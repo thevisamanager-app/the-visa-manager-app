@@ -1,0 +1,1 @@
+export const API_BASE_URL = 'https://api-fdkefcllsq-uc.a.run.app';

@@ -1,6 +1,8 @@
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
+apply plugin: "com.google.gms.google-services"
+
 
 /**
  * This is the configuration block to customize your React Native Android app.
@@ -116,4 +118,15 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+        // ⭐ FIREBASE DEPENDENCIES
+    implementation platform('com.google.firebase:firebase-bom:34.5.0')
+    implementation 'com.google.firebase:firebase-auth'
+
+    // ⭐ REQUIRED FOR GOOGLE SIGN-IN ON ANDROID
+    implementation 'com.google.android.gms:play-services-auth:20.7.0'
+
+    // OPTIONAL (Uncomment if you want Firestore, Storage later)
+    // implementation 'com.google.firebase:firebase-firestore'
+    // implementation 'com.google.firebase:firebase-storage'
 }

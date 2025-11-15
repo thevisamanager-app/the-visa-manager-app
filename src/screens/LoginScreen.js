@@ -26,6 +26,7 @@ export default function LoginScreen({ navigation }) {
   const handleGoogleLogin = async () => {
     try {
       const user = await signInWithGoogle();
+     navigation.navigate("HomeScreen", { user });
       console.log("Google Login Success:", user);
     } catch (error) {
       alert("Google login failed: " + error.message);

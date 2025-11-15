@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
 import { View, TextInput, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { confirmOtp } from '../services/auth/otpLogin';
+import { useNavigation } from "@react-navigation/native";
+
 
 export default function OtpScreen({ route, navigation }) {
   const { confirmation } = route.params;
   const [otp, setOtp] = useState("");
 
   const verifyOtp = async () => {
+    const navigation = useNavigation();
+
     try {
       const result = await confirmOtp(confirmation, otp);
       console.log("OTP Verified:", result.user);
-      navigation.replace("Home");
+      navigation.replace("HomeScreen");
     } catch (e) {
       alert("Invalid OTP");
     }

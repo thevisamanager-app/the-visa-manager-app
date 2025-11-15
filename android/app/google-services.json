@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "973458787565",
+    "project_id": "thevisamanager-bea80",
+    "storage_bucket": "thevisamanager-bea80.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:973458787565:android:6eb8d61a3e8d728c7410e4",
+        "android_client_info": {
+          "package_name": "com.thevisamanagerapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "973458787565-3acu5h08kaalt238seu4repuf4thp8q0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.thevisamanagerapp",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "973458787565-asdh334k3841q64mcmi17tk993jrqf07.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfM3G4mFUg2sgEiYAZ2zzZ6qDgjV4dCgU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "973458787565-asdh334k3841q64mcmi17tk993jrqf07.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

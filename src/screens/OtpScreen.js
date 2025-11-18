@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { confirmOtp } from '../services/auth/otpLogin';
-import { useNavigation } from "@react-navigation/native";
+//import { useNavigation } from "@react-navigation/native";
 
 
 export default function OtpScreen({ route, navigation }) {
@@ -9,7 +9,7 @@ export default function OtpScreen({ route, navigation }) {
   const [otp, setOtp] = useState("");
 
   const verifyOtp = async () => {
-    const navigation = useNavigation();
+
 
     try {
       const result = await confirmOtp(confirmation, otp);
@@ -19,8 +19,9 @@ export default function OtpScreen({ route, navigation }) {
       alert("Invalid OTP");
     }
   };
-
+    
   return (
+    
     <View style={styles.container}>
       <Text style={styles.title}>Enter OTP</Text>
 

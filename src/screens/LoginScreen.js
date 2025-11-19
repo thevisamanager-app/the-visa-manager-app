@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { sendOtp } from '../services/auth/otpLogin';
-import { signInWithGoogle } from '../services/auth/googleLogin';
+//import { signInWithGoogle } from '../services/auth/googleLogin';
+import { googleLogin } from "../services/auth/googleLogin";
 
 export default function LoginScreen({ navigation }) {
   const [phone, setPhone] = useState('');
@@ -23,15 +24,32 @@ export default function LoginScreen({ navigation }) {
     }
   };
 
+  // const handleGoogleLogin = async () => {
+  //   try {
+  //     const user = await googleLogin();
+  //    navigation.navigate("HomeScreen", { user });
+  //     console.log("Google Login Success:", user);
+  //   } catch (error) {
+  //     alert("Google login failed: " + error.message);
+  //   }
+  // };
   const handleGoogleLogin = async () => {
-    try {
-      const user = await signInWithGoogle();
-     navigation.navigate("HomeScreen", { user });
-      console.log("Google Login Success:", user);
-    } catch (error) {
-      alert("Google login failed: " + error.message);
+  try {
+    const user = await googleLogin();
+
+    if (!user) {
+      alert("Google login failed. Please try again.");
+      return; // ❌ STOP navigation
     }
-  };
+
+    console.log("Google Login Success:", user);
+    navigation.navigate("HomeScreen", { user });
+
+  } catch (error) {
+    alert("Google login failed: " + error.message);
+  }
+};
+
 
   return (
     <View style={styles.container}>

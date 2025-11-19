@@ -81,12 +81,16 @@ android {
 
     namespace "com.thevisamanagerapp"
     defaultConfig {
-        applicationId "com.thevisamanagerapp"
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
-    }
+    applicationId "com.thevisamanagerapp"
+    minSdkVersion rootProject.ext.minSdkVersion
+    targetSdkVersion rootProject.ext.targetSdkVersion
+    versionCode 1
+    versionName "1.0"
+
+    manifestPlaceholders = [
+        appAuthRedirectScheme: "com.thevisamanagerapp"
+    ]
+}
     signingConfigs {
         debug {
             storeFile file('debug.keystore')

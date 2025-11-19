@@ -1,18 +1,18 @@
-// // import auth from '@react-native-firebase/auth';
-// // import { GoogleSignin } from '@react-native-google-signin/google-signin';
+// import auth from '@react-native-firebase/auth';
+// import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
-// // export async function signInWithGoogle() {
-// //   await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+// export async function signInWithGoogle() {
+//   await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
 
-// //   // Step 1: Google popup
-// //   const { idToken } = await GoogleSignin.signIn();
+//   // Step 1: Google popup
+//   const { idToken } = await GoogleSignin.signIn();
 
-// //   // Step 2: Create Firebase credential
-// //   const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+//   // Step 2: Create Firebase credential
+//   const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
-// //   // Step 3: Login into Firebase
-// //   return auth().signInWithCredential(googleCredential);
-// // }
+//   // Step 3: Login into Firebase
+//   return auth().signInWithCredential(googleCredential);
+// }
 
 
 // import { GoogleSignin } from '@react-native-google-signin/google-signin';
@@ -55,8 +55,17 @@ export async function googleLogin() {
     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
     return await auth().signInWithCredential(googleCredential);
-  } catch (error) {
-    console.error("GOOGLE LOGIN ERROR:", JSON.stringify(error, null, 2));
-    alert(error.message || 'Google sign-in failed');
-  }
+  // } catch (error) {
+  //   console.log("GoogleSignIn error code:", error.code);
+  //   console.log("GoogleSignIn error message:", error.message);
+  //   console.log("GoogleSignIn raw error:", error);
+
+  //   // console.log("LOGIN_CREDENTIAL",error)
+  //   // console.error("GOOGLE LOGIN ERROR:", JSON.stringify(error, null, 2));
+  //   alert(error.message || 'Google sign-in failed');
+  // }
+   } catch (error) {
+  console.error("GOOGLE SIGNIN ERROR:", error);
+  throw error;  // 🔥 REQUIRED — let LoginScreen catch it
+}
 }

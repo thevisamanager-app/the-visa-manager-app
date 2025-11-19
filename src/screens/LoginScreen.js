@@ -24,15 +24,32 @@ export default function LoginScreen({ navigation }) {
     }
   };
 
+  // const handleGoogleLogin = async () => {
+  //   try {
+  //     const user = await googleLogin();
+  //    navigation.navigate("HomeScreen", { user });
+  //     console.log("Google Login Success:", user);
+  //   } catch (error) {
+  //     alert("Google login failed: " + error.message);
+  //   }
+  // };
   const handleGoogleLogin = async () => {
-    try {
-      const user = await googleLogin();
-     navigation.navigate("HomeScreen", { user });
-      console.log("Google Login Success:", user);
-    } catch (error) {
-      alert("Google login failed: " + error.message);
+  try {
+    const user = await googleLogin();
+
+    if (!user) {
+      alert("Google login failed. Please try again.");
+      return; // ❌ STOP navigation
     }
-  };
+
+    console.log("Google Login Success:", user);
+    navigation.navigate("HomeScreen", { user });
+
+  } catch (error) {
+    alert("Google login failed: " + error.message);
+  }
+};
+
 
   return (
     <View style={styles.container}>

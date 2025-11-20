@@ -66,92 +66,92 @@
 // }
 
 
-import firestore from "@react-native-firebase/firestore";
-import auth from "@react-native-firebase/auth";
+// import firestore from "@react-native-firebase/firestore";
+// import auth from "@react-native-firebase/auth";
 
-export async function savePassportData(data) {
-  const user = auth().currentUser;
-  if (!user) throw new Error("User not logged in");
+// export async function savePassportData(data) {
+//   const user = auth().currentUser;
+//   if (!user) throw new Error("User not logged in");
 
-  const uid = user.uid;
+//   const uid = user.uid;
 
-  return firestore()
-    .collection("users")
-    .doc(uid)
-    .collection("passportData")
-    .add({
-      ...data,
-      scannedAt: firestore.FieldValue.serverTimestamp(),
-    });
-}
-export async function savePassportData(frontData, backData) {
-  const user = auth().currentUser;
-  if (!user) throw new Error("User not logged in");
+//   return firestore()
+//     .collection("users")
+//     .doc(uid)
+//     .collection("passportData")
+//     .add({
+//       ...data,
+//       scannedAt: firestore.FieldValue.serverTimestamp(),
+//     });
+// }
+// export async function savePassportData(frontData, backData) {
+//   const user = auth().currentUser;
+//   if (!user) throw new Error("User not logged in");
 
-  const uid = user.uid;
+//   const uid = user.uid;
 
-  return firestore()
-    .collection("users")
-    .doc(uid)
-    .collection("passportData")
-    .add({
-      ...frontData,       // name, passport number, MRZ, front OCR result
-      ...backData,        // address, parents name, DOB, etc.
-      scannedAt: firestore.FieldValue.serverTimestamp(),
-    });
-}
+//   return firestore()
+//     .collection("users")
+//     .doc(uid)
+//     .collection("passportData")
+//     .add({
+//       ...frontData,       // name, passport number, MRZ, front OCR result
+//       ...backData,        // address, parents name, DOB, etc.
+//       scannedAt: firestore.FieldValue.serverTimestamp(),
+//     });
+// }
 
-export async function savePassportData(data) {
-  const user = auth().currentUser;
-  const uid = user.uid;
+// export async function savePassportData(data) {
+//   const user = auth().currentUser;
+//   const uid = user.uid;
 
-  return firestore()
-    .collection("users")
-    .doc(uid)
-    .collection("passportData")
-    .add({
-      ...data,
-      scannedAt: firestore.FieldValue.serverTimestamp(),
-    });
-}
+//   return firestore()
+//     .collection("users")
+//     .doc(uid)
+//     .collection("passportData")
+//     .add({
+//       ...data,
+//       scannedAt: firestore.FieldValue.serverTimestamp(),
+//     });
+// }
 
-export async function getPassportData() {
-  const user = auth().currentUser;
-  if (!user) throw new Error("User not logged in");
+// export async function getPassportData() {
+//   const user = auth().currentUser;
+//   if (!user) throw new Error("User not logged in");
 
-  const uid = user.uid;
+//   const uid = user.uid;
 
-  const snapshot = await firestore()
-    .collection("users")
-    .doc(uid)
-    .collection("passportData")
-    .orderBy("scannedAt", "desc")
-    .limit(1)
-    .get();
+//   const snapshot = await firestore()
+//     .collection("users")
+//     .doc(uid)
+//     .collection("passportData")
+//     .orderBy("scannedAt", "desc")
+//     .limit(1)
+//     .get();
 
-  if (snapshot.empty) return null;
+//   if (snapshot.empty) return null;
 
-  return { id: snapshot.docs[0].id, ...snapshot.docs[0].data() };
-}
+//   return { id: snapshot.docs[0].id, ...snapshot.docs[0].data() };
+// }
 
-export async function getAllPassportHistory() {
-  const user = auth().currentUser;
-  if (!user) throw new Error("User not logged in");
+// export async function getAllPassportHistory() {
+//   const user = auth().currentUser;
+//   if (!user) throw new Error("User not logged in");
 
-  const uid = user.uid;
+//   const uid = user.uid;
 
-  const snapshot = await firestore()
-    .collection("users")
-    .doc(uid)
-    .collection("passportData")
-    .orderBy("scannedAt", "desc")
-    .get();
+//   const snapshot = await firestore()
+//     .collection("users")
+//     .doc(uid)
+//     .collection("passportData")
+//     .orderBy("scannedAt", "desc")
+//     .get();
 
-  return snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
-}
+//   return snapshot.docs.map(doc => ({
+//     id: doc.id,
+//     ...doc.data(),
+//   }));
+// }
 
 
 // import firestore from "@react-native-firebase/firestore";
@@ -194,3 +194,136 @@ export async function getAllPassportHistory() {
 //       scannedAt: firestore.FieldValue.serverTimestamp(),
 //     });
 // }
+
+
+
+
+
+
+// import storage from "@react-native-firebase/storage";
+// import firestore from "@react-native-firebase/firestore";
+// import auth from "@react-native-firebase/auth";
+// import uuid from "react-native-uuid";
+
+// export async function uploadPassportImage(base64, type) {
+//   if (!base64) return null;
+
+//   const uid = auth().currentUser.uid;
+//   const fileId = uuid.v4();
+//   const path = `users/${uid}/passport/${type}_${fileId}.jpg`;
+
+//   const reference = storage().ref(path);
+
+//   await reference.putString(base64, "base64", {
+//     contentType: "image/jpeg",
+//   });
+
+//   return await reference.getDownloadURL();
+// }
+
+// export async function savePassportData(data, frontBase64, backBase64) {
+//   const user = auth().currentUser;
+//   if (!user) throw new Error("User not logged in");
+
+//   const uid = user.uid;
+
+//   // Upload images
+//   const frontURL = await uploadPassportImage(frontBase64, "front");
+//   const backURL = backBase64 ? await uploadPassportImage(backBase64, "back") : null;
+
+//   return firestore()
+//     .collection("users")
+//     .doc(uid)
+//     .collection("passportData")
+//     .add({
+//       ...data,
+//       frontImageURL: frontURL,
+//       backImageURL: backURL,
+//       scannedAt: firestore.FieldValue.serverTimestamp(),
+//     });
+// }
+
+// export async function getPassportData() {
+//   const uid = auth().currentUser.uid;
+
+//   const snapshot = await firestore()
+//     .collection("users")
+//     .doc(uid)
+//     .collection("passportData")
+//     .orderBy("scannedAt", "desc")
+//     .limit(1)
+//     .get();
+
+//   if (snapshot.empty) return null;
+
+//   return { id: snapshot.docs[0].id, ...snapshot.docs[0].data() };
+// }
+
+
+
+import storage from "@react-native-firebase/storage";
+import firestore from "@react-native-firebase/firestore";
+import auth from "@react-native-firebase/auth";
+import uuid from "react-native-uuid";
+
+// Upload base64 image → Firebase Storage
+export async function uploadPassportImage(base64, type) {
+  if (!base64) return null;
+
+  const uid = auth().currentUser.uid;
+  const fileId = uuid.v4(); // unique filename
+  const path = `users/${uid}/passport/${type}_${fileId}.jpg`;
+
+  const reference = storage().ref(path);
+
+  await reference.putString(base64, "base64", {
+    contentType: "image/jpeg",
+  });
+
+  return await reference.getDownloadURL();
+}
+
+export async function savePassportData(data) {
+  const user = auth().currentUser;
+  if (!user) throw new Error("User not logged in");
+
+  const uid = user.uid;
+
+  // Upload images
+  const frontURL = await uploadPassportImage(data.frontBase64, "front");
+  const backURL = await uploadPassportImage(data.backBase64, "back");
+
+  // Save MRZ + form + image URLs
+  return firestore()
+    .collection("users")
+    .doc(uid)
+    .collection("passportData")
+    .add({
+      firstName: data.firstName,
+      lastName: data.lastName,
+      passportNumber: data.passportNumber,
+      birthDate: data.birthDate,
+      expiryDate: data.expiryDate,
+
+      frontImageURL: frontURL,
+      backImageURL: backURL,
+
+      scannedAt: firestore.FieldValue.serverTimestamp(),
+    });
+}
+
+export async function getPassportData() {
+  const uid = auth().currentUser.uid;
+
+  const snapshot = await firestore()
+    .collection("users")
+    .doc(uid)
+    .collection("passportData")
+    .orderBy("scannedAt", "desc")
+    .limit(1)
+    .get();
+
+  if (snapshot.empty) return null;
+
+  return { id: snapshot.docs[0].id, ...snapshot.docs[0].data() };
+}

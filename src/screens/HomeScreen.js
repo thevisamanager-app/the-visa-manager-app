@@ -1,7 +1,9 @@
 import React, { useEffect ,useState} from 'react';
-import { View, Text, Button } from 'react-native';
+import { View, Text, Button,TouchableOpacity } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import { getPassportData } from '../api/user/passportService';
+import { useDispatch } from 'react-redux';
+import { logoutUser } from '../Redux/authSlice';
 
 export default function HomeScreen({ navigation }) {
   const logout = async () => {
@@ -9,12 +11,15 @@ export default function HomeScreen({ navigation }) {
     navigation.replace("Login");
   };
   const [data, setData] = useState(null);
-
+const dispatch = useDispatch();
   useEffect(() => {
   getPassportData().then(setData);
 }, []);
 
 
+  const handleLogout = async () => {
+    await dispatch(logoutUser());
+  };
   return (
     // <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
     //   <Text style={{ fontSize: 20 }}>Welcome to Home!</Text>
@@ -35,6 +40,17 @@ export default function HomeScreen({ navigation }) {
         title="Answer Visa Questions"
         onPress={() => navigation.navigate('QuestionScreen')}
       />
+            <TouchableOpacity
+        onPress={handleLogout}
+        style={{
+          backgroundColor: "red",
+          paddingVertical: 12,
+          paddingHorizontal: 25,
+          borderRadius: 8,
+        }}
+      >
+        <Text style={{ color: "white", fontSize: 16 }}>Logout</Text>
+      </TouchableOpacity>
     </View>
     
   );

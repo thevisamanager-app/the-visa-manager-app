@@ -43,7 +43,7 @@ export default function LoginScreen({ navigation }) {
     }
 
     console.log("Google Login Success:", user);
-    navigation.navigate("HomeScreen", { user });
+    navigation.navigate("DestinationScreen", { user });
 
   } catch (error) {
     alert("Google login failed: " + error.message);

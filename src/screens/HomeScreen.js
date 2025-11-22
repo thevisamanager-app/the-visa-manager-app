@@ -36,10 +36,10 @@ const dispatch = useDispatch();
 
       <View style={{ height: 12 }} />
 
-      <Button
+      {/* <Button
         title="Answer Visa Questions"
         onPress={() => navigation.navigate('QuestionScreen')}
-      />
+      /> */}
             <TouchableOpacity
         onPress={handleLogout}
         style={{

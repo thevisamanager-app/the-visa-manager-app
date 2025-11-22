@@ -34,21 +34,21 @@ export default function LoginScreen({ navigation }) {
   //   }
   // };
   const handleGoogleLogin = async () => {
-  try {
-    const user = await googleLogin();
+    try {
+      const user = await googleLogin();
 
-    if (!user) {
-      alert("Google login failed. Please try again.");
-      return; // ❌ STOP navigation
+      if (!user) {
+        alert("Google login failed. Please try again.");
+        return; // ❌ STOP navigation
+      }
+
+      console.log("Google Login Success:", user);
+      navigation.navigate("DestinationScreen", { user });
+
+    } catch (error) {
+      alert("Google login failed: " + error.message);
     }
-
-    console.log("Google Login Success:", user);
-    navigation.navigate("DestinationScreen", { user });
-
-  } catch (error) {
-    alert("Google login failed: " + error.message);
-  }
-};
+  };
 
 
   return (
@@ -59,6 +59,7 @@ export default function LoginScreen({ navigation }) {
       <TextInput
         style={styles.input}
         placeholder="Enter Phone Number"
+        placeholderTextColor="#000"
         keyboardType="number-pad"
         value={phone}
         onChangeText={setPhone}
@@ -82,7 +83,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: "center", padding: 20 },
   title: { fontSize: 26, textAlign: "center", marginBottom: 30, fontWeight: "700" },
   input: {
-    borderWidth: 1, borderColor: "#ccc", padding: 12, borderRadius: 8, marginBottom: 20
+    borderWidth: 1, borderColor: "#ccc", padding: 12, borderRadius: 8, marginBottom: 20, color: "#000"
   },
   button: { backgroundColor: "#007bff", padding: 15, borderRadius: 8 },
   buttonText: { color: "#fff", textAlign: "center", fontSize: 16 },

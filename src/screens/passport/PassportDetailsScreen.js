@@ -425,6 +425,8 @@ function formatMRZDate(mrz) {
 }
 
 export default function PassportDetailsScreen({ route, navigation }) {
+  const visaPreferences = route?.params?.visa || null;
+  console.log("DETAILS=>",visaPreferences)
   const {
     frontData,
     backData,
@@ -505,13 +507,14 @@ export default function PassportDetailsScreen({ route, navigation }) {
       expiryDate: form.expiryDate,
       frontBase64,
       backBase64,
+      visa: visaPreferences
     };
 
     try {
       await savePassportData(payload);
 
       Alert.alert("Success", "Passport saved successfully!");
-      navigation.navigate("QuestionScreen");
+      navigation.navigate("QuestionScreen",{payload});
 
     } catch (err) {
       console.log("SAVE ERROR:", err);

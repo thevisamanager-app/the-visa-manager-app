@@ -5,7 +5,8 @@ import { getPassportData } from '../api/user/passportService';
 import { useDispatch } from 'react-redux';
 import { logoutUser } from '../Redux/authSlice';
 
-export default function HomeScreen({ navigation }) {
+export default function HomeScreen({ navigation,route }) {
+   const visaPreferences = route?.params?.answerPayload || null;
   const logout = async () => {
     await auth().signOut();
     navigation.replace("Login");
@@ -31,7 +32,7 @@ const dispatch = useDispatch();
 
       <Button
         title="Scan Passport"
-        onPress={() => navigation.navigate('PassportUploadScreen')}
+        onPress={() => navigation.navigate('PassportUploadScreen',{ visaPreferences })}
       />
 
       <View style={{ height: 12 }} />

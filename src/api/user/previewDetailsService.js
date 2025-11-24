@@ -84,12 +84,58 @@
 //       createdAt: firestore.FieldValue.serverTimestamp(),
 //     });
 // }
+
+// import firestore from "@react-native-firebase/firestore";
+// import auth from "@react-native-firebase/auth";
+// import storage from "@react-native-firebase/storage";
+// import uuid from "react-native-uuid";
+
+// // Upload image ticket to Firebase Storage
+// export async function uploadTicketFile(file) {
+//   const user = auth().currentUser;
+//   if (!user) throw new Error("User not logged in");
+
+//   const uid = user.uid;
+//   const fileId = uuid.v4();
+
+//   const ext =
+//     file.name?.split(".").pop() ||
+//     file.type?.split("/")[1] ||
+//     "jpg";
+
+//   const path = `users/${uid}/tickets/${fileId}.${ext}`;
+
+//   const ref = storage().ref(path);
+//   await ref.putFile(file.uri);
+
+//   return await ref.getDownloadURL();
+// }
+
+// // Save preview details
+// export async function savePreviewDetails(previewPayload) {
+//   const user = auth().currentUser;
+//   if (!user) throw new Error("User not logged in");
+
+//   const uid = user.uid;
+// console.log("PREVIEWFIRESTORE==>",previewPayload)
+//   return firestore()
+//     .collection("users")
+//     .doc(uid)
+//     .collection("previewdetails")
+//     .add({
+//       ...previewPayload,
+//       createdAt: firestore.FieldValue.serverTimestamp(),
+//     });
+// }
+
+
+
 import firestore from "@react-native-firebase/firestore";
 import auth from "@react-native-firebase/auth";
 import storage from "@react-native-firebase/storage";
 import uuid from "react-native-uuid";
 
-// Upload image ticket to Firebase Storage
+// Upload ticket
 export async function uploadTicketFile(file) {
   const user = auth().currentUser;
   if (!user) throw new Error("User not logged in");
@@ -111,11 +157,32 @@ export async function uploadTicketFile(file) {
 }
 
 // Save preview details
+// export async function savePreviewDetails(previewPayload) {
+//   const user = auth().currentUser;
+//   if (!user) throw new Error("User not logged in");
+
+//   const uid = user.uid;
+
+//   console.log("🔥 PREVIEWFIRESTORE ==> ", previewPayload);
+
+//   return firestore()
+//     .collection("users")
+//     .doc(uid)
+//     .collection("previewdetails")
+//     .add({
+//       ...previewPayload,
+//       createdAt: firestore.FieldValue.serverTimestamp(),
+//     });
+//     console.log("🔥 STORED DOC ID ==>", res.id);
+// }
+
 export async function savePreviewDetails(previewPayload) {
   const user = auth().currentUser;
   if (!user) throw new Error("User not logged in");
 
   const uid = user.uid;
+
+  console.log("PREVIEWFIRESTORE==>", previewPayload);
 
   return firestore()
     .collection("users")
@@ -126,3 +193,5 @@ export async function savePreviewDetails(previewPayload) {
       createdAt: firestore.FieldValue.serverTimestamp(),
     });
 }
+
+

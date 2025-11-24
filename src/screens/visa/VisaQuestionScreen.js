@@ -34,21 +34,22 @@ export default function VisaQuestionScreen({ route, navigation }) {
 
         const answerPayload = {
             visaType,
-            entryType
+            entryType,
+            country
         };
-
-        try {
-            setLoading(true);
-            await saveAnswers(answerPayload);
-            setLoading(false);
+            console.log("PAYLOAD==>",answerPayload)
+        // try {
+           // setLoading(true);
+          //  await saveAnswers(answerPayload);
+            //setLoading(false);
 
             Alert.alert("Success", "Your visa preferences have been saved.");
-            navigation.navigate("HomeScreen");
-        } catch (e) {
-            console.log("SAVE ERROR:", e);
-            Alert.alert("Error", "Failed to save your answers.");
-            setLoading(false);
-        }
+            navigation.navigate("HomeScreen", { answerPayload });
+        // } catch (e) {
+        //     console.log("SAVE ERROR:", e);
+        //     Alert.alert("Error", "Failed to save your answers.");
+        //     setLoading(false);
+        // }
     };
 
     return (
@@ -94,8 +95,11 @@ export default function VisaQuestionScreen({ route, navigation }) {
                     {loading ? "Saving..." : "Save"}
                 </Text>
             </TouchableOpacity>
+            
         </View>
     );
+
+    
 }
 
 

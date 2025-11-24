@@ -567,8 +567,9 @@ import { extractTextFromImage } from "../../api/ocr/visionApi";
 import { parseMRZ } from "../../api/ocr/mrzParser";
 
 
-export default function PassportUploadScreen({ navigation }) {
-
+export default function PassportUploadScreen({ navigation ,route}) {
+    const visaPreferences = route?.params?.visaPreferences || null;
+console.log("UPLOAD==>",visaPreferences)
   const [photoUri, setPhotoUri] = useState(null);
   const [photoBase64, setPhotoBase64] = useState(null);
 
@@ -661,6 +662,7 @@ export default function PassportUploadScreen({ navigation }) {
       photoBase64,
       frontBase64,
       backBase64: asset.base64,
+      visa:visaPreferences
     });
   };
 

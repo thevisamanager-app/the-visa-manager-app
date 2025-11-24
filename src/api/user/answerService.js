@@ -62,47 +62,47 @@
 // // }
 
 
-import firestore from "@react-native-firebase/firestore";
-import auth from "@react-native-firebase/auth";
+// import firestore from "@react-native-firebase/firestore";
+// import auth from "@react-native-firebase/auth";
 
-export async function saveAnswers(answers) {
-  const user = auth().currentUser;
-  if (!user) throw new Error("User not logged in");
+// export async function saveAnswers(answers) {
+//   const user = auth().currentUser;
+//   if (!user) throw new Error("User not logged in");
 
-  const userDetails = {
-    uid: user.uid,
-    phone: user.phoneNumber ?? null,
-    email: user.email ?? null,
-    displayName: user.displayName ?? null,
-  };
+//   const userDetails = {
+//     uid: user.uid,
+//     phone: user.phoneNumber ?? null,
+//     email: user.email ?? null,
+//     displayName: user.displayName ?? null,
+//   };
 
-  return firestore()
-    .collection("users")
-    .doc(user.uid)
-    .collection("answers")
-    .add({
-      user: userDetails,
-      answers,
-      createdAt: firestore.FieldValue.serverTimestamp(),
-    });
-}
+//   return firestore()
+//     .collection("users")
+//     .doc(user.uid)
+//     .collection("answers")
+//     .add({
+//       user: userDetails,
+//       answers,
+//       createdAt: firestore.FieldValue.serverTimestamp(),
+//     });
+// }
 
-export async function getAnswers() {
-  const user = auth().currentUser;
-  if (!user) throw new Error("User not logged in");
+// export async function getAnswers() {
+//   const user = auth().currentUser;
+//   if (!user) throw new Error("User not logged in");
 
-  const snap = await firestore()
-    .collection("users")
-    .doc(user.uid)
-    .collection("answers")
-    .orderBy("createdAt", "desc")
-    .get();
+//   const snap = await firestore()
+//     .collection("users")
+//     .doc(user.uid)
+//     .collection("answers")
+//     .orderBy("createdAt", "desc")
+//     .get();
 
-  return snap.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
-  }));
-}
+//   return snap.docs.map(doc => ({
+//     id: doc.id,
+//     ...doc.data()
+//   }));
+// }
 // import firestore from "@react-native-firebase/firestore";
 // import auth from "@react-native-firebase/auth";
 
@@ -150,3 +150,134 @@ export async function getAnswers() {
 //     ...doc.data(),
 //   }));
 // }
+
+
+
+
+
+// import firestore from "@react-native-firebase/firestore";
+// import auth from "@react-native-firebase/auth";
+
+// // Save user's answers (MATCHES FIRESTORE RULES)
+// export async function saveAnswers(answers) {
+//     const user = auth().currentUser;
+//     if (!user) throw new Error("User not logged in");
+
+//     const uid = user.uid;
+
+//     const userDetails = {
+//         uid,
+//         phone: user.phoneNumber ?? null,
+//         email: user.email ?? null,
+//         displayName: user.displayName ?? null,
+//     };
+//     console.log("ANSWERSFIRESTORE==>", answers)
+//     return firestore()
+//         .collection("users")       // ROOT users
+//         .doc(uid)                  // user document
+//         .collection("answers")     // subcollection
+//         .add({
+//             user: userDetails,
+//             answers,
+//             createdAt: firestore.FieldValue.serverTimestamp(),
+//         });
+// }
+
+// // Get answers for logged-in user
+// export async function getAnswers() {
+//     const user = auth().currentUser;
+//     if (!user) throw new Error("User not logged in");
+
+//     const uid = user.uid;
+
+//     const snap = await firestore()
+//         .collection("users")
+//         .doc(uid)
+//         .collection("answers")
+//         .orderBy("createdAt", "desc")
+//         .get();
+
+//     return snap.docs.map((doc) => ({
+//         id: doc.id,
+//         ...doc.data(),
+//     }));
+// }
+
+
+
+// import firestore from "@react-native-firebase/firestore";
+// import auth from "@react-native-firebase/auth";
+
+// export async function saveAnswers(answers) {
+//   const user = auth().currentUser;
+//   if (!user) throw new Error("User not logged in");
+
+//   const uid = user.uid;
+
+//   return firestore()
+//     .collection("users")
+//     .doc(uid)
+//     .collection("answers")
+//     .add({
+//       ...answers,    // <-- FLATTEN answers directly
+//       createdAt: firestore.FieldValue.serverTimestamp(),
+//     });
+// }
+
+// export async function getAnswers() {
+//   const user = auth().currentUser;
+//   if (!user) throw new Error("User not logged in");
+
+//   const uid = user.uid;
+
+//   const snap = await firestore()
+//     .collection("users")
+//     .doc(uid)
+//     .collection("answers")
+//     .orderBy("createdAt", "desc")
+//     .get();
+
+//   return snap.docs.map(doc => ({
+//     id: doc.id,
+//     ...doc.data()
+//   }));
+// }
+
+
+import firestore from "@react-native-firebase/firestore";
+import auth from "@react-native-firebase/auth";
+
+export async function saveAnswers(answers) {
+  const user = auth().currentUser;
+  if (!user) throw new Error("User not logged in");
+
+  const uid = user.uid;
+
+  return firestore()
+    .collection("users")
+    .doc(uid)
+    .collection("answers")
+    .add({
+      ...answers,  // flatten answers
+      createdAt: firestore.FieldValue.serverTimestamp(),
+    });
+}
+
+export async function getAnswers() {
+  const user = auth().currentUser;
+  if (!user) throw new Error("User not logged in");
+
+  const uid = user.uid;
+
+  const snap = await firestore()
+    .collection("users")
+    .doc(uid)
+    .collection("answers")
+    .orderBy("createdAt", "desc")
+    .get();
+
+  return snap.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+}

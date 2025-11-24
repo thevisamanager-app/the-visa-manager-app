@@ -4,6 +4,19 @@ import { loadUserFromStorage } from '../Redux/authSlice';
 import AuthNavigator from './AuthNavigator';
 import AppNavigator from './AppNavigator';
 
+// export default function RootNavigator() {
+//   const dispatch = useDispatch();
+//   const user = useSelector((state) => state.auth.user);
+
+//   useEffect(() => {
+//     dispatch(loadUserFromStorage());
+//   }, []);
+
+//   console.log("USER==>",user)
+//   return user ? <AppNavigator /> : <AuthNavigator />;
+// }
+
+
 export default function RootNavigator() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
@@ -12,5 +25,8 @@ export default function RootNavigator() {
     dispatch(loadUserFromStorage());
   }, []);
 
+  // Updated check
+  console.log("Root user:", user);
+  console.log("Logged in?", user?.isLoggedIn);
   return user ? <AppNavigator /> : <AuthNavigator />;
 }

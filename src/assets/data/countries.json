@@ -1,0 +1,113 @@
+[
+  {
+    "country": "United States",
+    "cities": [
+      "New York",
+      "Los Angeles",
+      "Chicago",
+      "Houston",
+      "Phoenix"
+    ]
+  },
+  {
+    "country": "United Kingdom",
+    "cities": [
+      "London",
+      "Manchester",
+      "Birmingham",
+      "Liverpool",
+      "Leeds"
+    ]
+  },
+  {
+    "country": "Canada",
+    "cities": [
+      "Toronto",
+      "Vancouver",
+      "Montreal",
+      "Calgary",
+      "Ottawa"
+    ]
+  },
+  {
+    "country": "Australia",
+    "cities": [
+      "Sydney",
+      "Melbourne",
+      "Brisbane",
+      "Perth",
+      "Adelaide"
+    ]
+  },
+  {
+    "country": "India",
+    "cities": [
+      "Mumbai",
+      "Delhi",
+      "Bangalore",
+      "Hyderabad",
+      "Chennai",
+      "Pune"
+    ]
+  },
+  {
+    "country": "China",
+    "cities": [
+      "Beijing",
+      "Shanghai",
+      "Guangzhou",
+      "Shenzhen",
+      "Chengdu"
+    ]
+  },
+  {
+    "country": "Japan",
+    "cities": [
+      "Tokyo",
+      "Osaka",
+      "Nagoya",
+      "Sapporo",
+      "Fukuoka"
+    ]
+  },
+  {
+    "country": "Germany",
+    "cities": [
+      "Berlin",
+      "Hamburg",
+      "Munich",
+      "Cologne",
+      "Frankfurt"
+    ]
+  },
+  {
+    "country": "France",
+    "cities": [
+      "Paris",
+      "Marseille",
+      "Lyon",
+      "Toulouse",
+      "Nice"
+    ]
+  },
+  {
+    "country": "Brazil",
+    "cities": [
+      "S\u00e3o Paulo",
+      "Rio de Janeiro",
+      "Bras\u00edlia",
+      "Salvador",
+      "Fortaleza"
+    ]
+  },
+  {
+    "country": "Vietnam",
+    "cities": [
+      "Hà Nội",
+      "Hồ Chí Minh City (TP.HCM)",
+      "Hải Phòng",
+      "Đà Nẵng",
+      "Cần Thơ"
+    ]
+  }
+]

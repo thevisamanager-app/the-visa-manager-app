@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { sendOtp } from '../services/auth/otpLogin';
-import { signInWithGoogle } from '../services/auth/googleLogin';
+//import { signInWithGoogle } from '../services/auth/googleLogin';
+import { googleLogin } from "../services/auth/googleLogin";
 
 export default function LoginScreen({ navigation }) {
   const [phone, setPhone] = useState('');
@@ -23,14 +24,32 @@ export default function LoginScreen({ navigation }) {
     }
   };
 
+  // const handleGoogleLogin = async () => {
+  //   try {
+  //     const user = await googleLogin();
+  //    navigation.navigate("HomeScreen", { user });
+  //     console.log("Google Login Success:", user);
+  //   } catch (error) {
+  //     alert("Google login failed: " + error.message);
+  //   }
+  // };
   const handleGoogleLogin = async () => {
     try {
-      const user = await signInWithGoogle();
+      const user = await googleLogin();
+
+      if (!user) {
+        alert("Google login failed. Please try again.");
+        return; // ❌ STOP navigation
+      }
+
       console.log("Google Login Success:", user);
+      navigation.navigate("DestinationScreen", { user });
+
     } catch (error) {
       alert("Google login failed: " + error.message);
     }
   };
+
 
   return (
     <View style={styles.container}>
@@ -40,6 +59,7 @@ export default function LoginScreen({ navigation }) {
       <TextInput
         style={styles.input}
         placeholder="Enter Phone Number"
+        placeholderTextColor="#000"
         keyboardType="number-pad"
         value={phone}
         onChangeText={setPhone}
@@ -63,7 +83,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: "center", padding: 20 },
   title: { fontSize: 26, textAlign: "center", marginBottom: 30, fontWeight: "700" },
   input: {
-    borderWidth: 1, borderColor: "#ccc", padding: 12, borderRadius: 8, marginBottom: 20
+    borderWidth: 1, borderColor: "#ccc", padding: 12, borderRadius: 8, marginBottom: 20, color: "#000"
   },
   button: { backgroundColor: "#007bff", padding: 15, borderRadius: 8 },
   buttonText: { color: "#fff", textAlign: "center", fontSize: 16 },

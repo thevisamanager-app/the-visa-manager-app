@@ -2,6 +2,8 @@ apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 apply plugin: "com.google.gms.google-services"
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
+
 
 
 /**
@@ -81,12 +83,16 @@ android {
 
     namespace "com.thevisamanagerapp"
     defaultConfig {
-        applicationId "com.thevisamanagerapp"
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
-    }
+    applicationId "com.thevisamanagerapp"
+    minSdkVersion rootProject.ext.minSdkVersion
+    targetSdkVersion rootProject.ext.targetSdkVersion
+    versionCode 1
+    versionName "1.0"
+
+    manifestPlaceholders = [
+        appAuthRedirectScheme: "com.thevisamanagerapp"
+    ]
+}
     signingConfigs {
         debug {
             storeFile file('debug.keystore')

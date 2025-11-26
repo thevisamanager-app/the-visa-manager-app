@@ -1,0 +1,177 @@
+[debug] [2025-11-26T12:21:41.472Z] ----------------------------------------------------------------------
+[debug] [2025-11-26T12:21:41.486Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\marke\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only functions
+[debug] [2025-11-26T12:21:41.486Z] CLI Version:   14.26.0
+[debug] [2025-11-26T12:21:41.486Z] Platform:      win32
+[debug] [2025-11-26T12:21:41.486Z] Node Version:  v24.11.0
+[debug] [2025-11-26T12:21:41.486Z] Time:          Wed Nov 26 2025 17:51:41 GMT+0530 (India Standard Time)
+[debug] [2025-11-26T12:21:41.486Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-11-26T12:21:41.672Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-26T12:21:41.673Z] > authorizing via signed-in user (thevisamanager@gmail.com)
+[debug] [2025-11-26T12:21:41.673Z] [iam] checking project thevisamanager-bea80 for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2025-11-26T12:21:41.674Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:21:41.675Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:21:41.676Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/thevisamanager-bea80:testIamPermissions [none]
+[debug] [2025-11-26T12:21:41.676Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/thevisamanager-bea80:testIamPermissions x-goog-quota-user=projects/thevisamanager-bea80
+[debug] [2025-11-26T12:21:41.676Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/thevisamanager-bea80:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2025-11-26T12:21:43.257Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/thevisamanager-bea80:testIamPermissions 200
+[debug] [2025-11-26T12:21:43.257Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/thevisamanager-bea80:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2025-11-26T12:21:43.257Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:21:43.258Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:21:43.258Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/thevisamanager-bea80/serviceAccounts/thevisamanager-bea80@appspot.gserviceaccount.com:testIamPermissions [none]
+[debug] [2025-11-26T12:21:43.258Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/thevisamanager-bea80/serviceAccounts/thevisamanager-bea80@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2025-11-26T12:21:45.113Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/thevisamanager-bea80/serviceAccounts/thevisamanager-bea80@appspot.gserviceaccount.com:testIamPermissions 200
+[debug] [2025-11-26T12:21:45.114Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/thevisamanager-bea80/serviceAccounts/thevisamanager-bea80@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[info] 
+[info] === Deploying to 'thevisamanager-bea80'...
+[info] 
+[info] i  deploying functions 
+[debug] [2025-11-26T12:21:45.124Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:21:45.125Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:21:45.125Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/thevisamanager-bea80 [none]
+[debug] [2025-11-26T12:21:45.492Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/thevisamanager-bea80 200
+[debug] [2025-11-26T12:21:45.493Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/thevisamanager-bea80 {"projectNumber":"973458787565","projectId":"thevisamanager-bea80","lifecycleState":"ACTIVE","name":"Thevisamanager","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2025-10-14T09:31:12.508300Z"}
+[info] i  functions: preparing codebase default for deployment 
+[info] i  functions: ensuring required API cloudfunctions.googleapis.com is enabled... 
+[info] i  functions: ensuring required API cloudbuild.googleapis.com is enabled... 
+[info] i  artifactregistry: ensuring required API artifactregistry.googleapis.com is enabled... 
+[debug] [2025-11-26T12:21:45.499Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:21:45.500Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:21:45.503Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/thevisamanager-bea80/adminSdkConfig [none]
+[debug] [2025-11-26T12:21:46.310Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/thevisamanager-bea80/adminSdkConfig 200
+[debug] [2025-11-26T12:21:46.311Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/thevisamanager-bea80/adminSdkConfig {"projectId":"thevisamanager-bea80","storageBucket":"thevisamanager-bea80.firebasestorage.app"}
+[debug] [2025-11-26T12:21:46.312Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:21:46.312Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:21:46.312Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/thevisamanager-bea80/configs [none]
+[debug] [2025-11-26T12:21:46.923Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/thevisamanager-bea80/configs 200
+[debug] [2025-11-26T12:21:46.923Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/thevisamanager-bea80/configs {"configs":[{"name":"projects/thevisamanager-bea80/configs/razorpay"}]}
+[debug] [2025-11-26T12:21:46.923Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:21:46.924Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:21:46.924Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/thevisamanager-bea80/configs/razorpay/variables [none]
+[debug] [2025-11-26T12:21:47.306Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/thevisamanager-bea80/configs/razorpay/variables 200
+[debug] [2025-11-26T12:21:47.306Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/thevisamanager-bea80/configs/razorpay/variables {"variables":[{"name":"projects/thevisamanager-bea80/configs/razorpay/variables/key_id","updateTime":"2025-11-26T12:19:55.975801156Z"},{"name":"projects/thevisamanager-bea80/configs/razorpay/variables/key_secret","updateTime":"2025-11-26T12:19:56.126835641Z"}]}
+[debug] [2025-11-26T12:21:47.307Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:21:47.307Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:21:47.307Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:21:47.307Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:21:47.307Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/thevisamanager-bea80/configs/razorpay/variables/key_id [none]
+[debug] [2025-11-26T12:21:47.308Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/thevisamanager-bea80/configs/razorpay/variables/key_secret [none]
+[debug] [2025-11-26T12:21:47.610Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/thevisamanager-bea80/configs/razorpay/variables/key_id 200
+[debug] [2025-11-26T12:21:47.610Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/thevisamanager-bea80/configs/razorpay/variables/key_id {"name":"projects/thevisamanager-bea80/configs/razorpay/variables/key_id","updateTime":"2025-11-26T12:19:55.975801156Z","text":"rzp_live_Raqt382mPwe1Di"}
+[debug] [2025-11-26T12:21:48.061Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/thevisamanager-bea80/configs/razorpay/variables/key_secret 200
+[debug] [2025-11-26T12:21:48.061Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/thevisamanager-bea80/configs/razorpay/variables/key_secret {"name":"projects/thevisamanager-bea80/configs/razorpay/variables/key_secret","updateTime":"2025-11-26T12:19:56.126835641Z","text":"W2DI1EMxQVFNxmE3A0OvuKeV"}
+[debug] [2025-11-26T12:21:48.064Z] Validating nodejs source
+[debug] [2025-11-26T12:21:51.063Z] > [functions] package.json contents: {
+  "name": "api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "firebase emulators:start",
+    "deploy": "firebase deploy --only functions"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "eslint": "^9.39.1",
+    "firebase-functions": "4.4.1",
+    "firebase-admin": "11.0.1",
+    "express": "^4.18.2",
+    "razorpay": "^2.8.6",
+    "crypto-js": "^4.1.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.0.0"
+  }
+}
+[debug] [2025-11-26T12:21:51.064Z] Building nodejs source
+[info] i  functions: Loading and analyzing source code for codebase default to determine what to deploy 
+[debug] [2025-11-26T12:21:51.071Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-11-26T12:21:51.091Z] Found firebase-functions binary at 'C:\Users\marke\TVM\Sahil\TheVisaManagerApp\functions\api\node_modules\.bin\firebase-functions'
+[info] Serving at port 8176
+
+[debug] [2025-11-26T12:21:53.985Z] Got response from /__/functions.yaml {"endpoints":{"api":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"httpsTrigger":{},"entryPoint":"api"}},"specVersion":"v1alpha1","requiredAPIs":[],"extensions":{}}
+[info] i  extensions: ensuring required API firebaseextensions.googleapis.com is enabled... 
+[debug] [2025-11-26T12:21:58.042Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-26T12:21:58.042Z] > authorizing via signed-in user (thevisamanager@gmail.com)
+[debug] [2025-11-26T12:21:58.042Z] [iam] checking project thevisamanager-bea80 for permissions ["firebase.projects.get","firebaseextensions.instances.list"]
+[debug] [2025-11-26T12:21:58.042Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:21:58.042Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:21:58.042Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/thevisamanager-bea80:testIamPermissions [none]
+[debug] [2025-11-26T12:21:58.042Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/thevisamanager-bea80:testIamPermissions x-goog-quota-user=projects/thevisamanager-bea80
+[debug] [2025-11-26T12:21:58.042Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/thevisamanager-bea80:testIamPermissions {"permissions":["firebase.projects.get","firebaseextensions.instances.list"]}
+[debug] [2025-11-26T12:21:59.620Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/thevisamanager-bea80:testIamPermissions 200
+[debug] [2025-11-26T12:21:59.620Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/thevisamanager-bea80:testIamPermissions {"permissions":["firebase.projects.get","firebaseextensions.instances.list"]}
+[debug] [2025-11-26T12:21:59.621Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:21:59.621Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:21:59.622Z] >>> [apiv2][query] GET https://firebaseextensions.googleapis.com/v1beta/projects/thevisamanager-bea80/instances pageSize=100&pageToken=
+[debug] [2025-11-26T12:22:01.587Z] <<< [apiv2][status] GET https://firebaseextensions.googleapis.com/v1beta/projects/thevisamanager-bea80/instances 200
+[debug] [2025-11-26T12:22:01.587Z] <<< [apiv2][body] GET https://firebaseextensions.googleapis.com/v1beta/projects/thevisamanager-bea80/instances {}
+[info] i  functions: preparing functions/api directory for uploading... 
+[info] i  functions: packaged C:\Users\marke\TVM\Sahil\TheVisaManagerApp\functions\api (45.73 KB) for uploading 
+[debug] [2025-11-26T12:22:01.644Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:22:01.644Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:22:01.644Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v1/projects/thevisamanager-bea80/locations/-/functions [none]
+[debug] [2025-11-26T12:22:02.598Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v1/projects/thevisamanager-bea80/locations/-/functions 200
+[debug] [2025-11-26T12:22:02.598Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v1/projects/thevisamanager-bea80/locations/-/functions {}
+[debug] [2025-11-26T12:22:02.599Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:22:02.599Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:22:02.599Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v2/projects/thevisamanager-bea80/locations/-/functions filter=environment%3D%22GEN_2%22
+[debug] [2025-11-26T12:22:04.561Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v2/projects/thevisamanager-bea80/locations/-/functions 200
+[debug] [2025-11-26T12:22:04.561Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v2/projects/thevisamanager-bea80/locations/-/functions {"functions":[{"name":"projects/thevisamanager-bea80/locations/us-central1/functions/sendPaymentNotification","buildConfig":{"build":"projects/973458787565/locations/us-central1/builds/f1449cba-0aee-4267-b2e8-ffd5cfdb64f1","runtime":"nodejs22","entryPoint":"sendPaymentNotification","source":{"storageSource":{"bucket":"gcf-v2-sources-973458787565-us-central1","object":"sendPaymentNotification/function-source.zip","generation":"1761979144802238"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"dockerRepository":"projects/thevisamanager-bea80/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-973458787565-us-central1","object":"sendPaymentNotification/function-source.zip","generation":"1761979144802238"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/thevisamanager-bea80/serviceAccounts/973458787565-compute@developer.gserviceaccount.com","automaticUpdatePolicy":{}},"serviceConfig":{"service":"projects/thevisamanager-bea80/locations/us-central1/services/sendpaymentnotification","timeoutSeconds":60,"environmentVariables":{"FIREBASE_CONFIG":"{\"projectId\":\"thevisamanager-bea80\",\"storageBucket\":\"thevisamanager-bea80.firebasestorage.app\"}","GCLOUD_PROJECT":"thevisamanager-bea80","EVENTARC_CLOUD_EVENT_SOURCE":"projects/thevisamanager-bea80/locations/us-central1/services/sendPaymentNotification","FUNCTION_SIGNATURE_TYPE":"cloudevent","FUNCTION_TARGET":"sendPaymentNotification","LOG_EXECUTION_ID":"true"},"maxInstanceCount":20,"ingressSettings":"ALLOW_ALL","uri":"https://sendpaymentnotification-fdkefcllsq-uc.a.run.app","serviceAccountEmail":"973458787565-compute@developer.gserviceaccount.com","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"revision":"sendpaymentnotification-00001-kos","maxInstanceRequestConcurrency":80,"availableCpu":"1"},"eventTrigger":{"trigger":"projects/thevisamanager-bea80/locations/asia-south1/triggers/sendpaymentnotification-721900","triggerRegion":"asia-south1","eventType":"google.cloud.firestore.document.v1.created","eventFilters":[{"attribute":"document","value":"payments/{paymentId}","operator":"match-path-pattern"},{"attribute":"database","value":"(default)"},{"attribute":"namespace","value":"(default)"}],"pubsubTopic":"projects/thevisamanager-bea80/topics/eventarc-asia-south1-sendpaymentnotification-721900-510","serviceAccountEmail":"973458787565-compute@developer.gserviceaccount.com","retryPolicy":"RETRY_POLICY_DO_NOT_RETRY"},"state":"ACTIVE","updateTime":"2025-11-01T06:40:41.558766174Z","labels":{"deployment-tool":"cli-firebase","firebase-functions-hash":"7209fd43139c35bc4c00550b7d06551fa1c2e8e2"},"environment":"GEN_2","url":"https://us-central1-thevisamanager-bea80.cloudfunctions.net/sendPaymentNotification","createTime":"2025-11-01T06:39:05.998598968Z","satisfiesPzi":true},{"name":"projects/thevisamanager-bea80/locations/us-central1/functions/api","buildConfig":{"build":"projects/973458787565/locations/us-central1/builds/f210d4b3-e840-4400-b3a1-33258fc19f61","runtime":"nodejs20","entryPoint":"api","source":{"storageSource":{"bucket":"gcf-v2-sources-973458787565-us-central1","object":"api/function-source.zip","generation":"1762935663381180"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"dockerRepository":"projects/thevisamanager-bea80/locations/us-central1/repositories/gcf-artifacts","sourceProvenance":{"resolvedStorageSource":{"bucket":"gcf-v2-sources-973458787565-us-central1","object":"api/function-source.zip","generation":"1762935663381180"}},"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/thevisamanager-bea80/serviceAccounts/973458787565-compute@developer.gserviceaccount.com","automaticUpdatePolicy":{}},"serviceConfig":{"service":"projects/thevisamanager-bea80/locations/us-central1/services/api","timeoutSeconds":60,"environmentVariables":{"FIREBASE_CONFIG":"{\"projectId\":\"thevisamanager-bea80\",\"storageBucket\":\"thevisamanager-bea80.firebasestorage.app\"}","GCLOUD_PROJECT":"thevisamanager-bea80","EVENTARC_CLOUD_EVENT_SOURCE":"projects/thevisamanager-bea80/locations/us-central1/services/api","FUNCTION_TARGET":"api","LOG_EXECUTION_ID":"true"},"maxInstanceCount":20,"ingressSettings":"ALLOW_ALL","uri":"https://api-fdkefcllsq-uc.a.run.app","serviceAccountEmail":"973458787565-compute@developer.gserviceaccount.com","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"revision":"api-00002-yiz","maxInstanceRequestConcurrency":80,"availableCpu":"1"},"state":"ACTIVE","updateTime":"2025-11-12T08:22:03.590320174Z","labels":{"deployment-tool":"cli-firebase","firebase-functions-hash":"4a49815916594cb8c62eb5bf7004c1f74d6ad21b"},"environment":"GEN_2","url":"https://us-central1-thevisamanager-bea80.cloudfunctions.net/api","createTime":"2025-11-12T06:18:17.551762283Z","satisfiesPzi":true}]}
+[info] i  functions: ensuring required API run.googleapis.com is enabled... 
+[info] i  functions: ensuring required API eventarc.googleapis.com is enabled... 
+[info] i  functions: ensuring required API pubsub.googleapis.com is enabled... 
+[info] i  functions: ensuring required API storage.googleapis.com is enabled... 
+[info] i  functions: generating the service identity for pubsub.googleapis.com... 
+[debug] [2025-11-26T12:22:04.572Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:22:04.573Z] Checked if tokens are valid: true, expires at: 1764162556503
+[info] i  functions: generating the service identity for eventarc.googleapis.com... 
+[debug] [2025-11-26T12:22:04.573Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:22:04.573Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:22:04.573Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1beta1/projects/973458787565/services/pubsub.googleapis.com:generateServiceIdentity [none]
+[debug] [2025-11-26T12:22:04.573Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1beta1/projects/973458787565/services/pubsub.googleapis.com:generateServiceIdentity x-goog-quota-user=projects/973458787565
+[debug] [2025-11-26T12:22:04.573Z] >>> [apiv2][body] POST https://serviceusage.googleapis.com/v1beta1/projects/973458787565/services/pubsub.googleapis.com:generateServiceIdentity {}
+[debug] [2025-11-26T12:22:04.574Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1beta1/projects/973458787565/services/eventarc.googleapis.com:generateServiceIdentity [none]
+[debug] [2025-11-26T12:22:04.574Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1beta1/projects/973458787565/services/eventarc.googleapis.com:generateServiceIdentity x-goog-quota-user=projects/973458787565
+[debug] [2025-11-26T12:22:04.574Z] >>> [apiv2][body] POST https://serviceusage.googleapis.com/v1beta1/projects/973458787565/services/eventarc.googleapis.com:generateServiceIdentity {}
+[debug] [2025-11-26T12:22:05.375Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1beta1/projects/973458787565/services/eventarc.googleapis.com:generateServiceIdentity 200
+[debug] [2025-11-26T12:22:05.375Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1beta1/projects/973458787565/services/eventarc.googleapis.com:generateServiceIdentity {"name":"operations/finished.DONE_OPERATION","done":true,"response":{"@type":"type.googleapis.com/google.api.serviceusage.v1beta1.ServiceIdentity","email":"service-973458787565@gcp-sa-eventarc.iam.gserviceaccount.com","uniqueId":"101508158388143710418"}}
+[debug] [2025-11-26T12:22:05.381Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1beta1/projects/973458787565/services/pubsub.googleapis.com:generateServiceIdentity 200
+[debug] [2025-11-26T12:22:05.382Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1beta1/projects/973458787565/services/pubsub.googleapis.com:generateServiceIdentity {"name":"operations/finished.DONE_OPERATION","done":true,"response":{"@type":"type.googleapis.com/google.api.serviceusage.v1beta1.ServiceIdentity","email":"service-973458787565@gcp-sa-pubsub.iam.gserviceaccount.com","uniqueId":"116864293427088685004"}}
+[debug] [2025-11-26T12:22:05.386Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:22:05.386Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:22:05.386Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/thevisamanager-bea80 [none]
+[debug] [2025-11-26T12:22:07.299Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/thevisamanager-bea80 200
+[debug] [2025-11-26T12:22:07.299Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/thevisamanager-bea80 {"projectNumber":"973458787565","projectId":"thevisamanager-bea80","lifecycleState":"ACTIVE","name":"Thevisamanager","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2025-10-14T09:31:12.508300Z"}
+[debug] [2025-11-26T12:22:07.299Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:22:07.300Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:22:07.300Z] >>> [apiv2][query] GET https://compute.googleapis.com/compute/v1/projects/973458787565 [none]
+[debug] [2025-11-26T12:22:07.916Z] <<< [apiv2][status] GET https://compute.googleapis.com/compute/v1/projects/973458787565 403
+[debug] [2025-11-26T12:22:07.916Z] <<< [apiv2][body] GET https://compute.googleapis.com/compute/v1/projects/973458787565 {"error":{"code":403,"message":"Compute Engine API has not been used in project 973458787565 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=973458787565 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","errors":[{"message":"Compute Engine API has not been used in project 973458787565 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=973458787565 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","domain":"usageLimits","reason":"accessNotConfigured","extendedHelp":"https://console.developers.google.com"}],"status":"PERMISSION_DENIED","details":[{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"SERVICE_DISABLED","domain":"googleapis.com","metadata":{"service":"compute.googleapis.com","containerInfo":"973458787565","serviceTitle":"Compute Engine API","activationUrl":"https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=973458787565","consumer":"projects/973458787565"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"Compute Engine API has not been used in project 973458787565 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=973458787565 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Google developers console API activation","url":"https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=973458787565"}]}]}}
+[debug] [2025-11-26T12:22:07.917Z] unable to look up default compute service account. Falling back to 973458787565-compute@developer.gserviceaccount.com. Error: {"name":"FirebaseError","children":[],"context":{"body":{"error":{"code":403,"message":"Compute Engine API has not been used in project 973458787565 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=973458787565 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","errors":[{"message":"Compute Engine API has not been used in project 973458787565 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=973458787565 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","domain":"usageLimits","reason":"accessNotConfigured","extendedHelp":"https://console.developers.google.com"}],"status":"PERMISSION_DENIED","details":[{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"SERVICE_DISABLED","domain":"googleapis.com","metadata":{"service":"compute.googleapis.com","containerInfo":"973458787565","serviceTitle":"Compute Engine API","activationUrl":"https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=973458787565","consumer":"projects/973458787565"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"Compute Engine API has not been used in project 973458787565 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=973458787565 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Google developers console API activation","url":"https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=973458787565"}]}]}},"response":{"statusCode":403}},"exit":1,"message":"Request to https://compute.googleapis.com/compute/v1/projects/973458787565 had HTTP Error: 403, Compute Engine API has not been used in project 973458787565 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=973458787565 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","status":403}
+[debug] [2025-11-26T12:22:07.919Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:22:07.919Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:22:07.919Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/thevisamanager-bea80/billingInfo [none]
+[debug] [2025-11-26T12:22:09.942Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/thevisamanager-bea80/billingInfo 200
+[debug] [2025-11-26T12:22:09.943Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/thevisamanager-bea80/billingInfo {"name":"projects/thevisamanager-bea80/billingInfo","projectId":"thevisamanager-bea80","billingAccountName":"billingAccounts/01FF61-6872C1-161478","billingEnabled":true}
+[debug] [2025-11-26T12:22:09.945Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:22:09.945Z] Checked if tokens are valid: true, expires at: 1764162556503
+[debug] [2025-11-26T12:22:09.945Z] >>> [apiv2][query] POST https://cloudfunctions.googleapis.com/v2/projects/thevisamanager-bea80/locations/us-central1/functions:generateUploadUrl [none]
+[debug] [2025-11-26T12:22:11.397Z] <<< [apiv2][status] POST https://cloudfunctions.googleapis.com/v2/projects/thevisamanager-bea80/locations/us-central1/functions:generateUploadUrl 200
+[debug] [2025-11-26T12:22:11.398Z] <<< [apiv2][body] POST https://cloudfunctions.googleapis.com/v2/projects/thevisamanager-bea80/locations/us-central1/functions:generateUploadUrl {"uploadUrl":"https://storage.googleapis.com/gcf-v2-uploads-973458787565.us-central1.cloudfunctions.appspot.com/25bcd18a-c7f8-42c0-9fd5-6e9bf7d61d37.zip?GoogleAccessId=service-973458787565@gcf-admin-robot.iam.gserviceaccount.com&Expires=1764161531&Signature=zSW0UUHIm2qJL4tXqXkW%2FfZwliiazvxM6SmsDMoVNVI%2FUTrDDHSdfYGbFkarymHVtSjOIwkEAED0y3O8VFW82XVzb%2FLOfJTBCt2iIwLbTJDmLDUKBj4BCRiV1qQ8fAI2Zul6GN5WevekX9QyOW709K5qNm9JBe%2Bim%2FNhxGf7dRAKRnngg5y%2BanOwPreGYbcGYDgB7Pmi0JCUvAaf61ju7g0T02VJjaF7FG8oD64h3z4IC%2FgN8aHDe6BcDwBogwDW5b14EEAp0zoAT9MR0kfcxTMfeMBsHLs9HwwxFgMxkVFJ%2BlHi10sWQHntoZZ17w6xO%2B9DC6LVYtU94KlpVHB%2Bmg%3D%3D","storageSource":{"bucket":"gcf-v2-uploads-973458787565.us-central1.cloudfunctions.appspot.com","object":"25bcd18a-c7f8-42c0-9fd5-6e9bf7d61d37.zip"}}
+[debug] [2025-11-26T12:22:11.399Z] >>> [apiv2][query] PUT https://storage.googleapis.com/gcf-v2-uploads-973458787565.us-central1.cloudfunctions.appspot.com/25bcd18a-c7f8-42c0-9fd5-6e9bf7d61d37.zip GoogleAccessId=service-973458787565%40gcf-admin-robot.iam.gserviceaccount.com&Expires=1764161531&Signature=zSW0UUHIm2qJL4tXqXkW%2FfZwliiazvxM6SmsDMoVNVI%2FUTrDDHSdfYGbFkarymHVtSjOIwkEAED0y3O8VFW82XVzb%2FLOfJTBCt2iIwLbTJDmLDUKBj4BCRiV1qQ8fAI2Zul6GN5WevekX9QyOW709K5qNm9JBe%2Bim%2FNhxGf7dRAKRnngg5y%2BanOwPreGYbcGYDgB7Pmi0JCUvAaf61ju7g0T02VJjaF7FG8oD64h3z4IC%2FgN8aHDe6BcDwBogwDW5b14EEAp0zoAT9MR0kfcxTMfeMBsHLs9HwwxFgMxkVFJ%2BlHi10sWQHntoZZ17w6xO%2B9DC6LVYtU94KlpVHB%2Bmg%3D%3D
+[debug] [2025-11-26T12:22:11.399Z] >>> [apiv2][body] PUT https://storage.googleapis.com/gcf-v2-uploads-973458787565.us-central1.cloudfunctions.appspot.com/25bcd18a-c7f8-42c0-9fd5-6e9bf7d61d37.zip [stream]
+[debug] [2025-11-26T12:22:12.419Z] <<< [apiv2][status] PUT https://storage.googleapis.com/gcf-v2-uploads-973458787565.us-central1.cloudfunctions.appspot.com/25bcd18a-c7f8-42c0-9fd5-6e9bf7d61d37.zip 200
+[debug] [2025-11-26T12:22:12.419Z] <<< [apiv2][body] PUT https://storage.googleapis.com/gcf-v2-uploads-973458787565.us-central1.cloudfunctions.appspot.com/25bcd18a-c7f8-42c0-9fd5-6e9bf7d61d37.zip [omitted]
+[info] +  functions: functions/api source uploaded successfully 
+[info] 
+The following functions are found in your project but do not exist in your local source code:
+	sendPaymentNotification(us-central1)
+
+If you are renaming a function or changing its region, it is recommended that you create the new function first before deleting the old one to prevent event loss. For more info, visit https://firebase.google.com/docs/functions/manage-functions#modify
+

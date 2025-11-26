@@ -607,9 +607,19 @@ import { savePassportData } from "../../api/user/passportService";
 const ORANGE = "#FF5C00";
 
 export default function PassportDetailsScreen({ navigation, route }) {
+
+  const updatedPhotoUrl = route?.params?.updatedPhotoUrl || photoUrl;
+  const passport = route?.params?.passport || route?.params?.updatedPassport || {};
+  console.log("DETAILsCRREEN=>", updatedPhotoUrl)
   const travel = route?.params?.travelDate || null;
-  const photoUrl = route?.params?.photo || null;
-    const passport = route?.params?.passport || null;
+  // const photoUrl = route?.params?.photo || null;
+  const photoUrl =
+    route?.params?.photoUrl ||
+    passport?.photoUrl ||
+    null;
+  console.log("DETAIL PHOTO URL:", photoUrl);
+
+  //const passport = route?.params?.passport || null;
 
   // MRZ fields your parser usually returns; adjust names if needed
   const [firstName, setFirstName] = useState(passport?.firstName || "");
@@ -642,6 +652,26 @@ export default function PassportDetailsScreen({ navigation, route }) {
   const fromDate = travel?.departureDate || "";
   const toDate = travel?.returnDate || "";
 
+
+  const handleEditPhoto = () => {
+    navigation.navigate("PhotoUploadScreen", {
+      editMode: true,
+      returnTo: "PassportDetailsScreen",
+      travelDate: travel,
+      passport,
+      photoUrl
+    });
+  };
+
+  const handleEditPassport = () => {
+    navigation.navigate("PassportUploadScreen", {
+      editMode: true,
+      returnTo: "PassportDetailsScreen",
+      travelDate: travel,
+      passport,
+      photoUrl
+    });
+  };
   return (
     <View style={styles.container}>
       {/* TOP BAR */}
@@ -723,32 +753,116 @@ export default function PassportDetailsScreen({ navigation, route }) {
         </View>
 
         {/* Uploaded images row */}
-        <View style={[styles.sectionCard, { marginTop: 16 }]}>
-          <Text style={styles.sectionTitle}>Uploaded Documents</Text>
-          <View style={{ flexDirection: "row", marginTop: 10 }}>
-            {photoUrl && (
+        {/* <View style={[styles.sectionCard, { marginTop: 16 }]}>
+          <Text style={styles.sectionTitle}>Uploaded Documents</Text> */}
+        {/* <View style={{ flexDirection: "row", marginTop: 10 }}>
+            {/* {photoUrl && (
               <Image
                 source={{ uri: photoUrl }}
                 style={styles.thumb}
                 resizeMode="cover"
               />
-            )}
-            {passport?.frontImageURL && (
-              <Image
-                source={{ uri: passport.frontImageURL }}
-                style={styles.thumb}
-                resizeMode="cover"
-              />
-            )}
-            {passport?.backImageURL && (
-              <Image
-                source={{ uri: passport.backImageURL }}
-                style={styles.thumb}
-                resizeMode="cover"
-              />
-            )}
+            )} */}
+        {/* {photoUrl ? (
+          <Image source={{ uri: photoUrl }} style={styles.thumb} resizeMode="cover" />
+        ) : (
+          <Text>No Photo</Text>
+        )} */}
+
+        {/* {passport?.frontImageURL && (
+          <Image
+            source={{ uri: passport.frontImageURL }}
+            style={styles.thumb}
+            resizeMode="cover"
+          />
+        )} */}
+        {/* {passport?.backImageURL && (
+          <Image
+            source={{ uri: passport.backImageURL }}
+            style={styles.thumb}
+            resizeMode="cover"
+          />
+        )} */}
+        {/* </View> */}
+        {/* </View> */}
+        {/* DOCUMENTS SUBMITTED */}
+        <View style={[styles.sectionCard, { marginTop: 16 }]}>
+          <View style={styles.sectionHeader}>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Icon name="insert-drive-file" size={18} color={ORANGE} />
+              <Text style={styles.sectionTitle}> Documents Submitted</Text>
+            </View>
+          </View>
+
+          {/* Photo */}
+          <View style={styles.docRow}>
+            <View style={styles.docHeader}>
+              <View style={styles.docHeaderLeft}>
+                <Icon name="check-circle" size={18} color="#09B66E" />
+                <Text style={styles.docLabel}>Photo</Text>
+              </View>
+              <TouchableOpacity onPress={handleEditPhoto}>
+                <Icon name="edit" size={18} color={ORANGE} />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.thumbBox}>
+              {updatedPhotoUrl || photoUrl ? (
+                <Image
+                  source={{ uri: updatedPhotoUrl || photoUrl }}
+                  style={styles.docImage}
+                  resizeMode="cover"
+                />
+              ) : (
+                <Text style={styles.docPlaceholder}>No Photo</Text>
+              )}
+            </View>
+
+          </View>
+
+          {/* Passport Front */}
+          <View style={styles.docRow}>
+            <View style={styles.docHeader}>
+              <View style={styles.docHeaderLeft}>
+                <Icon name="check-circle" size={18} color="#09B66E" />
+                <Text style={styles.docLabel}>Passport Front</Text>
+              </View>
+              <TouchableOpacity onPress={handleEditPassport}>
+                <Icon name="edit" size={18} color={ORANGE} />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.thumbBox}>
+              {passport?.frontImageURL ? (
+                <Image source={{ uri: passport.frontImageURL }} style={styles.docImage} resizeMode="cover" />
+              ) : (
+                <Text style={styles.docPlaceholder}>No Image</Text>
+              )}
+            </View>
+          </View>
+
+          {/* Passport Back */}
+          <View style={styles.docRow}>
+            <View style={styles.docHeader}>
+              <View style={styles.docHeaderLeft}>
+                <Icon name="check-circle" size={18} color="#09B66E" />
+                <Text style={styles.docLabel}>Passport Back</Text>
+              </View>
+              <TouchableOpacity onPress={handleEditPassport}>
+                <Icon name="edit" size={18} color={ORANGE} />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.thumbBox}>
+              {passport?.backImageURL ? (
+                <Image source={{ uri: passport.backImageURL }} style={styles.docImage} resizeMode="cover" />
+              ) : (
+                <Text style={styles.docPlaceholder}>No Image</Text>
+              )}
+            </View>
           </View>
         </View>
+
 
         {/* Personal Info */}
         <View style={[styles.sectionCard, { marginTop: 16 }]}>
@@ -910,4 +1024,40 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
   },
+  docRow: {
+    marginTop: 12,
+  },
+  docHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 6,
+  },
+  docHeaderLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  docLabel: {
+    marginLeft: 6,
+    fontSize: 13,
+    fontWeight: "600",
+  },
+  thumbBox: {
+    width: 90,
+    height: 90,
+    borderRadius: 12,
+    overflow: "hidden",
+    backgroundColor: "#E9E9EF",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  docImage: {
+    width: "100%",
+    height: "100%",
+  },
+  docPlaceholder: {
+    fontSize: 12,
+    color: "#999",
+  },
+
 });

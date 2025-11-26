@@ -1,58 +1,85 @@
-// const functions = require("firebase-functions");
-// const admin = require("firebase-admin");
-// const express = require("express");
-
-// admin.initializeApp();
-// const db = admin.firestore();
-// const app = express();
-
-// app.use(express.json());
-
-// // Test route
-// app.get("/", (req, res) => {
-//   res.send("Firebase API is running 🚀");
-// });
-
-// exports.api = functions.https.onRequest(app);
-
-
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const express = require("express");
+const Razorpay = require("razorpay");
+const crypto = require("crypto");
 
 admin.initializeApp();
 const db = admin.firestore();
 const app = express();
-
 app.use(express.json());
 
+// Lazy init Razorpay with config()
+let razorpayInstance = null;
+function getRazorpay() {
+  if (!razorpayInstance) {
+    razorpayInstance = new Razorpay({
+      key_id: functions.config().razorpay.key_id,
+      key_secret: functions.config().razorpay.key_secret,
+    });
+  }
+  return razorpayInstance;
+}
 
-// Test route
-app.get("/", (req, res) => {
-  res.send("Firebase API is running 🚀");
-});
+// TEST
+app.get("/", (_, res) => res.send("API working 🚀"));
 
-// Add a user
-app.post("/addUser", async (req, res) => {
+// Create order
+app.post("/createRazorpayOrder", async (req, res) => {
   try {
-    const { name, email } = req.body;
-    if (!name || !email) {
-      return res.status(400).send("Name and email are required");
-    }
-    await db.collection("users").add({ name, email, createdAt: new Date() });
-    res.status(201).send("User added");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error adding user");
+    const { amount, userId } = req.body;
+    if (!amount || !userId) return res.status(400).json({ error: "Missing fields" });
+
+    const razorpay = getRazorpay();
+
+    const order = await razorpay.orders.create({
+      amount: amount * 100,
+      currency: "INR",
+      receipt: "receipt_" + Date.now(),
+    });
+
+    await db.collection("payments").doc(order.id).set({
+      userId,
+      amount,
+      status: "created",
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    res.status(200).json({
+      key: functions.config().razorpay.key_id,
+      orderId: order.id,
+      amount: order.amount,
+    });
+
+  } catch (e) {
+    res.status(500).json({ error: "Order error", details: e });
   }
 });
 
-// Get all users
-app.get("/getUsers", async (req, res) => {
-  const snapshot = await db.collection("users").get();
-  const users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-  res.send(users);
+// Verify payment
+app.post("/verifyRazorpayPayment", async (req, res) => {
+  try {
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+    const sign = razorpay_order_id + "|" + razorpay_payment_id;
+
+    const expected = crypto
+      .createHmac("sha256", functions.config().razorpay.key_secret)
+      .update(sign)
+      .digest("hex");
+
+    const verified = expected === razorpay_signature;
+
+    await db.collection("payments").doc(razorpay_order_id).update({
+      status: verified ? "paid" : "failed",
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    res.status(200).json({ valid: verified });
+
+  } catch (e) {
+    res.status(500).json({ error: "Verification failed", details: e });
+  }
 });
 
-// Export as Firebase Function
+// EXPORT GEN 1 EXPRESS FUNCTION
 exports.api = functions.https.onRequest(app);

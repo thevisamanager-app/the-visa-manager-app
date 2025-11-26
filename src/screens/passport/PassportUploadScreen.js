@@ -768,8 +768,8 @@ const ORANGE = "#FF5C00";
 export default function PassportUploadScreen({ navigation, route }) {
   // optional: coming from TravelDateScreen / PhotoUploadScreen
   const travel = route?.params?.travelDate || null;
-  const photoUrl = route?.params?.photo || null;
-   console.log("PAYLOAD==>",photoUrl)
+  const photoUrl = route?.params?.photoUrl || null;
+  console.log("PAYLOAD==>", photoUrl)
   const [front, setFront] = useState(null);
   const [back, setBack] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -802,7 +802,7 @@ export default function PassportUploadScreen({ navigation, route }) {
       }
 
       setMrzData(parsed);
-     // Alert.alert("Success", "Front image scanned successfully.");
+      // Alert.alert("Success", "Front image scanned successfully.");
     } catch (err) {
       console.log("OCR ERROR:", err);
       Alert.alert("Error", "Failed to scan passport front.");
@@ -853,13 +853,32 @@ export default function PassportUploadScreen({ navigation, route }) {
       setLoading(false);
 
       // go to detail screen with all info
-    
-      navigation.navigate("PassportDetailsScreen", {
-        passport: { id: docRef.id, ...passportPayload },
-        travel,
-        photoUrl,
-      });
-     
+
+      // navigation.navigate("PassportDetailsScreen", {
+      //   passport: { id: docRef.id, ...passportPayload },
+      //   travel,
+      //   photoUrl,
+      // });
+
+      if (route?.params?.editMode) {
+        navigation.navigate(route.params.returnTo, {
+          passport: {
+            ...route.params.passport,
+            frontImageURL: front.uri,
+            backImageURL: back.uri,
+          },
+          travelDate: route.params.travelDate,
+          photoUrl
+        });
+        return;
+      } else {
+        navigation.navigate("PassportDetailsScreen", {
+          passport: { id: docRef.id, ...passportPayload },
+          travel,
+          photoUrl,
+        });
+      }
+
     } catch (err) {
       console.log("PASSPORT SAVE ERROR:", err);
       setLoading(false);

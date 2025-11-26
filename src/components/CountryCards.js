@@ -46,7 +46,7 @@ export default function CountryCard({ title, source, countrName, item }) {
     const navigation = useNavigation();   // ✅ FIX
 
     return (
-        <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("VisaQuestionScreen", { country: item.countrName })}>
+        <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("StartApplicationScreen", { country: item.countrName })}>
             <Image source={source} style={styles.image} />
 
             <View style={styles.footer}>

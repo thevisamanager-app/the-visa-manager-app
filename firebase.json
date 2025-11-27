@@ -1,6 +1,6 @@
 {
   "functions": {
-    "source": "functions/api",
+    "source": "functions",
     "runtime": "nodejs20"
 
   },

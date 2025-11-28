@@ -59,15 +59,17 @@ export default function CountryCard({ title, source, countrName, item }) {
 const styles = StyleSheet.create({
     card: {
         width: width,
-        marginLeft: 10,
-        marginVertical: 5,
+        margin:10,
+        // padding:10,
+        // marginVertical: 5,
         backgroundColor: "#fff",
         borderRadius: 10,
         overflow: "hidden",
+        alignContent:"center",
 
         // Shadow (iOS)
         shadowColor: "#000",
-        shadowOpacity: 0.15,
+        shadowOpacity: 4,
         shadowOffset: { width: 0, height: 2 },
         shadowRadius: 6,
 
@@ -79,10 +81,7 @@ const styles = StyleSheet.create({
     image: {
         width: "95%",
         height: 210,
-        borderTopLeftRadius: 10,
-        borderTopRightRadius: 10,
-
-        padding: 10
+       // padding: 10
     },
 
     footer: {
@@ -92,6 +91,6 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 16,
         fontWeight: "600",
-        color: "#333",
+        color: "#FF5C00",
     },
 });

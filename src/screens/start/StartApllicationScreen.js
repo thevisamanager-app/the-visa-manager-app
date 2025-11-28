@@ -57,19 +57,19 @@ export default function StartApplicationScreen({ route }) {
                 </Text>
 
                 {/* ROTATING BORDER CIRCLE */}
-                <Animated.View style={[styles.circle, { transform: [{ rotate: spin }] }]}>
+                <View style={styles.circle}>
                     <View style={styles.innerCircle}>
                         <TouchableOpacity onPress={handleStart}>
                             <Text style={styles.startText}>Start</Text>
                         </TouchableOpacity>
                     </View>
-                </Animated.View>
+                </View>
             </View>
 
             {/* Bottom More Info */}
-            <TouchableOpacity style={styles.infoBtn}>
+            {/* <TouchableOpacity style={styles.infoBtn}>
                 <Text style={styles.infoText}>More Info</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </ImageBackground>
     );
 }
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     bg: {
         flex: 1,
         justifyContent: "space-between",
-        paddingVertical: 40,
+        paddingVertical: 60,
     },
 
     backBtn: {

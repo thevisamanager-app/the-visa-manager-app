@@ -29,6 +29,7 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from '../screens/LoginScreen';
 import OtpScreen from '../screens/OtpScreen';
+import DestinationScreen from '../screens/DestinationScreen';
 
 
 
@@ -40,6 +41,7 @@ export default function AuthNavigator() {
      
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="OtpScreen" component={OtpScreen} />
+      <Stack.Screen name ="Destination" component={DestinationScreen}/>
     </Stack.Navigator>
   );
 }

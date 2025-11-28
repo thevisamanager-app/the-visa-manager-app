@@ -13,7 +13,7 @@ import { uploadUserPhoto } from "../../api/user/photoService"
 
 export default function PhotoUploadScreen({ navigation, route }) {
     const travelDate = route?.params?.payload;
-    console.log("DATE==>",travelDate)
+   
     const [photo, setPhoto] = useState(null);
 
     // const pickPhoto = async () => {
@@ -29,33 +29,70 @@ export default function PhotoUploadScreen({ navigation, route }) {
     //     setPhoto(img);
     //     await uploadUserPhoto({ uri: img.uri });
     // };
+    // const pickPhoto = async () => {
+    //     const result = await launchImageLibrary({
+    //         mediaType: "photo",
+    //         includeBase64: true,
+    //         quality: 0.8,
+    //     });
+
+    //     if (!result.assets) return;
+
+    //     const img = result.assets[0];
+    //     setPhoto(img);
+
+    //     try {
+    //         await uploadUserPhoto({ uri: img.uri });
+    //     } catch (err) {
+    //         console.log("UPLOAD PHOTO ERROR:", err);
+    //         Alert.alert("Error", "Failed to upload photo.");
+    //     }
+    // };
+
     const pickPhoto = async () => {
         const result = await launchImageLibrary({
             mediaType: "photo",
-            includeBase64: true,
+            includeBase64: false,
             quality: 0.8,
         });
 
         if (!result.assets) return;
-
-        const img = result.assets[0];
-        setPhoto(img);
-
-        try {
-            await uploadUserPhoto({ uri: img.uri });
-        } catch (err) {
-            console.log("UPLOAD PHOTO ERROR:", err);
-            Alert.alert("Error", "Failed to upload photo.");
-        }
+        const uploadedUrl = await uploadUserPhoto(result.assets[0]);
+        setPhoto(uploadedUrl); // store actual URL
     };
 
-    const confirmPhoto = async () => {
+
+    // const confirmPhoto = async () => {
+    //     if (!photo) return Alert.alert("Upload Required", "Please upload a photo.");
+    //     navigation.navigate("PassportUploadScreen", {
+    //         travelDate,      // from TravelDateScreen
+    //         uploadedPhoto: photo,    // from photoService.uploadUserPhoto
+    //     });
+    // };
+
+    // const confirmPhoto = () => {
+    //     if (!photo) return Alert.alert("Upload Required", "Please upload a photo.");
+    //     navigation.navigate("PassportUploadScreen", { travelDate, photoUrl: photo });
+    // };
+
+    const confirmPhoto = () => {
         if (!photo) return Alert.alert("Upload Required", "Please upload a photo.");
-        navigation.navigate("PassportUploadScreen", {
-            travelDate,      // from TravelDateScreen
-            uploadedPhoto: photo,    // from photoService.uploadUserPhoto
-        });
+
+        // If editing return to details screen
+        if (route?.params?.editMode) {
+            navigation.navigate(route.params.returnTo, {
+                updatedPhotoUrl: photo,
+                passport: route.params.passport,
+                travelDate,
+            });
+            return;
+        }else{
+            navigation.navigate("PassportUploadScreen", { travelDate, photoUrl: photo })}
+
+        // Normal flow
+        navigation.navigate("PassportUploadScreen", { travelDate, photoUrl: photo });
     };
+
 
     return (
         <View style={styles.container}>
@@ -121,12 +158,13 @@ export default function PhotoUploadScreen({ navigation, route }) {
             <View style={styles.imageBox}>
                 {photo ? (
                     <Image
-                        source={{ uri: photo.uri }}
+                        source={{ uri: photo }}   // since photo is now a URL string
                         style={{ width: "100%", height: "100%", borderRadius: 10 }}
                     />
                 ) : (
                     <Text style={styles.placeholder}>No Image Selected</Text>
                 )}
+
             </View>
 
             {/* BUTTONS */}

@@ -90,8 +90,10 @@ android {
     versionName "1.0"
 
     manifestPlaceholders = [
-        appAuthRedirectScheme: "com.thevisamanagerapp"
+        appAuthRedirectScheme: "com.thevisamanagerapp",
+        razorpayKey: "rzp_live_Raqt382mPwe1Di"
     ]
+    
 }
     signingConfigs {
         debug {
@@ -131,6 +133,9 @@ dependencies {
 
     // ⭐ REQUIRED FOR GOOGLE SIGN-IN ON ANDROID
     implementation 'com.google.android.gms:play-services-auth:20.7.0'
+    implementation project(':react-native-razorpay')
+    
+
 
     // OPTIONAL (Uncomment if you want Firestore, Storage later)
     // implementation 'com.google.firebase:firebase-firestore'

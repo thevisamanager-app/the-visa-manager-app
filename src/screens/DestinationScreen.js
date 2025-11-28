@@ -56,12 +56,13 @@ export default function DestinationScreen() {
 
   return (
     <SafeAreaView>
-    <ScrollView>
+
       <TextInput
         style={styles.input}
         onChangeText={(text) => searchFilterFunction(text)}
         value={searchText}
         placeholder="Search destination"
+        placeholderTextColor={"#FF5C00"}
       />
 
       <FlatList
@@ -76,7 +77,7 @@ export default function DestinationScreen() {
           />
         )}
       />
-    </ScrollView>
+
     </SafeAreaView>
   );
 }
@@ -89,5 +90,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     borderColor: 'grey',
+    color:"#111"
   },
 });

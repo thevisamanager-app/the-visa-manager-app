@@ -4,13 +4,15 @@ import auth from '@react-native-firebase/auth';
 import { getPassportData } from '../api/user/passportService';
 import { useDispatch } from 'react-redux';
 import { logoutUser } from '../Redux/authSlice';
+import { logout } from "../services/auth/logoutService";
+import { log } from 'console';
 
 export default function HomeScreen({ navigation,route }) {
    const visaPreferences = route?.params?.answerPayload || null;
-  const logout = async () => {
-    await auth().signOut();
-    navigation.replace("Login");
-  };
+  // const logout = async () => {
+  //   await auth().signOut();
+  //   navigation.replace("Login");
+  // };
   const [data, setData] = useState(null);
 const dispatch = useDispatch();
   useEffect(() => {
@@ -18,9 +20,9 @@ const dispatch = useDispatch();
 }, []);
 
 
-  const handleLogout = async () => {
-    await dispatch(logoutUser());
-  };
+  // const handleLogout = async () => {
+  //   await dispatch(logoutUser());
+  // };
   return (
     // <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
     //   <Text style={{ fontSize: 20 }}>Welcome to Home!</Text>
@@ -42,7 +44,7 @@ const dispatch = useDispatch();
         onPress={() => navigation.navigate('QuestionScreen')}
       /> */}
             <TouchableOpacity
-        onPress={handleLogout}
+        onPress={logout}
         style={{
           backgroundColor: "red",
           paddingVertical: 12,

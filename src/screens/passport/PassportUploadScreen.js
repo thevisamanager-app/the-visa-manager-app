@@ -553,193 +553,556 @@
 // }
 
 
+// import React, { useState } from "react";
+// import {
+//   View,
+//   Image,
+//   TouchableOpacity,
+//   Text,
+//   Alert,
+//   ScrollView,
+// } from "react-native";
+// import { launchImageLibrary } from "react-native-image-picker";
+// import { extractTextFromImage } from "../../api/ocr/visionApi";
+// import { parseMRZ } from "../../api/ocr/mrzParser";
+
+
+// export default function PassportUploadScreen({ navigation ,route}) {
+//     const visaPreferences = route?.params?.visaPreferences || null;
+//     const uploadedPhoto = route?.params?.uploadedPhoto || null;
+
+// console.log("UPLOAD==>",visaPreferences)
+//   const [photoUri, setPhotoUri] = useState(null);
+//   const [photoBase64, setPhotoBase64] = useState(null);
+
+//   const [frontImageUri, setFrontImageUri] = useState(null);
+//   const [backImageUri, setBackImageUri] = useState(null);
+
+//   const [frontBase64, setFrontBase64] = useState(null);
+//   const [backBase64, setBackBase64] = useState(null);
+
+//   const [parsedFront, setParsedFront] = useState(null); 
+
+
+//   // 📌 1. PICK PASSPORT SIZE PHOTO
+//   const pickPhoto = async () => {
+//     const res = await launchImageLibrary({
+//       mediaType: "photo",
+//       includeBase64: true,
+//     });
+
+//     if (!res?.assets) return;
+
+//     const asset = res.assets[0];
+
+//     setPhotoUri(asset.uri);
+//     setPhotoBase64(asset.base64);
+
+//     Alert.alert("Success", "Photo uploaded successfully!");
+//   };
+
+
+//   // 📌 2. PICK FRONT SIDE
+//   const pickFront = async () => {
+//     const res = await launchImageLibrary({
+//       mediaType: "photo",
+//       includeBase64: true,
+//     });
+
+//     if (!res?.assets) return;
+
+//     const asset = res.assets[0];
+
+//     setFrontImageUri(asset.uri);
+//     setFrontBase64(asset.base64);
+
+//     try {
+//       const ocrText = await extractTextFromImage(asset.base64);
+//       const parsed = parseMRZ(ocrText);
+
+//       if (!parsed) {
+//         Alert.alert("OCR Error", "Failed to read passport MRZ.");
+//         return;
+//       }
+
+//       setParsedFront(parsed);
+//       Alert.alert("Success", "Front side scanned successfully!");
+
+//     } catch (err) {
+//       console.log("OCR ERROR:", err);
+//       Alert.alert("Error", "Failed to scan passport front.");
+//     }
+//   };
+
+
+//   // 📌 3. PICK BACK SIDE → Navigate to next screen
+//   const pickBack = async () => {
+//     const res = await launchImageLibrary({
+//       mediaType: "photo",
+//       includeBase64: true,
+//     });
+
+//     if (!res?.assets) return;
+
+//     const asset = res.assets[0];
+
+//     setBackImageUri(asset.uri);
+//     setBackBase64(asset.base64);
+
+//     if (!parsedFront) {
+//       Alert.alert("Upload Front First", "Please scan the FRONT side first.");
+//       return;
+//     }
+
+//     // Navigate to details screen
+//     navigation.navigate("PassportDetailsScreen", {
+//       frontData: parsedFront,
+//       backData: {},
+//       photoUri,
+//       frontImageUri,
+//       backImageUri: asset.uri,
+//       photoBase64,
+//       frontBase64,
+//       backBase64: asset.base64,
+//       visa:visaPreferences
+//     });
+//   };
+
+//   return (
+//     <View style={{ flex: 1, padding: 20 }}>
+
+//       {/* Preview Images */}
+//       <ScrollView horizontal>
+//         {photoUri && (
+//           <Image
+//             source={{ uri: photoUri }}
+//             style={{ width: 120, height: 120, marginRight: 10, borderRadius: 8 }}
+//           />
+//         )}
+//         {frontImageUri && (
+//           <Image
+//             source={{ uri: frontImageUri }}
+//             style={{ width: 200, height: 120, marginRight: 10, borderRadius: 8 }}
+//           />
+//         )}
+//         {backImageUri && (
+//           <Image
+//             source={{ uri: backImageUri }}
+//             style={{ width: 200, height: 120, marginRight: 10, borderRadius: 8 }}
+//           />
+//         )}
+//       </ScrollView>
+
+
+//       {/* 📌 Upload Photo */}
+//       <TouchableOpacity
+//         onPress={pickPhoto}
+//         style={{
+//           padding: 20,
+//           backgroundColor: "#8E44AD",
+//           marginVertical: 10,
+//           borderRadius: 8,
+//         }}
+//       >
+//         <Text style={{ color: "white", textAlign: "center" }}>
+//           Upload Passport Size Photo
+//         </Text>
+//       </TouchableOpacity>
+
+
+//       {/* 📌 Upload Front */}
+//       <TouchableOpacity
+//         onPress={pickFront}
+//         style={{
+//           padding: 20,
+//           backgroundColor: "#4CAF50",
+//           marginVertical: 10,
+//           borderRadius: 8,
+//         }}
+//       >
+//         <Text style={{ color: "white", textAlign: "center" }}>
+//           Upload FRONT of Passport
+//         </Text>
+//       </TouchableOpacity>
+
+
+//       {/* 📌 Upload Back */}
+//       <TouchableOpacity
+//         onPress={pickBack}
+//         style={{
+//           padding: 20,
+//           backgroundColor: "#2196F3",
+//           marginVertical: 10,
+//           borderRadius: 8,
+//         }}
+//       >
+//         <Text style={{ color: "white", textAlign: "center" }}>
+//           Upload BACK of Passport
+//         </Text>
+//       </TouchableOpacity>
+
+//     </View>
+//   );
+// }
+
+// src/screens/passport/PassportUploadScreen.js
 import React, { useState } from "react";
 import {
   View,
-  Image,
-  TouchableOpacity,
   Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
   Alert,
   ScrollView,
 } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
+import Icon from "react-native-vector-icons/MaterialIcons";
+
 import { extractTextFromImage } from "../../api/ocr/visionApi";
 import { parseMRZ } from "../../api/ocr/mrzParser";
+import { uploadPassportImage, savePassportData } from "../../api/user/passportService";
 
+const ORANGE = "#FF5C00";
 
-export default function PassportUploadScreen({ navigation ,route}) {
-    const visaPreferences = route?.params?.visaPreferences || null;
-console.log("UPLOAD==>",visaPreferences)
-  const [photoUri, setPhotoUri] = useState(null);
-  const [photoBase64, setPhotoBase64] = useState(null);
+export default function PassportUploadScreen({ navigation, route }) {
+  // optional: coming from TravelDateScreen / PhotoUploadScreen
+  const travel = route?.params?.travelDate || null;
+  const photoUrl = route?.params?.photoUrl || null;
+  console.log("PAYLOAD==>", photoUrl)
+  const [front, setFront] = useState(null);
+  const [back, setBack] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [mrzData, setMrzData] = useState(null);
 
-  const [frontImageUri, setFrontImageUri] = useState(null);
-  const [backImageUri, setBackImageUri] = useState(null);
-
-  const [frontBase64, setFrontBase64] = useState(null);
-  const [backBase64, setBackBase64] = useState(null);
-
-  const [parsedFront, setParsedFront] = useState(null); 
-
-
-  // 📌 1. PICK PASSPORT SIZE PHOTO
-  const pickPhoto = async () => {
-    const res = await launchImageLibrary({
-      mediaType: "photo",
-      includeBase64: true,
-    });
-
-    if (!res?.assets) return;
-
-    const asset = res.assets[0];
-
-    setPhotoUri(asset.uri);
-    setPhotoBase64(asset.base64);
-
-    Alert.alert("Success", "Photo uploaded successfully!");
-  };
-
-
-  // 📌 2. PICK FRONT SIDE
+  // pick FRONT image + OCR
   const pickFront = async () => {
-    const res = await launchImageLibrary({
+    const result = await launchImageLibrary({
       mediaType: "photo",
       includeBase64: true,
+      quality: 0.9,
     });
 
-    if (!res?.assets) return;
+    if (!result.assets) return;
 
-    const asset = res.assets[0];
-
-    setFrontImageUri(asset.uri);
-    setFrontBase64(asset.base64);
+    const asset = result.assets[0];
+    setFront(asset);
 
     try {
-      const ocrText = await extractTextFromImage(asset.base64);
-      const parsed = parseMRZ(ocrText);
+      if (!asset.base64) {
+        Alert.alert("Error", "No image base64 found.");
+        return;
+      }
+      const text = await extractTextFromImage(asset.base64);
+      const parsed = parseMRZ(text);
 
       if (!parsed) {
-        Alert.alert("OCR Error", "Failed to read passport MRZ.");
+        Alert.alert("OCR Failed", "Could not read passport MRZ. Try another photo.");
         return;
       }
 
-      setParsedFront(parsed);
-      Alert.alert("Success", "Front side scanned successfully!");
-
+      setMrzData(parsed);
+      // Alert.alert("Success", "Front image scanned successfully.");
     } catch (err) {
       console.log("OCR ERROR:", err);
       Alert.alert("Error", "Failed to scan passport front.");
     }
   };
 
-
-  // 📌 3. PICK BACK SIDE → Navigate to next screen
+  // pick BACK image
   const pickBack = async () => {
-    const res = await launchImageLibrary({
+    const result = await launchImageLibrary({
       mediaType: "photo",
-      includeBase64: true,
+      quality: 0.9,
     });
 
-    if (!res?.assets) return;
+    if (!result.assets) return;
 
-    const asset = res.assets[0];
+    const asset = result.assets[0];
+    setBack(asset);
+    //Alert.alert("Success", "Back image selected.");
+  };
 
-    setBackImageUri(asset.uri);
-    setBackBase64(asset.base64);
-
-    if (!parsedFront) {
-      Alert.alert("Upload Front First", "Please scan the FRONT side first.");
+  const onContinue = async () => {
+    if (!front || !back) {
+      Alert.alert("Upload Required", "Please upload both front and back images.");
+      return;
+    }
+    if (!mrzData) {
+      Alert.alert("Scan Required", "Please make sure front page was scanned successfully.");
       return;
     }
 
-    // Navigate to details screen
-    navigation.navigate("PassportDetailsScreen", {
-      frontData: parsedFront,
-      backData: {},
-      photoUri,
-      frontImageUri,
-      backImageUri: asset.uri,
-      photoBase64,
-      frontBase64,
-      backBase64: asset.base64,
-      visa:visaPreferences
-    });
+    try {
+      setLoading(true);
+
+      // upload images to Storage
+      const frontUrl = await uploadPassportImage(front, "front");
+      const backUrl = await uploadPassportImage(back, "back");
+
+      const passportPayload = {
+        ...mrzData,          // parsed MRZ fields (firstName, lastName, passportNumber, etc.)
+        frontImageURL: frontUrl,
+        backImageURL: backUrl,
+        travel,
+        photoUrl
+      };
+
+      const docRef = await savePassportData(passportPayload);
+
+      setLoading(false);
+
+      // go to detail screen with all info
+
+      // navigation.navigate("PassportDetailsScreen", {
+      //   passport: { id: docRef.id, ...passportPayload },
+      //   travel,
+      //   photoUrl,
+      // });
+
+      if (route?.params?.editMode) {
+        navigation.navigate(route.params.returnTo, {
+          updatedPassport : {...passportPayload },
+          travelDate: route.params.travelDate,
+          photoUrl
+        });
+        return;
+      } else {
+        navigation.navigate("PassportDetailsScreen", {
+          passport: { id: docRef.id, ...passportPayload },
+          travel,
+          photoUrl,
+        });
+      }
+
+    } catch (err) {
+      console.log("PASSPORT SAVE ERROR:", err);
+      setLoading(false);
+      Alert.alert("Error", "Failed to save passport data.");
+    }
   };
 
   return (
-    <View style={{ flex: 1, padding: 20 }}>
+    <View style={styles.container}>
+      {/* TOP BAR */}
+      <View style={styles.topNav}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Icon name="arrow-back" size={26} color="black" />
+        </TouchableOpacity>
 
-      {/* Preview Images */}
-      <ScrollView horizontal>
-        {photoUri && (
-          <Image
-            source={{ uri: photoUri }}
-            style={{ width: 120, height: 120, marginRight: 10, borderRadius: 8 }}
-          />
-        )}
-        {frontImageUri && (
-          <Image
-            source={{ uri: frontImageUri }}
-            style={{ width: 200, height: 120, marginRight: 10, borderRadius: 8 }}
-          />
-        )}
-        {backImageUri && (
-          <Image
-            source={{ uri: backImageUri }}
-            style={{ width: 200, height: 120, marginRight: 10, borderRadius: 8 }}
-          />
-        )}
+        <View style={styles.stepBadge}>
+          <Icon name="check-circle" size={18} color="white" />
+          <Text style={styles.stepBadgeText}>Visa on 27 Nov, 07:05 PM</Text>
+        </View>
+
+        <Icon name="home" size={26} color={ORANGE} />
+      </View>
+
+      {/* PROGRESS BAR */}
+      <View style={styles.progressContainer}>
+        {/* Dates */}
+        <View style={styles.stepItem}>
+          <Icon name="check-circle" size={22} color={ORANGE} />
+          <Text style={styles.stepLabel}>Dates</Text>
+        </View>
+        <View style={styles.line} />
+
+        {/* Photo */}
+        <View style={styles.stepItem}>
+          <Icon name="check-circle" size={22} color={ORANGE} />
+          <Text style={styles.stepLabel}>Photo</Text>
+        </View>
+        <View style={styles.line} />
+
+        {/* Passport (current) */}
+        <View style={styles.stepItem}>
+          <Icon name="check-circle" size={22} color={ORANGE} />
+          <Text style={[styles.stepLabel, { color: ORANGE }]}>Passport</Text>
+        </View>
+        <View style={styles.line} />
+
+        {/* Detail */}
+        <View style={styles.stepItem}>
+          <Icon name="radio-button-unchecked" size={22} color="#777" />
+          <Text style={styles.stepLabel}>Detail</Text>
+        </View>
+        <View style={styles.line} />
+
+        {/* Checkout */}
+        <View style={styles.stepItem}>
+          <Icon name="radio-button-unchecked" size={22} color="#777" />
+          <Text style={styles.stepLabel}>Checkout</Text>
+        </View>
+      </View>
+
+      {/* CONTENT */}
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Text style={styles.title}>
+          The government requires the front & back pages of your passport
+        </Text>
+
+        {/* small security banner (simplified) */}
+        <View style={styles.securityBox}>
+          <Icon name="verified-user" size={18} color={ORANGE} />
+          <Text style={styles.securityText}>
+            AES-256 encrypted maximum security
+          </Text>
+        </View>
+
+        {/* Upload from device block */}
+        <View style={styles.card}>
+          <Text style={styles.sectionTitle}>Upload from device</Text>
+
+          {/* FRONT */}
+          <View style={{ marginTop: 16 }}>
+            <Text style={styles.label}>Front page</Text>
+            {front && (
+              <Image
+                source={{ uri: front.uri }}
+                style={styles.preview}
+                resizeMode="cover"
+              />
+            )}
+            <TouchableOpacity style={styles.primaryButton} onPress={pickFront}>
+              <Text style={styles.primaryButtonText}>
+                {front ? "Change front image" : "Select passport front image"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* BACK */}
+          <View style={{ marginTop: 24 }}>
+            <Text style={styles.label}>Back page</Text>
+            {back && (
+              <Image
+                source={{ uri: back.uri }}
+                style={styles.preview}
+                resizeMode="cover"
+              />
+            )}
+            <TouchableOpacity style={styles.secondaryButton} onPress={pickBack}>
+              <Text style={styles.secondaryButtonText}>
+                {back ? "Change back image" : "Select passport back image"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </ScrollView>
 
-
-      {/* 📌 Upload Photo */}
-      <TouchableOpacity
-        onPress={pickPhoto}
-        style={{
-          padding: 20,
-          backgroundColor: "#8E44AD",
-          marginVertical: 10,
-          borderRadius: 8,
-        }}
-      >
-        <Text style={{ color: "white", textAlign: "center" }}>
-          Upload Passport Size Photo
+      {/* Bottom Upload button */}
+      <TouchableOpacity style={styles.bottomButton} onPress={onContinue}>
+        <Text style={styles.bottomButtonText}>
+          {loading ? "Saving..." : "Continue"}
         </Text>
       </TouchableOpacity>
-
-
-      {/* 📌 Upload Front */}
-      <TouchableOpacity
-        onPress={pickFront}
-        style={{
-          padding: 20,
-          backgroundColor: "#4CAF50",
-          marginVertical: 10,
-          borderRadius: 8,
-        }}
-      >
-        <Text style={{ color: "white", textAlign: "center" }}>
-          Upload FRONT of Passport
-        </Text>
-      </TouchableOpacity>
-
-
-      {/* 📌 Upload Back */}
-      <TouchableOpacity
-        onPress={pickBack}
-        style={{
-          padding: 20,
-          backgroundColor: "#2196F3",
-          marginVertical: 10,
-          borderRadius: 8,
-        }}
-      >
-        <Text style={{ color: "white", textAlign: "center" }}>
-          Upload BACK of Passport
-        </Text>
-      </TouchableOpacity>
-
     </View>
   );
 }
 
+const ORANGE_LIGHT = "#FFE1CC";
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: "#fff", padding: 20 },
+  topNav: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  stepBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: ORANGE,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 20,
+  },
+  stepBadgeText: { color: "white", fontWeight: "600", marginLeft: 6 },
+  progressContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 20,
+    justifyContent: "center",
+  },
+  stepItem: { alignItems: "center" },
+  stepLabel: { fontSize: 12, color: "#777", marginTop: 4 },
+  line: {
+    width: 30,
+    height: 2,
+    backgroundColor: ORANGE,
+    marginHorizontal: 5,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "700",
+    marginTop: 30,
+    marginBottom: 15,
+  },
+  securityBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: ORANGE_LIGHT,
+    padding: 10,
+    borderRadius: 10,
+  },
+  securityText: {
+    marginLeft: 8,
+    color: "#333",
+    fontSize: 13,
+    fontWeight: "500",
+  },
+  card: {
+    marginTop: 20,
+    backgroundColor: "#F8F8F8",
+    borderRadius: 16,
+    padding: 16,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: "600",
+    marginBottom: 6,
+  },
+  preview: {
+    width: "100%",
+    height: 140,
+    borderRadius: 10,
+    marginBottom: 10,
+    backgroundColor: "#eee",
+  },
+  primaryButton: {
+    backgroundColor: ORANGE,
+    paddingVertical: 12,
+    borderRadius: 10,
+  },
+  primaryButtonText: {
+    color: "white",
+    textAlign: "center",
+    fontWeight: "600",
+  },
+  secondaryButton: {
+    borderWidth: 1,
+    borderColor: ORANGE,
+    paddingVertical: 12,
+    borderRadius: 10,
+  },
+  secondaryButtonText: {
+    color: ORANGE,
+    textAlign: "center",
+    fontWeight: "600",
+  },
+  bottomButton: {
+    backgroundColor: ORANGE,
+    paddingVertical: 16,
+    borderRadius: 12,
+    marginTop: 10,
+  },
+  bottomButtonText: {
+    color: "#fff",
+    textAlign: "center",
+    fontSize: 18,
+    fontWeight: "700",
+  },
+});

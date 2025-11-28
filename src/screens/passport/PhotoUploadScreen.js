@@ -13,7 +13,7 @@ import { uploadUserPhoto } from "../../api/user/photoService"
 
 export default function PhotoUploadScreen({ navigation, route }) {
     const travelDate = route?.params?.payload;
-    console.log("DATE==>", travelDate)
+   
     const [photo, setPhoto] = useState(null);
 
     // const pickPhoto = async () => {

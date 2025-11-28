@@ -1107,9 +1107,9 @@ export default function PassportDetailsScreen({ navigation, route }) {
   const travel = route?.params?.travelDate || null;
   const photoUrl = route?.params?.updatedPhotoUrl || passport?.photoUrl || null;
 
-  console.log("UPDATE PASSPORT=>",passport?.firstName)
+  console.log("UPDATE PASSPORT=>",route?.params?.passport.firstName)
   // ===== State values =====
-  const [firstName, setFirstName] = useState(passport?.birthDate);
+  const [firstName, setFirstName] = useState(passport?.firstName ||"");
   const [lastName, setLastName] = useState(passport?.lastName || "");
   const [passportNumber, setPassportNumber] = useState(passport?.passportNumber || "");
   const [nationality, setNationality] = useState(passport?.nationality || "");

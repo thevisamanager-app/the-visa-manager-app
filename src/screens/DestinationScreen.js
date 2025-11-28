@@ -62,7 +62,7 @@ export default function DestinationScreen() {
         onChangeText={(text) => searchFilterFunction(text)}
         value={searchText}
         placeholder="Search destination"
-        placeholderTextColor={"#111"}
+        placeholderTextColor={"#FF5C00"}
       />
 
       <FlatList

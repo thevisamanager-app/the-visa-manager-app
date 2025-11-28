@@ -862,7 +862,7 @@ export default function PassportUploadScreen({ navigation, route }) {
 
       if (route?.params?.editMode) {
         navigation.navigate(route.params.returnTo, {
-          updatedPassport : { id: docRef.id, ...passportPayload },
+          updatedPassport : {...passportPayload },
           travelDate: route.params.travelDate,
           photoUrl
         });

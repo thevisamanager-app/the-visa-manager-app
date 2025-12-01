@@ -151,6 +151,7 @@ import StartApplicationScreen from '../screens/start/StartApllicationScreen';
 import TravelDateScreen from '../screens/date/TravelDateScreen';
 import PhotoUploadScreen from '../screens/passport/PhotoUploadScreen';
 import PassportListScreen from '../components/PassportListScreen';
+import  AddTravellerScreen from "../screens/passport/AddTravellerScreen";
 
 const Stack = createStackNavigator();
 
@@ -170,6 +171,8 @@ export default function AppNavigator() {
        <Stack.Screen name="TravelDateScreen" component={TravelDateScreen} />
        <Stack.Screen name="PhotoUploadScreen" component={PhotoUploadScreen} />
        <Stack.Screen name="PassportListScreen" component={PassportListScreen} />
+       <Stack.Screen name="AddTravellerScreen" component={AddTravellerScreen}  options={{ headerShown: false }}
+/>
     </Stack.Navigator>
   );
 }

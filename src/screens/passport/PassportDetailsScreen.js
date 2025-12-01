@@ -454,27 +454,27 @@
 //   };
 
 //   // ----------- VALIDATION ----------
-  // const validate = () => {
-  //   if (!form.firstName || !form.lastName || !form.passportNumber) {
-  //     Alert.alert("Missing Fields", "Fill first name, last name & passport number.");
-  //     return false;
-  //   }
+// const validate = () => {
+//   if (!form.firstName || !form.lastName || !form.passportNumber) {
+//     Alert.alert("Missing Fields", "Fill first name, last name & passport number.");
+//     return false;
+//   }
 
-  //   // Validate correct DD/MM/YYYY
-  //   const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
+//   // Validate correct DD/MM/YYYY
+//   const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
 
-  //   if (form.birthDate && !dateRegex.test(form.birthDate)) {
-  //     Alert.alert("Invalid Date", "Birth Date must be DD/MM/YYYY");
-  //     return false;
-  //   }
+//   if (form.birthDate && !dateRegex.test(form.birthDate)) {
+//     Alert.alert("Invalid Date", "Birth Date must be DD/MM/YYYY");
+//     return false;
+//   }
 
-  //   if (form.expiryDate && !dateRegex.test(form.expiryDate)) {
-  //     Alert.alert("Invalid Date", "Expiry Date must be DD/MM/YYYY");
-  //     return false;
-  //   }
+//   if (form.expiryDate && !dateRegex.test(form.expiryDate)) {
+//     Alert.alert("Invalid Date", "Expiry Date must be DD/MM/YYYY");
+//     return false;
+//   }
 
-  //   return true;
-  // };
+//   return true;
+// };
 
 //   // ------------- SAVE DATA -------------
 //   // const save = async () => {
@@ -653,15 +653,15 @@
 //   const toDate = travel?.returnDate || "";
 
 
-//   const handleEditPhoto = () => {
-//     navigation.navigate("PhotoUploadScreen", {
-//       editMode: true,
-//       returnTo: "PassportDetailsScreen",
-//       travelDate: travel,
-//       passport,
-//       photoUrl
-//     });
-//   };
+// const handleEditPhoto = () => {
+//   navigation.navigate("PhotoUploadScreen", {
+//     editMode: true,
+//     returnTo: "PassportDetailsScreen",
+//     travelDate: travel,
+//     passport,
+//     photoUrl
+//   });
+// };
 
 //   const handleEditPassport = () => {
 //     navigation.navigate("PassportUploadScreen", {
@@ -688,42 +688,42 @@
 //         <Icon name="home" size={26} color={ORANGE} />
 //       </View>
 
-//       {/* PROGRESS BAR */}
-//       <View style={styles.progressContainer}>
-//         {/* Dates */}
-//         <View style={styles.stepItem}>
-//           <Icon name="check-circle" size={22} color={ORANGE} />
-//           <Text style={styles.stepLabel}>Dates</Text>
-//         </View>
-//         <View style={styles.line} />
+// {/* PROGRESS BAR */}
+// <View style={styles.progressContainer}>
+//   {/* Dates */}
+//   <View style={styles.stepItem}>
+//     <Icon name="check-circle" size={22} color={ORANGE} />
+//     <Text style={styles.stepLabel}>Dates</Text>
+//   </View>
+//   <View style={styles.line} />
 
-//         {/* Photo */}
-//         <View style={styles.stepItem}>
-//           <Icon name="check-circle" size={22} color={ORANGE} />
-//           <Text style={styles.stepLabel}>Photo</Text>
-//         </View>
-//         <View style={styles.line} />
+//   {/* Photo */}
+//   <View style={styles.stepItem}>
+//     <Icon name="check-circle" size={22} color={ORANGE} />
+//     <Text style={styles.stepLabel}>Photo</Text>
+//   </View>
+//   <View style={styles.line} />
 
-//         {/* Passport */}
-//         <View style={styles.stepItem}>
-//           <Icon name="check-circle" size={22} color={ORANGE} />
-//           <Text style={styles.stepLabel}>Passport</Text>
-//         </View>
-//         <View style={styles.line} />
+//   {/* Passport */}
+//   <View style={styles.stepItem}>
+//     <Icon name="check-circle" size={22} color={ORANGE} />
+//     <Text style={styles.stepLabel}>Passport</Text>
+//   </View>
+//   <View style={styles.line} />
 
-//         {/* Detail (current) */}
-//         <View style={styles.stepItem}>
-//           <Icon name="check-circle" size={22} color={ORANGE} />
-//           <Text style={[styles.stepLabel, { color: ORANGE }]}>Detail</Text>
-//         </View>
-//         <View style={styles.line} />
+//   {/* Detail (current) */}
+//   <View style={styles.stepItem}>
+//     <Icon name="check-circle" size={22} color={ORANGE} />
+//     <Text style={[styles.stepLabel, { color: ORANGE }]}>Detail</Text>
+//   </View>
+//   <View style={styles.line} />
 
-//         {/* Checkout */}
-//         <View style={styles.stepItem}>
-//           <Icon name="radio-button-unchecked" size={22} color="#777" />
-//           <Text style={styles.stepLabel}>Checkout</Text>
-//         </View>
-//       </View>
+//   {/* Checkout */}
+//   <View style={styles.stepItem}>
+//     <Icon name="radio-button-unchecked" size={22} color="#777" />
+//     <Text style={styles.stepLabel}>Checkout</Text>
+//   </View>
+// </View>
 
 //       <ScrollView showsVerticalScrollIndicator={false}>
 //         <Text style={styles.title}>Review your information</Text>
@@ -1067,7 +1067,359 @@
 
 
 
-import React, { useState } from "react";
+// import React, { useState } from "react";
+// import {
+//   View,
+//   Text,
+//   StyleSheet,
+//   TextInput,
+//   TouchableOpacity,
+//   Image,
+//   ScrollView,
+//   Alert,
+// } from "react-native";
+// import Icon from "react-native-vector-icons/MaterialIcons";
+// import { savePassportData } from "../../api/user/passportService";
+
+// const ORANGE = "#FF5C00";
+
+// export default function PassportDetailsScreen({ navigation, route }) {
+//   // ===== Helper to format MRZ date (YYMMDD -> DD MMM YYYY) =====
+//   function formatMRZDate(mrz) {
+//     if (!mrz || mrz.length !== 6) return mrz;
+
+//     const year = parseInt(mrz.slice(0, 2), 10);
+//     const month = mrz.slice(2, 4);
+//     const day = mrz.slice(4, 6);
+
+//     const fullYear = year >= 40 ? `19${mrz.slice(0, 2)}` : `20${mrz.slice(0, 2)}`;
+
+//     const months = [
+//       "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+//       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+//     ];
+
+//     return `${day} ${months[parseInt(month, 10) - 1]} ${fullYear}`;
+//   }
+
+//   // ===== Route params =====
+//   const passport = route?.params?.passport || route?.params?.updatedPassport || {};
+//   const travel = route?.params?.travelDate || null;
+//   const photoUrl = route?.params?.updatedPhotoUrl || passport?.photoUrl || null;
+
+//   console.log("UPDATE PASSPORT=>", route?.params?.passport.firstName)
+//   // ===== State values =====
+//   const [firstName, setFirstName] = useState(passport?.firstName || "");
+//   const [lastName, setLastName] = useState(passport?.lastName || "");
+//   const [passportNumber, setPassportNumber] = useState(passport?.passportNumber || "");
+//   const [nationality, setNationality] = useState(passport?.nationality || "");
+//   const [birthDate, setBirthDate] = useState(formatMRZDate(passport?.birthDate));
+//   const [expiryDate, setExpiryDate] = useState(formatMRZDate(passport?.expiryDate));
+//   const [coTravellers, setCoTravellers] = useState(route?.params?.coTravellers || []);
+
+
+//   console.log("UPDATE PASSPORT=>", birthDate)
+//   // ===== Confirm & Continue =====
+//   const onConfirm = async () => {
+//     const payload = {
+//       ...passport,
+//       firstName,
+//       lastName,
+//       passportNumber,
+//       nationality,
+//       birthDate,
+//       expiryDate,
+//     };
+
+//     await savePassportData(payload);
+
+//     navigation.navigate("CheckoutScreen", {
+//       passport: payload,
+//       travel,
+//       photoUrl,
+//     });
+//   };
+
+//   // ===== Image edit actions =====
+//   const handleEditPhoto = () => {
+//     navigation.navigate("PhotoUploadScreen", {
+//       editMode: true,
+//       returnTo: "PassportDetailsScreen",
+//       travelDate: travel,
+//       passport,
+//       photoUrl,
+//     });
+//   };
+
+// const handleEditPassport = () => {
+//   navigation.navigate("PassportUploadScreen", {
+//     editMode: true,
+//     returnTo: "PassportDetailsScreen",
+//     travelDate: travel,
+//     passport,
+//     photoUrl,
+//   });
+// };
+
+//   const handleAddCoTraveller = () => {
+//     navigation.navigate("PhotoUploadScreen", {
+//       addMode: true,
+//       returnTo: "PassportDetailsScreen",
+//       travelDate: travel,
+//       coTravellers,
+//       onSaveTraveller: (newTraveller) => {
+//         setCoTravellers(prev => [...prev, newTraveller]);
+//       }
+//     });
+//   };
+
+//   const fromDate = travel?.departureDate || "";
+//   const toDate = travel?.returnDate || "";
+
+//   return (
+//     <View style={styles.container}>
+
+//       {/* TOP NAV BAR */}
+//       <View style={styles.topNav}>
+//         <TouchableOpacity onPress={() => navigation.goBack()}>
+//           <Icon name="arrow-back" size={26} color="black" />
+//         </TouchableOpacity>
+
+//         <View style={styles.stepBadge}>
+//           <Icon name="check-circle" size={18} color="white" />
+//           <Text style={styles.stepBadgeText}>Visa on 27 Nov, 07:05 PM</Text>
+//         </View>
+
+//         <Icon name="home" size={26} color={ORANGE} />
+//       </View>
+
+//       {/* PROGRESS INDICATOR */}
+//       <View style={styles.progressContainer}>
+//         <View style={styles.stepItem}>
+//           <Icon name="check-circle" size={22} color={ORANGE} />
+//           <Text style={styles.stepLabel}>Dates</Text>
+//         </View>
+//         <View style={styles.line} />
+
+//         <View style={styles.stepItem}>
+//           <Icon name="check-circle" size={22} color={ORANGE} />
+//           <Text style={styles.stepLabel}>Photo</Text>
+//         </View>
+//         <View style={styles.line} />
+
+//         <View style={styles.stepItem}>
+//           <Icon name="check-circle" size={22} color={ORANGE} />
+//           <Text style={styles.stepLabel}>Passport</Text>
+//         </View>
+//         <View style={styles.line} />
+
+//         <View style={styles.stepItem}>
+//           <Icon name="check-circle" size={22} color={ORANGE} />
+//           <Text style={[styles.stepLabel, { color: ORANGE }]}>Detail</Text>
+//         </View>
+//         <View style={styles.line} />
+
+//         <View style={styles.stepItem}>
+//           <Icon name="radio-button-unchecked" size={22} color="#777" />
+//           <Text style={styles.stepLabel}>Checkout</Text>
+//         </View>
+//       </View>
+
+//       {/* MAIN CONTENT */}
+//       <ScrollView showsVerticalScrollIndicator={false}>
+//         <Text style={styles.title}>Review your information</Text>
+
+//         {/* VISA VALIDITY */}
+//         <View style={styles.sectionCard}>
+//           {/* <View style={styles.sectionHeader}>
+//             <View style={{ flexDirection: "row", alignItems: "center" }}>
+//               <Icon name="event" size={18} color={ORANGE} />
+//               <Text style={styles.sectionTitle}> Visa Validity</Text>
+//             </View>
+//           </View> */}
+
+//           <TouchableOpacity onPress={handleAddCoTraveller}>
+//             <Text style={{ color: ORANGE, fontWeight: "bold" }}>+ Add Co-Passenger</Text>
+//           </TouchableOpacity>
+
+//           {/* <View style={styles.validityRow}>
+//             <View>
+//               <Text style={styles.smallLabel}>From</Text>
+//               <Text style={styles.dateText}>{fromDate}</Text>
+//             </View>
+
+//             <Icon name="arrow-forward" size={20} color="#555" />
+
+//             <View>
+//               <Text style={styles.smallLabel}>Until</Text>
+//               <Text style={styles.dateText}>{toDate}</Text>
+//             </View>
+//           </View> */}
+//         </View>
+
+//         {/* DOCUMENTS */}
+//         <View style={[styles.sectionCard, { marginTop: 16 }]}>
+//           <View style={styles.sectionHeader}>
+//             <View style={{ flexDirection: "row", alignItems: "center" }}>
+//               <Icon name="insert-drive-file" size={18} color={ORANGE} />
+//               <Text style={styles.sectionTitle}> Documents Submitted</Text>
+//             </View>
+//           </View>
+
+//           {/* Photo */}
+//           <View style={styles.docRow}>
+//             <View style={styles.docHeader}>
+//               <View style={styles.docHeaderLeft}>
+//                 <Icon name="check-circle" size={18} color="#09B66E" />
+//                 <Text style={styles.docLabel}>Photo</Text>
+//               </View>
+//               <TouchableOpacity onPress={handleEditPhoto}>
+//                 <Icon name="edit" size={18} color={ORANGE} />
+//               </TouchableOpacity>
+//             </View>
+
+//             <View style={styles.thumbBox}>
+//               {photoUrl ? (
+//                 <Image source={{ uri: photoUrl }} style={styles.docImage} resizeMode="cover" />
+//               ) : (
+//                 <Text style={styles.docPlaceholder}>No Photo</Text>
+//               )}
+//             </View>
+//           </View>
+
+//           {/* Passport Front */}
+//   <View style={styles.docRow}>
+//     <View style={styles.docHeader}>
+//       <View style={styles.docHeaderLeft}>
+//         <Icon name="check-circle" size={18} color="#09B66E" />
+//         <Text style={styles.docLabel}>Passport Front</Text>
+//       </View>
+//       <TouchableOpacity onPress={handleEditPassport}>
+//         <Icon name="edit" size={18} color={ORANGE} />
+//       </TouchableOpacity>
+//     </View>
+
+//     <View style={styles.thumbBox}>
+//       {passport?.frontImageURL ? (
+//         <Image source={{ uri: passport.frontImageURL }} style={styles.docImage} resizeMode="cover" />
+//       ) : (
+//         <Text style={styles.docPlaceholder}>No Image</Text>
+//       )}
+//     </View>
+//   </View>
+
+//   {/* Passport Back */}
+//   <View style={styles.docRow}>
+//     <View style={styles.docHeader}>
+//       <View style={styles.docHeaderLeft}>
+//         <Icon name="check-circle" size={18} color="#09B66E" />
+//         <Text style={styles.docLabel}>Passport Back</Text>
+//       </View>
+//       <TouchableOpacity onPress={handleEditPassport}>
+//         <Icon name="edit" size={18} color={ORANGE} />
+//       </TouchableOpacity>
+//     </View>
+
+//     <View style={styles.thumbBox}>
+//       {passport?.backImageURL ? (
+//         <Image source={{ uri: passport.backImageURL }} style={styles.docImage} resizeMode="cover" />
+//       ) : (
+//         <Text style={styles.docPlaceholder}>No Image</Text>
+//       )}
+//     </View>
+//   </View>
+// </View>
+
+//         {/* PERSONAL INFO */}
+//         <View style={[styles.sectionCard, { marginTop: 16 }]}>
+//           <View style={styles.sectionHeader}>
+//             <View style={{ flexDirection: "row", alignItems: "center" }}>
+//               <Icon name="person-outline" size={18} color={ORANGE} />
+//               <Text style={styles.sectionTitle}> Personal Information</Text>
+//             </View>
+//           </View>
+
+//           <Text style={styles.inputLabel}>First Name</Text>
+//           <TextInput style={styles.input} value={firstName} onChangeText={setFirstName} />
+
+//           <Text style={styles.inputLabel}>Last Name</Text>
+//           <TextInput style={styles.input} value={lastName} onChangeText={setLastName} />
+
+//           <Text style={styles.inputLabel}>Passport Number</Text>
+//           <TextInput style={styles.input} value={passportNumber} onChangeText={setPassportNumber} />
+
+//           <Text style={styles.inputLabel}>Nationality</Text>
+//           <TextInput style={styles.input} value={nationality} onChangeText={setNationality} />
+
+//           <Text style={styles.inputLabel}>Birth Date</Text>
+//           <TextInput style={styles.input} value={birthDate} onChangeText={setBirthDate} />
+
+//           <Text style={styles.inputLabel}>Passport Expiry</Text>
+//           <TextInput style={styles.input} value={expiryDate} onChangeText={setExpiryDate} />
+//         </View>
+
+//         <TouchableOpacity style={styles.confirmButton} onPress={onConfirm}>
+//           <Text style={styles.confirmText}>Confirm</Text>
+//         </TouchableOpacity>
+//       </ScrollView>
+//     </View>
+//   );
+// }
+
+// // ===== STYLES =====
+// const styles = StyleSheet.create({
+//   container: { flex: 1, backgroundColor: "#fff", padding: 20 },
+//   topNav: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+//   stepBadge: {
+//     flexDirection: "row",
+//     alignItems: "center",
+//     backgroundColor: ORANGE,
+//     paddingHorizontal: 14,
+//     paddingVertical: 6,
+//     borderRadius: 20,
+//   },
+//   stepBadgeText: { color: "white", fontWeight: "600", marginLeft: 6 },
+//   progressContainer: {
+//     flexDirection: "row",
+//     alignItems: "center",
+//     marginTop: 20,
+//     justifyContent: "center",
+//   },
+//   stepItem: { alignItems: "center" },
+//   stepLabel: { fontSize: 12, color: "#777", marginTop: 4 },
+//   line: { width: 30, height: 2, backgroundColor: ORANGE, marginHorizontal: 5 },
+//   title: { fontSize: 20, fontWeight: "700", marginTop: 24, marginBottom: 10, textAlign: "center" },
+//   sectionCard: { backgroundColor: "#F6F6F8", borderRadius: 16, padding: 16, marginTop: 8 },
+//   sectionHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+//   sectionTitle: { fontSize: 16, fontWeight: "700" },
+//   validityRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 16 },
+//   smallLabel: { fontSize: 12, color: "#777" },
+//   dateText: { fontSize: 16, fontWeight: "600", marginTop: 4 },
+//   docRow: { marginTop: 12 },
+//   docHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 6 },
+//   docHeaderLeft: { flexDirection: "row", alignItems: "center" },
+//   docLabel: { marginLeft: 6, fontSize: 13, fontWeight: "600" },
+//   thumbBox: {
+//     width: 90,
+//     height: 90,
+//     borderRadius: 12,
+//     overflow: "hidden",
+//     backgroundColor: "#E9E9EF",
+//     justifyContent: "center",
+//     alignItems: "center",
+//   },
+//   docImage: { width: "100%", height: "100%" },
+//   docPlaceholder: { fontSize: 12, color: "#999" },
+//   inputLabel: { fontSize: 13, fontWeight: "600", marginTop: 12, marginBottom: 4 },
+//   input: { borderWidth: 1, borderColor: "#ddd", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 8, backgroundColor: "#fff" },
+//   confirmButton: { backgroundColor: ORANGE, paddingVertical: 16, borderRadius: 12, marginVertical: 24 },
+//   confirmText: { textAlign: "center", color: "#fff", fontSize: 18, fontWeight: "700" },
+// });
+
+
+
+
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -1076,7 +1428,6 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  Alert,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { savePassportData } from "../../api/user/passportService";
@@ -1084,7 +1435,12 @@ import { savePassportData } from "../../api/user/passportService";
 const ORANGE = "#FF5C00";
 
 export default function PassportDetailsScreen({ navigation, route }) {
-  // ===== Helper to format MRZ date (YYMMDD -> DD MMM YYYY) =====
+
+  useEffect(() => {
+    setCoTravellers(toArray(route?.params?.coTravellers));
+  }, [route?.params?.coTravellers]);
+
+  // === Format MRZ to DD MMM YYYY ===
   function formatMRZDate(mrz) {
     if (!mrz || mrz.length !== 6) return mrz;
 
@@ -1102,50 +1458,62 @@ export default function PassportDetailsScreen({ navigation, route }) {
     return `${day} ${months[parseInt(month, 10) - 1]} ${fullYear}`;
   }
 
-  // ===== Route params =====
-  const passport = route?.params?.passport || route?.params?.updatedPassport || {};
-  const travel = route?.params?.travelDate || null;
-  const photoUrl = route?.params?.updatedPhotoUrl || passport?.photoUrl || null;
+  // === PARAMS ===
+  const passport = route?.params?.passport || {};
 
-  console.log("UPDATE PASSPORT=>",route?.params?.passport.firstName)
-  // ===== State values =====
-  const [firstName, setFirstName] = useState(passport?.firstName ||"");
+  const travel = route?.params?.travelDate || null;
+  const photoUrl = route?.params?.photoUrl || passport?.photoUrl;
+
+  // === State ===
+  // Helper to always return an array
+  const toArray = (value) => {
+    if (!value) return [];
+    return Array.isArray(value) ? value : [value];
+  };
+
+
+
+  const coTravellersFromRoute = toArray(route?.params?.coTravellers);
+  const [coTravellers, setCoTravellers] = useState(coTravellersFromRoute);
+
+  const [photoUrlState, setPhotoUrlState] = useState(photoUrl);
+
+  const [firstName, setFirstName] = useState(passport?.firstName || "");
   const [lastName, setLastName] = useState(passport?.lastName || "");
   const [passportNumber, setPassportNumber] = useState(passport?.passportNumber || "");
   const [nationality, setNationality] = useState(passport?.nationality || "");
   const [birthDate, setBirthDate] = useState(formatMRZDate(passport?.birthDate));
   const [expiryDate, setExpiryDate] = useState(formatMRZDate(passport?.expiryDate));
+  const [passportState, setPassportState] = useState(passport);
+  const fromDate = travel?.departureDate || "";
+  const toDate = travel?.returnDate || "";
 
-  console.log("UPDATE PASSPORT=>",birthDate)
-  // ===== Confirm & Continue =====
-  const onConfirm = async () => {
-    const payload = {
-      ...passport,
-      firstName,
-      lastName,
-      passportNumber,
-      nationality,
-      birthDate,
-      expiryDate,
-    };
+  useEffect(() => {
+    if (route?.params?.updatedPhotoUrl) setPhotoUrlState(route?.params?.updatedPhotoUrl);
+  }, [route?.params?.updatedPhotoUrl]);
 
-    await savePassportData(payload);
+  useEffect(() => {
+    if (route?.params?.updatedPassport) setPassportState(route?.params?.updatedPassport);
+  }, [route?.params?.updatedPassport]);
 
-    navigation.navigate("CheckoutScreen", {
-      passport: payload,
-      travel,
-      photoUrl,
-    });
-  };
 
-  // ===== Image edit actions =====
-  const handleEditPhoto = () => {
+  useEffect(() => {
+    if (passportState) {
+      setFirstName(passportState.firstName || "");
+      setLastName(passportState.lastName || "");
+      setPassportNumber(passportState.passportNumber || "");
+      setNationality(passportState.nationality || "");
+      setBirthDate(formatMRZDate(passportState.birthDate));
+      setExpiryDate(formatMRZDate(passportState.expiryDate));
+    }
+  }, [passportState]);
+  // === Add Co Traveller Flow ===
+  const handleAddCoTraveller = () => {
     navigation.navigate("PhotoUploadScreen", {
-      editMode: true,
-      returnTo: "PassportDetailsScreen",
+      addMode: true,
       travelDate: travel,
-      passport,
-      photoUrl,
+      passportState,
+      coTravellers,
     });
   };
 
@@ -1154,75 +1522,125 @@ export default function PassportDetailsScreen({ navigation, route }) {
       editMode: true,
       returnTo: "PassportDetailsScreen",
       travelDate: travel,
-      passport,
-      photoUrl,
+      passport: passportState,     // FIX - send updated version
+      photoUrl: photoUrlState      // FIX - consistent naming
     });
   };
 
-  const fromDate = travel?.departureDate || "";
-  const toDate = travel?.returnDate || "";
+
+  const handleEditPhoto = () => {
+    navigation.navigate("PhotoUploadScreen", {
+      editMode: true,
+      returnTo: "PassportDetailsScreen",
+      travelDate: travel,
+      passport: passportState,
+      photoUrl: photoUrlState,
+    });
+  };
+
+  // === Remove ===
+  const removeCoTraveller = (index) => {
+    const updated = [...coTravellers];
+    updated.splice(index, 1);
+    setCoTravellers(updated);
+  };
+
+  // === Confirm ===
+  const onConfirm = async () => {
+    const payload = {
+      ...passportState,
+      firstName,
+      lastName,
+      passportNumber,
+      nationality,
+      birthDate,
+      expiryDate,
+      coTravellers,
+    };
+
+    await savePassportData(payload);
+
+    navigation.navigate("CheckoutScreen", {
+      passport: payload,
+      travel,
+      photoUrlState,
+      coTravellers,
+    });
+  };
 
   return (
     <View style={styles.container}>
 
-      {/* TOP NAV BAR */}
+      {/* NAV */}
       <View style={styles.topNav}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Icon name="arrow-back" size={26} color="black" />
         </TouchableOpacity>
 
         <View style={styles.stepBadge}>
-          <Icon name="check-circle" size={18} color="white" />
-          <Text style={styles.stepBadgeText}>Visa on 27 Nov, 07:05 PM</Text>
+          <Icon name="check-circle" size={16} color="#fff" />
+          <Text style={styles.stepBadgeText}>Review Visa</Text>
         </View>
 
         <Icon name="home" size={26} color={ORANGE} />
       </View>
 
-      {/* PROGRESS INDICATOR */}
+      {/* Progress */}
+      {/* <View style={styles.progressContainer}>
+        <Icon name="check-circle" size={22} color={ORANGE} />
+        <View style={styles.line} />
+        <Icon name="check-circle" size={22} color={ORANGE} />
+        <View style={styles.line} />
+        <Icon name="check-circle" size={22} color={ORANGE} />
+        <View style={styles.line} />
+        <Icon name="check-circle" size={22} color={ORANGE} />
+        <View style={styles.line} />
+        <Icon name="radio-button-unchecked" size={22} color="#777" />
+      </View> */}
+      {/* PROGRESS BAR */}
       <View style={styles.progressContainer}>
+        {/* Dates */}
         <View style={styles.stepItem}>
           <Icon name="check-circle" size={22} color={ORANGE} />
           <Text style={styles.stepLabel}>Dates</Text>
         </View>
         <View style={styles.line} />
 
+        {/* Photo */}
         <View style={styles.stepItem}>
           <Icon name="check-circle" size={22} color={ORANGE} />
           <Text style={styles.stepLabel}>Photo</Text>
         </View>
         <View style={styles.line} />
 
+        {/* Passport */}
         <View style={styles.stepItem}>
           <Icon name="check-circle" size={22} color={ORANGE} />
           <Text style={styles.stepLabel}>Passport</Text>
         </View>
         <View style={styles.line} />
 
+        {/* Detail (current) */}
         <View style={styles.stepItem}>
           <Icon name="check-circle" size={22} color={ORANGE} />
           <Text style={[styles.stepLabel, { color: ORANGE }]}>Detail</Text>
         </View>
         <View style={styles.line} />
 
+        {/* Checkout */}
         <View style={styles.stepItem}>
           <Icon name="radio-button-unchecked" size={22} color="#777" />
           <Text style={styles.stepLabel}>Checkout</Text>
         </View>
       </View>
 
-      {/* MAIN CONTENT */}
+
       <ScrollView showsVerticalScrollIndicator={false}>
         <Text style={styles.title}>Review your information</Text>
 
         {/* VISA VALIDITY */}
-        <View style={styles.sectionCard}>
-          <View style={styles.sectionHeader}>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Icon name="event" size={18} color={ORANGE} />
-              <Text style={styles.sectionTitle}> Visa Validity</Text>
-            </View>
-          </View>
+        {/* <View style={styles.sectionCard}>
+          <Text style={styles.sectionTitle}>Visa Validity</Text>
 
           <View style={styles.validityRow}>
             <View>
@@ -1237,16 +1655,11 @@ export default function PassportDetailsScreen({ navigation, route }) {
               <Text style={styles.dateText}>{toDate}</Text>
             </View>
           </View>
-        </View>
+        </View> */}
 
-        {/* DOCUMENTS */}
+        {/* Document display */}
         <View style={[styles.sectionCard, { marginTop: 16 }]}>
-          <View style={styles.sectionHeader}>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Icon name="insert-drive-file" size={18} color={ORANGE} />
-              <Text style={styles.sectionTitle}> Documents Submitted</Text>
-            </View>
-          </View>
+          <Text style={styles.sectionTitle}>Documents Submitted</Text>
 
           {/* Photo */}
           <View style={styles.docRow}>
@@ -1259,17 +1672,31 @@ export default function PassportDetailsScreen({ navigation, route }) {
                 <Icon name="edit" size={18} color={ORANGE} />
               </TouchableOpacity>
             </View>
-
             <View style={styles.thumbBox}>
-              {photoUrl ? (
-                <Image source={{ uri: photoUrl }} style={styles.docImage} resizeMode="cover" />
+              {photoUrlState ? (
+                <Image source={{ uri: photoUrlState }} style={styles.docImage} />
               ) : (
                 <Text style={styles.docPlaceholder}>No Photo</Text>
               )}
             </View>
           </View>
 
-          {/* Passport Front */}
+          {/* Passport */}
+          {/* <View style={styles.docRow}>
+            <View style={styles.docHeader}>
+              <View style={styles.docHeaderLeft}>
+                <Icon name="check-circle" size={18} color="#09B66E" />
+                <Text style={styles.docLabel}>Passport</Text>
+              </View>
+            </View>
+            <View style={styles.thumbBox}>
+              {passport?.frontImageURL ? (
+                <Image source={{ uri: passport.frontImageURL }} style={styles.docImage} />
+              ) : (
+                <Text style={styles.docPlaceholder}>No Image</Text>
+              )}
+            </View>
+          </View> */}
           <View style={styles.docRow}>
             <View style={styles.docHeader}>
               <View style={styles.docHeaderLeft}>
@@ -1282,8 +1709,8 @@ export default function PassportDetailsScreen({ navigation, route }) {
             </View>
 
             <View style={styles.thumbBox}>
-              {passport?.frontImageURL ? (
-                <Image source={{ uri: passport.frontImageURL }} style={styles.docImage} resizeMode="cover" />
+              {passportState?.frontImageURL ? (
+                <Image source={{ uri: passportState.frontImageURL }} style={styles.docImage} resizeMode="cover" />
               ) : (
                 <Text style={styles.docPlaceholder}>No Image</Text>
               )}
@@ -1303,8 +1730,8 @@ export default function PassportDetailsScreen({ navigation, route }) {
             </View>
 
             <View style={styles.thumbBox}>
-              {passport?.backImageURL ? (
-                <Image source={{ uri: passport.backImageURL }} style={styles.docImage} resizeMode="cover" />
+              {passportState?.backImageURL ? (
+                <Image source={{ uri: passportState.backImageURL }} style={styles.docImage} resizeMode="cover" />
               ) : (
                 <Text style={styles.docPlaceholder}>No Image</Text>
               )}
@@ -1312,14 +1739,41 @@ export default function PassportDetailsScreen({ navigation, route }) {
           </View>
         </View>
 
-        {/* PERSONAL INFO */}
+
+        {/* TRAVELLERS LIST */}
         <View style={[styles.sectionCard, { marginTop: 16 }]}>
           <View style={styles.sectionHeader}>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Icon name="person-outline" size={18} color={ORANGE} />
-              <Text style={styles.sectionTitle}> Personal Information</Text>
-            </View>
+            <Text style={styles.sectionTitle}>Travellers</Text>
+
+            <TouchableOpacity onPress={handleAddCoTraveller}>
+              <Text style={styles.addBtn}>+ Add Co-Passenger</Text>
+            </TouchableOpacity>
           </View>
+
+          {/* Main Traveller */}
+          <View style={styles.travellerRow}>
+            <Icon name="person" size={24} color={ORANGE} />
+            <Text style={styles.travellerName}>
+              {firstName} {lastName} (You)
+            </Text>
+          </View>
+
+          {/* Co Travellers */}
+          {coTravellers.map((p, i) => (
+            <View key={i} style={styles.travellerRow}>
+              <Icon name="person" size={24} color="#555" />
+              <Text style={styles.travellerName}>{p.firstName} {p.lastName}</Text>
+
+              <TouchableOpacity onPress={() => removeCoTraveller(i)}>
+                <Icon name="delete" size={22} color="red" />
+              </TouchableOpacity>
+            </View>
+          ))}
+        </View>
+
+        {/* PERSONAL INFO */}
+        <View style={[styles.sectionCard, { marginTop: 16 }]}>
+          <Text style={styles.sectionTitle}>Personal Information</Text>
 
           <Text style={styles.inputLabel}>First Name</Text>
           <TextInput style={styles.input} value={firstName} onChangeText={setFirstName} />
@@ -1340,60 +1794,37 @@ export default function PassportDetailsScreen({ navigation, route }) {
           <TextInput style={styles.input} value={expiryDate} onChangeText={setExpiryDate} />
         </View>
 
+        {/* Confirm */}
         <TouchableOpacity style={styles.confirmButton} onPress={onConfirm}>
-          <Text style={styles.confirmText}>Confirm</Text>
+          <Text style={styles.confirmText}>Continue</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
   );
 }
 
-// ===== STYLES =====
+// === Styles ===
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff", padding: 20 },
   topNav: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  stepBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: ORANGE,
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 20,
-  },
-  stepBadgeText: { color: "white", fontWeight: "600", marginLeft: 6 },
-  progressContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 20,
-    justifyContent: "center",
-  },
-  stepItem: { alignItems: "center" },
-  stepLabel: { fontSize: 12, color: "#777", marginTop: 4 },
+  stepBadge: { backgroundColor: ORANGE, borderRadius: 18, paddingHorizontal: 10, paddingVertical: 4, flexDirection: "row", alignItems: "center" },
+  stepBadgeText: { color: "#fff", marginLeft: 6 },
+  progressContainer: { flexDirection: "row", alignItems: "center", marginTop: 20, justifyContent: "center" },
   line: { width: 30, height: 2, backgroundColor: ORANGE, marginHorizontal: 5 },
-  title: { fontSize: 20, fontWeight: "700", marginTop: 24, marginBottom: 10, textAlign: "center" },
-  sectionCard: { backgroundColor: "#F6F6F8", borderRadius: 16, padding: 16, marginTop: 8 },
-  sectionHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  sectionTitle: { fontSize: 16, fontWeight: "700" },
-  validityRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 16 },
-  smallLabel: { fontSize: 12, color: "#777" },
-  dateText: { fontSize: 16, fontWeight: "600", marginTop: 4 },
-  docRow: { marginTop: 12 },
-  docHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 6 },
+  title: { fontSize: 20, fontWeight: "700", marginVertical: 15, textAlign: "center" },
+  sectionCard: { backgroundColor: "#F6F6F8", borderRadius: 16, padding: 16 },
+  sectionTitle: { fontWeight: "700", fontSize: 16 },
+  travellerRow: { flexDirection: "row", alignItems: "center", marginTop: 10 },
+  travellerName: { marginLeft: 10, fontSize: 15, fontWeight: "600", flex: 1 },
+  addBtn: { color: ORANGE, fontWeight: "600" },
+  inputLabel: { marginTop: 10, fontWeight: "600" },
+  input: { borderWidth: 1, borderColor: "#ddd", padding: 8, marginTop: 4, borderRadius: 8, backgroundColor: "#fff" },
+  docRow: { marginTop: 10 },
+  docHeader: { flexDirection: "row", justifyContent: "space-between" },
   docHeaderLeft: { flexDirection: "row", alignItems: "center" },
-  docLabel: { marginLeft: 6, fontSize: 13, fontWeight: "600" },
-  thumbBox: {
-    width: 90,
-    height: 90,
-    borderRadius: 12,
-    overflow: "hidden",
-    backgroundColor: "#E9E9EF",
-    justifyContent: "center",
-    alignItems: "center",
-  },
+  thumbBox: { backgroundColor: "#eee", width: 80, height: 80, marginTop: 8, borderRadius: 10, overflow: "hidden" },
   docImage: { width: "100%", height: "100%" },
-  docPlaceholder: { fontSize: 12, color: "#999" },
-  inputLabel: { fontSize: 13, fontWeight: "600", marginTop: 12, marginBottom: 4 },
-  input: { borderWidth: 1, borderColor: "#ddd", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 8, backgroundColor: "#fff" },
-  confirmButton: { backgroundColor: ORANGE, paddingVertical: 16, borderRadius: 12, marginVertical: 24 },
-  confirmText: { textAlign: "center", color: "#fff", fontSize: 18, fontWeight: "700" },
+  travellerIcon: { marginRight: 8 },
+  confirmButton: { backgroundColor: ORANGE, padding: 14, marginTop: 24, borderRadius: 12 },
+  confirmText: { color: "#fff", textAlign: "center", fontSize: 18, fontWeight: "700" },
 });

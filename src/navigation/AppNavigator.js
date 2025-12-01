@@ -153,6 +153,7 @@ import PhotoUploadScreen from '../screens/passport/PhotoUploadScreen';
 import PassportListScreen from '../components/PassportListScreen';
 import RatingScreen from '../screens/visa/RatingScreen';
 import VisaStatusScreen from '../screens/visa/VisaStatusScreen';
+import AddTravellerScreen from "../screens/passport/AddTravellerScreen";
 
 const Stack = createStackNavigator();
 
@@ -169,12 +170,14 @@ export default function AppNavigator() {
       <Stack.Screen name="VisaQuestionScreen" component={VisaQuestionScreen} />
       <Stack.Screen name="CheckoutScreen" component={CheckoutScreen} />
       <Stack.Screen name="StartApplicationScreen" component={StartApplicationScreen} />
-       <Stack.Screen name="TravelDateScreen" component={TravelDateScreen} />
-       <Stack.Screen name="PhotoUploadScreen" component={PhotoUploadScreen} />
-       <Stack.Screen name="PassportListScreen" component={PassportListScreen} />
-       <Stack.Screen name="RatingScreen" component={RatingScreen} />
+      <Stack.Screen name="TravelDateScreen" component={TravelDateScreen} />
+      <Stack.Screen name="PhotoUploadScreen" component={PhotoUploadScreen} />
+      <Stack.Screen name="PassportListScreen" component={PassportListScreen} />
+      <Stack.Screen name="RatingScreen" component={RatingScreen} />
       <Stack.Screen name="VisaStatusScreen" component={VisaStatusScreen} />
 
+      <Stack.Screen name="AddTravellerScreen" component={AddTravellerScreen} options={{ headerShown: false }}
+      />
     </Stack.Navigator>
   );
 }

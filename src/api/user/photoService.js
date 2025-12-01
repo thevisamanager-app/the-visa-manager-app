@@ -26,3 +26,23 @@ export async function uploadUserPhoto(photo) {
 
   return url;
 }
+
+export async function getUserPhoto() {
+  const user = auth().currentUser;
+  if (!user) throw new Error("User not logged in");
+
+  const uid = user.uid;
+
+  const snap = await firestore()
+    .collection("users")
+    .doc(uid)
+    .collection("photo")
+    .orderBy("createdAt", "desc")
+    .limit(1)
+    .get();
+
+  if (snap.empty) return null;
+
+  const doc = snap.docs[0];
+  return doc.data().url;
+}

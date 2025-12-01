@@ -151,6 +151,8 @@ import StartApplicationScreen from '../screens/start/StartApllicationScreen';
 import TravelDateScreen from '../screens/date/TravelDateScreen';
 import PhotoUploadScreen from '../screens/passport/PhotoUploadScreen';
 import PassportListScreen from '../components/PassportListScreen';
+import RatingScreen from '../screens/visa/RatingScreen';
+import VisaStatusScreen from '../screens/visa/VisaStatusScreen';
 
 const Stack = createStackNavigator();
 
@@ -170,6 +172,9 @@ export default function AppNavigator() {
        <Stack.Screen name="TravelDateScreen" component={TravelDateScreen} />
        <Stack.Screen name="PhotoUploadScreen" component={PhotoUploadScreen} />
        <Stack.Screen name="PassportListScreen" component={PassportListScreen} />
+       <Stack.Screen name="RatingScreen" component={RatingScreen} />
+      <Stack.Screen name="VisaStatusScreen" component={VisaStatusScreen} />
+
     </Stack.Navigator>
   );
 }

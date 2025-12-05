@@ -49,8 +49,8 @@ export default function CongratsScreen({ navigation }) {
                 <View style={styles.circleImagePlaceholder}>
                     <Icon name="earth-outline" size={120} color={ORANGE} />
                 </View>
-                <TouchableOpacity style={styles.primaryButton}>
-                    <Text style={styles.primaryButtonText}> Dwonload Your Invoice </Text>
+                <TouchableOpacity style={styles.primaryButton} >
+                    <Text style={styles.primaryButtonText}> Download Your Invoice </Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.primaryButton}  onPress={() => navigation.navigate("VisaStatusScreen")} >
                     <Text style={styles.primaryButtonText}> Unlock Your Visa </Text>
@@ -171,6 +171,7 @@ const styles = StyleSheet.create({
     marginTop:30,
     backgroundColor: ORANGE,
     paddingVertical: 12,
+    padding: 22,
     borderRadius: 10,
   },
   primaryButtonText: {

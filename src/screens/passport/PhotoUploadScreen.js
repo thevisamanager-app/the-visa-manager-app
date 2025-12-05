@@ -325,6 +325,7 @@ export default function PhotoUploadScreen({ navigation, route }) {
       navigation.navigate(route.params.returnTo, {
         updatedPhotoUrl: photo,
         passport: route.params.passport,
+         coTravellers: route?.params?.coTravellers || [],
         travelDate,
       });
       return;
@@ -334,9 +335,10 @@ export default function PhotoUploadScreen({ navigation, route }) {
       navigation.navigate("PassportUploadScreen", {
         addMode: true,
         travelDate,
-        passport: route?.params?.passport,
+        passport: route.params.passportState,
         coTravellers: route?.params?.coTravellers || [],
         photoUrl: photo,
+        mainPhotoUrl: route.params.mainPhotoUrl,
       });
       return;
     }

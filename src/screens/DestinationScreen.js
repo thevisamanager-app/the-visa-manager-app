@@ -16,6 +16,10 @@ const DATA = [
     source: require('../assets/images/vietnam.jpeg'),
     title: '07 NOV 11:42 AM',
     countrName: 'Vietnam',
+    VisaManagerFee:"1770",
+    AuthorityCharges:"750",
+    GovernmentFee:"2350",
+    currency:""
   },
   {
     id: 2,

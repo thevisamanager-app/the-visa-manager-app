@@ -625,3 +625,24 @@ export async function getPassportData() {
   const doc = snap.docs[0];
   return { id: doc.id, ...doc.data() };
 }
+
+export async function getAllPassportData() {
+  const user = auth().currentUser;
+  if (!user) throw new Error("User not logged in");
+
+  const uid = user.uid;
+
+  const snap = await firestore()
+    .collection("users")
+    .doc(uid)
+    .collection("passportData")
+    .orderBy("createdAt", "desc")
+    .get();
+
+  if (snap.empty) return [];
+
+  return snap.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+}

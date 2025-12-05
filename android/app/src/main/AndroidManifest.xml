@@ -1,10 +1,11 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage" />
 
     <application
         android:name=".MainApplication"
@@ -14,9 +15,9 @@
         android:allowBackup="false"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="${usesCleartextTraffic}"
-        android:supportsRtl="true">
+        android:supportsRtl="true"
+        android:requestLegacyExternalStorage="true">
 
-            <!-- ADD THIS META-DATA LINE HERE -->
         <meta-data
             android:name="com.google.android.gms.auth.API_KEY"
             android:value="973458787565-asdh334k3841q64mcmi17tk993jrqf07.apps.googleusercontent.com" />
@@ -36,7 +37,6 @@
 
         </activity>
 
-        <!-- Required Google Sign-In Activities -->
         <activity
             android:name="com.google.android.gms.auth.api.signin.internal.SignInHubActivity"
             android:excludeFromRecents="true"

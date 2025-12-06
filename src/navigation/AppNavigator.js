@@ -1,140 +1,3 @@
-// // // import { createStackNavigator } from '@react-navigation/stack';
-// // // import LoginScreen from '../screens/LoginScreen';
-// // // import TabNavigator from "./TabNavigator";
-
-// // // const Stack = createStackNavigator();
-
-// // // export default function AppNavigator() {
-// // //   return (
-// // //     <Stack.Navigator screenOptions={{ headerShown: false }}>
-// // //       <Stack.Screen name="LoginScreen" component={LoginScreen} />
-// // //         <Stack.Screen name="Tabs" component={TabNavigator} />
-// // //     </Stack.Navigator>
-// // //   );
-// // // }
-
-
-// // import { createStackNavigator } from '@react-navigation/stack';
-// // import TabNavigator from "./TabNavigator";
-// // import PassportUploadScreen from '../screens/passport/PassportUploadScreen';
-// // import PassportDetailsScreen from '../screens/passport/PassportDetailsScreen';
-// // import QuestionScreen from '../screens/questions/QuestionScreen';
-// // import ReviewAnswersScreen from '../screens/questions/ReviewAnswerScreen';
-// // import HomeScreen from '../screens/HomeScreen';
-
-// // const Stack = createStackNavigator();
-
-// // export default function AppNavigator() {
-// //   return (
-// //     <Stack.Navigator screenOptions={{ headerShown: false }}>
-// //       <Stack.Screen name="Tabs" component={TabNavigator} />
-// //         <Stack.Screen name="HomeScreen" component={HomeScreen} />
-// //       <Stack.Screen name="PassportUploadScreen" component={PassportUploadScreen} />
-// //       <Stack.Screen name="PassportDetailsScreen" component={PassportDetailsScreen} />
-// //       <Stack.Screen name="QuestionScreen" component={QuestionScreen} />
-// //       <Stack.Screen name="ReviewAnswersScreen" component={ReviewAnswersScreen} />
-// //     </Stack.Navigator>
-// //   );
-// // }
-
-
-// import { createStackNavigator } from '@react-navigation/stack';
-// import TabNavigator from './TabNavigator';
-// import PassportUploadScreen from '../screens/passport/PassportUploadScreen';
-// import PassportDetailsScreen from '../screens/passport/PassportDetailsScreen';
-// import QuestionScreen from '../screens/questions/QuestionScreen';
-// import ReviewAnswersScreen from '../screens/questions/ReviewAnswerScreen';
-// import HomeScreen from '../screens/HomeScreen';
-
-// const Stack = createStackNavigator();
-
-// export default function AppNavigator() {
-//   return (
-//     <Stack.Navigator screenOptions={{ headerShown: false }}>
-//       <Stack.Screen name="Tabs" component={TabNavigator} />
-//       <Stack.Screen name="PassportUploadScreen" component={PassportUploadScreen} />
-//       <Stack.Screen name="PassportDetailsScreen" component={PassportDetailsScreen} />
-//       <Stack.Screen name="Home" component={HomeScreen} />
-//       <Stack.Screen name="QuestionScreen" component={QuestionScreen} />
-//       <Stack.Screen name="ReviewAnswersScreen" component={ReviewAnswersScreen} />
-//     </Stack.Navigator>
-//   );
-// }
-
-
-// import { createStackNavigator } from '@react-navigation/stack';
-// import TabNavigator from './TabNavigator';
-// import PassportUploadScreen from '../screens/passport/PassportUploadScreen';
-// import PassportDetailsScreen from '../screens/passport/PassportDetailsScreen';
-// import QuestionScreen from '../screens/questions/QuestionScreen';
-// import ReviewAnswersScreen from '../screens/questions/ReviewAnswerScreen';
-// import HomeScreen from '../screens/HomeScreen';
-// import DestinationScreen from '../screens/DestinationScreen'
-// import VisaQuestionScreen from '../screens/visa/VisaQuestionScreen'
-
-
-// const Stack = createStackNavigator();
-
-// export default function AppNavigator() {
-//   return (
-//     <Stack.Navigator screenOptions={{ headerShown: false }}>
-
-//       {/* MAIN APP ENTRY — Tabs must be FIRST */}
-//       <Stack.Screen name="Tabs" component={TabNavigator} />
-
-//       {/* Additional screens */}
-//       <Stack.Screen name="PassportUploadScreen" component={PassportUploadScreen} />
-//       <Stack.Screen name="PassportDetailsScreen" component={PassportDetailsScreen} />
-//       <Stack.Screen name="QuestionScreen" component={QuestionScreen} />
-//       <Stack.Screen name="ReviewAnswersScreen" component={ReviewAnswersScreen} />
-//       <Stack.Screen name="HomeScreen" component={HomeScreen} />
-//       <Stack.Screen name="Destination" component={DestinationScreen} />
-//       <Stack.Screen name="VisaQuestionScreen" component={VisaQuestionScreen} />
-
-
-
-//     </Stack.Navigator>
-//   );
-// }
-// import { createStackNavigator } from '@react-navigation/stack';
-// import TabNavigator from './TabNavigator';
-
-// import PassportUploadScreen from '../screens/passport/PassportUploadScreen';
-// import PassportDetailsScreen from '../screens/passport/PassportDetailsScreen';
-// import QuestionScreen from '../screens/questions/QuestionScreen';
-// import ReviewAnswersScreen from '../screens/questions/ReviewAnswerScreen';
-// import HomeScreen from '../screens/HomeScreen';
-// import DestinationScreen from '../screens/DestinationScreen';
-// import VisaQuestionScreen from '../screens/visa/VisaQuestionScreen';
-
-
-// // ⭐ Add CheckoutScreen
-// // import CheckoutScreen from '../screens/visa/CheckoutScreen';
-
-// const Stack = createStackNavigator();
-
-// export default function AppNavigator() {
-//   return (
-//     <Stack.Navigator screenOptions={{ headerShown: false }}>
-
-//       {/* MAIN APP ENTRY */}
-//       <Stack.Screen name="Tabs" component={TabNavigator} />
-
-//       {/* Additional screens */}
-//       <Stack.Screen name="PassportUploadScreen" component={PassportUploadScreen} />
-//       <Stack.Screen name="PassportDetailsScreen" component={PassportDetailsScreen} />
-//       <Stack.Screen name="QuestionScreen" component={QuestionScreen} />
-//       <Stack.Screen name="ReviewAnswersScreen" component={ReviewAnswersScreen} />
-//       <Stack.Screen name="HomeScreen" component={HomeScreen} />
-//       <Stack.Screen name="Destination" component={DestinationScreen} />
-//       <Stack.Screen name="VisaQuestionScreen" component={VisaQuestionScreen} />
-
-
-
-
-//     </Stack.Navigator>
-//   );
-// }
 
 import { createStackNavigator } from '@react-navigation/stack';
 import TabNavigator from './TabNavigator';
@@ -151,9 +14,9 @@ import StartApplicationScreen from '../screens/start/StartApllicationScreen';
 import TravelDateScreen from '../screens/date/TravelDateScreen';
 import PhotoUploadScreen from '../screens/passport/PhotoUploadScreen';
 import PassportListScreen from '../components/PassportListScreen';
-import RatingScreen from '../screens/visa/RatingScreen';
-import VisaStatusScreen from '../screens/visa/VisaStatusScreen';
 import AddTravellerScreen from "../screens/passport/AddTravellerScreen";
+import RatingScreen from "../screens/visa/RatingScreen";
+import VisaStatusScreen from "../screens/visa/VisaStatusScreen";
 
 const Stack = createStackNavigator();
 
@@ -173,11 +36,17 @@ export default function AppNavigator() {
       <Stack.Screen name="TravelDateScreen" component={TravelDateScreen} />
       <Stack.Screen name="PhotoUploadScreen" component={PhotoUploadScreen} />
       <Stack.Screen name="PassportListScreen" component={PassportListScreen} />
+<<<<<<< HEAD
       <Stack.Screen name="RatingScreen" component={RatingScreen} />
       <Stack.Screen name="VisaStatusScreen" component={VisaStatusScreen} />
 
       <Stack.Screen name="AddTravellerScreen" component={AddTravellerScreen} options={{ headerShown: false }}
       />
+=======
+      <Stack.Screen name="AddTravellerScreen" component={AddTravellerScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="RatingScreen" component={RatingScreen} />
+      <Stack.Screen name="VisaStatusScreen" component={VisaStatusScreen} />
+>>>>>>> 5d910e4af51bef17b3e4fd79be5e77af773b8128
     </Stack.Navigator>
   );
 }

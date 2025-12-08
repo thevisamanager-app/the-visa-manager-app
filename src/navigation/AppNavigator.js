@@ -17,7 +17,6 @@ import PassportListScreen from '../components/PassportListScreen';
 import AddTravellerScreen from "../screens/passport/AddTravellerScreen";
 import RatingScreen from "../screens/visa/RatingScreen";
 import VisaStatusScreen from "../screens/visa/VisaStatusScreen";
-
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {

@@ -16,19 +16,35 @@ const DATA = [
     source: require('../assets/images/vietnam.jpeg'),
     title: '07 NOV 11:42 AM',
     countrName: 'Vietnam',
-    VisaManagerFee:"1770",
-    AuthorityCharges:"750",
-    GovernmentFee:"2350",
-    currency:""
+    VisaManagerFee: "1770",
+    AuthorityCharges: "750",
+    GovernmentFee: "2350",
+    currency: ""
   },
   {
     id: 2,
     source: require('../assets/images/singapore.jpeg'),
     title: '08 DEC 12:15 PM',
     countrName: 'Singapore',
+    VisaManagerFee: "779",
+    AuthorityCharges: "999",
+    GovernmentFee: "1900",
+    currency: ""
   },
   {
     id: 3,
+    source: require('../assets/images/indonesia.jpeg'),
+    title: '09 JAN 11:00 AM',
+    countrName: 'Indonesia',
+  },
+    {
+    id: 4,
+    source: require('../assets/images/indonesia.jpeg'),
+    title: '09 JAN 11:00 AM',
+    countrName: 'Indonesia',
+  },
+    {
+    id: 5,
     source: require('../assets/images/indonesia.jpeg'),
     title: '09 JAN 11:00 AM',
     countrName: 'Indonesia',
@@ -94,6 +110,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     borderColor: 'grey',
-    color:"#111"
+    color: "#111"
   },
 });

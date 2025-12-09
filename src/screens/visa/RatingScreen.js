@@ -740,14 +740,15 @@ import functions from "@react-native-firebase/functions";
 import auth from "@react-native-firebase/auth";
 import RNFS from "react-native-fs";
 import FileViewer from "react-native-file-viewer";
-
+import { useSelector } from "react-redux";
 const ORANGE = "#FF7A00";
 
-export default function CongratsScreen({ navigation }) {
+export default function CongratsScreen({ navigation, route }) {
     const [ratingVisible, setRatingVisible] = useState(false);
     const [selectedRating, setSelectedRating] = useState(0);
     const [loading, setLoading] = useState(false);
-
+    const passport = route?.params?.passport || route?.params?.updatedPassport || {};
+    const amount = route?.params?.totalAmount || {};
     useEffect(() => {
         const timer = setTimeout(() => {
             setRatingVisible(true);
@@ -761,7 +762,9 @@ export default function CongratsScreen({ navigation }) {
         await AsyncStorage.setItem("userRating", value.toString());
         setRatingVisible(false);
     };
-
+    // ⬇️ Read selected destination from Redux
+    const selected = useSelector((state) => state.destinations.selected);
+    console.log("RATING SCREEN ===", selected.countrName, passport, amount);
     const handleDownloadInvoice = async () => {
         try {
             setLoading(true);
@@ -775,15 +778,16 @@ export default function CongratsScreen({ navigation }) {
 
             const invoiceId = `INV-${Date.now()}`;
             const callGenerateInvoice = functions().httpsCallable("generateInvoice");
-            console.log("USER ID ===>", user.uid);
-            console.log("Invoice Payload:", { invoiceId, userName: user.displayName, userId: user.uid });
+            console.log("USER ID ===>", user);
+            console.log("Invoice Payload:", { invoiceId, userName: user.displayName, userId: user.uid, selectedCountry: selected });
 
 
             const response = await callGenerateInvoice({
                 invoiceId,
                 userName: user.displayName ?? user.email ?? user.phoneNumber ?? "Guest User",
-                userId: user.uid,
-                amount: 1500,
+                userId: passport.firstName + " " + passport.lastName,
+                amount: amount,
+                country: selected.countrName,
                 date: new Date().toLocaleString(),
             });
 
@@ -873,97 +877,17 @@ export default function CongratsScreen({ navigation }) {
 const styles = StyleSheet.create({
     // ---- original styling unchanged ----
     container: { flex: 1, backgroundColor: "#FFFFFF" },
-
-    centerContent: {
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-        paddingHorizontal: 24,
-    },
-
-    title: {
-        fontSize: 42,
-        fontWeight: "900",
-        color: ORANGE,
-        marginBottom: 10,
-    },
-    subtitle: {
-        textAlign: "center",
-        fontSize: 16,
-        color: "#333",
-        marginBottom: 15,
-    },
-
-    datePill: {
-        flexDirection: "row",
-        alignItems: "center",
-        borderColor: ORANGE,
-        borderWidth: 1.5,
-        paddingVertical: 6,
-        paddingHorizontal: 16,
-        borderRadius: 30,
-        marginTop: 8,
-    },
-    dateText: {
-        marginLeft: 6,
-        fontSize: 15,
-        fontWeight: "600",
-        color: "#000",
-    },
-
-    circleImagePlaceholder: {
-        marginTop: 25,
-        width: 220,
-        height: 220,
-        borderRadius: 120,
-        borderWidth: 6,
-        borderColor: ORANGE,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-
-    modalBackground: {
-        flex: 1,
-        justifyContent: "flex-end",
-        backgroundColor: "rgba(0,0,0,0.2)",
-    },
-    modalCard: {
-        backgroundColor: "#FFFFFF",
-        padding: 25,
-        borderTopLeftRadius: 22,
-        borderTopRightRadius: 22,
-        alignItems: "center",
-    },
-
-    modalTitle: {
-        fontSize: 20,
-        fontWeight: "700",
-        color: "#000",
-        textAlign: "center",
-    },
-    modalSubtitle: {
-        fontSize: 15,
-        fontWeight: "400",
-        color: "#444",
-        marginVertical: 10,
-        textAlign: "center",
-    },
-
-    starContainer: {
-        flexDirection: "row",
-        marginTop: 8,
-        paddingBottom: 12,
-    },
-      primaryButton: {
-    marginTop:30,
-    backgroundColor: ORANGE,
-    paddingVertical: 12,
-    padding: 22,
-    borderRadius: 10,
-  },
-  primaryButtonText: {
-    color: "white",
-    textAlign: "center",
-    fontWeight: "600",
-  },
+    centerContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 24 },
+    title: { fontSize: 42, fontWeight: "900", color: ORANGE, marginBottom: 10 },
+    subtitle: { textAlign: "center", fontSize: 16, color: "#333", marginBottom: 15 },
+    datePill: { flexDirection: "row", alignItems: "center", borderColor: ORANGE, borderWidth: 1.5, paddingVertical: 6, paddingHorizontal: 16, borderRadius: 30, marginTop: 8 },
+    dateText: { marginLeft: 6, fontSize: 15, fontWeight: "600", color: "#000" },
+    circleImagePlaceholder: { marginTop: 25, width: 220, height: 220, borderRadius: 120, borderWidth: 6, borderColor: ORANGE, justifyContent: "center", alignItems: "center" },
+    primaryButton: { marginTop: 30, backgroundColor: ORANGE, padding: 22, borderRadius: 10 },
+    primaryButtonText: { color: "white", textAlign: "center", fontWeight: "600" },
+    modalBackground: { flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(0,0,0,0.2)" },
+    modalCard: { backgroundColor: "#FFFFFF", padding: 25, borderTopLeftRadius: 22, borderTopRightRadius: 22, alignItems: "center" },
+    modalTitle: { fontSize: 20, fontWeight: "700", color: "#000", textAlign: "center" },
+    modalSubtitle: { fontSize: 15, fontWeight: "400", color: "#444", marginVertical: 10, textAlign: "center" },
+    starContainer: { flexDirection: "row", marginTop: 8, paddingBottom: 12 },
 });

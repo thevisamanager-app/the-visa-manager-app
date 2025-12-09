@@ -22,15 +22,15 @@ export default function CheckoutScreen({ navigation, route }) {
 
   // ⬇️ Read selected destination from Redux
   const selected = useSelector((state) => state.destinations.selected);
-
   const passport = route?.params?.passport || route?.params?.updatedPassport || {};
-  const amount = 2;
-  const userId = "USER001";
-
-  console.log("SELECTED COUNTRY ===", selected);
-
+  console.log("SELECTED COUNTRY ===", selected, passport);
   const handlePay = async () => {
-    navigation.navigate("RatingScreen");
+    const totalAmount = Number(
+      typeof selected?.GovernmentFee === "string"
+        ? selected?.GovernmentFee
+        : selected?.GovernmentFee?.Single
+    ) + Number(selected?.VisaManagerFee?.replace(/[^\d.]/g, "")) + Number(selected?.AuthorityCharges?.replace(/[^\d.]/g, ""))
+    navigation.navigate("RatingScreen", { passport, totalAmount, selected });
 
     // const result = await startPayment(amount, userId, passport);
 
@@ -88,7 +88,7 @@ export default function CheckoutScreen({ navigation, route }) {
             {/* ⬇️ Use redux VisaManagerFee */}
             <Text style={styles.freePrice}>₹{selected?.VisaManagerFee}</Text>
           </View>
-          
+
           <View style={styles.rowSpace}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Icon name="shield-checkmark-outline" size={22} color={ORANGE} />
@@ -110,17 +110,17 @@ export default function CheckoutScreen({ navigation, route }) {
           <View style={styles.rowSpace}>
             <Text style={styles.totalLabel}>Total</Text>
 
-            {/* TOTAL = Visa + TVM */}
+            {/* TOTAL = Visa + TVM  + Authorityfee*/}
             <Text style={styles.totalAmount}>
               ₹
               {Number(
                 typeof selected?.GovernmentFee === "string"
                   ? selected?.GovernmentFee
                   : selected?.GovernmentFee?.Single
-              ) + Number(selected?.VisaManagerFee?.replace(/[^\d.]/g, ""))}
+              ) + Number(selected?.VisaManagerFee?.replace(/[^\d.]/g, "")) + Number(selected?.AuthorityCharges?.replace(/[^\d.]/g, ""))}
             </Text>
           </View>
-          
+
         </View>
 
         {/* Protection Section */}

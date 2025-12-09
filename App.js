@@ -55,10 +55,10 @@
 // // import Counter from'./src/components/Counter';
 // //  import { View ,Text} from 'react-native';
 // //  import { configureGoogleSignin } from './src/config/googleConfig';
- 
+
 
 // // export default function App() {
-  
+
 // //   useEffect(() => {
 // //     configureGoogleSignin();
 // //   }, []);
@@ -126,7 +126,7 @@ export default function App() {
   }, []);
 
   return (
-    <Provider store={store}>                {/* MUST wrap here */}
+    <Provider store={store}>
       <NavigationContainer>
         <RootNavigator />
       </NavigationContainer>

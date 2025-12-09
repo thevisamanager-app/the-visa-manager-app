@@ -2064,6 +2064,7 @@ import {
 } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../../utils/metrics";
 
 import { extractTextFromImage } from "../../api/ocr/visionApi";
 import { parseMRZ } from "../../api/ocr/mrzParser";
@@ -2333,75 +2334,205 @@ export default function PassportUploadScreen({ navigation, route }) {
   );
 }
 
+// const styles = StyleSheet.create({
+//   container: { flex: 1, backgroundColor: "#fff", padding: 20 },
+//   topNav: {
+//     flexDirection: "row",
+//     justifyContent: "space-between",
+//     alignItems: "center",
+//   },
+//   stepBadge: {
+//     flexDirection: "row",
+//     alignItems: "center",
+//     backgroundColor: ORANGE,
+//     paddingHorizontal: 14,
+//     paddingVertical: 6,
+//     borderRadius: 20,
+//   },
+//   stepBadgeText: { color: "white", fontWeight: "600", marginLeft: 6 },
+//   progressContainer: {
+//     flexDirection: "row",
+//     alignItems: "center",
+//     marginTop: 20,
+//     justifyContent: "center",
+//   },
+//   stepItem: { alignItems: "center" },
+//   stepLabel: { fontSize: 12, color: "#777", marginTop: 4 },
+//   line: { width: 30, height: 2, backgroundColor: ORANGE, marginHorizontal: 5 },
+//   title: { fontSize: 18, fontWeight: "700", marginTop: 30, marginBottom: 15 },
+//   card: {
+//     marginTop: 20,
+//     backgroundColor: "#F8F8F8",
+//     borderRadius: 16,
+//     padding: 16,
+//   },
+//   sectionTitle: { fontSize: 16, fontWeight: "700" },
+//   label: { fontSize: 14, fontWeight: "600", marginBottom: 6 },
+//   preview: {
+//     width: "100%",
+//     height: 140,
+//     borderRadius: 10,
+//     marginBottom: 10,
+//     backgroundColor: "#eee",
+//   },
+//   primaryButton: {
+//     backgroundColor: ORANGE,
+//     paddingVertical: 12,
+//     borderRadius: 10,
+//   },
+//   primaryButtonText: { color: "white", textAlign: "center", fontWeight: "600" },
+//   secondaryButton: {
+//     borderWidth: 1,
+//     borderColor: ORANGE,
+//     paddingVertical: 12,
+//     borderRadius: 10,
+//   },
+//   secondaryButtonText: {
+//     color: ORANGE,
+//     textAlign: "center",
+//     fontWeight: "600",
+//   },
+//   bottomButton: {
+//     backgroundColor: ORANGE,
+//     paddingVertical: 16,
+//     borderRadius: 12,
+//     marginTop: 10,
+//   },
+//   bottomButtonText: {
+//     color: "#fff",
+//     textAlign: "center",
+//     fontSize: 18,
+//     fontWeight: "700",
+//   },
+// });
+
+
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff", padding: 20 },
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    padding: wp("4%"),                          // responsive padding
+  },
+
   topNav: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    marginTop: verticalScale(5),
   },
+
   stepBadge: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: ORANGE,
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 20,
+    paddingHorizontal: moderateScale(12),
+    paddingVertical: verticalScale(5),
+    borderRadius: moderateScale(20),
   },
-  stepBadgeText: { color: "white", fontWeight: "600", marginLeft: 6 },
+
+  stepBadgeText: {
+    color: "white",
+    fontWeight: "600",
+    marginLeft: scale(6),
+    fontSize: RFValue(12),
+  },
+
   progressContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 20,
+    marginTop: verticalScale(18),
     justifyContent: "center",
   },
-  stepItem: { alignItems: "center" },
-  stepLabel: { fontSize: 12, color: "#777", marginTop: 4 },
-  line: { width: 30, height: 2, backgroundColor: ORANGE, marginHorizontal: 5 },
-  title: { fontSize: 18, fontWeight: "700", marginTop: 30, marginBottom: 15 },
-  card: {
-    marginTop: 20,
-    backgroundColor: "#F8F8F8",
-    borderRadius: 16,
-    padding: 16,
+
+  stepItem: {
+    alignItems: "center",
   },
-  sectionTitle: { fontSize: 16, fontWeight: "700" },
-  label: { fontSize: 14, fontWeight: "600", marginBottom: 6 },
+
+  stepLabel: {
+    fontSize: RFValue(10),
+    color: "#777",
+    marginTop: verticalScale(4),
+  },
+
+  line: {
+    width: wp("6%"),
+    height: scale(2),
+    backgroundColor: ORANGE,
+    marginHorizontal: wp("1%"),
+  },
+
+  title: {
+    fontSize: RFValue(17),
+    fontWeight: "700",
+    marginTop: verticalScale(22),
+    marginBottom: verticalScale(12),
+    textAlign: "center",
+  },
+
+  card: {
+    marginTop: verticalScale(16),
+    backgroundColor: "#F8F8F8",
+    borderRadius: moderateScale(14),
+    padding: moderateScale(14),
+  },
+
+  sectionTitle: {
+    fontSize: RFValue(15),
+    fontWeight: "700",
+  },
+
+  label: {
+    fontSize: RFValue(13),
+    fontWeight: "600",
+    marginBottom: verticalScale(4),
+  },
+
   preview: {
     width: "100%",
-    height: 140,
-    borderRadius: 10,
-    marginBottom: 10,
+    height: hp("22%"),
+    borderRadius: moderateScale(10),
+    marginBottom: verticalScale(10),
     backgroundColor: "#eee",
   },
+
   primaryButton: {
     backgroundColor: ORANGE,
-    paddingVertical: 12,
-    borderRadius: 10,
+    paddingVertical: verticalScale(12),
+    borderRadius: moderateScale(10),
   },
-  primaryButtonText: { color: "white", textAlign: "center", fontWeight: "600" },
+
+  primaryButtonText: {
+    color: "white",
+    textAlign: "center",
+    fontSize: RFValue(14),
+    fontWeight: "600",
+  },
+
   secondaryButton: {
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: ORANGE,
-    paddingVertical: 12,
-    borderRadius: 10,
+    paddingVertical: verticalScale(12),
+    borderRadius: moderateScale(10),
   },
+
   secondaryButtonText: {
     color: ORANGE,
     textAlign: "center",
+    fontSize: RFValue(14),
     fontWeight: "600",
   },
+
   bottomButton: {
     backgroundColor: ORANGE,
-    paddingVertical: 16,
-    borderRadius: 12,
-    marginTop: 10,
+    paddingVertical: verticalScale(14),
+    borderRadius: moderateScale(12),
+    marginTop: verticalScale(14),
   },
+
   bottomButtonText: {
     color: "#fff",
     textAlign: "center",
-    fontSize: 18,
+    fontSize: RFValue(16),
     fontWeight: "700",
   },
 });
-

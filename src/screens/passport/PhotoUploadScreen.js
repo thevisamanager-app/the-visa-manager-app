@@ -279,6 +279,7 @@ import {
 import { launchImageLibrary } from "react-native-image-picker";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { uploadUserPhoto } from "../../api/user/photoService";
+import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../../utils/metrics";
 
 export default function PhotoUploadScreen({ navigation, route }) {
   const travelDate = route?.params?.travelDate || null;
@@ -458,20 +459,128 @@ export default function PhotoUploadScreen({ navigation, route }) {
 }
 
 // ===== STYLES =====
+// const styles = StyleSheet.create({
+//   container: { flex: 1, backgroundColor: "#fff", padding: 20 },
+//   topNav: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+//   stepBadge: { backgroundColor: "#FF5C00", paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, flexDirection: "row", alignItems: "center" },
+//   stepBadgeText: { color: "white", fontWeight: "600", marginLeft: 6 },
+//   progressContainer: { flexDirection: "row", alignItems: "center", marginTop: 20, justifyContent: "center" },
+//   stepItem: { alignItems: "center" },
+//   stepLabel: { fontSize: 12, color: "#777", marginTop: 4 },
+//   line: { width: 30, height: 2, backgroundColor: "#FF5C00", marginHorizontal: 5 },
+//   title: { fontSize: 22, fontWeight: "700", marginTop: 30, marginBottom: 15 },
+//   imageBox: { width: "100%", height: 260, backgroundColor: "#f4f4f4", borderRadius: 12, justifyContent: "center", alignItems: "center" },
+//   placeholder: { color: "#999", fontSize: 14 },
+//   confirmButton: { backgroundColor: "#FF5C00", padding: 16, borderRadius: 10, marginTop: 30 },
+//   confirmText: { color: "white", fontSize: 18, textAlign: "center", fontWeight: "700" },
+//   retakeButton: { borderWidth: 2, borderColor: "#FF5C00", padding: 16, borderRadius: 10, marginTop: 12 },
+//   retakeText: { color: "#FF5C00", fontSize: 18, textAlign: "center", fontWeight: "700" },
+// });
+
+
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff", padding: 20 },
-  topNav: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  stepBadge: { backgroundColor: "#FF5C00", paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, flexDirection: "row", alignItems: "center" },
-  stepBadgeText: { color: "white", fontWeight: "600", marginLeft: 6 },
-  progressContainer: { flexDirection: "row", alignItems: "center", marginTop: 20, justifyContent: "center" },
-  stepItem: { alignItems: "center" },
-  stepLabel: { fontSize: 12, color: "#777", marginTop: 4 },
-  line: { width: 30, height: 2, backgroundColor: "#FF5C00", marginHorizontal: 5 },
-  title: { fontSize: 22, fontWeight: "700", marginTop: 30, marginBottom: 15 },
-  imageBox: { width: "100%", height: 260, backgroundColor: "#f4f4f4", borderRadius: 12, justifyContent: "center", alignItems: "center" },
-  placeholder: { color: "#999", fontSize: 14 },
-  confirmButton: { backgroundColor: "#FF5C00", padding: 16, borderRadius: 10, marginTop: 30 },
-  confirmText: { color: "white", fontSize: 18, textAlign: "center", fontWeight: "700" },
-  retakeButton: { borderWidth: 2, borderColor: "#FF5C00", padding: 16, borderRadius: 10, marginTop: 12 },
-  retakeText: { color: "#FF5C00", fontSize: 18, textAlign: "center", fontWeight: "700" },
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    padding: wp("4%"),                          // responsive padding
+  },
+
+  topNav: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: verticalScale(5),
+  },
+
+  stepBadge: {
+    backgroundColor: "#FF5C00",
+    paddingHorizontal: moderateScale(12),
+    paddingVertical: verticalScale(5),
+    borderRadius: moderateScale(20),
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  stepBadgeText: {
+    color: "white",
+    fontWeight: "600",
+    marginLeft: scale(6),
+    fontSize: RFValue(12),
+  },
+
+  progressContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: verticalScale(18),
+    justifyContent: "center",
+  },
+
+  stepItem: {
+    alignItems: "center",
+  },
+
+  stepLabel: {
+    fontSize: RFValue(10),
+    color: "#777",
+    marginTop: verticalScale(4),
+  },
+
+  line: {
+    width: wp("6%"),
+    height: scale(2),
+    backgroundColor: "#FF5C00",
+    marginHorizontal: wp("1%"),
+  },
+
+  title: {
+    fontSize: RFValue(20),
+    fontWeight: "700",
+    marginTop: verticalScale(24),
+    marginBottom: verticalScale(12),
+    textAlign: "center",
+  },
+
+  imageBox: {
+    width: "100%",
+    height: hp("30%"),
+    backgroundColor: "#f4f4f4",
+    borderRadius: moderateScale(12),
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: verticalScale(20),
+  },
+
+  placeholder: {
+    color: "#999",
+    fontSize: RFValue(14),
+  },
+
+  confirmButton: {
+    backgroundColor: "#FF5C00",
+    paddingVertical: verticalScale(14),
+    borderRadius: moderateScale(10),
+    marginTop: verticalScale(24),
+  },
+
+  confirmText: {
+    color: "white",
+    fontSize: RFValue(16),
+    textAlign: "center",
+    fontWeight: "700",
+  },
+
+  retakeButton: {
+    borderWidth: scale(2),
+    borderColor: "#FF5C00",
+    paddingVertical: verticalScale(14),
+    borderRadius: moderateScale(10),
+    marginTop: verticalScale(10),
+  },
+
+  retakeText: {
+    color: "#FF5C00",
+    fontSize: RFValue(16),
+    textAlign: "center",
+    fontWeight: "700",
+  },
 });

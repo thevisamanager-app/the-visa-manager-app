@@ -735,6 +735,8 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../../utils/metrics";
+
 
 import functions from "@react-native-firebase/functions";
 import auth from "@react-native-firebase/auth";
@@ -870,24 +872,208 @@ export default function CongratsScreen({ navigation, route }) {
     );
 }
 
-// ---- styles unchanged ----
+// const styles = StyleSheet.create({
+//     container: { flex: 1, backgroundColor: "#FFFFFF" },
 
+//     centerContent: {
+//         flex: 1,
+//         alignItems: "center",
+//         justifyContent: "center",
+//         paddingHorizontal: 24,
+//     },
 
+//     title: {
+//         fontSize: 42,
+//         fontWeight: "900",
+//         color: ORANGE,
+//         marginBottom: 10,
+//     },
+//     subtitle: {
+//         textAlign: "center",
+//         fontSize: 16,
+//         color: "#333",
+//         marginBottom: 15,
+//     },
+
+//     datePill: {
+//         flexDirection: "row",
+//         alignItems: "center",
+//         borderColor: ORANGE,
+//         borderWidth: 1.5,
+//         paddingVertical: 6,
+//         paddingHorizontal: 16,
+//         borderRadius: 30,
+//         marginTop: 8,
+//     },
+//     dateText: {
+//         marginLeft: 6,
+//         fontSize: 15,
+//         fontWeight: "600",
+//         color: "#000",
+//     },
+
+//     circleImagePlaceholder: {
+//         marginTop: 25,
+//         width: 220,
+//         height: 220,
+//         borderRadius: 120,
+//         borderWidth: 6,
+//         borderColor: ORANGE,
+//         justifyContent: "center",
+//         alignItems: "center",
+//     },
+
+//     modalBackground: {
+//         flex: 1,
+//         justifyContent: "flex-end",
+//         backgroundColor: "rgba(0,0,0,0.2)",
+//     },
+//     modalCard: {
+//         backgroundColor: "#FFFFFF",
+//         padding: 25,
+//         borderTopLeftRadius: 22,
+//         borderTopRightRadius: 22,
+//         alignItems: "center",
+//     },
+
+//     modalTitle: {
+//         fontSize: 20,
+//         fontWeight: "700",
+//         color: "#000",
+//         textAlign: "center",
+//     },
+//     modalSubtitle: {
+//         fontSize: 15,
+//         fontWeight: "400",
+//         color: "#444",
+//         marginVertical: 10,
+//         textAlign: "center",
+//     },
+
+//     starContainer: {
+//         flexDirection: "row",
+//         marginTop: 8,
+//         paddingBottom: 12,
+//     },
+//       primaryButton: {
+//     marginTop:30,
+//     backgroundColor: ORANGE,
+//     paddingVertical: 12,
+//     padding: 22,
+//     borderRadius: 10,
+//   },
+//   primaryButtonText: {
+//     color: "white",
+//     textAlign: "center",
+//     fontWeight: "600",
+//   },
+// });
 
 const styles = StyleSheet.create({
-    // ---- original styling unchanged ----
-    container: { flex: 1, backgroundColor: "#FFFFFF" },
-    centerContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 24 },
-    title: { fontSize: 42, fontWeight: "900", color: ORANGE, marginBottom: 10 },
-    subtitle: { textAlign: "center", fontSize: 16, color: "#333", marginBottom: 15 },
-    datePill: { flexDirection: "row", alignItems: "center", borderColor: ORANGE, borderWidth: 1.5, paddingVertical: 6, paddingHorizontal: 16, borderRadius: 30, marginTop: 8 },
-    dateText: { marginLeft: 6, fontSize: 15, fontWeight: "600", color: "#000" },
-    circleImagePlaceholder: { marginTop: 25, width: 220, height: 220, borderRadius: 120, borderWidth: 6, borderColor: ORANGE, justifyContent: "center", alignItems: "center" },
-    primaryButton: { marginTop: 30, backgroundColor: ORANGE, padding: 22, borderRadius: 10 },
-    primaryButtonText: { color: "white", textAlign: "center", fontWeight: "600" },
-    modalBackground: { flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(0,0,0,0.2)" },
-    modalCard: { backgroundColor: "#FFFFFF", padding: 25, borderTopLeftRadius: 22, borderTopRightRadius: 22, alignItems: "center" },
-    modalTitle: { fontSize: 20, fontWeight: "700", color: "#000", textAlign: "center" },
-    modalSubtitle: { fontSize: 15, fontWeight: "400", color: "#444", marginVertical: 10, textAlign: "center" },
-    starContainer: { flexDirection: "row", marginTop: 8, paddingBottom: 12 },
+  container: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+  },
+
+  centerContent: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: wp("6%"),
+  },
+
+  title: {
+    fontSize: RFValue(38),
+    fontWeight: "900",
+    color: ORANGE,
+    marginBottom: verticalScale(10),
+  },
+
+  subtitle: {
+    textAlign: "center",
+    fontSize: RFValue(14),
+    color: "#333",
+    marginBottom: verticalScale(12),
+  },
+
+  datePill: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderColor: ORANGE,
+    borderWidth: scale(1.4),
+    paddingVertical: verticalScale(6),
+    paddingHorizontal: moderateScale(14),
+    borderRadius: moderateScale(30),
+    marginTop: verticalScale(6),
+  },
+
+  dateText: {
+    marginLeft: scale(6),
+    fontSize: RFValue(13),
+    fontWeight: "600",
+    color: "#000",
+  },
+
+  circleImagePlaceholder: {
+    marginTop: verticalScale(22),
+    width: wp("55%"),
+    height: wp("55%"),
+    borderRadius: wp("28%"),
+    borderWidth: scale(5),
+    borderColor: ORANGE,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  primaryButton: {
+    marginTop: verticalScale(25),
+    backgroundColor: ORANGE,
+    paddingVertical: verticalScale(12),
+    paddingHorizontal: moderateScale(22),
+    borderRadius: moderateScale(10),
+    width: wp("70%"),
+  },
+
+  primaryButtonText: {
+    color: "#fff",
+    textAlign: "center",
+    fontWeight: "600",
+    fontSize: RFValue(15),
+  },
+
+  modalBackground: {
+    flex: 1,
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0,0,0,0.2)",
+  },
+
+  modalCard: {
+    backgroundColor: "#FFFFFF",
+    padding: moderateScale(22),
+    borderTopLeftRadius: moderateScale(22),
+    borderTopRightRadius: moderateScale(22),
+    alignItems: "center",
+  },
+
+  modalTitle: {
+    fontSize: RFValue(18),
+    fontWeight: "700",
+    color: "#000",
+    textAlign: "center",
+  },
+
+  modalSubtitle: {
+    fontSize: RFValue(13),
+    fontWeight: "400",
+    color: "#444",
+    marginVertical: verticalScale(8),
+    textAlign: "center",
+  },
+
+  starContainer: {
+    flexDirection: "row",
+    marginTop: verticalScale(6),
+    paddingBottom: verticalScale(12),
+  },
 });
+

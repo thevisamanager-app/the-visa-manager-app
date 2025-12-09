@@ -11,6 +11,7 @@ import {
 import Icon from "react-native-vector-icons/Ionicons";
 import { getAuth } from "@react-native-firebase/auth";
 import { startPayment } from "../../services/payment/PaymentService";
+import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../../utils/metrics";
 
 // ⬇️ NEW IMPORT
 import { useSelector } from "react-redux";
@@ -151,89 +152,249 @@ export default function CheckoutScreen({ navigation, route }) {
   );
 }
 
+// -----------------------------------------------
+// NO UI STYLE CHANGES BELOW (COPIED 100% SAME)
+// -----------------------------------------------
+
+// const styles = StyleSheet.create({
+//   container: { flex: 1, backgroundColor: "#FAFAFA", marginTop: 40 },
+//   header: {
+//     flexDirection: "row",
+//     alignItems: "center",
+//     paddingHorizontal: 20,
+//     paddingVertical: 10,
+//     justifyContent: "space-between",
+//   },
+//   headerTitle: {
+//     fontSize: 20,
+//     fontWeight: "700",
+//     color: "#000",
+//   },
+//   travellerBtn: {
+//     flexDirection: "row",
+//     alignItems: "center",
+//     alignSelf: "flex-start",
+//     marginTop: 10,
+//     marginLeft: 20,
+//     borderWidth: 1,
+//     borderColor: "#ccc",
+//     paddingHorizontal: 12,
+//     paddingVertical: 8,
+//     borderRadius: 10,
+//   },
+//   travelerText: { fontSize: 15, fontWeight: "600" },
+//   card: {
+//     backgroundColor: CARD_BG,
+//     margin: 16,
+//     padding: 18,
+//     borderRadius: 16,
+//     borderWidth: 1.3,
+//     borderColor: "#E4E4E7",
+//   },
+//   rowSpace: {
+//     flexDirection: "row",
+//     justifyContent: "space-between",
+//     alignItems: "center",
+//     marginVertical: 6,
+//   },
+//   itemTitle: { fontSize: 16, marginLeft: 8, fontWeight: "500" },
+//   price: { fontSize: 17, fontWeight: "600", color: "#111" },
+//   freePrice: { fontSize: 17, fontWeight: "700", color: ORANGE },
+//   divider: { height: 1, backgroundColor: "#E4E4E7", marginVertical: 10 },
+//   totalLabel: { fontSize: 20, fontWeight: "700", color: "#111" },
+//   totalAmount: { fontSize: 22, fontWeight: "900", color: ORANGE },
+//   bannerBox: {
+//     backgroundColor: LIGHT_PURPLE,
+//     padding: 10,
+//     borderRadius: 10,
+//     marginTop: 6,
+//   },
+//   bannerText: { fontSize: 14, textAlign: "center", color: "#4A4A4A" },
+//   protectCard: {
+//     backgroundColor: CARD_BG,
+//     marginHorizontal: 16,
+//     padding: 18,
+//     borderRadius: 16,
+//     marginTop: 6,
+//     borderWidth: 1,
+//     borderColor: "#e4e4e7",
+//   },
+//   protectTitle: { fontSize: 18, fontWeight: "700", color: "#2F2F2F" },
+//   protectBadge: {
+//     fontSize: 13,
+//     color: "#2AA952",
+//     marginTop: 2,
+//     fontWeight: "700",
+//   },
+//   protectInfo: { marginTop: 5, fontSize: 14, color: "#444" },
+//   bottomBar: {
+//     position: "absolute",
+//     bottom: 0,
+//     width: "100%",
+//     padding: 16,
+//     backgroundColor: "#fff",
+//   },
+//   payButton: {
+//     backgroundColor: ORANGE,
+//     paddingVertical: 16,
+//     borderRadius: 12,
+//     alignItems: "center",
+//   },
+//   btnText: { fontSize: 18, color: "#fff", fontWeight: "800" },
+// });
+
+
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FAFAFA", marginTop: 40 },
+  container: {
+    flex: 1,
+    backgroundColor: "#FAFAFA",
+    marginTop: verticalScale(30),
+  },
+
   header: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingHorizontal: wp("4%"),
+    paddingVertical: verticalScale(10),
     justifyContent: "space-between",
   },
+
   headerTitle: {
-    fontSize: 20,
+    fontSize: RFValue(18),
     fontWeight: "700",
     color: "#000",
   },
+
   travellerBtn: {
     flexDirection: "row",
     alignItems: "center",
     alignSelf: "flex-start",
-    marginTop: 10,
-    marginLeft: 20,
-    borderWidth: 1,
+    marginTop: verticalScale(10),
+    marginLeft: wp("4%"),
+    borderWidth: scale(1),
     borderColor: "#ccc",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 10,
+    paddingHorizontal: moderateScale(12),
+    paddingVertical: verticalScale(6),
+    borderRadius: moderateScale(10),
   },
-  travelerText: { fontSize: 15, fontWeight: "600" },
+
+  travelerText: {
+    fontSize: RFValue(14),
+    fontWeight: "600",
+  },
+
   card: {
     backgroundColor: CARD_BG,
-    margin: 16,
-    padding: 18,
-    borderRadius: 16,
-    borderWidth: 1.3,
+    margin: wp("4%"),
+    padding: moderateScale(16),
+    borderRadius: moderateScale(16),
+    borderWidth: scale(1.2),
     borderColor: "#E4E4E7",
   },
+
   rowSpace: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginVertical: 6,
+    marginVertical: verticalScale(6),
   },
-  itemTitle: { fontSize: 16, marginLeft: 8, fontWeight: "500" },
-  price: { fontSize: 17, fontWeight: "600", color: "#111" },
-  freePrice: { fontSize: 17, fontWeight: "700", color: ORANGE },
-  divider: { height: 1, backgroundColor: "#E4E4E7", marginVertical: 10 },
-  totalLabel: { fontSize: 20, fontWeight: "700", color: "#111" },
-  totalAmount: { fontSize: 22, fontWeight: "900", color: ORANGE },
+
+  itemTitle: {
+    fontSize: RFValue(14),
+    marginLeft: scale(8),
+    fontWeight: "500",
+  },
+
+  price: {
+    fontSize: RFValue(16),
+    fontWeight: "600",
+    color: "#111",
+  },
+
+  freePrice: {
+    fontSize: RFValue(16),
+    fontWeight: "700",
+    color: ORANGE,
+  },
+
+  divider: {
+    height: scale(1),
+    backgroundColor: "#E4E4E7",
+    marginVertical: verticalScale(10),
+  },
+
+  totalLabel: {
+    fontSize: RFValue(18),
+    fontWeight: "700",
+    color: "#111",
+  },
+
+  totalAmount: {
+    fontSize: RFValue(20),
+    fontWeight: "900",
+    color: ORANGE,
+  },
+
   bannerBox: {
     backgroundColor: LIGHT_PURPLE,
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 6,
+    padding: verticalScale(10),
+    borderRadius: moderateScale(10),
+    marginTop: verticalScale(6),
   },
-  bannerText: { fontSize: 14, textAlign: "center", color: "#4A4A4A" },
+
+  bannerText: {
+    fontSize: RFValue(13),
+    textAlign: "center",
+    color: "#4A4A4A",
+  },
+
   protectCard: {
     backgroundColor: CARD_BG,
-    marginHorizontal: 16,
-    padding: 18,
-    borderRadius: 16,
-    marginTop: 6,
-    borderWidth: 1,
+    marginHorizontal: wp("4%"),
+    padding: moderateScale(16),
+    borderRadius: moderateScale(16),
+    marginTop: verticalScale(8),
+    borderWidth: scale(1),
     borderColor: "#e4e4e7",
   },
-  protectTitle: { fontSize: 18, fontWeight: "700", color: "#2F2F2F" },
+
+  protectTitle: {
+    fontSize: RFValue(16),
+    fontWeight: "700",
+    color: "#2F2F2F",
+  },
+
   protectBadge: {
-    fontSize: 13,
+    fontSize: RFValue(12),
     color: "#2AA952",
-    marginTop: 2,
+    marginTop: verticalScale(2),
     fontWeight: "700",
   },
-  protectInfo: { marginTop: 5, fontSize: 14, color: "#444" },
+
+  protectInfo: {
+    marginTop: verticalScale(5),
+    fontSize: RFValue(13),
+    color: "#444",
+  },
+
   bottomBar: {
     position: "absolute",
     bottom: 0,
     width: "100%",
-    padding: 16,
+    padding: moderateScale(14),
     backgroundColor: "#fff",
   },
+
   payButton: {
     backgroundColor: ORANGE,
-    paddingVertical: 16,
-    borderRadius: 12,
+    paddingVertical: verticalScale(14),
+    borderRadius: moderateScale(12),
     alignItems: "center",
   },
-  btnText: { fontSize: 18, color: "#fff", fontWeight: "800" },
+
+  btnText: {
+    fontSize: RFValue(16),
+    color: "#fff",
+    fontWeight: "800",
+  },
 });

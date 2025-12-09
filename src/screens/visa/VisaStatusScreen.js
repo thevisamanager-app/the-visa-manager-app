@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { LinearGradient } from "react-native-linear-gradient";
-
+import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../../utils/metrics";
 
 const ORANGE = "#FF5C00";
 const BLACK = "#000";
@@ -112,107 +112,220 @@ export default function VisaStatusScreen({ navigation }) {
 }
 
 // STYLES
+// const styles = StyleSheet.create({
+//   container: { flex: 1, backgroundColor: "#FFFFFF" },
+
+//   headerRow: {
+//     padding: 18,
+//     flexDirection: "row",
+//     justifyContent: "space-between",
+//     alignItems: "center",
+//   },
+//   helpButton: { flexDirection: "row", alignItems: "center" },
+//   helpText: { marginLeft: 4, color: ORANGE, fontWeight: "700" },
+
+//   topSection: { flexDirection: "row", paddingHorizontal: 16, marginTop: 6 },
+
+//   dateCard: {
+//     width: 82,
+//     height: 120,
+//     borderRadius: 16,
+//     borderWidth: 2,
+//     borderColor: ORANGE,
+//     alignItems: "center",
+//     justifyContent: "center",
+//   },
+//   dateDay: { fontSize: 34, fontWeight: "900", color: ORANGE },
+//   dateMonth: { fontSize: 18, fontWeight: "600", color: ORANGE },
+//   dateTimePill: {
+//     backgroundColor: ORANGE,
+//     paddingVertical: 4,
+//     paddingHorizontal: 10,
+//     borderRadius: 12,
+//     marginTop: 6,
+//   },
+//   dateTime: { fontSize: 12, fontWeight: "700", color: "#fff" },
+
+//   userInfo: { marginLeft: 14, justifyContent: "center" },
+//   userName: { fontSize: 22, fontWeight: "800", color: BLACK },
+//   country: { marginTop: 4, fontSize: 15, color: GRAY },
+
+//   approvedTag: {
+//     backgroundColor: "#FFD7C6",
+//     paddingVertical: 4,
+//     paddingHorizontal: 10,
+//     borderRadius: 10,
+//     marginTop: 8,
+//   },
+//   approvedText: { color: ORANGE, fontWeight: "700", fontSize: 13 },
+
+//   bannerCard: {
+//     flexDirection: "row",
+//     justifyContent: "space-between",
+//     alignItems: "center",
+//     padding: 14,
+//     borderRadius: 12,
+//     marginHorizontal: 16,
+//     marginTop: 16,
+//   },
+//   bannerText: { color: "#FFF", fontWeight: "700", fontSize: 15 },
+
+//   sectionTitle: {
+//     fontSize: 20,
+//     fontWeight: "800",
+//     marginLeft: 16,
+//     marginTop: 20,
+//     marginBottom: 10,
+//     color: BLACK,
+//   },
+
+//   timelineContainer: { paddingHorizontal: 16, paddingBottom: 140 },
+//   row: { flexDirection: "row" },
+//   columnLeft: { alignItems: "center", width: 30 },
+//   columnRight: { flex: 1, paddingBottom: 20 },
+//   dot: {
+//     width: 12,
+//     height: 12,
+//     backgroundColor: ORANGE,
+//     borderRadius: 6,
+//     marginTop: 4,
+//   },
+//   line: {
+//     width: 2,
+//     height: 40,
+//     backgroundColor: ORANGE,
+//     marginTop: 2,
+//   },
+
+//   stepTitle: { fontSize: 15, fontWeight: "600", color: BLACK },
+//   time: { fontSize: 13, color: GRAY, marginTop: 2 },
+
+//   bottomBar: {
+//     position: "absolute",
+//     bottom: 0,
+//     width: "100%",
+//     padding: 14,
+//     backgroundColor: "#FFF",
+//   },
+
+//   viewButton: {
+//     backgroundColor: ORANGE,
+//     paddingVertical: 16,
+//     borderRadius: 12,
+//     alignItems: "center",
+//   },
+//   viewBtnText: { color: "#FFF", fontSize: 18, fontWeight: "900" },
+// });
+
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FFFFFF" },
 
   headerRow: {
-    padding: 18,
+    padding: moderateScale(18),
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
   helpButton: { flexDirection: "row", alignItems: "center" },
-  helpText: { marginLeft: 4, color: ORANGE, fontWeight: "700" },
+  helpText: { marginLeft: scale(4), color: ORANGE, fontWeight: "700", fontSize: RFValue(13) },
 
-  topSection: { flexDirection: "row", paddingHorizontal: 16, marginTop: 6 },
+  topSection: {
+    flexDirection: "row",
+    paddingHorizontal: wp("4%"),
+    marginTop: verticalScale(6),
+  },
 
   dateCard: {
-    width: 82,
-    height: 120,
-    borderRadius: 16,
-    borderWidth: 2,
+    width: wp("22%"),
+    height: hp("17%"),
+    borderRadius: moderateScale(16),
+    borderWidth: scale(2),
     borderColor: ORANGE,
     alignItems: "center",
     justifyContent: "center",
   },
-  dateDay: { fontSize: 34, fontWeight: "900", color: ORANGE },
-  dateMonth: { fontSize: 18, fontWeight: "600", color: ORANGE },
+  dateDay: { fontSize: RFValue(30), fontWeight: "900", color: ORANGE },
+  dateMonth: { fontSize: RFValue(16), fontWeight: "600", color: ORANGE },
   dateTimePill: {
     backgroundColor: ORANGE,
-    paddingVertical: 4,
-    paddingHorizontal: 10,
-    borderRadius: 12,
-    marginTop: 6,
+    paddingVertical: verticalScale(4),
+    paddingHorizontal: moderateScale(10),
+    borderRadius: moderateScale(12),
+    marginTop: verticalScale(4),
   },
-  dateTime: { fontSize: 12, fontWeight: "700", color: "#fff" },
+  dateTime: { fontSize: RFValue(11), fontWeight: "700", color: "#fff" },
 
-  userInfo: { marginLeft: 14, justifyContent: "center" },
-  userName: { fontSize: 22, fontWeight: "800", color: BLACK },
-  country: { marginTop: 4, fontSize: 15, color: GRAY },
+  userInfo: { marginLeft: wp("3%"), justifyContent: "center" },
+  userName: { fontSize: RFValue(20), fontWeight: "800", color: BLACK },
+  country: { marginTop: verticalScale(4), fontSize: RFValue(14), color: GRAY },
 
   approvedTag: {
     backgroundColor: "#FFD7C6",
-    paddingVertical: 4,
-    paddingHorizontal: 10,
-    borderRadius: 10,
-    marginTop: 8,
+    paddingVertical: verticalScale(4),
+    paddingHorizontal: moderateScale(10),
+    borderRadius: moderateScale(10),
+    marginTop: verticalScale(6),
   },
-  approvedText: { color: ORANGE, fontWeight: "700", fontSize: 13 },
+  approvedText: { color: ORANGE, fontWeight: "700", fontSize: RFValue(12) },
 
   bannerCard: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 14,
-    borderRadius: 12,
-    marginHorizontal: 16,
-    marginTop: 16,
+    padding: moderateScale(14),
+    borderRadius: moderateScale(12),
+    marginHorizontal: wp("4%"),
+    marginTop: verticalScale(16),
   },
-  bannerText: { color: "#FFF", fontWeight: "700", fontSize: 15 },
+  bannerText: { color: "#FFF", fontWeight: "700", fontSize: RFValue(14) },
 
   sectionTitle: {
-    fontSize: 20,
+    fontSize: RFValue(18),
     fontWeight: "800",
-    marginLeft: 16,
-    marginTop: 20,
-    marginBottom: 10,
+    marginLeft: wp("4%"),
+    marginTop: verticalScale(18),
+    marginBottom: verticalScale(10),
     color: BLACK,
   },
 
-  timelineContainer: { paddingHorizontal: 16, paddingBottom: 140 },
+  timelineContainer: {
+    paddingHorizontal: wp("4%"),
+    paddingBottom: hp("16%"),
+  },
   row: { flexDirection: "row" },
-  columnLeft: { alignItems: "center", width: 30 },
-  columnRight: { flex: 1, paddingBottom: 20 },
+  columnLeft: { alignItems: "center", width: wp("8%") },
+  columnRight: { flex: 1, paddingBottom: verticalScale(18) },
+
   dot: {
-    width: 12,
-    height: 12,
+    width: scale(10),
+    height: scale(10),
     backgroundColor: ORANGE,
-    borderRadius: 6,
-    marginTop: 4,
+    borderRadius: scale(5),
+    marginTop: verticalScale(4),
   },
   line: {
-    width: 2,
-    height: 40,
+    width: scale(2),
+    height: verticalScale(38),
     backgroundColor: ORANGE,
-    marginTop: 2,
+    marginTop: verticalScale(2),
   },
 
-  stepTitle: { fontSize: 15, fontWeight: "600", color: BLACK },
-  time: { fontSize: 13, color: GRAY, marginTop: 2 },
+  stepTitle: { fontSize: RFValue(14), fontWeight: "600", color: BLACK },
+  time: { fontSize: RFValue(12), color: GRAY, marginTop: verticalScale(2) },
 
   bottomBar: {
     position: "absolute",
     bottom: 0,
     width: "100%",
-    padding: 14,
+    padding: moderateScale(14),
     backgroundColor: "#FFF",
   },
 
   viewButton: {
     backgroundColor: ORANGE,
-    paddingVertical: 16,
-    borderRadius: 12,
+    paddingVertical: verticalScale(14),
+    borderRadius: moderateScale(12),
     alignItems: "center",
   },
-  viewBtnText: { color: "#FFF", fontSize: 18, fontWeight: "900" },
+  viewBtnText: { color: "#FFF", fontSize: RFValue(16), fontWeight: "900" },
 });

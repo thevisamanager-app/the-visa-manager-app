@@ -2738,6 +2738,7 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { savePassportData } from "../../api/user/passportService";
+import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../../utils/metrics";
 
 const ORANGE = "#FF5C00";
 
@@ -3215,88 +3216,259 @@ export default function PassportDetailsScreen({ navigation, route }) {
 }
 
 // === Styles (UNCHANGED) ===
+// const styles = StyleSheet.create({
+//   container: { flex: 1, backgroundColor: "#fff", padding: 20 },
+//   topNav: {
+//     flexDirection: "row",
+//     justifyContent: "space-between",
+//     alignItems: "center",
+//   },
+//   stepBadge: {
+//     backgroundColor: ORANGE,
+//     borderRadius: 18,
+//     paddingHorizontal: 10,
+//     paddingVertical: 4,
+//     flexDirection: "row",
+//     alignItems: "center",
+//   },
+//   stepBadgeText: { color: "#fff", marginLeft: 6 },
+//   progressContainer: {
+//     flexDirection: "row",
+//     alignItems: "center",
+//     marginTop: 20,
+//     justifyContent: "center",
+//   },
+//   stepItem: { alignItems: "center" },
+//   stepLabel: { fontSize: 12, color: "#777", marginTop: 4 },
+//   line: { width: 30, height: 2, backgroundColor: ORANGE, marginHorizontal: 5 },
+//   title: {
+//     fontSize: 20,
+//     fontWeight: "700",
+//     marginVertical: 15,
+//     textAlign: "center",
+//   },
+//   sectionCard: { backgroundColor: "#F6F6F8", borderRadius: 16, padding: 16 },
+//   sectionTitle: { fontWeight: "700", fontSize: 16 },
+//   sectionHeader: {
+//     flexDirection: "row",
+//     justifyContent: "space-between",
+//     alignItems: "center",
+//   },
+//   travellerRow: { flexDirection: "row", alignItems: "center", marginTop: 10 },
+//   travellerName: {
+//     marginLeft: 10,
+//     fontSize: 15,
+//     fontWeight: "600",
+//     flex: 1,
+//   },
+//   addBtn: { color: ORANGE, fontWeight: "600" },
+//   inputLabel: { marginTop: 10, fontWeight: "600" },
+//   input: {
+//     borderWidth: 1,
+//     borderColor: "#ddd",
+//     padding: 8,
+//     marginTop: 4,
+//     borderRadius: 8,
+//     backgroundColor: "#fff",
+//   },
+//   docRow: { marginTop: 10 },
+//   docHeader: { flexDirection: "row", justifyContent: "space-between" },
+//   docHeaderLeft: { flexDirection: "row", alignItems: "center" },
+//   docLabel: { marginLeft: 6, fontWeight: "600" },
+//   thumbBox: {
+//     backgroundColor: "#eee",
+//     width: 80,
+//     height: 80,
+//     marginTop: 8,
+//     borderRadius: 10,
+//     overflow: "hidden",
+//     justifyContent: "center",
+//     alignItems: "center",
+//   },
+//   docImage: { width: "100%", height: "100%" },
+//   docPlaceholder: { fontSize: 12, color: "#555", textAlign: "center" },
+//   confirmButton: {
+//     backgroundColor: ORANGE,
+//     padding: 14,
+//     marginTop: 24,
+//     borderRadius: 12,
+//   },
+//   confirmText: {
+//     color: "#fff",
+//     textAlign: "center",
+//     fontSize: 18,
+//     fontWeight: "700",
+//   },
+// });
+
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff", padding: 20 },
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    padding: wp("4%"),
+  },
+
   topNav: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    marginTop: verticalScale(5),
   },
+
   stepBadge: {
     backgroundColor: ORANGE,
-    borderRadius: 18,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    borderRadius: moderateScale(18),
+    paddingHorizontal: moderateScale(10),
+    paddingVertical: verticalScale(4),
     flexDirection: "row",
     alignItems: "center",
   },
-  stepBadgeText: { color: "#fff", marginLeft: 6 },
+
+  stepBadgeText: {
+    color: "#fff",
+    marginLeft: scale(6),
+    fontSize: RFValue(12),
+    fontWeight: "600",
+  },
+
   progressContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 20,
+    marginTop: verticalScale(16),
     justifyContent: "center",
   },
-  stepItem: { alignItems: "center" },
-  stepLabel: { fontSize: 12, color: "#777", marginTop: 4 },
-  line: { width: 30, height: 2, backgroundColor: ORANGE, marginHorizontal: 5 },
+
+  stepItem: {
+    alignItems: "center",
+  },
+
+  stepLabel: {
+    fontSize: RFValue(10),
+    color: "#777",
+    marginTop: verticalScale(4),
+  },
+
+  line: {
+    width: wp("6%"),
+    height: scale(2),
+    backgroundColor: ORANGE,
+    marginHorizontal: wp("1%"),
+  },
+
   title: {
-    fontSize: 20,
+    fontSize: RFValue(18),
     fontWeight: "700",
-    marginVertical: 15,
+    marginVertical: verticalScale(14),
     textAlign: "center",
   },
-  sectionCard: { backgroundColor: "#F6F6F8", borderRadius: 16, padding: 16 },
-  sectionTitle: { fontWeight: "700", fontSize: 16 },
+
+  sectionCard: {
+    backgroundColor: "#F6F6F8",
+    borderRadius: moderateScale(14),
+    padding: moderateScale(14),
+  },
+
+  sectionTitle: {
+    fontWeight: "700",
+    fontSize: RFValue(15),
+  },
+
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
-  travellerRow: { flexDirection: "row", alignItems: "center", marginTop: 10 },
+
+  travellerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: verticalScale(10),
+  },
+
   travellerName: {
-    marginLeft: 10,
-    fontSize: 15,
+    marginLeft: scale(10),
+    fontSize: RFValue(14),
     fontWeight: "600",
     flex: 1,
   },
-  addBtn: { color: ORANGE, fontWeight: "600" },
-  inputLabel: { marginTop: 10, fontWeight: "600" },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    padding: 8,
-    marginTop: 4,
-    borderRadius: 8,
-    backgroundColor: "#fff",
+
+  addBtn: {
+    color: ORANGE,
+    fontWeight: "600",
+    fontSize: RFValue(13),
   },
-  docRow: { marginTop: 10 },
-  docHeader: { flexDirection: "row", justifyContent: "space-between" },
-  docHeaderLeft: { flexDirection: "row", alignItems: "center" },
-  docLabel: { marginLeft: 6, fontWeight: "600" },
+
+  inputLabel: {
+    marginTop: verticalScale(10),
+    fontWeight: "600",
+    fontSize: RFValue(13),
+  },
+
+  input: {
+    borderWidth: scale(1),
+    borderColor: "#ddd",
+    padding: moderateScale(8),
+    marginTop: verticalScale(4),
+    borderRadius: moderateScale(8),
+    backgroundColor: "#fff",
+    fontSize: RFValue(13),
+  },
+
+  docRow: {
+    marginTop: verticalScale(10),
+  },
+
+  docHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+
+  docHeaderLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  docLabel: {
+    marginLeft: scale(6),
+    fontWeight: "600",
+    fontSize: RFValue(13),
+  },
+
   thumbBox: {
     backgroundColor: "#eee",
-    width: 80,
-    height: 80,
-    marginTop: 8,
-    borderRadius: 10,
+    width: wp("20%"),
+    height: hp("10%"),
+    marginTop: verticalScale(6),
+    borderRadius: moderateScale(10),
     overflow: "hidden",
     justifyContent: "center",
     alignItems: "center",
   },
-  docImage: { width: "100%", height: "100%" },
-  docPlaceholder: { fontSize: 12, color: "#555", textAlign: "center" },
+
+  docImage: {
+    width: "100%",
+    height: "100%",
+  },
+
+  docPlaceholder: {
+    fontSize: RFValue(11),
+    color: "#555",
+    textAlign: "center",
+  },
+
   confirmButton: {
     backgroundColor: ORANGE,
-    padding: 14,
-    marginTop: 24,
-    borderRadius: 12,
+    paddingVertical: verticalScale(14),
+    marginTop: verticalScale(20),
+    borderRadius: moderateScale(12),
   },
+
   confirmText: {
     color: "#fff",
     textAlign: "center",
-    fontSize: 18,
+    fontSize: RFValue(16),
     fontWeight: "700",
   },
 });
+
 

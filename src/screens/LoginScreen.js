@@ -110,6 +110,7 @@ import {
 
 import { sendOtp } from '../services/auth/otpLogin';
 import { googleLogin } from "../services/auth/googleLogin";
+import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../utils/metrics";
 
 export default function LoginScreen({ navigation }) {
   const [phone, setPhone] = useState('');
@@ -188,15 +189,76 @@ export default function LoginScreen({ navigation }) {
 }
 
 // ===== STYLES =====
+// const styles = StyleSheet.create({
+//   container: { flex: 1, justifyContent: "center", padding: 20, backgroundColor: "#fff" },
+//   title: { fontSize: 40, textAlign: "center", fontWeight: "700" },
+//   input: {
+//     borderWidth: 1, borderColor: "#ccc", padding: 12, borderRadius: 8, marginBottom: 20, color: "#000"
+//   },
+//   button: { backgroundColor: "#FF5C00", padding: 15, borderRadius: 8 },
+//   buttonText: { color: "#fff", textAlign: "center", fontSize: 16 },
+//   orText: { textAlign: "center", marginVertical: 20, color: "#666" },
+//   googleButton: { backgroundColor: "#111", padding: 15, borderRadius: 8 },
+//   googleText: { color: "#fff", textAlign: "center", fontSize: 16 },
+// });
+
+
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", padding: 20, backgroundColor: "#fff" },
-  title: { fontSize: 40, textAlign: "center", fontWeight: "700" },
-  input: {
-    borderWidth: 1, borderColor: "#ccc", padding: 12, borderRadius: 8, marginBottom: 20, color: "#000"
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    padding: wp("5%"),
+    backgroundColor: "#fff",
   },
-  button: { backgroundColor: "#FF5C00", padding: 15, borderRadius: 8 },
-  buttonText: { color: "#fff", textAlign: "center", fontSize: 16 },
-  orText: { textAlign: "center", marginVertical: 20, color: "#666" },
-  googleButton: { backgroundColor: "#111", padding: 15, borderRadius: 8 },
-  googleText: { color: "#fff", textAlign: "center", fontSize: 16 },
+
+  title: {
+    fontSize: RFValue(34),
+    textAlign: "center",
+    fontWeight: "700",
+    marginBottom: verticalScale(20),
+  },
+
+  input: {
+    borderWidth: scale(1),
+    borderColor: "#ccc",
+    padding: moderateScale(12),
+    borderRadius: moderateScale(8),
+    marginBottom: verticalScale(20),
+    color: "#000",
+    fontSize: RFValue(14),
+  },
+
+  button: {
+    backgroundColor: "#FF5C00",
+    paddingVertical: verticalScale(14),
+    borderRadius: moderateScale(8),
+  },
+
+  buttonText: {
+    color: "#fff",
+    textAlign: "center",
+    fontSize: RFValue(16),
+    fontWeight: "600",
+  },
+
+  orText: {
+    textAlign: "center",
+    marginVertical: verticalScale(20),
+    color: "#666",
+    fontSize: RFValue(14),
+  },
+
+  googleButton: {
+    backgroundColor: "#111",
+    paddingVertical: verticalScale(14),
+    borderRadius: moderateScale(8),
+    marginTop: verticalScale(4),
+  },
+
+  googleText: {
+    color: "#fff",
+    textAlign: "center",
+    fontSize: RFValue(16),
+    fontWeight: "600",
+  },
 });

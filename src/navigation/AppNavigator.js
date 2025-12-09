@@ -36,17 +36,9 @@ export default function AppNavigator() {
       <Stack.Screen name="TravelDateScreen" component={TravelDateScreen} />
       <Stack.Screen name="PhotoUploadScreen" component={PhotoUploadScreen} />
       <Stack.Screen name="PassportListScreen" component={PassportListScreen} />
-<<<<<<< HEAD
-      <Stack.Screen name="RatingScreen" component={RatingScreen} />
-      <Stack.Screen name="VisaStatusScreen" component={VisaStatusScreen} />
-
-      <Stack.Screen name="AddTravellerScreen" component={AddTravellerScreen} options={{ headerShown: false }}
-      />
-=======
       <Stack.Screen name="AddTravellerScreen" component={AddTravellerScreen} options={{ headerShown: false }} />
       <Stack.Screen name="RatingScreen" component={RatingScreen} />
       <Stack.Screen name="VisaStatusScreen" component={VisaStatusScreen} />
->>>>>>> 5d910e4af51bef17b3e4fd79be5e77af773b8128
     </Stack.Navigator>
   );
 }

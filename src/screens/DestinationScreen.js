@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   TextInput,
   StyleSheet,
@@ -8,72 +8,54 @@ import {
 } from 'react-native';
 import CountryCards from '../components/CountryCards';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSelector, useDispatch } from 'react-redux';
+import { setSelectedDestination } from '../Redux/destinationsSlice';
+import { useNavigation } from '@react-navigation/native';
 
-
-const DATA = [
-  {
-    id: 1,
-    source: require('../assets/images/vietnam.jpeg'),
-    title: '07 NOV 11:42 AM',
-    countrName: 'Vietnam',
-    VisaManagerFee: "1770",
-    AuthorityCharges: "750",
-    GovernmentFee: "2350",
-    currency: ""
-  },
-  {
-    id: 2,
-    source: require('../assets/images/singapore.jpeg'),
-    title: '08 DEC 12:15 PM',
-    countrName: 'Singapore',
-    VisaManagerFee: "779",
-    AuthorityCharges: "999",
-    GovernmentFee: "1900",
-    currency: ""
-  },
-  {
-    id: 3,
-    source: require('../assets/images/indonesia.jpeg'),
-    title: '09 JAN 11:00 AM',
-    countrName: 'Indonesia',
-  },
-    {
-    id: 4,
-    source: require('../assets/images/indonesia.jpeg'),
-    title: '09 JAN 11:00 AM',
-    countrName: 'Indonesia',
-  },
-    {
-    id: 5,
-    source: require('../assets/images/indonesia.jpeg'),
-    title: '09 JAN 11:00 AM',
-    countrName: 'Indonesia',
-  },
-];
 
 export default function DestinationScreen() {
-  const [data, setData] = useState(DATA);
-  const [filteredData, setFilteredData] = useState(DATA);
+
   const [searchText, setSearchText] = useState('');
+  const destinations = useSelector((state) => state.destinations.list);
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
 
-  const searchFilterFunction = (text) => {
-    setSearchText(text);
+  // const searchFilterFunction = (text) => {
+  //   setSearchText(text);
 
-    if (text) {
-      const upperText = text.toUpperCase();
-      const newData = data.filter((item) => {
-        const itemName = item.countrName
-          ? item.countrName.toUpperCase()
-          : ''.toUpperCase();
-        return itemName.indexOf(upperText) > -1;
-      });
-      setFilteredData(newData);
-    } else {
-      // reset if search is cleared
-      setFilteredData(data);
-    }
+  //   if (text) {
+  //     const upperText = text.toUpperCase();
+  //     const newData = data.filter((item) => {
+  //       const itemName = item.countrName
+  //         ? item.countrName.toUpperCase()
+  //         : ''.toUpperCase();
+  //       return itemName.indexOf(upperText) > -1;
+  //     });
+  //     setFilteredData(newData);
+  //   } else {
+  //     // reset if search is cleared
+  //     setFilteredData(data);
+  //   }
+  // };
+
+
+  // ⬇️ Filter from Redux store list
+  const filteredData = useMemo(() => {
+    if (!searchText) return destinations;
+
+    const upperText = searchText.toUpperCase();
+    return destinations.filter((item) => {
+      const itemName = item.countrName ? item.countrName.toUpperCase() : '';
+      return itemName.indexOf(upperText) > -1;
+    });
+  }, [searchText, destinations]);
+
+console.log("DTAFILTER==>",destinations)
+  // ⬇️ When card pressed, save item to Redux & navigate
+  const handleCardPress = (item) => {
+    dispatch(setSelectedDestination(item));
+    navigation.navigate('StartApplicationScreen');   // make sure route name matches your stack
   };
-
   return (
     <SafeAreaView>
 
@@ -90,10 +72,11 @@ export default function DestinationScreen() {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <CountryCards
-            title={item.title}
+            title={item.countrName}
             source={item.source}
             countrName={item.countrName}
             item={item}
+            onPress={() => handleCardPress(item)}
           />
         )}
       />

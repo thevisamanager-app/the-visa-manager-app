@@ -873,3 +873,68 @@ exports.api = onRequest(
   },
   app
 );
+
+
+const functions = require("firebase-functions");
+const admin = require("firebase-admin");
+const PDFDocument = require("pdfkit");
+const path = require("path");
+const os = require("os");
+const fs = require("fs");
+
+admin.initializeApp();
+
+exports.generateVisaPDF = functions.https.onCall(async (data, context) => {
+  const {
+    firstName,
+    lastName,
+    passportNumber,
+    nationality,
+    birthDate,
+    expiryDate,
+    logoUrl
+  } = data;
+
+  const tempFilePath = path.join(os.tmpdir(), `Visa_${passportNumber}.pdf`);
+  const doc = new PDFDocument();
+
+  const writeStream = fs.createWriteStream(tempFilePath);
+  doc.pipe(writeStream);
+
+  // Logo + Company Name
+  doc.image("logo/tvm.png", 40, 40, { width: 80 });
+  doc.fontSize(28).fillColor("black").text("The Visa ", 140, 50, { continued: true });
+  doc.fillColor("#FF5C00").text("Manager");
+
+  doc.moveDown(2);
+
+  // Header line
+  doc.moveTo(40, 120).lineTo(550, 120).stroke("#FF5C00");
+
+  // Data
+  doc.fontSize(16).fillColor("black").text(`Traveller Name: ${firstName} ${lastName}`);
+  doc.text(`Passport Number: ${passportNumber}`);
+  doc.text(`Nationality: ${nationality}`);
+  doc.text(`Birth Date: ${birthDate}`);
+  doc.text(`Passport Expiry: ${expiryDate}`);
+
+  doc.end();
+
+  await new Promise(res => writeStream.on("finish", res));
+
+  const bucket = admin.storage().bucket();
+  await bucket.upload(tempFilePath, {
+    destination: `visas/pdf/${passportNumber}.pdf`,
+    contentType: "application/pdf",
+  });
+
+  fs.unlinkSync(tempFilePath);
+
+  const file = bucket.file(`visas/pdf/${passportNumber}.pdf`);
+  const [url] = await file.getSignedUrl({
+    action: "read",
+    expires: "03-09-2030"
+  });
+
+  return { downloadUrl: url };
+});

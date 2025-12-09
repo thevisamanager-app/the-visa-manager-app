@@ -99,10 +99,11 @@
 
 import React from "react";
 import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity } from "react-native";
+import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../utils/metrics";
 
 const { width } = Dimensions.get("window");
 
-export default function CountryCards({ title, source, countrName, item, onPress }) {
+export default function CountryCards({ title, source, countrName, item, onPress, date }) {
 
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
@@ -112,7 +113,7 @@ export default function CountryCards({ title, source, countrName, item, onPress 
         <Text style={styles.title}>{countrName}</Text>
         <View style={{ flexDirection: "row" }}>
           <Text>Get on </Text>
-          <Text style={styles.date}>{title}</Text>
+          <Text style={styles.date}>{date ?? "N/A"}</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -121,35 +122,39 @@ export default function CountryCards({ title, source, countrName, item, onPress 
 
 const styles = StyleSheet.create({
   card: {
-    width: width,
-    margin: 10,
+    width: wp('92%'),                 // 92% width instead of 100%
+    alignSelf: "center",              // Center horizontally
+    marginVertical: verticalScale(10),
     backgroundColor: "#fff",
-    borderRadius: 10,
+    borderRadius: moderateScale(12),
     overflow: "hidden",
 
     shadowColor: "#000",
-    shadowOpacity: 4,
+    shadowOpacity: 0.15,
     shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
-    elevation: 4,
+    shadowRadius: 5,
+    elevation: 3,
   },
 
   image: {
     width: "100%",
-    height: 210,
+    height: hp('25%'),               // responsive image height
+    resizeMode: "cover",
   },
 
   footer: {
-    padding: 10,
+    padding: moderateScale(12),
   },
 
   title: {
-    fontSize: 16,
+    fontSize: RFValue(16),
     fontWeight: "600",
     color: "#FF5C00",
+    marginBottom: verticalScale(4),
   },
 
   date: {
+    fontSize: RFValue(14),
     fontWeight: "bold",
     color: "#00008B",
   },

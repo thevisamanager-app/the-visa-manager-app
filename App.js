@@ -126,7 +126,7 @@ export default function App() {
   }, []);
 
   return (
-    <Provider store={store}>                {/* MUST wrap here */}
+    <Provider store={store}>                
       <NavigationContainer>
         <RootNavigator />
       </NavigationContainer>

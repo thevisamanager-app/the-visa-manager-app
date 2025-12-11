@@ -15,7 +15,7 @@ import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../../util
 
 // ⬇️ NEW IMPORT
 import { useSelector } from "react-redux";
-const ORANGE = "#FF7A00"; // neon-orange like screenshot
+const ORANGE = "#FF5C00"; // neon-orange like screenshot
 const LIGHT_PURPLE = "#ECEAFF";
 const CARD_BG = "#FFFFFF";
 
@@ -54,7 +54,10 @@ export default function CheckoutScreen({ navigation, route }) {
         {/* ⬇️ Replace static text with selected.countrName */}
         <Text style={styles.headerTitle}>{selected?.countrName}</Text>
 
-        <Icon name="home-outline" size={26} color={ORANGE} />
+        <TouchableOpacity onPress={() => navigation.navigate("Destination")}>
+          <Icon name="home-outline" size={26} color={ORANGE} />
+        </TouchableOpacity>
+
       </View>
 
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
@@ -127,7 +130,7 @@ export default function CheckoutScreen({ navigation, route }) {
         {/* Protection Section */}
         <View style={styles.protectCard}>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Icon name="shield-half-outline" size={32} color="#4147D5" />
+            <Icon name="shield-half-outline" size={32} color={ORANGE} />
             <View style={{ marginLeft: 10 }}>
               <Text style={styles.protectTitle}>The Visa Manager</Text>
               <Text style={styles.protectBadge}>Included for Free</Text>

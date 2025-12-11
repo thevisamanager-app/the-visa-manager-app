@@ -267,7 +267,7 @@
 
 
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -284,10 +284,10 @@ import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../../util
 export default function PhotoUploadScreen({ navigation, route }) {
   const travelDate = route?.params?.travelDate || null;
   const [photo, setPhoto] = useState(null);
-
+  const [date, setDate] = useState("");
   const addMode = route?.params?.addMode || false;
   const editMode = route?.params?.editMode || false;
-
+  const ORANGE = "#FF7A00";
   const pickPhoto = async () => {
     const result = await launchImageLibrary({
       mediaType: "photo",
@@ -326,7 +326,7 @@ export default function PhotoUploadScreen({ navigation, route }) {
       navigation.navigate(route.params.returnTo, {
         updatedPhotoUrl: photo,
         passport: route.params.passport,
-         coTravellers: route?.params?.coTravellers || [],
+        coTravellers: route?.params?.coTravellers || [],
         travelDate,
       });
       return;
@@ -351,6 +351,18 @@ export default function PhotoUploadScreen({ navigation, route }) {
       photoUrl: photo,
     });
   };
+  // Generate a date 5 days ahead
+  const getDateAfterFiveDays = () => {
+    const currentDate = new Date();
+    // currentDate.setDate(currentDate.getDate() + 5);
+
+    const options = { day: "2-digit", month: "short", year: "numeric" };
+    return currentDate.toLocaleDateString("en-GB", options);
+  };
+
+  useEffect(() => {
+    setDate(getDateAfterFiveDays());
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -363,10 +375,13 @@ export default function PhotoUploadScreen({ navigation, route }) {
 
         <View style={styles.stepBadge}>
           <Icon name="check-circle" size={18} color="white" />
-          <Text style={styles.stepBadgeText}>Visa on 27 Nov</Text>
+          <Text style={styles.stepBadgeText}>Visa on {date}</Text>
         </View>
 
-        <Icon name="home" size={26} color="#FF5C00" />
+        <TouchableOpacity onPress={() => navigation.navigate("Destination")}>
+          <Icon name="home" size={26} color={ORANGE} />
+        </TouchableOpacity>
+
       </View>
 
       {/* PROGRESS BAR */}
@@ -447,12 +462,13 @@ export default function PhotoUploadScreen({ navigation, route }) {
       </View>
 
       {/* ACTIONS */}
-      <TouchableOpacity style={styles.confirmButton} onPress={confirmPhoto}>
-        <Text style={styles.confirmText}>Confirm Image</Text>
-      </TouchableOpacity>
+
 
       <TouchableOpacity style={styles.retakeButton} onPress={pickPhoto}>
         <Text style={styles.retakeText}>{photo ? "Reload Image" : "Upload Image"}</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.confirmButton} onPress={confirmPhoto}>
+        <Text style={styles.confirmText}>Confirm Image</Text>
       </TouchableOpacity>
     </View>
   );

@@ -589,7 +589,7 @@ export default function StartApplicationScreen() {
   // Generate a date 5 days ahead
   const getDateAfterFiveDays = () => {
     const currentDate = new Date();
-    currentDate.setDate(currentDate.getDate() + 5);
+   // currentDate.setDate(currentDate.getDate() + 5);
 
     const options = { day: "2-digit", month: "short", year: "numeric" };
     return currentDate.toLocaleDateString("en-GB", options);

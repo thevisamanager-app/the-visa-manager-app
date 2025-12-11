@@ -9,6 +9,7 @@ const crypto = require("crypto");
 const PDFDocument = require("pdfkit");
 const path = require("path");
 const fs = require("fs");
+const os = require("os");
 
 // ===================== FIREBASE INIT ======================
 admin.initializeApp();
@@ -95,31 +96,161 @@ app.post("/verifyRazorpayPayment", async (req, res) => {
 });
 
 // ===================== GENERATE INVOICE PDF (REAL PDF) ======================
+// exports.generateInvoice = onCall(async (req) => {
+//   try {
+//     console.log("CALL DATA ===>", req.data);
+
+//     if (!req.auth || !req.auth.uid) {
+//       throw new HttpsError("unauthenticated", "User not authenticated");
+//     }
+
+//     const { invoiceId, userName, date, amount, userId, country } = req.data;
+//     if (!invoiceId || !date || !amount || !userId || !country) {
+//       throw new HttpsError("invalid-argument", "Missing required fields");
+//     }
+
+//     const displayName = userName || "Guest User";
+
+//     // PDF Setup
+//     const fs = require("fs");
+//     const doc = new PDFDocument({ margin: 40, size: "A4" });
+//     const filePath = `/tmp/${invoiceId}.pdf`;
+//     doc.pipe(fs.createWriteStream(filePath));
+
+//     // ---- LOGO & HEADER ----
+//     const logoPath = path.join(__dirname, "assets", "TVMLogo.png");
+//     doc.image(logoPath, 40, 40, { width: 140 });
+//     doc.fillColor("#FF6A00").fontSize(26).text("INVOICE", 400, 45, { align: "right" });
+
+//     doc.moveDown(1);
+
+//     doc.fontSize(12).fillColor("#000")
+//       .text(`Invoice No: ${invoiceId}`, 40, doc.y);
+//     doc.text(`Date: ${date}`, { align: "right" });
+
+//     doc.moveDown(2);
+//     // ---- BILL TO & COMPANY DETAILS ----
+//     doc.fontSize(14).fillColor("#FF6A00").text("Bill To:", 40);
+//     doc.fillColor("#000").fontSize(12);
+//     doc.text(`Customer ID: ${userId}`);
+//     doc.text(`Mobile: ${displayName}`);
+//     doc.moveDown(2);
+
+//     doc.fontSize(14).fillColor("#FF6A00").text("Company Details:", 40);
+//     doc.fillColor("#000").fontSize(12);
+//     doc.text("The Visa Manager");
+//     doc.text("Pune, Maharashtra");
+//     doc.text("Transaction Type: B2C");
+
+//     doc.moveDown(1);
+
+//     // ---- TABLE HEADER ----
+//     doc.moveTo(40, doc.y + 10).lineTo(550, doc.y + 10).stroke("#FF6A00");
+//     doc.moveDown();
+//     doc.fontSize(14).fillColor("#FF6A00")
+//       .text("DESCRIPTION", 40, doc.y, { continued: true })
+//       .text("CURRENCY", 300, doc.y, { continued: true })
+//       .text("AMOUNT", 450, doc.y);
+
+//     doc.moveTo(40, doc.y + 10).lineTo(550, doc.y + 10).stroke("#FF6A00");
+//     doc.moveDown(1.5);
+
+//     // ---- TABLE ROW ----
+//     doc.fontSize(13).fillColor("#000");
+//     doc.text(`${country}`, 40, doc.y, { continued: true });
+//     doc.text("INR", 300, doc.y, { continued: true });
+//     doc.text(`${amount}`, 450, doc.y);
+
+//     doc.moveDown(2);
+
+//     // ---- TOTAL ----
+//     doc.fontSize(16).fillColor("#FF6A00").text(`TOTAL: INR ${amount}`, { align: "right" });
+
+//     doc.moveDown(2);
+
+//     // ---- FOOTER ----
+//     doc.fontSize(11).fillColor("#000")
+//       .text("This is a computer-generated invoice and requires no signature.", { align: "center" });
+
+//     doc.moveDown(1);
+
+//     doc.fontSize(10).fillColor("gray")
+//       .text("Support: support@thevisamanager.com | +91-XXXXXXXXXX", { align: "center" });
+
+//     doc.end();
+//     await new Promise((resolve) => setTimeout(resolve, 800));
+
+//     // Upload to Storage
+//     await bucket.upload(filePath, {
+//       destination: `invoices/${invoiceId}.pdf`,
+//       contentType: "application/pdf",
+//       metadata: { cacheControl: "public,max-age=31536000" }
+//     });
+
+//     const file = bucket.file(`invoices/${invoiceId}.pdf`);
+//     const [url] = await file.getSignedUrl({
+//       action: "read",
+//       expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days
+//     });
+
+//     console.log("Invoice URL =>", url);
+
+//     return {
+//       status: "success",
+//       message: "Invoice generated successfully",
+//       url,
+//     };
+
+//   } catch (error) {
+//     console.error("Invoice generation failed:", error);
+//     throw new HttpsError("internal", error.message);
+//   }
+// });
+
 exports.generateInvoice = onCall(async (req) => {
   try {
     console.log("CALL DATA ===>", req.data);
 
+    // --------- AUTH CHECK ----------
     if (!req.auth || !req.auth.uid) {
       throw new HttpsError("unauthenticated", "User not authenticated");
     }
 
     const { invoiceId, userName, date, amount, userId, country } = req.data;
-    if (!invoiceId || !date || !amount || !userId || !country) {
+
+    // --------- BASIC VALIDATION ----------
+    if (!invoiceId || !date || amount == null || !userId || !country) {
       throw new HttpsError("invalid-argument", "Missing required fields");
+    }
+
+    if (typeof amount !== "number") {
+      throw new HttpsError("invalid-argument", "Amount must be a number");
     }
 
     const displayName = userName || "Guest User";
 
-    // PDF Setup
-    const fs = require("fs");
+    // --------- PDF SETUP ----------
     const doc = new PDFDocument({ margin: 40, size: "A4" });
-    const filePath = `/tmp/${invoiceId}.pdf`;
-    doc.pipe(fs.createWriteStream(filePath));
+    const filePath = path.join(os.tmpdir(), `${invoiceId}.pdf`);
+    const writeStream = fs.createWriteStream(filePath);
+    doc.pipe(writeStream);
 
-    // ---- LOGO & HEADER ----
-    const logoPath = path.join(__dirname, "assests", "TVMLogo.png");
-    doc.image(logoPath, 40, 40, { width: 140 });
-    doc.fillColor("#FF6A00").fontSize(26).text("INVOICE", 400, 45, { align: "right" });
+    // --------- LOGO & HEADER ----------
+    try {
+      const logoPath = path.join(__dirname, "assets", "TVMLogo.png"); // ✅ FIXED FOLDER NAME
+      if (fs.existsSync(logoPath)) {
+        doc.image(logoPath, 40, 40, { width: 140 });
+      } else {
+        console.warn("Logo file not found at:", logoPath);
+      }
+    } catch (e) {
+      console.warn("Logo load failed:", e);
+      // don't throw, still generate invoice without logo
+    }
+
+    doc.fillColor("#FF6A00")
+      .fontSize(26)
+      .text("INVOICE", 400, 45, { align: "right" });
 
     doc.moveDown(1);
 
@@ -128,7 +259,8 @@ exports.generateInvoice = onCall(async (req) => {
     doc.text(`Date: ${date}`, { align: "right" });
 
     doc.moveDown(2);
-    // ---- BILL TO & COMPANY DETAILS ----
+
+    // --------- BILL TO & COMPANY DETAILS ----------
     doc.fontSize(14).fillColor("#FF6A00").text("Bill To:", 40);
     doc.fillColor("#000").fontSize(12);
     doc.text(`Customer ID: ${userId}`);
@@ -143,9 +275,10 @@ exports.generateInvoice = onCall(async (req) => {
 
     doc.moveDown(1);
 
-    // ---- TABLE HEADER ----
+    // --------- TABLE HEADER ----------
     doc.moveTo(40, doc.y + 10).lineTo(550, doc.y + 10).stroke("#FF6A00");
     doc.moveDown();
+
     doc.fontSize(14).fillColor("#FF6A00")
       .text("DESCRIPTION", 40, doc.y, { continued: true })
       .text("CURRENCY", 300, doc.y, { continued: true })
@@ -154,7 +287,7 @@ exports.generateInvoice = onCall(async (req) => {
     doc.moveTo(40, doc.y + 10).lineTo(550, doc.y + 10).stroke("#FF6A00");
     doc.moveDown(1.5);
 
-    // ---- TABLE ROW ----
+    // --------- TABLE ROW ----------
     doc.fontSize(13).fillColor("#000");
     doc.text(`${country}`, 40, doc.y, { continued: true });
     doc.text("INR", 300, doc.y, { continued: true });
@@ -162,29 +295,49 @@ exports.generateInvoice = onCall(async (req) => {
 
     doc.moveDown(2);
 
-    // ---- TOTAL ----
-    doc.fontSize(16).fillColor("#FF6A00").text(`TOTAL: INR ${amount}`, { align: "right" });
+    // --------- TOTAL ----------
+    doc.fontSize(16).fillColor("#FF6A00").text(`TOTAL: INR ${amount}`, {
+      align: "right",
+    });
 
     doc.moveDown(2);
 
-    // ---- FOOTER ----
+    // --------- FOOTER ----------
     doc.fontSize(11).fillColor("#000")
-      .text("This is a computer-generated invoice and requires no signature.", { align: "center" });
+      .text(
+        "This is a computer-generated invoice and requires no signature.",
+        { align: "center" }
+      );
 
     doc.moveDown(1);
 
     doc.fontSize(10).fillColor("gray")
-      .text("Support: support@thevisamanager.com | +91-XXXXXXXXXX", { align: "center" });
+      .text(
+        "Support: support@thevisamanager.com | +91-XXXXXXXXXX",
+        { align: "center" }
+      );
 
     doc.end();
-    await new Promise((resolve) => setTimeout(resolve, 800));
 
-    // Upload to Storage
+    // ✅ Wait for file write to finish (instead of fixed 800ms)
+    await new Promise((resolve, reject) => {
+      writeStream.on("finish", resolve);
+      writeStream.on("error", reject);
+    });
+
+    // --------- UPLOAD TO STORAGE ----------
     await bucket.upload(filePath, {
       destination: `invoices/${invoiceId}.pdf`,
       contentType: "application/pdf",
-      metadata: { cacheControl: "public,max-age=31536000" }
+      metadata: { cacheControl: "public,max-age=31536000" },
     });
+
+    // Optional: clean tmp
+    try {
+      fs.unlinkSync(filePath);
+    } catch (e) {
+      console.warn("Failed to delete temp file:", e);
+    }
 
     const file = bucket.file(`invoices/${invoiceId}.pdf`);
     const [url] = await file.getSignedUrl({
@@ -199,10 +352,9 @@ exports.generateInvoice = onCall(async (req) => {
       message: "Invoice generated successfully",
       url,
     };
-
   } catch (error) {
     console.error("Invoice generation failed:", error);
-    throw new HttpsError("internal", error.message);
+    throw new HttpsError("internal", error.message || "Invoice failed");
   }
 });
 

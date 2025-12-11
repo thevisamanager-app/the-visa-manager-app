@@ -1,12 +1,10 @@
 
 import { createStackNavigator } from '@react-navigation/stack';
 import TabNavigator from './TabNavigator';
-
 import PassportUploadScreen from '../screens/passport/PassportUploadScreen';
 import PassportDetailsScreen from '../screens/passport/PassportDetailsScreen';
 import QuestionScreen from '../screens/questions/QuestionScreen';
 import ReviewAnswersScreen from '../screens/questions/ReviewAnswerScreen';
-import HomeScreen from '../screens/HomeScreen';
 import DestinationScreen from '../screens/DestinationScreen';
 import VisaQuestionScreen from '../screens/visa/VisaQuestionScreen';
 import CheckoutScreen from '../screens/visa/CheckoutScreen';
@@ -18,6 +16,10 @@ import AddTravellerScreen from "../screens/passport/AddTravellerScreen";
 import RatingScreen from "../screens/visa/RatingScreen";
 import VisaStatusScreen from "../screens/visa/VisaStatusScreen";
 import AdminVisaStatusScreen from "../screens/visa/AdminVisaStatusScreen";
+import EditProfileScreen from "../screens/profile/EditProfileScreen"
+import ProfileScreen from '../screens/profile/ProfileScreen';
+
+
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
@@ -28,7 +30,6 @@ export default function AppNavigator() {
       <Stack.Screen name="PassportDetailsScreen" component={PassportDetailsScreen} />
       <Stack.Screen name="QuestionScreen" component={QuestionScreen} />
       <Stack.Screen name="ReviewAnswersScreen" component={ReviewAnswersScreen} />
-      <Stack.Screen name="HomeScreen" component={HomeScreen} />
       <Stack.Screen name="Destination" component={DestinationScreen} />
       <Stack.Screen name="VisaQuestionScreen" component={VisaQuestionScreen} />
       <Stack.Screen name="CheckoutScreen" component={CheckoutScreen} />
@@ -41,6 +42,8 @@ export default function AppNavigator() {
       <Stack.Screen name="VisaStatusScreen" component={VisaStatusScreen} />
       <Stack.Screen name="AdminVisaStatusScreen" component={AdminVisaStatusScreen} />
 
+      <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} />
+       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
     </Stack.Navigator>
   );
 }

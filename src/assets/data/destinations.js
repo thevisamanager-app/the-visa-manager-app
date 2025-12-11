@@ -137,7 +137,7 @@ const DESTINATIONS = [
     id: 14,
     source: require('../images/Usa.jpg'),
     title: '09 JAN 11:00 AM',
-    countrName: 'Usa',
+    countrName: 'USA',
     VisaManagerFee:"2948.82",
     AuthorityCharges:"0",
     GovernmentFee:"17020",

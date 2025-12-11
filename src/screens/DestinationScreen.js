@@ -16,7 +16,7 @@
 // export default function DestinationScreen() {
 
 //   const [date, setDate] = useState('');
-  
+
 //   const [searchText, setSearchText] = useState('');
 //   const destinations = useSelector((state) => state.destinations.list);
 //   const dispatch = useDispatch();
@@ -52,7 +52,7 @@
 //     });
 //   }, [searchText, destinations]);
 
- 
+
 //   console.log("DTAFILTER==>", destinations)
 //   // ⬇️ When card pressed, save item to Redux & navigate
 //   const handleCardPress = (item) => {
@@ -187,10 +187,10 @@ export default function DestinationScreen() {
         onChangeText={(text) => setSearchText(text)}
         value={searchText}
         placeholder="Search destination"
-        placeholderTextColor={"#FF5C00"}
+        placeholderTextColor={"#000"}
       />
 
-      <FlatList
+      {/* <FlatList
         data={filteredData}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
@@ -203,7 +203,23 @@ export default function DestinationScreen() {
             date={date}      // Now date is passed correctly
           />
         )}
-      />
+      /> */
+        <FlatList
+          data={filteredData}
+          keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={{ paddingBottom: 120 }}  // ⭐ Important
+          renderItem={({ item }) => (
+            <CountryCards
+              title={item.countrName}
+              source={item.source}
+              countrName={item.countrName}
+              item={item}
+              onPress={() => handleCardPress(item)}
+              date={date}
+            />
+          )}
+        />
+      }
 
     </SafeAreaView>
   );
@@ -220,9 +236,10 @@ const styles = StyleSheet.create({
     marginVertical: verticalScale(10),
     borderWidth: scale(1),
     padding: moderateScale(10),
-    borderRadius: moderateScale(10),
+    borderRadius: moderateScale(50),
     borderColor: 'grey',
-    color: '#111',
+    color: '#fff',
     fontSize: RFValue(14),
+    backgroundColor: "#fff"
   },
 });

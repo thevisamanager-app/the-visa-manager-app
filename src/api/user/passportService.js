@@ -599,8 +599,10 @@ export async function savePassportData(passportPayload) {
     .collection("users")
     .doc(uid)
     .collection("passportData")
+    
     .add({
       ...passportPayload,
+      userId: uid,
       createdAt: firestore.FieldValue.serverTimestamp(),
     });
 }
@@ -645,4 +647,32 @@ export async function getAllPassportData() {
     id: doc.id,
     ...doc.data(),
   }));
+}
+
+
+export async function getAllPassportDataAdmin() {
+  const usersSnap = await firestore().collection("users").get();
+
+  const allPassports = [];
+
+  for (const userDoc of usersSnap.docs) {
+    const userId = userDoc.id;
+
+    const passportSnap = await firestore()
+      .collection("users")
+      .doc(userId)
+      .collection("passportData")
+      .orderBy("createdAt", "desc")
+      .get();
+
+    passportSnap.forEach((p) => {
+      allPassports.push({
+        id: p.id,
+        userId: userId,        // 🔥 IMPORTANT, for admin actions
+        ...p.data(),
+      });
+    });
+  }
+
+  return allPassports;
 }

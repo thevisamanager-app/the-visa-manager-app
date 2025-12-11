@@ -17,6 +17,7 @@ import PassportListScreen from '../components/PassportListScreen';
 import AddTravellerScreen from "../screens/passport/AddTravellerScreen";
 import RatingScreen from "../screens/visa/RatingScreen";
 import VisaStatusScreen from "../screens/visa/VisaStatusScreen";
+import AdminVisaStatusScreen from "../screens/visa/AdminVisaStatusScreen";
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
@@ -38,6 +39,8 @@ export default function AppNavigator() {
       <Stack.Screen name="AddTravellerScreen" component={AddTravellerScreen} options={{ headerShown: false }} />
       <Stack.Screen name="RatingScreen" component={RatingScreen} />
       <Stack.Screen name="VisaStatusScreen" component={VisaStatusScreen} />
+      <Stack.Screen name="AdminVisaStatusScreen" component={AdminVisaStatusScreen} />
+
     </Stack.Navigator>
   );
 }

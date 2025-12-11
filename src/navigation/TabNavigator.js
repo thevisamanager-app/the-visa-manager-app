@@ -39,6 +39,7 @@ import HomeScreen from '../screens/HomeScreen';
 import PassportUploadScreen from '../screens/passport/PassportUploadScreen';
 import PassportListScreen from '../components/PassportListScreen';
 import DestinationScreen from '../screens/DestinationScreen';
+import VisaStatusScreen from '../screens/visa/VisaStatusScreen';
 
 
 const Tab = createBottomTabNavigator();
@@ -47,7 +48,7 @@ export default function TabNavigator() {
   return (
     <Tab.Navigator screenOptions={{ headerShown: false }}>
       <Tab.Screen name="Destination" component={DestinationScreen} />
-      <Tab.Screen name="Passport" component={PassportUploadScreen} />
+      <Tab.Screen name="VisaStatusScreen" component={VisaStatusScreen} />
       <Tab.Screen name="PassportListScreen" component={PassportListScreen} />
        <Tab.Screen name="HomeScreen" component={HomeScreen} />
     </Tab.Navigator>

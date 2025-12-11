@@ -828,7 +828,10 @@ export default function CheckoutScreen({ navigation, route }) {
         {/* ⬇️ Replace static text with selected.countrName */}
         <Text style={styles.headerTitle}>{selected?.countrName}</Text>
 
-        <Icon name="home-outline" size={26} color={ORANGE} />
+        <TouchableOpacity onPress={() => navigation.navigate("Destination")}>
+          <Icon name="home-outline" size={26} color={ORANGE} />
+        </TouchableOpacity>
+
       </View>
 
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
@@ -863,7 +866,7 @@ export default function CheckoutScreen({ navigation, route }) {
             {/* ⬇️ Use redux VisaManagerFee */}
             <Text style={styles.freePrice}>₹{selected?.VisaManagerFee}</Text>
           </View>
-          
+
           <View style={styles.rowSpace}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Icon name="shield-checkmark-outline" size={22} color={ORANGE} />
@@ -896,7 +899,7 @@ export default function CheckoutScreen({ navigation, route }) {
               ) + Number(selected?.VisaManagerFee?.replace(/[^\d.]/g, ""))}
             </Text>
           </View>
-          
+
         </View>
 
         {/* Protection Section */}

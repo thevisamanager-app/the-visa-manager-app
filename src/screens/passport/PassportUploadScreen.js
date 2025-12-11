@@ -2052,7 +2052,7 @@
 // });
 
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -2064,6 +2064,7 @@ import {
 } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../../utils/metrics";
 
 import { extractTextFromImage } from "../../api/ocr/visionApi";
@@ -2096,7 +2097,7 @@ export default function PassportUploadScreen({ navigation, route }) {
   const [back, setBack] = useState(null);
   const [loading, setLoading] = useState(false);
   const [mrzData, setMrzData] = useState(null);
-
+  const [date, setDate] = useState("");
   // PICK FRONT
   const pickFront = async () => {
     const result = await launchImageLibrary({
@@ -2239,6 +2240,18 @@ export default function PassportUploadScreen({ navigation, route }) {
       Alert.alert("Error", "Failed to save passport.");
     }
   };
+  // Generate a date 5 days ahead
+  const getDateAfterFiveDays = () => {
+    const currentDate = new Date();
+    // currentDate.setDate(currentDate.getDate() + 5);
+
+    const options = { day: "2-digit", month: "short", year: "numeric" };
+    return currentDate.toLocaleDateString("en-GB", options);
+  };
+
+  useEffect(() => {
+    setDate(getDateAfterFiveDays());
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -2249,9 +2262,11 @@ export default function PassportUploadScreen({ navigation, route }) {
         </TouchableOpacity>
         <View style={styles.stepBadge}>
           <Icon name="check-circle" size={18} color="white" />
-          <Text style={styles.stepBadgeText}>Visa on 27 Nov, 07:05 PM</Text>
+          <Text style={styles.stepBadgeText}>Visa on {date}</Text>
         </View>
-        <Icon name="home" size={26} color={ORANGE} />
+        <TouchableOpacity onPress={() => navigation.navigate("Destination")}>
+          <Icon name="home" size={moderateScale(24)} color="black" />
+        </TouchableOpacity>
       </View>
 
       {/* PROGRESS BAR (KEEPING ORIGINAL UI) */}

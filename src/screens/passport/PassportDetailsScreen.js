@@ -2737,6 +2737,7 @@ import {
   ScrollView,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import { savePassportData } from "../../api/user/passportService";
 import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../../utils/metrics";
 
@@ -2756,7 +2757,6 @@ export default function PassportDetailsScreen({ navigation, route }) {
     const month = mrz.slice(2, 4);
     const day = mrz.slice(4, 6);
     const fullYear = year >= 40 ? `19${mrz.slice(0, 2)}` : `20${mrz.slice(0, 2)}`;
-
     const months = [
       "Jan",
       "Feb",
@@ -2784,6 +2784,7 @@ export default function PassportDetailsScreen({ navigation, route }) {
 
   // MAIN PASSPORT STATE
   const [passportState, setPassportState] = useState(basePassport);
+  const [date, setDate] = useState("");
 
   useEffect(() => {
     if (route?.params?.updatedPassport) {
@@ -2918,6 +2919,18 @@ export default function PassportDetailsScreen({ navigation, route }) {
       coTravellers,
     });
   };
+  // Generate a date 5 days ahead
+  const getDateAfterFiveDays = () => {
+    const currentDate = new Date();
+    // currentDate.setDate(currentDate.getDate() + 5);
+
+    const options = { day: "2-digit", month: "short", year: "numeric" };
+    return currentDate.toLocaleDateString("en-GB", options);
+  };
+
+  useEffect(() => {
+    setDate(getDateAfterFiveDays());
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -2929,10 +2942,12 @@ export default function PassportDetailsScreen({ navigation, route }) {
 
         <View style={styles.stepBadge}>
           <Icon name="check-circle" size={16} color="#fff" />
-          <Text style={styles.stepBadgeText}>Review Visa</Text>
+          <Text style={styles.stepBadgeText}>Review Visa {date}</Text>
         </View>
 
-        <Icon name="home" size={26} color={ORANGE} />
+        <TouchableOpacity onPress={() => navigation.navigate("Destination")}>
+          <Icon name="home" size={moderateScale(24)} color="black" />
+        </TouchableOpacity>
       </View>
 
       {/* PROGRESS BAR (KEEPING ORIGINAL UI) */}

@@ -190,7 +190,7 @@ export default function DestinationScreen() {
         placeholderTextColor={"#FF5C00"}
       />
 
-      <FlatList
+      {/* <FlatList
         data={filteredData}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
@@ -203,7 +203,23 @@ export default function DestinationScreen() {
             date={date}      // Now date is passed correctly
           />
         )}
-      />
+      /> */
+      <FlatList
+  data={filteredData}
+  keyExtractor={(item) => item.id.toString()}
+  contentContainerStyle={{ paddingBottom: 120 }}  // ⭐ Important
+  renderItem={({ item }) => (
+    <CountryCards
+      title={item.countrName}
+      source={item.source}
+      countrName={item.countrName}
+      item={item}
+      onPress={() => handleCardPress(item)}
+      date={date}
+    />
+  )}
+/>  
+      }
 
     </SafeAreaView>
   );

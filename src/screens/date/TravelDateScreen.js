@@ -96,7 +96,7 @@
 //         const dateTime = new Date(year, month, date, hour, minute, second);
 //         return dateTime.toISOString();
 //     };
-    
+
 //     return (
 //         <SafeAreaView style={styles.safe}>
 //             <View style={styles.container}>
@@ -353,16 +353,17 @@
 // });
 
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState ,useEffect} from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  SafeAreaView,
+    View,
+    Text,
+    StyleSheet,
+    TouchableOpacity,
+    SafeAreaView,
 } from "react-native";
 import { Calendar } from "react-native-calendars";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import Icon from "react-native-vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 import { saveTravelDates } from "../../api/user/travelDateService";
@@ -373,282 +374,294 @@ import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../../util
 const ORANGE = "#FF5C00";
 
 function addDays(date, n) {
-  const d = new Date(date);
-  d.setDate(d.getDate() + n);
-  return d;
+    const d = new Date(date);
+    d.setDate(d.getDate() + n);
+    return d;
 }
 
 function addMonths(date, n) {
-  const d = new Date(date);
-  d.setMonth(d.getMonth() + n);
-  return d;
+    const d = new Date(date);
+    d.setMonth(d.getMonth() + n);
+    return d;
 }
 
 function toYMD(date) {
-  return date.toISOString().split("T")[0];
+    return date.toISOString().split("T")[0];
 }
 
 function formatDisplayDate(dateString) {
-  const [y, m, d] = dateString.split("-");
-  return `${d}/${m}/${y}`;
+    const [y, m, d] = dateString.split("-");
+    return `${d}/${m}/${y}`;
 }
 
 export default function TravelDateScreen({ navigation }) {
-  const today = useMemo(() => new Date(), []);
-  const minDate = useMemo(() => toYMD(addDays(today, 3)), [today]);
-  const maxDate = useMemo(() => toYMD(addMonths(today, 3)), [today]);
+    const today = useMemo(() => new Date(), []);
+    const minDate = useMemo(() => toYMD(addDays(today, 3)), [today]);
+    const maxDate = useMemo(() => toYMD(addMonths(today, 3)), [today]);
 
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [mode, setMode] = useState("fixed");
-  const [saving, setSaving] = useState(false);
-
-  const onDayPress = (day) => {
-    setSelectedDate(day.dateString);
-  };
-
-  const markedDates = useMemo(() => {
-    if (!selectedDate) return {};
-    return {
-      [selectedDate]: {
-        selected: true,
-        selectedColor: ORANGE,
-        selectedTextColor: "#ffffff",
-      },
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [mode, setMode] = useState("fixed");
+    const [saving, setSaving] = useState(false);
+    const [date, setDate] = useState("");
+    const onDayPress = (day) => {
+        setSelectedDate(day.dateString);
     };
-  }, [selectedDate]);
 
-  const disabledContinue = !selectedDate || saving;
+    const markedDates = useMemo(() => {
+        if (!selectedDate) return {};
+        return {
+            [selectedDate]: {
+                selected: true,
+                selectedColor: ORANGE,
+                selectedTextColor: "#ffffff",
+            },
+        };
+    }, [selectedDate]);
 
-  const handleContinue = async () => {
-    if (!selectedDate) return;
-    try {
-      setSaving(true);
-      const payload = {
-        departureDate: selectedDate,
-        displayDate: formatDisplayDate(selectedDate),
-        mode,
+    const disabledContinue = !selectedDate || saving;
+
+    const handleContinue = async () => {
+        if (!selectedDate) return;
+        try {
+            setSaving(true);
+            const payload = {
+                departureDate: selectedDate,
+                displayDate: formatDisplayDate(selectedDate),
+                mode,
+            };
+
+            await saveTravelDates(payload);
+            navigation.navigate("PhotoUploadScreen", { traveldate: payload });
+
+        } catch (err) {
+            alert("Could not save date. Please try again.");
+        } finally {
+            setSaving(false);
+        }
+    };
+      // Generate a date 5 days ahead
+      const getDateAfterFiveDays = () => {
+        const currentDate = new Date();
+        currentDate.setDate(currentDate.getDate() + 5);
+    
+        const options = { day: "2-digit", month: "short", year: "numeric" };
+        return currentDate.toLocaleDateString("en-GB", options);
       };
+    
+      useEffect(() => {
+        setDate(getDateAfterFiveDays());
+      }, []);
 
-      await saveTravelDates(payload);
-      navigation.navigate("PhotoUploadScreen", { traveldate: payload });
+    return (
+        <SafeAreaView style={styles.safe}>
+            <View style={styles.container}>
 
-    } catch (err) {
-      alert("Could not save date. Please try again.");
-    } finally {
-      setSaving(false);
-    }
-  };
+                {/* HEADER */}
+                <View style={styles.headerRow}>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                        <Ionicons name="chevron-back" size={moderateScale(28)} color="black" />
+                    </TouchableOpacity>
 
-  return (
-    <SafeAreaView style={styles.safe}>
-      <View style={styles.container}>
+                    <View style={styles.badge}>
+                        <Ionicons name="checkmark-circle" size={moderateScale(16)} color="#fff" />
+                        <Text style={styles.badgeText}>
+                            Visa on <Text style={{ fontWeight: "700" }}>{new Date().toISOString()}</Text>
+                        </Text>
+                    </View>
 
-        {/* HEADER */}
-        <View style={styles.headerRow}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="chevron-back" size={moderateScale(28)} color="black" />
-          </TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate("Destination")}>
+                        <Icon name="home" size={moderateScale(24)} color="black" />
+                    </TouchableOpacity>
+                </View>
 
-          <View style={styles.badge}>
-            <Ionicons name="checkmark-circle" size={moderateScale(16)} color="#fff" />
-            <Text style={styles.badgeText}>
-              Visa on <Text style={{ fontWeight: "700" }}>{new Date().toISOString()}</Text>
-            </Text>
-          </View>
+                {/* STEPPER */}
+                <View style={styles.stepperRow}>
+                    {[
+                        { key: "dates", label: "Dates", icon: "calendar-blank" },
+                        { key: "photo", label: "Photo", icon: "camera-outline" },
+                        { key: "passport", label: "Passport", icon: "passport-biometric" },
+                        { key: "detail", label: "Detail", icon: "account-outline" },
+                        { key: "checkout", label: "Checkout", icon: "check-circle-outline" },
+                    ].map((step, index) => {
+                        const isActive = step.key === "dates";
+                        const color = isActive ? ORANGE : "#A0A0A0";
 
-          <TouchableOpacity onPress={() => navigation.navigate("HomeScreen")}>
-            <Ionicons name="home-outline" size={moderateScale(24)} color="black" />
-          </TouchableOpacity>
-        </View>
+                        return (
+                            <View key={step.key} style={styles.stepItem}>
+                                <MaterialCommunityIcons
+                                    name={step.icon}
+                                    size={moderateScale(22)}
+                                    color={color}
+                                />
+                                <Text style={[styles.stepLabel, { color: isActive ? ORANGE : "#444" }]}>
+                                    {step.label}
+                                </Text>
+                                {isActive && <View style={styles.stepUnderline} />}
+                                {index < 4 && <View style={styles.stepConnector} />}
+                            </View>
+                        );
+                    })}
+                </View>
 
-        {/* STEPPER */}
-        <View style={styles.stepperRow}>
-          {[
-            { key: "dates", label: "Dates", icon: "calendar-blank" },
-            { key: "photo", label: "Photo", icon: "camera-outline" },
-            { key: "passport", label: "Passport", icon: "passport-biometric" },
-            { key: "detail", label: "Detail", icon: "account-outline" },
-            { key: "checkout", label: "Checkout", icon: "check-circle-outline" },
-          ].map((step, index) => {
-            const isActive = step.key === "dates";
-            const color = isActive ? ORANGE : "#A0A0A0";
+                {/* TITLE */}
+                <Text style={styles.question}>What is your departure date?</Text>
 
-            return (
-              <View key={step.key} style={styles.stepItem}>
-                <MaterialCommunityIcons
-                  name={step.icon}
-                  size={moderateScale(22)}
-                  color={color}
+                {/* MODE BUTTONS */}
+                <View style={styles.modeToggle}>
+                    <TouchableOpacity
+                        style={[styles.modeButton, mode === "fixed" && styles.modeButtonActive]}
+                        onPress={() => setMode("fixed")}
+                    >
+                        <Text style={[styles.modeText, mode === "fixed" && styles.modeTextActive]}>
+                            Fixed Date
+                        </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={[styles.modeButton, mode === "flexible" && styles.modeButtonActive]}
+                        onPress={() => setMode("flexible")}
+                    >
+                        <Text style={[styles.modeText, mode === "flexible" && styles.modeTextActive]}>
+                            Flexible Date
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+
+                {/* CALENDAR */}
+                <Calendar
+                    minDate={minDate}
+                    maxDate={maxDate}
+                    onDayPress={onDayPress}
+                    markedDates={markedDates}
+                    firstDay={1}
+                    style={styles.calendar}
+                    theme={{
+                        selectedDayBackgroundColor: ORANGE,
+                        todayTextColor: ORANGE,
+                    }}
                 />
-                <Text style={[styles.stepLabel, { color: isActive ? ORANGE : "#444" }]}>
-                  {step.label}
-                </Text>
-                {isActive && <View style={styles.stepUnderline} />}
-                {index < 4 && <View style={styles.stepConnector} />}
-              </View>
-            );
-          })}
-        </View>
 
-        {/* TITLE */}
-        <Text style={styles.question}>What is your departure date?</Text>
-
-        {/* MODE BUTTONS */}
-        <View style={styles.modeToggle}>
-          <TouchableOpacity
-            style={[styles.modeButton, mode === "fixed" && styles.modeButtonActive]}
-            onPress={() => setMode("fixed")}
-          >
-            <Text style={[styles.modeText, mode === "fixed" && styles.modeTextActive]}>
-              Fixed Date
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.modeButton, mode === "flexible" && styles.modeButtonActive]}
-            onPress={() => setMode("flexible")}
-          >
-            <Text style={[styles.modeText, mode === "flexible" && styles.modeTextActive]}>
-              Flexible Date
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* CALENDAR */}
-        <Calendar
-          minDate={minDate}
-          maxDate={maxDate}
-          onDayPress={onDayPress}
-          markedDates={markedDates}
-          firstDay={1}
-          style={styles.calendar}
-          theme={{
-            selectedDayBackgroundColor: ORANGE,
-            todayTextColor: ORANGE,
-          }}
-        />
-
-        {/* BUTTON */}
-        <View style={styles.footer}>
-          <TouchableOpacity
-            style={[styles.continueButton, disabledContinue && { opacity: 0.5 }]}
-            disabled={disabledContinue}
-            onPress={handleContinue}
-          >
-            <Text style={styles.continueText}>{saving ? "Saving..." : "Continue"}</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </SafeAreaView>
-  );
+                {/* BUTTON */}
+                <View style={styles.footer}>
+                    <TouchableOpacity
+                        style={[styles.continueButton, disabledContinue && { opacity: 0.5 }]}
+                        disabled={disabledContinue}
+                        onPress={handleContinue}
+                    >
+                        <Text style={styles.continueText}>{saving ? "Saving..." : "Continue"}</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </SafeAreaView>
+    );
 }
 
 const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  container: {
-    flex: 1,
-    paddingTop: hp("2%"),
-  },
-  headerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: wp("4%"),
-    paddingVertical: verticalScale(10),
-    justifyContent: "space-between",
-  },
-  badge: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: ORANGE,
-    paddingHorizontal: moderateScale(12),
-    paddingVertical: verticalScale(5),
-    borderRadius: 999,
-  },
-  badgeText: {
-    color: "#fff",
-    marginLeft: scale(6),
-    fontSize: RFValue(12),
-  },
-  stepperRow: {
-    flexDirection: "row",
-    alignItems: "flex-end",
-    paddingHorizontal: wp("2%"),
-    paddingBottom: verticalScale(6),
-  },
-  stepItem: {
-    flex: 1,
-    alignItems: "center",
-  },
-  stepLabel: {
-    fontSize: RFValue(10),
-    marginTop: verticalScale(4),
-  },
-  stepUnderline: {
-    marginTop: verticalScale(4),
-    height: verticalScale(2),
-    alignSelf: "stretch",
-    backgroundColor: ORANGE,
-  },
-  stepConnector: {
-    position: "absolute",
-    right: -verticalScale(6),
-    top: verticalScale(10),
-    width: wp("4%"),
-    height: scale(1),
-    backgroundColor: "#e0e0e0",
-  },
-  question: {
-    fontSize: RFValue(18),
-    fontWeight: "700",
-    paddingHorizontal: wp("4%"),
-    paddingVertical: verticalScale(12),
-  },
-  modeToggle: {
-    flexDirection: "row",
-    backgroundColor: "#f4f4f4",
-    marginHorizontal: wp("4%"),
-    borderRadius: 999,
-    padding: scale(3),
-  },
-  modeButton: {
-    flex: 1,
-    borderRadius: 999,
-    paddingVertical: verticalScale(10),
-    alignItems: "center",
-  },
-  modeButtonActive: {
-    backgroundColor: "#ffffff",
-    borderWidth: scale(1),
-    borderColor: ORANGE,
-  },
-  modeText: {
-    fontSize: RFValue(13),
-    color: "#666",
-  },
-  modeTextActive: {
-    color: ORANGE,
-    fontWeight: "700",
-  },
-  calendar: {
-    marginTop: verticalScale(12),
-    marginHorizontal: scale(2),
-  },
-  footer: {
-    paddingHorizontal: wp("4%"),
-    paddingVertical: verticalScale(12),
-  },
-  continueButton: {
-    backgroundColor: ORANGE,
-    borderRadius: 999,
-    paddingVertical: verticalScale(14),
-  },
-  continueText: {
-    color: "#fff",
-    textAlign: "center",
-    fontSize: RFValue(16),
-    fontWeight: "700",
-  },
+    safe: {
+        flex: 1,
+        backgroundColor: "#fff",
+    },
+    container: {
+        flex: 1,
+        paddingTop: hp("2%"),
+    },
+    headerRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        paddingHorizontal: wp("4%"),
+        paddingVertical: verticalScale(10),
+        justifyContent: "space-between",
+    },
+    badge: {
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: ORANGE,
+        paddingHorizontal: moderateScale(12),
+        paddingVertical: verticalScale(5),
+        borderRadius: 999,
+    },
+    badgeText: {
+        color: "#fff",
+        marginLeft: scale(6),
+        fontSize: RFValue(12),
+    },
+    stepperRow: {
+        flexDirection: "row",
+        alignItems: "flex-end",
+        paddingHorizontal: wp("2%"),
+        paddingBottom: verticalScale(6),
+    },
+    stepItem: {
+        flex: 1,
+        alignItems: "center",
+    },
+    stepLabel: {
+        fontSize: RFValue(10),
+        marginTop: verticalScale(4),
+    },
+    stepUnderline: {
+        marginTop: verticalScale(4),
+        height: verticalScale(2),
+        alignSelf: "stretch",
+        backgroundColor: ORANGE,
+    },
+    stepConnector: {
+        position: "absolute",
+        right: -verticalScale(6),
+        top: verticalScale(10),
+        width: wp("4%"),
+        height: scale(1),
+        backgroundColor: "#e0e0e0",
+    },
+    question: {
+        fontSize: RFValue(18),
+        fontWeight: "700",
+        paddingHorizontal: wp("4%"),
+        paddingVertical: verticalScale(12),
+    },
+    modeToggle: {
+        flexDirection: "row",
+        backgroundColor: "#f4f4f4",
+        marginHorizontal: wp("4%"),
+        borderRadius: 999,
+        padding: scale(3),
+    },
+    modeButton: {
+        flex: 1,
+        borderRadius: 999,
+        paddingVertical: verticalScale(10),
+        alignItems: "center",
+    },
+    modeButtonActive: {
+        backgroundColor: "#ffffff",
+        borderWidth: scale(1),
+        borderColor: ORANGE,
+    },
+    modeText: {
+        fontSize: RFValue(13),
+        color: "#666",
+    },
+    modeTextActive: {
+        color: ORANGE,
+        fontWeight: "700",
+    },
+    calendar: {
+        marginTop: verticalScale(12),
+        marginHorizontal: scale(2),
+    },
+    footer: {
+        paddingHorizontal: wp("4%"),
+        paddingVertical: verticalScale(12),
+    },
+    continueButton: {
+        backgroundColor: ORANGE,
+        borderRadius: 999,
+        paddingVertical: verticalScale(14),
+    },
+    continueText: {
+        color: "#fff",
+        textAlign: "center",
+        fontSize: RFValue(16),
+        fontWeight: "700",
+    },
 });

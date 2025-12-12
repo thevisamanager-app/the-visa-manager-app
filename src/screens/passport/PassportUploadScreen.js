@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -174,7 +174,7 @@ export default function PassportUploadScreen({ navigation, route }) {
 
       //const docRef = await savePassportData(passportPayload);
       navigation.navigate("PassportDetailsScreen", {
-        passport: {...passportPayload },
+        passport: { ...passportPayload },
         travelDate: travel,
         photoUrl: currentPhotoUrl,
         coTravellers: [],
@@ -211,9 +211,17 @@ export default function PassportUploadScreen({ navigation, route }) {
           <Icon name="check-circle" size={18} color="white" />
           <Text style={styles.stepBadgeText}>Visa on {date}</Text>
         </View>
-        <TouchableOpacity onPress={() => navigation.navigate("Destination")}>
+        {/* <TouchableOpacity onPress={() => navigation.navigate("Destination")}>
           <Icon name="home" size={moderateScale(24)} color={ORANGE} />
-        </TouchableOpacity>
+        </TouchableOpacity> */
+          <TouchableOpacity onPress={() => navigation.navigate("Tabs", {
+            screen: "Destination",
+          })
+          }>
+            <Icon name="home" size={moderateScale(24)} color={ORANGE} />
+          </TouchableOpacity>
+
+        }
       </View>
 
       {/* PROGRESS BAR (KEEPING ORIGINAL UI) */}
@@ -369,14 +377,14 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: RFValue(15),
     fontWeight: "700",
-    alignSelf:"center"
+    alignSelf: "center"
   },
 
   label: {
     fontSize: RFValue(13),
     fontWeight: "600",
     marginBottom: verticalScale(4),
-    alignSelf:"center"
+    alignSelf: "center"
   },
 
   preview: {

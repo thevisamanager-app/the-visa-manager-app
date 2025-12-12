@@ -353,7 +353,7 @@
 // });
 
 
-import React, { useMemo, useState ,useEffect} from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import {
     View,
     Text,
@@ -439,18 +439,18 @@ export default function TravelDateScreen({ navigation }) {
             setSaving(false);
         }
     };
-      // Generate a date 5 days ahead
-      const getDateAfterFiveDays = () => {
+    // Generate a date 5 days ahead
+    const getDateAfterFiveDays = () => {
         const currentDate = new Date();
         //currentDate.setDate(currentDate.getDate() + 5);
-    
+
         const options = { day: "2-digit", month: "short", year: "numeric" };
         return currentDate.toLocaleDateString("en-GB", options);
-      };
-    
-      useEffect(() => {
+    };
+
+    useEffect(() => {
         setDate(getDateAfterFiveDays());
-      }, []);
+    }, []);
 
     return (
         <SafeAreaView style={styles.safe}>
@@ -469,8 +469,11 @@ export default function TravelDateScreen({ navigation }) {
                         </Text>
                     </View>
 
-                    <TouchableOpacity onPress={() => navigation.navigate("Destination")}>
-                        <Icon name="home" size={moderateScale(24)} color="black" />
+                    <TouchableOpacity onPress={() => navigation.navigate("Tabs", {
+                        screen: "Destination",
+                    })
+                    }>
+                        <Icon name="home" size={moderateScale(24)} color={ORANGE} />
                     </TouchableOpacity>
                 </View>
 

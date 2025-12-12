@@ -1,571 +1,208 @@
-// // import firestore from "@react-native-firebase/firestore";
-// // import auth from "@react-native-firebase/auth";
+// import firestore from "@react-native-firebase/firestore";
+// import auth from "@react-native-firebase/auth";
+// import storage from "@react-native-firebase/storage";
+// import uuid from "react-native-uuid";
 
-// // export async function savePassportData(data) {
-// //   const uid = auth().currentUser.uid;
+// // Upload a passport image (front/back) to Storage and return its URL
+// export async function uploadPassportImage(file, side = "front") {
+//   const user = auth().currentUser;
+//   if (!user) throw new Error("User not logged in");
 
-// //   return firestore()
-// //     .collection("users")
-// //     .doc(uid)
-// //     .collection("passportData")
-// //     .doc("latest")
-// //     .set(data);
+//   const uid = user.uid;
+//   const fileId = uuid.v4();
+
+//   const ext =
+//     file.fileName?.split(".").pop() ||
+//     file.name?.split(".").pop() ||
+//     file.type?.split("/")[1] ||
+//     "jpg";
+
+//   const path = `users/${uid}/passport/${side}_${fileId}.${ext}`;
+
+//   const ref = storage().ref(path);
+//   await ref.putFile(file.uri);
+
+//   const url = await ref.getDownloadURL();
+//   return url;
+// }
+
+// // Save passport data (MRZ + image URLs) in Firestore
+// export async function savePassportData(passportPayload) {
+//   const user = auth().currentUser;
+//   if (!user) throw new Error("User not logged in");
+
+//   const uid = user.uid;
+
+//   return firestore()
+//     .collection("users")
+//     .doc(uid)
+//     .collection("passportData")
+
+//     .add({
+//       ...passportPayload,
+//       userId: uid,
+//       createdAt: firestore.FieldValue.serverTimestamp(),
+//     });
+// }
+
+// // Get the most recent passport doc (you were already using something like this)
+// export async function getPassportData() {
+//   const user = auth().currentUser;
+//   if (!user) throw new Error("User not logged in");
+
+//   const uid = user.uid;
+
+//   const snap = await firestore()
+//     .collection("users")
+//     .doc(uid)
+//     .collection("passportData")
+//     .orderBy("createdAt", "desc")
+//     .limit(1)
+//     .get();
+
+//   if (snap.empty) return null;
+
+//   const doc = snap.docs[0];
+//   return { id: doc.id, ...doc.data() };
+// }
+
+// export async function getAllPassportData() {
+//   const user = auth().currentUser;
+//   if (!user) throw new Error("User not logged in");
+
+//   const uid = user.uid;
+
+//   const snap = await firestore()
+//     .collection("users")
+//     .doc(uid)
+//     .collection("passportData")
+//     .orderBy("createdAt", "desc")
+//     .get();
+
+//   if (snap.empty) return [];
+
+//   return snap.docs.map((doc) => ({
+//     id: doc.id,
+//     ...doc.data(),
+//   }));
+// }
+
+
+// // export async function getAllPassportDataAdmin() {
+// //   const usersSnap = await firestore().collection("users").get();
+
+// //   const allPassports = [];
+
+// //   for (const userDoc of usersSnap.docs) {
+// //     const userId = userDoc.id;
+
+// //     const passportSnap = await firestore()
+// //       .collection("users")
+// //       .doc(userId)
+// //       .collection("passportData")
+// //       .orderBy("createdAt", "desc")
+// //       .get();
+
+// //     passportSnap.forEach((p) => {
+// //       allPassports.push({
+// //         id: p.id,
+// //         userId: userId,        // 🔥 IMPORTANT, for admin actions
+// //         ...p.data(),
+// //       });
+// //     });
+// //   }
+
+// //   return allPassports;
 // // }
 
-// // export async function getPassportData() {
-// //   const uid = auth().currentUser.uid;
 
-// //   const doc = await firestore()
-// //     .collection("users")
-// //     .doc(uid)
-// //     .collection("passportData")
-// //     .doc("latest")
-// //     .get();
+// // export const getAllPassportDataAdmin = async () => {
+// //   const usersSnap = await firestore().collection("users").get();
 
-// //   return doc.exists ? doc.data() : null;
-// // }
+// //   let allPassports = [];
+
+// //   for (const userDoc of usersSnap.docs) {
+// //     const userId = userDoc.id;
+
+// //     const passportSnap = await firestore()
+// //       .collection("users")
+// //       .doc(userId)
+// //       .collection("passportData")
+// //       .get();
+
+// //     passportSnap.forEach((doc) => {
+// //       allPassports.push({
+// //         id: doc.id,
+// //         userId,                 // 🔥 IMPORTANT
+// //         ...doc.data(),
+// //       });
+// //     });
+// //   }
+
+// //   return allPassports;
+// // };
 
 
-// // import firestore from "@react-native-firebase/firestore";
-// // import auth from "@react-native-firebase/auth";
 
-// // export async function savePassportData(data) {
-// //   const user = auth().currentUser;
-// //   if (!user) throw new Error("User not logged in");
 
-// //   const uid = user.uid;
+// export const getAllPassportDataAdmin = async () => {
+//   const snapshot = await firestore()
+//     .collectionGroup("passportData") // 🔥 KEY LINE
+//     .get();
 
-// //   return firestore()
-// //     .collection("users")
-// //     .doc(uid)
-// //     .collection("passportData")
-// //     .doc("latest")
-// //     .set(
-// //       {
-// //         ...data,
-// //         updatedAt: firestore.FieldValue.serverTimestamp(),
-// //       },
-// //       { merge: true }
+//   return snapshot.docs.map(doc => ({
+//     id: doc.id,
+//     ...doc.data(),
+//     userId: doc.ref.parent.parent.id, // 👈 extract userId
+//   }));
+// };
+
+
+// // export const getAllPassportDataAdmin = async () => {
+// //   const usersSnap = await firestore().collection("users").get();
+
+// //   console.log("ALL USERS COUNT:", usersSnap.size);
+
+// //   let allPassports = [];
+
+// //   for (const userDoc of usersSnap.docs) {
+// //     const userId = userDoc.id;
+
+// //     const passportSnap = await firestore()
+// //       .collection("users")
+// //       .doc(userId)
+// //       .collection("passportData")
+// //       .get();
+
+// //     console.log(
+// //       `USER ${userId} PASSPORT COUNT:`,
+// //       passportSnap.size
 // //     );
-// // }
 
-// // export async function getPassportData() {
-// //   const user = auth().currentUser;
-// //   if (!user) throw new Error("User not logged in");
-
-// //   const uid = user.uid;
-
-// //   const doc = await firestore()
-// //     .collection("users")
-// //     .doc(uid)
-// //     .collection("passportData")
-// //     .doc("latest")
-// //     .get();
-
-// //   return doc.exists ? doc.data() : null;
-// // }
-
-
-// // import firestore from "@react-native-firebase/firestore";
-// // import auth from "@react-native-firebase/auth";
-
-// // export async function savePassportData(data) {
-// //   const user = auth().currentUser;
-// //   if (!user) throw new Error("User not logged in");
-
-// //   const uid = user.uid;
-
-// //   return firestore()
-// //     .collection("users")
-// //     .doc(uid)
-// //     .collection("passportData")
-// //     .add({
-// //       ...data,
-// //       scannedAt: firestore.FieldValue.serverTimestamp(),
+// //     passportSnap.forEach((doc) => {
+// //       allPassports.push({
+// //         id: doc.id,
+// //         userId, // 🔥 REQUIRED
+// //         ...doc.data(),
+// //       });
 // //     });
-// // }
-// // export async function savePassportData(frontData, backData) {
-// //   const user = auth().currentUser;
-// //   if (!user) throw new Error("User not logged in");
+// //   }
 
-// //   const uid = user.uid;
+// //   console.log("TOTAL PASSPORTS:", allPassports);
+// //   return allPassports;
+// // };
 
-// //   return firestore()
-// //     .collection("users")
-// //     .doc(uid)
-// //     .collection("passportData")
-// //     .add({
-// //       ...frontData,       // name, passport number, MRZ, front OCR result
-// //       ...backData,        // address, parents name, DOB, etc.
-// //       scannedAt: firestore.FieldValue.serverTimestamp(),
-// //     });
-// // }
 
-// // export async function savePassportData(data) {
-// //   const user = auth().currentUser;
-// //   const uid = user.uid;
 
-// //   return firestore()
-// //     .collection("users")
-// //     .doc(uid)
-// //     .collection("passportData")
-// //     .add({
-// //       ...data,
-// //       scannedAt: firestore.FieldValue.serverTimestamp(),
-// //     });
-// // }
 
-// // export async function getPassportData() {
-// //   const user = auth().currentUser;
-// //   if (!user) throw new Error("User not logged in");
-
-// //   const uid = user.uid;
-
-// //   const snapshot = await firestore()
-// //     .collection("users")
-// //     .doc(uid)
-// //     .collection("passportData")
-// //     .orderBy("scannedAt", "desc")
-// //     .limit(1)
-// //     .get();
-
-// //   if (snapshot.empty) return null;
-
-// //   return { id: snapshot.docs[0].id, ...snapshot.docs[0].data() };
-// // }
-
-// // export async function getAllPassportHistory() {
-// //   const user = auth().currentUser;
-// //   if (!user) throw new Error("User not logged in");
-
-// //   const uid = user.uid;
-
-// //   const snapshot = await firestore()
-// //     .collection("users")
-// //     .doc(uid)
-// //     .collection("passportData")
-// //     .orderBy("scannedAt", "desc")
-// //     .get();
-
-// //   return snapshot.docs.map(doc => ({
-// //     id: doc.id,
-// //     ...doc.data(),
-// //   }));
-// // }
-
-
-// // import firestore from "@react-native-firebase/firestore";
-// // import auth from "@react-native-firebase/auth";
-// // import storage from "@react-native-firebase/storage";
-// // import { Platform } from "react-native";
-
-// // async function uploadImage(uri, path) {
-// //   if (!uri) return null;
-
-// //   const uploadUri = Platform.OS === "ios" ? uri.replace("file://", "") : uri;
-
-// //   const ref = storage().ref(path);
-// //   await ref.putFile(uploadUri);
-
-// //   return await ref.getDownloadURL();
-// // }
-
-
-
-// // export async function savePassportData({ frontData, backData, frontImage, backImage }) {
-// //   const user = auth().currentUser;
-// //   if (!user) throw new Error("User not logged in");
-
-// //   const uid = user.uid;
-
-// //   // Upload images
-// //   const frontImageUrl = await uploadImage(frontImage, `passport/${uid}/front.jpg`);
-// //   const backImageUrl = await uploadImage(backImage, `passport/${uid}/back.jpg`);
-
-// //   return firestore()
-// //     .collection("users")
-// //     .doc(uid)
-// //     .collection("passportData")
-// //     .add({
-// //       frontData,
-// //       backData,
-// //       frontImageUrl,
-// //       backImageUrl,
-// //       scannedAt: firestore.FieldValue.serverTimestamp(),
-// //     });
-// // }
-
-
-
-
-
-
-// // import storage from "@react-native-firebase/storage";
-// // import firestore from "@react-native-firebase/firestore";
-// // import auth from "@react-native-firebase/auth";
-// // import uuid from "react-native-uuid";
-
-// // export async function uploadPassportImage(base64, type) {
-// //   if (!base64) return null;
-
-// //   const uid = auth().currentUser.uid;
-// //   const fileId = uuid.v4();
-// //   const path = `users/${uid}/passport/${type}_${fileId}.jpg`;
-
-// //   const reference = storage().ref(path);
-
-// //   await reference.putString(base64, "base64", {
-// //     contentType: "image/jpeg",
-// //   });
-
-// //   return await reference.getDownloadURL();
-// // }
-
-// // export async function savePassportData(data, frontBase64, backBase64) {
-// //   const user = auth().currentUser;
-// //   if (!user) throw new Error("User not logged in");
-
-// //   const uid = user.uid;
-
-// //   // Upload images
-// //   const frontURL = await uploadPassportImage(frontBase64, "front");
-// //   const backURL = backBase64 ? await uploadPassportImage(backBase64, "back") : null;
-
-// //   return firestore()
-// //     .collection("users")
-// //     .doc(uid)
-// //     .collection("passportData")
-// //     .add({
-// //       ...data,
-// //       frontImageURL: frontURL,
-// //       backImageURL: backURL,
-// //       scannedAt: firestore.FieldValue.serverTimestamp(),
-// //     });
-// // }
-
-// // export async function getPassportData() {
-// //   const uid = auth().currentUser.uid;
-
-// //   const snapshot = await firestore()
-// //     .collection("users")
-// //     .doc(uid)
-// //     .collection("passportData")
-// //     .orderBy("scannedAt", "desc")
-// //     .limit(1)
-// //     .get();
-
-// //   if (snapshot.empty) return null;
-
-// //   return { id: snapshot.docs[0].id, ...snapshot.docs[0].data() };
-// // }
-
-
-
-// import storage from "@react-native-firebase/storage";
-// import firestore from "@react-native-firebase/firestore";
-// import auth from "@react-native-firebase/auth";
-// import uuid from "react-native-uuid";
-
-// // Upload base64 image → Firebase Storage
-// export async function uploadPassportImage(base64, type) {
-//   if (!base64) return null;
-
-//   const uid = auth().currentUser.uid;
-//   const fileId = uuid.v4(); // unique filename
-//   const path = `users/${uid}/passport/${type}_${fileId}.jpg`;
-
-//   const reference = storage().ref(path);
-
-//   await reference.putString(base64, "base64", {
-//     contentType: "image/jpeg",
-//   });
-
-//   return await reference.getDownloadURL();
-// }
-
-// export async function savePassportData(data) {
-//   const user = auth().currentUser;
-//   if (!user) throw new Error("User not logged in");
-
-//   const uid = user.uid;
-
-//   // Upload images
-//   const frontURL = await uploadPassportImage(data.frontBase64, "front");
-//   const backURL = await uploadPassportImage(data.backBase64, "back");
-
-//   // Save MRZ + form + image URLs
-//   return firestore()
-//     .collection("users")
-//     .doc(uid)
-//     .collection("passportData")
-//     .add({
-//       firstName: data.firstName,
-//       lastName: data.lastName,
-//       passportNumber: data.passportNumber,
-//       birthDate: data.birthDate,
-//       expiryDate: data.expiryDate,
-
-//       frontImageURL: frontURL,
-//       backImageURL: backURL,
-
-//       scannedAt: firestore.FieldValue.serverTimestamp(),
-//     });
-// }
-
-// export async function getPassportData() {
-//   const uid = auth().currentUser.uid;
-
-//   const snapshot = await firestore()
-//     .collection("users")
-//     .doc(uid)
-//     .collection("passportData")
-//     .orderBy("scannedAt", "desc")
-//     .limit(1)
-//     .get();
-
-//   if (snapshot.empty) return null;
-
-//   return { id: snapshot.docs[0].id, ...snapshot.docs[0].data() };
-// }
-
-
-// import storage from "@react-native-firebase/storage";
-// import firestore from "@react-native-firebase/firestore";
-// import auth from "@react-native-firebase/auth";
-// import uuid from "react-native-uuid";
-
-// // Upload base64 → Firebase Storage
-// async function uploadPassportImage(base64, type) {
-//   if (!base64) return null;
-
-//   const uid = auth().currentUser.uid;
-//   const fileId = uuid.v4();
-//   const path = `users/${uid}/passport/${type}_${fileId}.jpg`;
-
-//   const reference = storage().ref(path);
-
-//   await reference.putString(base64, "base64", {
-//     contentType: "image/jpeg",
-//   });
-
-//   return await reference.getDownloadURL();
-// }
-
-// // SAVE PASSPORT DETAILS → Firestore
-// export async function savePassportData(data) {
-//   const user = auth().currentUser;
-//   if (!user) throw new Error("User not logged in");
-
-//   const uid = user.uid;
-
-//   // Upload images
-//   const frontURL = await uploadPassportImage(data.frontBase64, "front");
-//   const backURL = await uploadPassportImage(data.backBase64, "back");
-
-//   // Store data under passportdetails/{uid}/items
-//   return firestore()
-//     .collection("passportdetails")
-//     .doc(uid)
-//     .collection("items")
-//     .add({
-//       firstName: data.firstName,
-//       lastName: data.lastName,
-//       passportNumber: data.passportNumber,
-//       birthDate: data.birthDate,
-//       expiryDate: data.expiryDate,
-
-//       frontImageURL: frontURL,
-//       backImageURL: backURL,
-
-//       scannedAt: firestore.FieldValue.serverTimestamp(),
-//     });
-// }
-
-// // GET LATEST PASSPORT DATA
-// export async function getPassportData() {
-//   const user = auth().currentUser;
-//   if (!user) throw new Error("User not logged in");
-
-//   const uid = user.uid;
-
-//   const snapshot = await firestore()
-//     .collection("passportdetails")
-//     .doc(uid)
-//     .collection("items")
-//     .orderBy("scannedAt", "desc")
-//     .limit(1)
-//     .get();
-
-//   if (snapshot.empty) return null;
-
-//   return {
-//     id: snapshot.docs[0].id,
-//     ...snapshot.docs[0].data(),
-//   };
-// }
-
-
-// import storage from "@react-native-firebase/storage";
-// import firestore from "@react-native-firebase/firestore";
-// import auth from "@react-native-firebase/auth";
-// import uuid from "react-native-uuid";
-
-// // Upload base64 → Firebase Storage
-// async function uploadPassportImage(base64, type) {
-//   if (!base64) return null;
-
-//   const uid = auth().currentUser.uid;
-//   const fileId = uuid.v4();
-//   const path = `users/${uid}/passport/${type}_${fileId}.jpg`;
-
-//   const reference = storage().ref(path);
-
-//   await reference.putString(base64, "base64", {
-//     contentType: "image/jpeg",
-//   });
-
-//   return await reference.getDownloadURL();
-// }
-
-// // SAVE PASSPORT DETAILS → Firestore
-// export async function savePassportData(data) {
-//   const user = auth().currentUser;
-//   if (!user) throw new Error("User not logged in");
-
-//   const uid = user.uid;
-
-//   // Upload images
-//   const frontURL = await uploadPassportImage(data.frontBase64, "front");
-//   const backURL = await uploadPassportImage(data.backBase64, "back");
-
-//   return firestore()
-//     .collection("users")
-//     .doc(uid)
-//     .collection("passportData")   // ✅ Correct path
-//     .add({
-//       firstName: data.firstName,
-//       lastName: data.lastName,
-//       passportNumber: data.passportNumber,
-//       birthDate: data.birthDate,
-//       expiryDate: data.expiryDate,
-
-//       frontImageURL: frontURL,
-//       backImageURL: backURL,
-
-//       scannedAt: firestore.FieldValue.serverTimestamp(),
-//     });
-// }
-
-// // GET LATEST PASSPORT DATA
-// export async function getPassportData() {
-//   const user = auth().currentUser;
-//   if (!user) throw new Error("User not logged in");
-
-//   const uid = user.uid;
-
-//   const snapshot = await firestore()
-//     .collection("users")
-//     .doc(uid)
-//     .collection("passportData")   // ✅ Correct path
-//     .orderBy("scannedAt", "desc")
-//     .limit(1)
-//     .get();
-
-//   if (snapshot.empty) return null;
-
-//   return {
-//     id: snapshot.docs[0].id,
-//     ...snapshot.docs[0].data(),
-//   };
-// }
-
-
-
-// import storage from "@react-native-firebase/storage";
-// import firestore from "@react-native-firebase/firestore";
-// import auth from "@react-native-firebase/auth";
-// import uuid from "react-native-uuid";
-
-// // Upload base64 → Firebase Storage
-// async function uploadPassportImage(base64, type) {
-//   if (!base64) return null;
-
-//   const uid = auth().currentUser.uid;
-//   const fileId = uuid.v4();
-//   const path = `users/${uid}/passport/${type}_${fileId}.jpg`;
-
-//   const reference = storage().ref(path);
-
-//   await reference.putString(base64, "base64", {
-//     contentType: "image/jpeg",
-//   });
-
-//   return await reference.getDownloadURL();
-// }
-
-// // SAVE PASSPORT DETAILS → Firestore
-// export async function savePassportData(data) {
-//   const user = auth().currentUser;
-//   if (!user) throw new Error("User not logged in");
-
-//   const uid = user.uid;
-
-//   // Upload images
-//   const frontURL = await uploadPassportImage(data.frontBase64, "front");
-//   const backURL = await uploadPassportImage(data.backBase64, "back");
-
-//   return firestore()
-//     .collection("users")
-//     .doc(uid)
-//     .collection("passportData")   // ✅ Correct path
-//     .add({
-//       firstName: data.firstName,
-//       lastName: data.lastName,
-//       passportNumber: data.passportNumber,
-//       birthDate: data.birthDate,
-//       expiryDate: data.expiryDate,
-
-//       frontImageURL: frontURL,
-//       backImageURL: backURL,
-
-//       scannedAt: firestore.FieldValue.serverTimestamp(),
-//     });
-// }
-
-// // GET LATEST PASSPORT DATA
-// export async function getPassportData() {
-//   const user = auth().currentUser;
-//   if (!user) throw new Error("User not logged in");
-
-//   const uid = user.uid;
-
-//   const snapshot = await firestore()
-//     .collection("users")
-//     .doc(uid)
-//     .collection("passportData")   // ✅ Correct path
-//     .orderBy("scannedAt", "desc")
-//     .limit(1)
-//     .get();
-
-//   if (snapshot.empty) return null;
-
-//   return {
-//     id: snapshot.docs[0].id,
-//     ...snapshot.docs[0].data(),
-//   };
-// }
-
-
-
-
-
-// src/api/user/passportService.js
 import firestore from "@react-native-firebase/firestore";
 import auth from "@react-native-firebase/auth";
 import storage from "@react-native-firebase/storage";
 import uuid from "react-native-uuid";
 
-// Upload a passport image (front/back) to Storage and return its URL
+/* =====================================================
+   UPLOAD PASSPORT IMAGE (FRONT / BACK)
+===================================================== */
 export async function uploadPassportImage(file, side = "front") {
   const user = auth().currentUser;
   if (!user) throw new Error("User not logged in");
@@ -588,7 +225,9 @@ export async function uploadPassportImage(file, side = "front") {
   return url;
 }
 
-// Save passport data (MRZ + image URLs) in Firestore
+/* =====================================================
+   SAVE PASSPORT DATA (USER)
+===================================================== */
 export async function savePassportData(passportPayload) {
   const user = auth().currentUser;
   if (!user) throw new Error("User not logged in");
@@ -599,15 +238,16 @@ export async function savePassportData(passportPayload) {
     .collection("users")
     .doc(uid)
     .collection("passportData")
-    
     .add({
       ...passportPayload,
-      userId: uid,
+      userId: uid, // keep for convenience
       createdAt: firestore.FieldValue.serverTimestamp(),
     });
 }
 
-// Get the most recent passport doc (you were already using something like this)
+/* =====================================================
+   GET LATEST PASSPORT (USER)
+===================================================== */
 export async function getPassportData() {
   const user = auth().currentUser;
   if (!user) throw new Error("User not logged in");
@@ -628,6 +268,9 @@ export async function getPassportData() {
   return { id: doc.id, ...doc.data() };
 }
 
+/* =====================================================
+   GET ALL PASSPORTS (USER – history)
+===================================================== */
 export async function getAllPassportData() {
   const user = auth().currentUser;
   if (!user) throw new Error("User not logged in");
@@ -649,30 +292,21 @@ export async function getAllPassportData() {
   }));
 }
 
+/* =====================================================
+   🔥 ADMIN: GET ALL USERS PASSPORT DATA
+===================================================== */
+export const getAllPassportDataAdmin = async () => {
+  const snapshot = await firestore()
+    .collectionGroup("passportData") // 🔥 CRITICAL
+    .get();
 
-export async function getAllPassportDataAdmin() {
-  const usersSnap = await firestore().collection("users").get();
+  return snapshot.docs.map((doc) => {
+    const parentUserRef = doc.ref.parent.parent;
 
-  const allPassports = [];
-
-  for (const userDoc of usersSnap.docs) {
-    const userId = userDoc.id;
-
-    const passportSnap = await firestore()
-      .collection("users")
-      .doc(userId)
-      .collection("passportData")
-      .orderBy("createdAt", "desc")
-      .get();
-
-    passportSnap.forEach((p) => {
-      allPassports.push({
-        id: p.id,
-        userId: userId,        // 🔥 IMPORTANT, for admin actions
-        ...p.data(),
-      });
-    });
-  }
-
-  return allPassports;
-}
+    return {
+      id: doc.id,
+      ...doc.data(),
+      userId: parentUserRef?.id || null, // 🔥 SAFE extraction
+    };
+  });
+};

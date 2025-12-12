@@ -469,7 +469,7 @@ export default function TravelDateScreen({ navigation }) {
                         </Text>
                     </View>
 
-                    <TouchableOpacity onPress={() => navigation.navigate("Destination")}>
+                    <TouchableOpacity onPress={() => navigation.replace("Destination")}>
                         <Icon name="home" size={moderateScale(24)} color="black" />
                     </TouchableOpacity>
                 </View>

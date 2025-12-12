@@ -37,20 +37,34 @@
 
 // // Register your main component
 // AppRegistry.registerComponent(appName, () => ReduxApp);
+
+
+// import 'react-native-gesture-handler';
+// import { AppRegistry } from 'react-native';
+// import React from 'react';
+// import { Provider } from 'react-redux';
+// import App from './App';
+// import { name as appName } from './app.json';
+
+// function Main() {
+//   return (
+//     <Provider>
+//       <App />
+//     </Provider>
+//   );
+// }
+
+// AppRegistry.registerComponent(appName, () => Main);
+
+
 import 'react-native-gesture-handler';
 import { AppRegistry } from 'react-native';
 import React from 'react';
-import { Provider } from 'react-redux';
-import { store } from './src/Redux/store';
 import App from './App';
 import { name as appName } from './app.json';
 
 function Main() {
-  return (
-    <Provider store={store}>
-      <App />
-    </Provider>
-  );
+  return <App />;
 }
 
 AppRegistry.registerComponent(appName, () => Main);

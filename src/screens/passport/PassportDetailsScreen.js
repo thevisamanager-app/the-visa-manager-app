@@ -110,7 +110,7 @@ export default function PassportDetailsScreen({ navigation, route }) {
   const [expiryDate, setExpiryDate] = useState(
     formatMRZDate(passportState?.expiryDate)
   );
-    const [phoneNumber, setphoneNumber] = useState(
+  const [phoneNumber, setphoneNumber] = useState(
     formatMRZDate(passportState?.phoneNumber)
   );
 
@@ -222,9 +222,17 @@ export default function PassportDetailsScreen({ navigation, route }) {
           <Text style={styles.stepBadgeText}>Review Visa {date}</Text>
         </View>
 
-        <TouchableOpacity onPress={() => navigation.navigate("Destination")}>
+        {/* <TouchableOpacity onPress={() => navigation.navigate("Destination")}>
           <Icon name="home" size={moderateScale(24)} color={ORANGE} />
-        </TouchableOpacity>
+        </TouchableOpacity> */
+          <TouchableOpacity onPress={() => navigation.navigate("Tabs", {
+            screen: "Destination",
+          })
+          }>
+            <Icon name="home" size={moderateScale(24)} color={ORANGE} />
+          </TouchableOpacity>
+
+        }
       </View>
 
       {/* PROGRESS BAR (KEEPING ORIGINAL UI) */}

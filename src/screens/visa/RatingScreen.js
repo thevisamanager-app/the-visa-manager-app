@@ -734,6 +734,7 @@ import {
     Alert,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../../utils/metrics";
 
@@ -742,8 +743,9 @@ import functions from "@react-native-firebase/functions";
 import auth from "@react-native-firebase/auth";
 import RNFS from "react-native-fs";
 import FileViewer from "react-native-file-viewer";
+
 import { useSelector } from "react-redux";
-const ORANGE = "#FF7A00";
+const ORANGE = "#FF5C00";
 
 export default function CongratsScreen({ navigation, route }) {
     const [ratingVisible, setRatingVisible] = useState(false);
@@ -784,12 +786,12 @@ export default function CongratsScreen({ navigation, route }) {
             console.log("USER ID ===>", user);
             console.log("Invoice Payload:", { invoiceId, userName: user.displayName, userId: user.uid, selectedCountry: selected });
 
-            console.log("COUNTRYNAME===>",selected.countrName)
+            console.log("COUNTRYNAME===>", selected.countrName)
             const response = await callGenerateInvoice({
                 invoiceId,
                 userName: user.displayName ?? user.email ?? user.phoneNumber ?? "Guest User",
                 userId: passport.firstName + " " + passport.lastName,
-                amount: Number(amount),  
+                amount: Number(amount),
                 country: selected.countrName,
                 date: new Date().toLocaleString(),
             });
@@ -831,6 +833,29 @@ export default function CongratsScreen({ navigation, route }) {
 
     return (
         <SafeAreaView style={styles.container}>
+            <View style={styles.headerRow}>
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <Ionicons name="chevron-back" size={moderateScale(28)} color="black" />
+                </TouchableOpacity>
+
+                <View style={styles.badge}>
+                    <Ionicons name="checkmark-circle" size={moderateScale(16)} color="#fff" />
+                    <Text style={styles.badgeText}>
+                        Visa on <Text style={{ fontWeight: "700" }}>{date}</Text>
+                    </Text>
+                </View>
+
+                <TouchableOpacity
+                    onPress={() =>
+                        navigation.navigate("Tabs", {
+                            screen: "Destination",
+                        })
+                    }
+                >
+                    <Icon name="home" size={moderateScale(24)} color={ORANGE} />
+                </TouchableOpacity>
+
+            </View>
             <View style={styles.centerContent}>
                 <Text style={styles.title}>Congrats!</Text>
                 <Text style={styles.subtitle}>
@@ -983,6 +1008,32 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#FFFFFF",
+    },
+
+    // ✅ Added — fixes header alignment like CheckoutScreen
+    headerRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        paddingHorizontal: wp("4%"),
+        paddingVertical: verticalScale(10),
+        justifyContent: "space-between",
+    },
+
+    // ✅ Added — fixes center orange pill alignment
+    badge: {
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: ORANGE,
+        paddingHorizontal: moderateScale(12),
+        paddingVertical: verticalScale(5),
+        borderRadius: 999,
+    },
+
+    // ✅ Added — fixes text alignment inside badge
+    badgeText: {
+        color: "#fff",
+        marginLeft: scale(6),
+        fontSize: RFValue(12),
     },
 
     centerContent: {

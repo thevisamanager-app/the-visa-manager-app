@@ -187,7 +187,7 @@ export default function DestinationScreen() {
         onChangeText={(text) => setSearchText(text)}
         value={searchText}
         placeholder="Search destination"
-        placeholderTextColor={"#000"}
+        placeholderTextColor={"#FF5C00"}
       />
 
       {/* <FlatList
@@ -207,7 +207,7 @@ export default function DestinationScreen() {
         <FlatList
           data={filteredData}
           keyExtractor={(item) => item.id.toString()}
-          contentContainerStyle={{ paddingBottom: 120 }}  // ⭐ Important
+          contentContainerStyle={{ paddingBottom: 120 }}
           renderItem={({ item }) => (
             <CountryCards
               title={item.countrName}
@@ -236,10 +236,9 @@ const styles = StyleSheet.create({
     marginVertical: verticalScale(10),
     borderWidth: scale(1),
     padding: moderateScale(10),
-    borderRadius: moderateScale(50),
+    borderRadius: moderateScale(10),
     borderColor: 'grey',
-    color: '#fff',
+    color: '#111',
     fontSize: RFValue(14),
-    backgroundColor: "#fff"
   },
 });

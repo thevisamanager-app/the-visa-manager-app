@@ -15,6 +15,8 @@ import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../../util
 
 // ⬇️ NEW IMPORT
 import { useSelector } from "react-redux";
+
+
 const ORANGE = "#FF5C00"; // neon-orange like screenshot
 const LIGHT_PURPLE = "#ECEAFF";
 const CARD_BG = "#FFFFFF";
@@ -54,9 +56,17 @@ export default function CheckoutScreen({ navigation, route }) {
         {/* ⬇️ Replace static text with selected.countrName */}
         <Text style={styles.headerTitle}>{selected?.countrName}</Text>
 
-        <TouchableOpacity onPress={() => navigation.navigate("Destination")}>
+        {/* <TouchableOpacity onPress={() => navigation.navigate("Destination")}>
           <Icon name="home-outline" size={26} color={ORANGE} />
-        </TouchableOpacity>
+        </TouchableOpacity> */
+          <TouchableOpacity onPress={() => navigation.navigate("Tabs", {
+            screen: "Destination",
+          })
+          }>
+            <Icon name="home" size={moderateScale(24)} color={ORANGE} />
+          </TouchableOpacity>
+
+        }
 
       </View>
 

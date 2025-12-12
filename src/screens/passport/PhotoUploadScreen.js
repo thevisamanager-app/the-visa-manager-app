@@ -378,9 +378,18 @@ export default function PhotoUploadScreen({ navigation, route }) {
           <Text style={styles.stepBadgeText}>Visa on {date}</Text>
         </View>
 
-        <TouchableOpacity onPress={() => navigation.navigate("Destination")}>
+        {/* <TouchableOpacity onPress={() => navigation.navigate("Destination")}>
           <Icon name="home" size={26} color={ORANGE} />
-        </TouchableOpacity>
+        </TouchableOpacity> */
+
+          <TouchableOpacity onPress={() => navigation.navigate("Tabs", {
+            screen: "Destination",
+          })
+          }>
+            <Icon name="home" size={moderateScale(24)} color={ORANGE} />
+          </TouchableOpacity>
+
+        }
 
       </View>
 
@@ -462,13 +471,12 @@ export default function PhotoUploadScreen({ navigation, route }) {
       </View>
 
       {/* ACTIONS */}
-
+      <TouchableOpacity style={styles.confirmButton} onPress={confirmPhoto}>
+        <Text style={styles.confirmText}>Confirm Image</Text>
+      </TouchableOpacity>
 
       <TouchableOpacity style={styles.retakeButton} onPress={pickPhoto}>
         <Text style={styles.retakeText}>{photo ? "Reload Image" : "Upload Image"}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.confirmButton} onPress={confirmPhoto}>
-        <Text style={styles.confirmText}>Confirm Image</Text>
       </TouchableOpacity>
     </View>
   );

@@ -7,7 +7,8 @@ const DESTINATIONS = [
     VisaManagerFee:"1770",
     AuthorityCharges:"750",
     GovernmentFee:"2350",
-    currency:""
+    currency:"",
+    countryType:"eVisa", //  or eVisa or DAC 
   },
   {
     id: 2,

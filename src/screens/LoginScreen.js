@@ -324,7 +324,7 @@ export default function LoginScreen({ navigation }) {
     <View style={styles.container}>
 
       <Image
-        source={require("../assets/icons/TVMLogo.png")}
+        source={require("../../tvm_assets/tvmlogo.png")}
         style={{
           width: wp("65%"),
           height: hp("25%"),

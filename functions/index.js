@@ -237,7 +237,7 @@ exports.generateInvoice = onCall(async (req) => {
 
     // --------- LOGO & HEADER ----------
     try {
-      const logoPath = path.join(__dirname, "assets", "TVMLogo.png"); // ✅ FIXED FOLDER NAME
+      const logoPath = path.join(__dirname, "tvm_assets", "tvmLogo.png"); // ✅ FIXED FOLDER NAME
       if (fs.existsSync(logoPath)) {
         doc.image(logoPath, 40, 40, { width: 140 });
       } else {

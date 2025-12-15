@@ -122,6 +122,115 @@
 // });
 
 
+// import React, { useState, useMemo, useEffect } from 'react';
+// import {
+//   TextInput,
+//   StyleSheet,
+//   FlatList,
+// } from 'react-native';
+// import CountryCards from '../components/CountryCards';
+// import { SafeAreaView } from 'react-native-safe-area-context';
+// import { useSelector, useDispatch } from 'react-redux';
+// import { setSelectedDestination } from '../Redux/destinationsSlice';
+// import { useNavigation } from '@react-navigation/native';
+// import { wp, hp, scale, verticalScale, moderateScale, RFValue } from '../utils/metrics';
+
+// export default function DestinationScreen() {
+
+//   const [searchText, setSearchText] = useState('');
+//   const [date, setDate] = useState('');
+
+//   const destinations = useSelector((state) => state.destinations.list);
+//   const dispatch = useDispatch();
+//   const navigation = useNavigation();
+
+//   // ---------------------------
+//   // Get date 5 days from now
+//   // ---------------------------
+//   const getDateAfterFiveDays = () => {
+//     const currentDate = new Date();
+//     currentDate.setDate(currentDate.getDate() + 5);
+
+//     const options = { day: '2-digit', month: 'short', year: 'numeric' };
+//     return currentDate.toLocaleDateString('en-GB', options);
+//   };
+
+//   // Call once when screen loads
+//   useEffect(() => {
+//     setDate(getDateAfterFiveDays());
+//   }, []);
+
+//   // ---------------------------
+//   // Search filter
+//   // ---------------------------
+//   const filteredData = useMemo(() => {
+//     if (!searchText) return destinations;
+
+//     const upperText = searchText.toUpperCase();
+//     return destinations.filter((item) => {
+//       const itemName = item.countrName ? item.countrName.toUpperCase() : '';
+//       return itemName.indexOf(upperText) > -1;
+//     });
+//   }, [searchText, destinations]);
+
+
+//   const handleCardPress = (item) => {
+//     dispatch(setSelectedDestination(item));
+//     navigation.navigate('StartApplicationScreen');
+//   };
+
+//   return (
+//     <SafeAreaView style={styles.safeArea}>
+
+//       <TextInput
+//         style={styles.input}
+//         onChangeText={(text) => setSearchText(text)}
+//         value={searchText}
+//         placeholder="Search destination"
+//         placeholderTextColor={"#FF5C00"}
+//       />
+
+//       {
+//         <FlatList
+//           data={filteredData}
+//           keyExtractor={(item) => item.id.toString()}
+//           contentContainerStyle={{ paddingBottom: 120 }}
+//           renderItem={({ item }) => (
+//             <CountryCards
+//               title={item.countrName}
+//               source={item.source}
+//               countrName={item.countrName}
+//               item={item}
+//               onPress={() => handleCardPress(item)}
+//               date={date}
+//             />
+//           )}
+//         />
+//       }
+
+//     </SafeAreaView>
+//   );
+// }
+
+// const styles = StyleSheet.create({
+//   safeArea: {
+//     flex: 1,
+//     backgroundColor: '#FFF'
+//   },
+//   input: {
+//     height: hp('6%'),
+//     marginHorizontal: wp('4%'),
+//     marginVertical: verticalScale(10),
+//     borderWidth: scale(1),
+//     padding: moderateScale(10),
+//     borderRadius: moderateScale(10),
+//     borderColor: 'grey',
+//     color: '#111',
+//     fontSize: RFValue(14),
+//   },
+// });
+
+
 import React, { useState, useMemo, useEffect } from 'react';
 import {
   TextInput,
@@ -210,7 +319,7 @@ export default function DestinationScreen() {
           contentContainerStyle={{ paddingBottom: 120 }}
           renderItem={({ item }) => (
             <CountryCards
-              title={item.countrName}
+             // title={item.countrName}
               source={item.source}
               countrName={item.countrName}
               item={item}

@@ -344,5 +344,37 @@ const DESTINATIONS = [
     currency:""
   },
 
+  {
+    id: 35,
+    source: require('../images/Malaysia.jpg'),
+    title: '09 JAN 11:00 AM',
+    countrName: 'Malaysia',
+    VisaManagerFee:"590",
+    AuthorityCharges:"0",
+    GovernmentFee:"0",
+    currency:""
+  },
+
+  {
+    id: 36,
+    source: require('../images/Japan.jpg'),
+    title: '09 JAN 11:00 AM',
+    countrName: 'Japan',
+    VisaManagerFee:"1770",
+    AuthorityCharges:"750",
+    GovernmentFee:"550",
+    currency:""
+  },
+
+  {
+    id: 37,
+    source: require('../images/Thailand.jpg'),
+    title: '09 JAN 11:00 AM',
+    countrName: 'Thailand',
+    VisaManagerFee:"590",
+    AuthorityCharges:"0",
+    GovernmentFee:"0",
+    currency:""
+  },
 ];
 export default DESTINATIONS;

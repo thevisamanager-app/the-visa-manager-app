@@ -14,6 +14,7 @@ import counterReducer from './counterSlice';
 import authReducer from './authSlice';
 import destinationsReducer from './destinationsSlice';
 
+
 export const store = configureStore({
   reducer: {
     user: userReducer,

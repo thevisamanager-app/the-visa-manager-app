@@ -169,56 +169,6 @@ function Input({ label, value, secure }) {
   );
 }
 
-// const styles = StyleSheet.create({
-//   container: { padding: wp("5%"), backgroundColor: COLORS.white },
-
-//   backArrow: { fontSize: RFValue(32), color: COLORS.black, fontWeight: "300" },
-
-//   header: {
-//     fontSize: RFValue(22),
-//     fontWeight: "700",
-//     alignSelf: "center",
-//     marginVertical: verticalScale(10),
-//     color: COLORS.black,
-//   },
-
-//   avatarBox: {
-//     alignItems: "center",
-//     marginVertical: verticalScale(20),
-//   },
-
-//   avatar: {
-//     width: wp("25%"),
-//     height: wp("25%"),
-//     borderRadius: 100,
-//     borderWidth: 2,
-//     borderColor: COLORS.primary,
-//   },
-
-//   inputLabel: { color: COLORS.gray, marginBottom: 6, fontSize: RFValue(14) },
-
-//   input: {
-//     backgroundColor: COLORS.lightGray,
-//     padding: moderateScale(14),
-//     borderRadius: moderateScale(10),
-//     fontSize: RFValue(15),
-//   },
-
-//   saveBtn: {
-//     backgroundColor: COLORS.primary,
-//     paddingVertical: verticalScale(16),
-//     borderRadius: moderateScale(12),
-//     marginTop: verticalScale(10),
-//   },
-
-//   saveText: {
-//     color: COLORS.white,
-//     textAlign: "center",
-//     fontSize: RFValue(16),
-//     fontWeight: "700",
-//   },
-// });
-
 
 const styles = StyleSheet.create({
   container: {

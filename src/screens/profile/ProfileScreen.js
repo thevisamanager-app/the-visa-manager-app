@@ -346,10 +346,10 @@ export default function ProfileScreen({ navigation }) {
     Alert.alert(
       "About",
       "The Visa Manager is an entity of Ishwa Holidays Private Limited.\n\n" +
-        "We are dedicated to simplifying the complex world of international travel and immigration. " +
-        "Our mission is to provide individuals, families, and businesses with reliable, personalized visa services " +
-        "that remove the stress and confusion from the application process.\n\n" +
-        "Whether you’re traveling for leisure, we’re here to help you navigate every step of the journey."
+      "We are dedicated to simplifying the complex world of international travel and immigration. " +
+      "Our mission is to provide individuals, families, and businesses with reliable, personalized visa services " +
+      "that remove the stress and confusion from the application process.\n\n" +
+      "Whether you’re traveling for leisure, we’re here to help you navigate every step of the journey."
     );
   };
 
@@ -432,8 +432,12 @@ export default function ProfileScreen({ navigation }) {
           isDark={isDark}
           onPress={() =>
             navigation.navigate("Tabs", {
-              screen: "Destination",
+              screen: "Home",
+              params: {
+                screen: "DestinationScreen",
+              },
             })
+
           }
         />
       </View>
@@ -448,8 +452,8 @@ export default function ProfileScreen({ navigation }) {
         {/* <Text style={[styles.sectionTitle, isDark && { color: "#AAA" }]}>
           Support
         </Text> */}
-        <MenuItem title="Help Center" onPress={showHelp}  />
-        <MenuItem title="About" onPress={showAbout}/>
+        <MenuItem title="Help Center" onPress={showHelp} />
+        <MenuItem title="About" onPress={showAbout} />
       </View>
 
       {/* Logout */}
@@ -498,7 +502,7 @@ const styles = StyleSheet.create({
   },
 
   section: {
-    marginVertical: verticalScale(0),hadowColor: "#000",
+    marginVertical: verticalScale(0), hadowColor: "#000",
   },
 
   sectionTitle: {

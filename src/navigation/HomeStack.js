@@ -1,8 +1,7 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-
+import TabNavigator from "./TabNavigator";
 import DestinationScreen from "../screens/DestinationScreen";
-import QuestionScreen from "../screens/questions/QuestionScreen";
 import VisaQuestionScreen from "../screens/visa/VisaQuestionScreen";
 import CheckoutScreen from "../screens/visa/CheckoutScreen";
 import StartApplicationScreen from "../screens/start/StartApllicationScreen";

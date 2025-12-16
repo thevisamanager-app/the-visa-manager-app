@@ -246,6 +246,7 @@ import { logout } from "../../services/auth/logoutService";
 import { wp, hp, verticalScale, RFValue, moderateScale } from "../../utils/metrics";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import auth from "@react-native-firebase/auth";
+import firestore from "@react-native-firebase/firestore";
 import { getPassportData } from "../../services/passport/passportService";
 import { Linking } from "react-native";
 
@@ -303,9 +304,12 @@ function DarkModeToggle({ isDark, setIsDark }) {
 /* ---------------- Profile Screen ---------------- */
 export default function ProfileScreen({ navigation }) {
   const user = auth().currentUser;
+
   const [passport, setPassport] = useState(null);
+  const [profile, setProfile] = useState(null); // 🔥 NEW
   const [isDark, setIsDark] = useState(false);
 
+  /* ---------------- Passport Data ---------------- */
   useEffect(() => {
     (async () => {
       try {
@@ -317,14 +321,35 @@ export default function ProfileScreen({ navigation }) {
     })();
   }, []);
 
+  /* ---------------- User Profile (Realtime) ---------------- */
+  useEffect(() => {
+    if (!user) return;
+
+    const unsubscribe = firestore()
+      .collection("users")
+      .doc(user.uid)
+      .onSnapshot(
+        (doc) => {
+          if (doc.exists) {
+            setProfile(doc.data());
+          }
+        },
+        (error) => {
+          console.log("Profile listener error:", error);
+        }
+      );
+
+    return unsubscribe;
+  }, []);
+
   const showAbout = () => {
     Alert.alert(
       "About",
       "The Visa Manager is an entity of Ishwa Holidays Private Limited.\n\n" +
-      "We are dedicated to simplifying the complex world of international travel and immigration. " +
-      "Our mission is to provide individuals, families, and businesses with reliable, personalized visa services " +
-      "that remove the stress and confusion from the application process.\n\n" +
-      "Whether you’re traveling for leisure, we’re here to help you navigate every step of the journey."
+        "We are dedicated to simplifying the complex world of international travel and immigration. " +
+        "Our mission is to provide individuals, families, and businesses with reliable, personalized visa services " +
+        "that remove the stress and confusion from the application process.\n\n" +
+        "Whether you’re traveling for leisure, we’re here to help you navigate every step of the journey."
     );
   };
 
@@ -351,7 +376,6 @@ export default function ProfileScreen({ navigation }) {
     );
   };
 
-
   return (
     <ScrollView
       style={[
@@ -376,14 +400,21 @@ export default function ProfileScreen({ navigation }) {
         <Icon name="account-circle" size={58} color={COLORS.primary} />
 
         <View>
+          {/* ✅ NAME PRIORITY: Firestore → Passport → Auth */}
           <Text style={[styles.name, isDark && { color: "#FFF" }]}>
-            {passport?.firstName
-              ? `${passport.firstName} ${passport.lastName || ""}`
-              : user?.displayName || "User"}
+            {profile?.fullName ||
+              (passport?.firstName
+                ? `${passport.firstName} ${passport.lastName || ""}`
+                : user?.displayName || "User")}
           </Text>
 
+          {/* ✅ EMAIL / PHONE FROM PROFILE */}
           <Text style={[styles.email, isDark && { color: "#CCC" }]}>
-            {user?.phoneNumber || user?.email || "No phone/email"}
+            {profile?.phone ||
+              profile?.email ||
+              user?.phoneNumber ||
+              user?.email ||
+              "No phone/email"}
           </Text>
 
           {passport?.passportNumber && (
@@ -407,20 +438,18 @@ export default function ProfileScreen({ navigation }) {
         />
       </View>
 
-
-      <View style={styles.section}>
+      {/* <View style={styles.section}>
         <Text style={[styles.sectionTitle, isDark && { color: "#AAA" }]}>
           Settings & Preferences
         </Text>
-        <DarkModeToggle isDark={isDark} setIsDark={setIsDark} />
-      </View>
+      </View> */}
 
       <View style={styles.section}>
-        <Text style={[styles.sectionTitle, isDark && { color: "#AAA" }]}>
+        {/* <Text style={[styles.sectionTitle, isDark && { color: "#AAA" }]}>
           Support
-        </Text>
-        <MenuItem title="Help Center" onPress={showHelp} isDark={isDark} />
-        <MenuItem title="About" onPress={showAbout} isDark={isDark} />
+        </Text> */}
+        <MenuItem title="Help Center" onPress={showHelp}  />
+        <MenuItem title="About" onPress={showAbout}/>
       </View>
 
       {/* Logout */}
@@ -465,11 +494,11 @@ const styles = StyleSheet.create({
   email: {
     color: COLORS.gray,
     fontSize: RFValue(14),
-    marginTop: 2,
+    marginTop: 0,
   },
 
   section: {
-    marginVertical: verticalScale(12),
+    marginVertical: verticalScale(0),hadowColor: "#000",
   },
 
   sectionTitle: {

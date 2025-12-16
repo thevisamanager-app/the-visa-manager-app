@@ -103,7 +103,7 @@ import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../utils/m
 
 const { width } = Dimensions.get("window");
 
-export default function CountryCards({ title, source, countrName, item, onPress, date }) {
+export default function CountryCards({source, countrName, item, onPress, date }) {
 
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>

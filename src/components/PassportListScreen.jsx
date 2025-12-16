@@ -13,7 +13,7 @@
 // // } from "react-native";
 
 // // import { getAllPassportDataAdmin } from "../api/user/passportService";
-// // import { downloadAndZipImages } from "../utils/zipUtils";
+// import { downloadAndZipImages } from "../utils/zipUtils";
 // // import { requestAllFilesPermission } from "../utils/permissions";
 
 // // import auth from "@react-native-firebase/auth";
@@ -140,21 +140,21 @@
 // //     setExpandedId((prev) => (prev === id ? null : id));
 // //   };
 
-// //   // =============================
-// //   // DOWNLOAD ZIP
-// //   // =============================
-// //   const handleDownloadDocuments = async (item) => {
-// //     try {
-// //       const images = [item.frontImageURL, item.backImageURL, item.photoUrl];
-// //       const zipPath = await downloadAndZipImages(
-// //         images,
-// //         `documents_${item.firstName}_${item.lastName}.zip`
-// //       );
-// //       Alert.alert("Download Complete", zipPath);
-// //     } catch (err) {
-// //       Alert.alert("Download Failed", err.message);
-// //     }
-// //   };
+// // =============================
+// // DOWNLOAD ZIP
+// // =============================
+// const handleDownloadDocuments = async (item) => {
+//   try {
+//     const images = [item.frontImageURL, item.backImageURL, item.photoUrl];
+//     const zipPath = await downloadAndZipImages(
+//       images,
+//       `documents_${item.firstName}_${item.lastName}.zip`
+//     );
+//     Alert.alert("Download Complete", zipPath);
+//   } catch (err) {
+//     Alert.alert("Download Failed", err.message);
+//   }
+// };
 
 // //   // =============================
 // //   // UPDATE VISA STATUS
@@ -237,13 +237,13 @@
 // //             <Text style={styles.label}>DOB: {item.birthDate}</Text>
 // //             <Text style={styles.label}>Expiry: {item.expiryDate}</Text>
 
-// //             {/* DOWNLOAD */}
-// //             <TouchableOpacity
-// //               style={styles.downloadBtn}
-// //               onPress={() => handleDownloadDocuments(item)}
-// //             >
-// //               <Text style={styles.downloadText}>Download ZIP</Text>
-// //             </TouchableOpacity>
+// {/* DOWNLOAD */}
+// <TouchableOpacity
+//   style={styles.downloadBtn}
+//   onPress={() => handleDownloadDocuments(item)}
+// >
+//   <Text style={styles.downloadText}>Download ZIP</Text>
+// </TouchableOpacity>
 
 // //             {/* STATUS UPDATE */}
 // //             <Text style={styles.sectionTitle}>Update Visa Status</Text>
@@ -1249,16 +1249,26 @@ import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import { launchImageLibrary } from "react-native-image-picker";
-
+import { downloadAndZipImages } from "../utils/zipUtils";
 import { getAllPassportDataAdmin } from "../api/user/passportService";
 import { requestAllFilesPermission } from "../utils/permissions";
-
-import {
-  moderateScale,
-  scale,
-  verticalScale,
-} from "react-native-size-matters";
-
+import RNFS from "react-native-fs";
+import { logout } from "../services/auth/logoutService";
+import Share from "react-native-share";
+import { Linking } from "react-native";
+// import {
+//   moderateScale,
+//   scale,
+//   verticalScale,
+// } from "react-native-size-matters";
+import { wp, hp, scale, verticalScale, RFValue, moderateScale } from "../utils/metrics";
+const COLORS = {
+  primary: "#FF5C00",
+  black: "#000",
+  white: "#FFF",
+  gray: "#777",
+  lightGray: "#F5F5F5",
+};
 /* =====================================================
    STATUS COLOR HELPER
 ===================================================== */
@@ -1440,7 +1450,69 @@ export default function PassportListScreen() {
     }
   };
 
+  // =============================
+  // DOWNLOAD ZIP
+  // =============================
+  //  const handleDownloadDocuments = async (item) => {
+  //   try {
+  //     const images = [
+  //       item.frontImageURL,
+  //       item.backImageURL,
+  //       item.photoUrl,
+  //     ];
 
+  //     const zipName = `documents_${item.firstName}_${item.lastName}.zip`;
+
+  //     const zipPath = await downloadAndZipImages(images, zipName);
+
+  //     Alert.alert(
+  //       "Download Complete",
+  //       `Saved to Downloads\n${zipName}`,
+  //       [
+  //         {
+  //           text: "Open",
+  //           onPress: () => Linking.openURL(`file://${zipPath}`),
+  //         },
+  //         { text: "OK" },
+  //       ]
+  //     );
+  //   } catch (err) {
+  //     Alert.alert("Download Failed", err.message);
+  //   }
+  // };
+  const handleDownloadDocuments = async (item) => {
+    try {
+      const images = [
+        item.frontImageURL,
+        item.backImageURL,
+        item.photoUrl,
+      ];
+
+      const zipName = `documents_${item.firstName}_${item.lastName}.zip`;
+
+      const zipPath = await downloadAndZipImages(images, zipName);
+
+      Alert.alert(
+        "Download Complete",
+        "ZIP saved to Downloads",
+        [
+          {
+            text: "Share",
+            onPress: async () => {
+              await Share.open({
+                url: `file://${zipPath}`,
+                type: "application/zip",
+                title: zipName,
+              });
+            },
+          },
+          { text: "OK" },
+        ]
+      );
+    } catch (err) {
+      Alert.alert("Download Failed", err.message);
+    }
+  };
   /* =====================================================
      RENDER ITEM
   ===================================================== */
@@ -1503,12 +1575,18 @@ export default function PassportListScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.actionBtn, { backgroundColor: "#0F766E" }]}
+              style={[styles.actionBtn, { backgroundColor: "#FF5C00" }]}
               onPress={() => uploadUserDocument(item.userId)}
             >
               <Text style={styles.actionText}>Upload Document</Text>
             </TouchableOpacity>
-
+            {/* DOWNLOAD */}
+            <TouchableOpacity
+              style={[styles.actionBtn, { backgroundColor: "#FF5C00" }]}
+              onPress={() => handleDownloadDocuments(item)}
+            >
+              <Text style={styles.actionText}>Download ZIP</Text>
+            </TouchableOpacity>
             {/* <TextInput
               style={styles.input}
               placeholder="Banner Start Color"
@@ -1544,6 +1622,7 @@ export default function PassportListScreen() {
         placeholder="Search name or passport"
         value={searchText}
         onChangeText={handleSearch}
+        placeholderTextColor={"#000"}
       />
 
       <FlatList
@@ -1555,6 +1634,9 @@ export default function PassportListScreen() {
         }
         contentContainerStyle={{ paddingBottom: 60 }}
       />
+      <TouchableOpacity style={styles.logoutBtn} onPress={logout}>
+        <Text style={styles.logoutText}>Log out</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -1568,7 +1650,8 @@ const styles = StyleSheet.create({
     padding: moderateScale(12),
     borderRadius: moderateScale(10),
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "#000",
+    marginTop: verticalScale(50)
   },
   card: {
     marginHorizontal: scale(16),
@@ -1627,5 +1710,19 @@ const styles = StyleSheet.create({
     color: "#fff",
     textAlign: "center",
     fontWeight: "700",
+  },
+    logoutBtn: {
+    padding: verticalScale(14),
+    borderRadius: moderateScale(12),
+    backgroundColor: COLORS.primary,
+    alignItems: "center",
+    marginBottom: verticalScale(35),
+    margin:moderateScale(10)
+  },
+
+  logoutText: {
+    color: COLORS.white,
+    fontWeight: "700",
+    fontSize: RFValue(16),
   },
 });

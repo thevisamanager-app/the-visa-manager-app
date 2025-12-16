@@ -431,11 +431,12 @@ export default function PassportDetailsScreen({ navigation, route }) {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Travellers</Text>
 
+
             <TouchableOpacity onPress={handleAddCoTraveller}>
               <Text style={styles.addBtn}>+ Add Co-Passenger</Text>
             </TouchableOpacity>
           </View>
-
+          <Text style={styles.sectionTMinoritle}>If Co-Passenger is minor please upload the minor Passport and Birth Certificate</Text>
           {/* Main Traveller */}
           <View style={styles.travellerRow}>
             <Icon name="person" size={24} color={ORANGE} />
@@ -521,92 +522,6 @@ export default function PassportDetailsScreen({ navigation, route }) {
   );
 }
 
-// === Styles (UNCHANGED) ===
-// const styles = StyleSheet.create({
-//   container: { flex: 1, backgroundColor: "#fff", padding: 20 },
-//   topNav: {
-//     flexDirection: "row",
-//     justifyContent: "space-between",
-//     alignItems: "center",
-//   },
-//   stepBadge: {
-//     backgroundColor: ORANGE,
-//     borderRadius: 18,
-//     paddingHorizontal: 10,
-//     paddingVertical: 4,
-//     flexDirection: "row",
-//     alignItems: "center",
-//   },
-//   stepBadgeText: { color: "#fff", marginLeft: 6 },
-//   progressContainer: {
-//     flexDirection: "row",
-//     alignItems: "center",
-//     marginTop: 20,
-//     justifyContent: "center",
-//   },
-//   stepItem: { alignItems: "center" },
-//   stepLabel: { fontSize: 12, color: "#777", marginTop: 4 },
-//   line: { width: 30, height: 2, backgroundColor: ORANGE, marginHorizontal: 5 },
-//   title: {
-//     fontSize: 20,
-//     fontWeight: "700",
-//     marginVertical: 15,
-//     textAlign: "center",
-//   },
-//   sectionCard: { backgroundColor: "#F6F6F8", borderRadius: 16, padding: 16 },
-//   sectionTitle: { fontWeight: "700", fontSize: 16 },
-//   sectionHeader: {
-//     flexDirection: "row",
-//     justifyContent: "space-between",
-//     alignItems: "center",
-//   },
-//   travellerRow: { flexDirection: "row", alignItems: "center", marginTop: 10 },
-//   travellerName: {
-//     marginLeft: 10,
-//     fontSize: 15,
-//     fontWeight: "600",
-//     flex: 1,
-//   },
-//   addBtn: { color: ORANGE, fontWeight: "600" },
-//   inputLabel: { marginTop: 10, fontWeight: "600" },
-//   input: {
-//     borderWidth: 1,
-//     borderColor: "#ddd",
-//     padding: 8,
-//     marginTop: 4,
-//     borderRadius: 8,
-//     backgroundColor: "#fff",
-//   },
-//   docRow: { marginTop: 10 },
-//   docHeader: { flexDirection: "row", justifyContent: "space-between" },
-//   docHeaderLeft: { flexDirection: "row", alignItems: "center" },
-//   docLabel: { marginLeft: 6, fontWeight: "600" },
-//   thumbBox: {
-//     backgroundColor: "#eee",
-//     width: 80,
-//     height: 80,
-//     marginTop: 8,
-//     borderRadius: 10,
-//     overflow: "hidden",
-//     justifyContent: "center",
-//     alignItems: "center",
-//   },
-//   docImage: { width: "100%", height: "100%" },
-//   docPlaceholder: { fontSize: 12, color: "#555", textAlign: "center" },
-//   confirmButton: {
-//     backgroundColor: ORANGE,
-//     padding: 14,
-//     marginTop: 24,
-//     borderRadius: 12,
-//   },
-//   confirmText: {
-//     color: "#fff",
-//     textAlign: "center",
-//     fontSize: 18,
-//     fontWeight: "700",
-//   },
-// });
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -678,7 +593,11 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: RFValue(15),
   },
-
+ sectionTMinoritle: {
+    fontWeight: "700",
+    fontSize: RFValue(15),
+    color:"green",
+  },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",

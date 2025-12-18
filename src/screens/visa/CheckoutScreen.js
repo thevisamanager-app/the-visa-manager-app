@@ -712,20 +712,20 @@ export default function CheckoutScreen({ navigation, route }) {
   // try {
   //   const userId = auth().currentUser?.uid;
 
-    //const result = await startPayment(finalTotal, userId, passport);
+  //   const result = await startPayment(finalTotal, userId, passport);
 
-    // ✅ PAYMENT SUCCESS
-    // if (result?.success) {
-    //   navigation.navigate("RatingScreen", {
-    //     passport,
-    //     totalAmount: finalTotal,
-    //     selected,
-    //     minors,
-    //   });
-    //   return;
-    // }
+  //   ✅ PAYMENT SUCCESS
+  //   if (result?.success) {
+  //     navigation.navigate("RatingScreen", {
+  //       passport,
+  //       totalAmount: finalTotal,
+  //       selected,
+  //       minors,
+  //     });
+  //     return;
+  //   }
 
-    // ❌ PAYMENT FAILED / CANCELLED
+  //   ❌ PAYMENT FAILED / CANCELLED
   //   Alert.alert(
   //     "Payment Failed",
   //     "Payment was not completed. Please try again."

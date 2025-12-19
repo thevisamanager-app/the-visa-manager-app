@@ -713,19 +713,20 @@ export default function CheckoutScreen({ navigation, route }) {
     // try {
     //   const userId = auth().currentUser?.uid;
 
-    //const result = await startPayment(finalTotal, userId, passport);
+  //   const result = await startPayment(finalTotal, userId, passport);
 
-    // ✅ PAYMENT SUCCESS
-    // if (result?.success) {
-    //   navigation.navigate("RatingScreen", {
-    //     passport,
-    //     totalAmount: finalTotal,
-    //     selected,
-    //     minors,
-    //   });
-    //   return;
-    // }
+  //   ✅ PAYMENT SUCCESS
+  //   if (result?.success) {
+  //     navigation.navigate("RatingScreen", {
+  //       passport,
+  //       totalAmount: finalTotal,
+  //       selected,
+  //       minors,
+  //     });
+  //     return;
+  //   }
 
+<<<<<<< HEAD
     // ❌ PAYMENT FAILED / CANCELLED
     //   Alert.alert(
     //     "Payment Failed",
@@ -740,6 +741,22 @@ export default function CheckoutScreen({ navigation, route }) {
     // }
     navigation.navigate("RatingScreen", { passport, totalAmount, selected })
   };
+=======
+  //   ❌ PAYMENT FAILED / CANCELLED
+  //   Alert.alert(
+  //     "Payment Failed",
+  //     "Payment was not completed. Please try again."
+  //   );
+  // } catch (error) {
+  //   // ❌ PAYMENT ERROR
+  //   Alert.alert(
+  //     "Payment Error",
+  //     error.message || "Something went wrong. Please try again."
+  //   );
+  // }
+  navigation.navigate("RatingScreen",{passport,totalAmount,selected})
+};
+>>>>>>> c8c78de6c0006ce5e72d08dadab1aed72e55b43b
 
   return (
     <ScreenWrapper style={styles.container}>

@@ -11,6 +11,7 @@ import {
 import Icon from "react-native-vector-icons/MaterialIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { savePassportData } from "../../api/user/passportService";
+import ScreenWrapper from "../../components/ScreenWrapper";
 import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../../utils/metrics";
 
 const ORANGE = "#FF5C00";
@@ -210,7 +211,7 @@ export default function PassportDetailsScreen({ navigation, route }) {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <ScreenWrapper style={styles.container}>
       {/* NAV */}
       <View style={styles.topNav}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -518,7 +519,7 @@ export default function PassportDetailsScreen({ navigation, route }) {
           <Text style={styles.confirmText}>Continue</Text>
         </TouchableOpacity>
       </ScrollView>
-    </View>
+    </ScreenWrapper>
   );
 }
 

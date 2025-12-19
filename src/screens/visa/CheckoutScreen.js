@@ -657,6 +657,7 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import ScreenWrapper from "../../components/ScreenWrapper";
 import { useSelector } from "react-redux";
 import {
   wp,
@@ -707,10 +708,10 @@ export default function CheckoutScreen({ navigation, route }) {
 
   const totalAmount = baseTotal + totalMinorFee;
 
-  
+
   const handlePay = async () => {
-  // try {
-  //   const userId = auth().currentUser?.uid;
+    // try {
+    //   const userId = auth().currentUser?.uid;
 
     //const result = await startPayment(finalTotal, userId, passport);
 
@@ -726,22 +727,22 @@ export default function CheckoutScreen({ navigation, route }) {
     // }
 
     // ❌ PAYMENT FAILED / CANCELLED
-  //   Alert.alert(
-  //     "Payment Failed",
-  //     "Payment was not completed. Please try again."
-  //   );
-  // } catch (error) {
-  //   // ❌ PAYMENT ERROR
-  //   Alert.alert(
-  //     "Payment Error",
-  //     error.message || "Something went wrong. Please try again."
-  //   );
-  // }
-  navigation.navigate("RatingScreen",{passport,totalAmount,selected})
-};
+    //   Alert.alert(
+    //     "Payment Failed",
+    //     "Payment was not completed. Please try again."
+    //   );
+    // } catch (error) {
+    //   // ❌ PAYMENT ERROR
+    //   Alert.alert(
+    //     "Payment Error",
+    //     error.message || "Something went wrong. Please try again."
+    //   );
+    // }
+    navigation.navigate("RatingScreen", { passport, totalAmount, selected })
+  };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ScreenWrapper style={styles.container}>
       {/* HEADER */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -824,9 +825,20 @@ export default function CheckoutScreen({ navigation, route }) {
             <Text style={styles.totalAmount}>₹{totalAmount}</Text>
           </View>
 
-          <View style={styles.bannerBox}>
-            <Text style={styles.bannerText}>
-              You pay only when we deliver your visa on time
+          <View style={styles.protectCard}>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Icon name="shield-half-outline" size={32} color={ORANGE} />
+              <View style={{ marginLeft: 10 }}>
+                <Text style={styles.protectTitle}>The Visa Manager</Text>
+                <Text style={styles.protectBadge}>Included for Free</Text>
+              </View>
+            </View>
+
+            <Text style={styles.protectInfo}>
+              If Visa Delayed: No The Visa Manager Fee
+            </Text>
+            <Text style={styles.protectInfo}>
+              If Visa Rejected: 100% Visa Fee Back
             </Text>
           </View>
         </View>
@@ -837,7 +849,7 @@ export default function CheckoutScreen({ navigation, route }) {
           <Text style={styles.btnText}>Proceed to Pay</Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </ScreenWrapper>
   );
 }
 
@@ -947,5 +959,33 @@ const styles = StyleSheet.create({
     fontSize: RFValue(16),
     color: "#fff",
     fontWeight: "800",
+  },
+  protectCard: {
+    backgroundColor: CARD_BG,
+    //marginHorizontal: wp("4%"),
+    padding: moderateScale(16),
+    borderRadius: moderateScale(16),
+    marginTop: verticalScale(8),
+    borderWidth: scale(1),
+    borderColor: "#e4e4e7",
+  },
+
+  protectTitle: {
+    fontSize: RFValue(16),
+    fontWeight: "700",
+    color: "#2F2F2F",
+  },
+
+  protectBadge: {
+    fontSize: RFValue(12),
+    color: "#2AA952",
+    marginTop: verticalScale(2),
+    fontWeight: "700",
+  },
+
+  protectInfo: {
+    marginTop: verticalScale(5),
+    fontSize: RFValue(10),
+    color: "#444",
   },
 });

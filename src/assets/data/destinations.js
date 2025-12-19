@@ -1,7 +1,7 @@
 const DESTINATIONS = [
   {
     id: 1,
-    source: require('../images/vietnam.jpeg'),
+    source: require('../images/vietnam.webp'),
     title: '07 NOV 11:42 AM',
     countrName: 'Vietnam',
     VisaManagerFee: "1770",
@@ -12,7 +12,7 @@ const DESTINATIONS = [
   },
   {
     id: 2,
-    source: require('../images/singapore.jpeg'),
+    source: require('../images/singapore.webp'),
     title: '08 DEC 12:15 PM',
     countrName: 'Singapore',
     VisaManagerFee: "799",
@@ -24,7 +24,7 @@ const DESTINATIONS = [
   },
   {
     id: 3,
-    source: require('../images/South Korea.jpg'),
+    source: require('../images/South Korea.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'South Korea',
     VisaManagerFee: "3540",
@@ -35,7 +35,7 @@ const DESTINATIONS = [
   },
   {
     id: 4,
-    source: require('../images/indonesia.jpeg'),
+    source: require('../images/indonesia.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Indonesia',
     VisaManagerFee: " 590",
@@ -46,7 +46,7 @@ const DESTINATIONS = [
   },
   {
     id: 5,
-    source: require('../images/Hong-Kong.jpg'),
+    source: require('../images/Hong-Kong.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Hong Kong',
     VisaManagerFee: "588.82",
@@ -57,7 +57,7 @@ const DESTINATIONS = [
   },
   {
     id: 6,
-    source: require('../images/Cambodia.jpg'),
+    source: require('../images/Cambodia.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Cambodia',
     VisaManagerFee: "1770",
@@ -68,7 +68,7 @@ const DESTINATIONS = [
   },
   {
     id: 7,
-    source: require('../images/Sri lanka.jpg'),
+    source: require('../images/Sri lanka.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Sri-Lanka',
     VisaManagerFee: "800",
@@ -79,7 +79,7 @@ const DESTINATIONS = [
   },
   {
     id: 8,
-    source: require('../images/philippines.jpg'),
+    source: require('../images/philippines.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Philippines',
     VisaManagerFee: "1180",
@@ -90,7 +90,7 @@ const DESTINATIONS = [
   },
   {
     id: 9,
-    source: require('../images/Uzbekistan.jpg'),
+    source: require('../images/Uzbekistan.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Uzbekistan',
     VisaManagerFee: "1770 per traveler",
@@ -107,7 +107,7 @@ const DESTINATIONS = [
 
   {
     id: 10,
-    source: require('../images/Armenia.jpg'),
+    source: require('../images/Armenia.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Armenia',
     VisaManagerFee: "1770 per traveler",
@@ -119,7 +119,7 @@ const DESTINATIONS = [
 
   {
     id: 11,
-    source: require('../images/Russia.jpg'),
+    source: require('../images/Russia.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Russia',
     VisaManagerFee: "3540",
@@ -131,7 +131,7 @@ const DESTINATIONS = [
 
   {
     id: 12,
-    source: require('../images/France.jpg'),
+    source: require('../images/France.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'France',
     VisaManagerFee: "2948.82",
@@ -143,7 +143,7 @@ const DESTINATIONS = [
 
   {
     id: 13,
-    source: require('../images/Italy.jpg'),
+    source: require('../images/Italy.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Italy',
     VisaManagerFee: "2948.82",
@@ -155,7 +155,7 @@ const DESTINATIONS = [
 
   {
     id: 14,
-    source: require('../images/Usa.jpg'),
+    source: require('../images/Usa.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'USA',
     VisaManagerFee: "2948.82",
@@ -167,7 +167,7 @@ const DESTINATIONS = [
 
   {
     id: 15,
-    source: require('../images/Sweden.jpg'),
+    source: require('../images/Sweden.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Sweden',
     VisaManagerFee: "3540",
@@ -180,7 +180,7 @@ const DESTINATIONS = [
 
   {
     id: 16,
-    source: require('../images/Qatar.jpg'),
+    source: require('../images/Qatar.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Qatar',
     VisaManagerFee: "2948.82",
@@ -192,7 +192,7 @@ const DESTINATIONS = [
 
   {
     id: 17,
-    source: require('../images/Romania.jpg'),
+    source: require('../images/Romania.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Romania',
     VisaManagerFee: "2948.82",
@@ -204,7 +204,7 @@ const DESTINATIONS = [
 
   {
     id: 18,
-    source: require('../images/Uganda.jpg'),
+    source: require('../images/Uganda.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Uganda',
     VisaManagerFee: "2948.82",
@@ -216,7 +216,7 @@ const DESTINATIONS = [
 
   {
     id: 19,
-    source: require('../images/Uk.jpg'),
+    source: require('../images/Uk.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Uk',
     VisaManagerFee: "4130",
@@ -228,7 +228,7 @@ const DESTINATIONS = [
 
   {
     id: 20,
-    source: require('../images/Poland.jpg'),
+    source: require('../images/Poland.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Poland',
     VisaManagerFee: "3540",
@@ -240,7 +240,7 @@ const DESTINATIONS = [
 
   {
     id: 21,
-    source: require('../images/Portugal.jpg'),
+    source: require('../images/Portugal.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Portugal',
     VisaManagerFee: "2948.82",
@@ -252,7 +252,7 @@ const DESTINATIONS = [
 
   {
     id: 22,
-    source: require('../images/Norway.jpg'),
+    source: require('../images/Norway.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Norway',
     VisaManagerFee: "2948.82",
@@ -264,7 +264,7 @@ const DESTINATIONS = [
 
   {
     id: 23,
-    source: require('../images/Nigeria.jpg'),
+    source: require('../images/Nigeria.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Nigeria',
     VisaManagerFee: "2948.82",
@@ -276,7 +276,7 @@ const DESTINATIONS = [
 
   {
     id: 24,
-    source: require('../images/Netherland.jpg'),
+    source: require('../images/Netherland.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Netherland',
     VisaManagerFee: "2948.82",
@@ -288,7 +288,7 @@ const DESTINATIONS = [
 
   {
     id: 25,
-    source: require('../images/Monoglia.jpg'),
+    source: require('../images/Monoglia.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Monoglia',
     VisaManagerFee: "3540",
@@ -300,7 +300,7 @@ const DESTINATIONS = [
 
   {
     id: 26,
-    source: require('../images/Maldives.jpg'),
+    source: require('../images/Maldives.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Maldives',
     VisaManagerFee: "590",
@@ -312,7 +312,7 @@ const DESTINATIONS = [
 
   {
     id: 27,
-    source: require('../images/malawi.jpg'),
+    source: require('../images/malawi.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Malawi',
     VisaManagerFee: "1770",
@@ -324,7 +324,7 @@ const DESTINATIONS = [
 
   {
     id: 28,
-    source: require('../images/Liechtenstein.jpg'),
+    source: require('../images/Liechtenstein.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Liechtenstein',
     VisaManagerFee: "2948.82",
@@ -336,7 +336,7 @@ const DESTINATIONS = [
 
   {
     id: 29,
-    source: require('../images/Lebanon.jpg'),
+    source: require('../images/Lebanon.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Lebanon',
     VisaManagerFee: "2948.82",
@@ -348,7 +348,7 @@ const DESTINATIONS = [
 
   {
     id: 30,
-    source: require('../images/Finland.jpg'),
+    source: require('../images/Finland.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Finland',
     VisaManagerFee: "2948.82",
@@ -360,7 +360,7 @@ const DESTINATIONS = [
 
   {
     id: 31,
-    source: require('../images/Colombia.jpg'),
+    source: require('../images/Colombia.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Colombia',
     VisaManagerFee: "2948.82",
@@ -372,7 +372,7 @@ const DESTINATIONS = [
 
   {
     id: 32,
-    source: require('../images/Australia.jpg'),
+    source: require('../images/Australia.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Australia',
     VisaManagerFee: "4130",
@@ -384,7 +384,7 @@ const DESTINATIONS = [
 
   {
     id: 33,
-    source: require('../images/Austria.jpg'),
+    source: require('../images/Austria.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Austria',
     VisaManagerFee: "2948.82",
@@ -397,7 +397,7 @@ const DESTINATIONS = [
 
   {
     id: 34,
-    source: require('../images/Bulgaria.jpg'),
+    source: require('../images/Bulgaria.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Bulgaria',
     VisaManagerFee: "2950",
@@ -409,7 +409,7 @@ const DESTINATIONS = [
 
   {
     id: 35,
-    source: require('../images/Malaysia.jpg'),
+    source: require('../images/Malaysia.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Malaysia',
     VisaManagerFee: "590",
@@ -421,7 +421,7 @@ const DESTINATIONS = [
 
   {
     id: 36,
-    source: require('../images/Japan.jpg'),
+    source: require('../images/Japan.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Japan',
     VisaManagerFee: "1770",
@@ -433,7 +433,7 @@ const DESTINATIONS = [
 
   {
     id: 37,
-    source: require('../images/Thailand.jpg'),
+    source: require('../images/Thailand.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Thailand',
     VisaManagerFee: "590",
@@ -445,7 +445,7 @@ const DESTINATIONS = [
 
   {
     id: 38,
-    source: require('../images/Belgium.jpg'),
+    source: require('../images/Belgium.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Belgium',
     VisaManagerFee: "2950",
@@ -457,7 +457,7 @@ const DESTINATIONS = [
 
   {
     id: 39,
-    source: require('../images/Croatia.jpg'),
+    source: require('../images/Croatia.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Croatia',
     VisaManagerFee: "2950",
@@ -469,7 +469,7 @@ const DESTINATIONS = [
 
   {
     id: 40,
-    source: require('../images/Czechia.jpg'),
+    source: require('../images/Czechia.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Czechia',
     VisaManagerFee: "2950",
@@ -481,7 +481,7 @@ const DESTINATIONS = [
 
   {
     id: 41,
-    source: require('../images/Denmark.jpg'),
+    source: require('../images/Denmark.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Denmark',
     VisaManagerFee: "2950",
@@ -493,7 +493,7 @@ const DESTINATIONS = [
 
   {
     id: 42,
-    source: require('../images/Estonia.jpg'),
+    source: require('../images/Estonia.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Estonia',
     VisaManagerFee: "2950",
@@ -505,7 +505,7 @@ const DESTINATIONS = [
 
   {
     id: 43,
-    source: require('../images/Germany.jpg'),
+    source: require('../images/Germany.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Germany',
     VisaManagerFee: "2950",
@@ -517,7 +517,7 @@ const DESTINATIONS = [
 
   {
     id: 44,
-    source: require('../images/Greece.jpg'),
+    source: require('../images/Greece.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Greece',
     VisaManagerFee: "2950",
@@ -529,7 +529,7 @@ const DESTINATIONS = [
 
   {
     id: 45,
-    source: require('../images/Hungary.jpg'),
+    source: require('../images/Hungary.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Hungary',
     VisaManagerFee: "2950",
@@ -541,7 +541,7 @@ const DESTINATIONS = [
 
   {
     id: 46,
-    source: require('../images/Iceland.jpg'),
+    source: require('../images/Iceland.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Iceland',
     VisaManagerFee: "2950",
@@ -552,7 +552,7 @@ const DESTINATIONS = [
   },
   {
     id: 47,
-    source: require('../images/Latvia.jpg'),
+    source: require('../images/Latvia.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Latvia',
     VisaManagerFee: "2950",
@@ -564,7 +564,7 @@ const DESTINATIONS = [
 
   {
     id: 48,
-    source: require('../images/Lithuania.jpg'),
+    source: require('../images/Lithuania.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Lithuania',
     VisaManagerFee: "2950",
@@ -576,7 +576,7 @@ const DESTINATIONS = [
 
   {
     id: 49,
-    source: require('../images/Luxembourg.jpg'),
+    source: require('../images/Luxembourg.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Luxembourg',
     VisaManagerFee: "2950",
@@ -588,7 +588,7 @@ const DESTINATIONS = [
 
   {
     id: 50,
-    source: require('../images/Malta.jpg'),
+    source: require('../images/Malta.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Malta',
     VisaManagerFee: "2950",
@@ -600,7 +600,7 @@ const DESTINATIONS = [
 
   {
     id: 51,
-    source: require('../images/Netherland.jpg'),
+    source: require('../images/Netherland.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Netherland',
     VisaManagerFee: "2950",
@@ -612,7 +612,7 @@ const DESTINATIONS = [
 
   {
     id: 52,
-    source: require('../images/Norway.jpg'),
+    source: require('../images/Norway.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Norway',
     VisaManagerFee: "2950",
@@ -624,7 +624,7 @@ const DESTINATIONS = [
 
   {
     id: 53,
-    source: require('../images/Poland.jpg'),
+    source: require('../images/Poland.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Poland',
     VisaManagerFee: "2950",
@@ -636,7 +636,7 @@ const DESTINATIONS = [
 
   {
     id: 54,
-    source: require('../images/Portugal.jpg'),
+    source: require('../images/Portugal.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Portugal',
     VisaManagerFee: "2950",
@@ -648,7 +648,7 @@ const DESTINATIONS = [
 
   {
     id: 55,
-    source: require('../images/Romania.jpg'),
+    source: require('../images/Romania.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Romania',
     VisaManagerFee: "2950",
@@ -660,7 +660,7 @@ const DESTINATIONS = [
 
   {
     id: 56,
-    source: require('../images/Poland.jpg'),
+    source: require('../images/Poland.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Poland',
     VisaManagerFee: "2950",
@@ -672,7 +672,7 @@ const DESTINATIONS = [
 
   {
     id: 57,
-    source: require('../images/Slovakia.jpg'),
+    source: require('../images/Slovakia.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Slovakia',
     VisaManagerFee: "2950",
@@ -684,7 +684,7 @@ const DESTINATIONS = [
 
   {
     id: 58,
-    source: require('../images/Slovenia.jpg'),
+    source: require('../images/Slovenia.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Slovenia',
     VisaManagerFee: "2950",
@@ -696,7 +696,7 @@ const DESTINATIONS = [
 
   {
     id: 59,
-    source: require('../images/Slovenia.jpg'),
+    source: require('../images/Slovenia.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Slovenia',
     VisaManagerFee: "2950",
@@ -708,7 +708,7 @@ const DESTINATIONS = [
 
   {
     id: 60,
-    source: require('../images/Switzerland.jpg'),
+    source: require('../images/Switzerland.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Switzerland',
     VisaManagerFee: "2950",

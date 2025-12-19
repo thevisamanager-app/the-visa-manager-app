@@ -1055,6 +1055,7 @@ import {
 import Icon from "react-native-vector-icons/Ionicons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import ScreenWrapper from "../../components/ScreenWrapper";
 import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../../utils/metrics";
 
 import functions from "@react-native-firebase/functions";
@@ -1147,7 +1148,7 @@ export default function CongratsScreen({ navigation, route }) {
     }, []);
 
     return (
-        <SafeAreaView style={styles.container}>
+         <ScreenWrapper style={styles.container}>
             <View style={styles.headerRow}>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Ionicons name="chevron-back" size={moderateScale(28)} color="black" />
@@ -1226,7 +1227,7 @@ export default function CongratsScreen({ navigation, route }) {
                     </View>
                 </View>
             </Modal>
-        </SafeAreaView>
+         </ScreenWrapper>
     );
 }
 

@@ -112,13 +112,37 @@
 // }
 
 
+// import React, { useEffect } from 'react';
+// import { NavigationContainer } from '@react-navigation/native';
+// import RootNavigator from './src/navigation/RootNavigator';
+// import { configureGoogleSignin } from './src/config/googleConfig';
+
+// import { Provider } from 'react-redux';
+// import { store } from './src/Redux/store';  // ⬅️ check correct path
+
+// export default function App() {
+//   useEffect(() => {
+//     configureGoogleSignin();
+//   }, []);
+
+//   return (
+//     <Provider store={store}>                
+//       <NavigationContainer>
+//         <RootNavigator />
+//       </NavigationContainer>
+//     </Provider>
+//   );
+// }
+
+
 import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import RootNavigator from './src/navigation/RootNavigator';
 import { configureGoogleSignin } from './src/config/googleConfig';
 
 import { Provider } from 'react-redux';
-import { store } from './src/Redux/store';  // ⬅️ check correct path
+import { store } from './src/Redux/store';
 
 export default function App() {
   useEffect(() => {
@@ -126,10 +150,12 @@ export default function App() {
   }, []);
 
   return (
-    <Provider store={store}>                
-      <NavigationContainer>
-        <RootNavigator />
-      </NavigationContainer>
-    </Provider>
+    <SafeAreaProvider>
+      <Provider store={store}>
+        <NavigationContainer>
+          <RootNavigator />
+        </NavigationContainer>
+      </Provider>
+    </SafeAreaProvider>
   );
 }

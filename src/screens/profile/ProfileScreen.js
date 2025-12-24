@@ -629,7 +629,7 @@ export default function ProfileScreen({ navigation }) {
     Alert.alert(
       "About",
       "The Visa Manager is an entity of Ishwa Holidays Private Limited.\n\n" +
-        "We are dedicated to simplifying international travel and visa services."
+      "We are dedicated to simplifying international travel and visa services."
     );
   };
 
@@ -658,22 +658,66 @@ export default function ProfileScreen({ navigation }) {
     Alert.alert(
       "Privacy & Policy",
       "The Visa Manager Private Limited (“The Visa Manager”, “we”, “us” or “our”) respects your privacy.\n\n" +
-        "This Privacy Policy explains how your personal data is collected, stored, and processed through our App or our offices.\n\n" +
-        "By using our services, you agree to the processing of your personal data.\n\n" +
-        "PURPOSE OF COLLECTING PERSONAL INFORMATION:\n\n" +
-        "• Communicate with you regarding visa applications\n" +
-        "• Send visa application confirmations\n" +
-        "• Keep you updated on transaction status\n" +
-        "• Send visa service-related updates\n" +
-        "• Send verification or alert messages\n" +
-        "• Notify you of changes in visa applications\n" +
-        "• Resolve complaints and disputes\n" +
-        "• Allow customer service contact\n" +
-        "• Detect and prevent fraud or criminal activity\n" +
-        "• Fulfil contractual obligations\n" +
-        "• Ensure effective website content presentation"
+      "This Privacy Policy explains how your personal data is collected, stored, and processed through our App or our offices.\n\n" +
+      "By using our services, you agree to the processing of your personal data.\n\n" +
+      "PURPOSE OF COLLECTING PERSONAL INFORMATION:\n\n" +
+      "• Communicate with you regarding visa applications\n" +
+      "• Send visa application confirmations\n" +
+      "• Keep you updated on transaction status\n" +
+      "• Send visa service-related updates\n" +
+      "• Send verification or alert messages\n" +
+      "• Notify you of changes in visa applications\n" +
+      "• Resolve complaints and disputes\n" +
+      "• Allow customer service contact\n" +
+      "• Detect and prevent fraud or criminal activity\n" +
+      "• Fulfil contractual obligations\n" +
+      "• Ensure effective website content presentation"
     );
   };
+
+ const deleteAccount = async () => {
+  try {
+    const user = auth().currentUser;
+    if (!user) return;
+
+    // Delete Firestore data
+    await firestore().collection("users").doc(user.uid).delete();
+
+    // Delete Auth account
+    await user.delete();
+
+    Alert.alert("Account Deleted", "Your account has been removed.");
+  } catch (error) {
+    if (error.code === "auth/requires-recent-login") {
+      Alert.alert(
+        "Re-login Required",
+        "Please log in again to delete your account.",
+        [{ text: "OK", onPress: logout }]
+      );
+    } else {
+      Alert.alert("Error", error.message);
+    }
+  }
+};
+
+
+
+
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      "Delete Account",
+      "This action is permanent. All your data will be deleted.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: deleteAccount,
+        },
+      ]
+    );
+  };
+
 
   return (
     <ScrollView
@@ -730,7 +774,7 @@ export default function ProfileScreen({ navigation }) {
           onPress={() =>
             navigation.navigate("Tabs", {
               screen: "Home",
-              params: { screen: "DestinationScreen" },
+              params: { screen: "Destination" },
             })
           }
         />
@@ -740,15 +784,17 @@ export default function ProfileScreen({ navigation }) {
       <View style={styles.section}>
         <MenuItem title="Help Center" onPress={showHelp} isDark={isDark} />
         <MenuItem title="About" onPress={showAbout} isDark={isDark} />
-        ✅
+        
         <MenuItem
           title="Privacy & Policy"
           onPress={showPrivacyPolicy}
           isDark={isDark}
         />
       </View>
-
-      {/* Logout */}
+      <TouchableOpacity style={styles.logoutBtn} onPress={handleDeleteAccount}>
+        <Text style={styles.logoutText}>Delete My Accountt</Text>
+      </TouchableOpacity>
+    
       <TouchableOpacity style={styles.logoutBtn} onPress={logout}>
         <Text style={styles.logoutText}>Log out</Text>
       </TouchableOpacity>

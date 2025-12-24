@@ -12,7 +12,7 @@ const Stack = createStackNavigator();
 export default function HomeStack() {
     return (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="DestinationScreen" component={DestinationScreen} />
+            <Stack.Screen name="Destination" component={DestinationScreen} />
             <Stack.Screen name="VisaQuestionScreen" component={VisaQuestionScreen} />
             <Stack.Screen name="CheckoutScreen" component={CheckoutScreen} />
             <Stack.Screen name="StartApplicationScreen" component={StartApplicationScreen} />

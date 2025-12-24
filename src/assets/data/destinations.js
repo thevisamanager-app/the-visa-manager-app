@@ -235,7 +235,7 @@ const DESTINATIONS = [
     AuthorityCharges: "944",
     GovernmentFee: "9743",
     currency: "",
-    countryType: "evisa"
+    countryType: "Schengen"
   },
 
   {
@@ -307,7 +307,7 @@ const DESTINATIONS = [
     AuthorityCharges: "0",
     GovernmentFee: "0",
     currency: "",
-    countryType:"DAC"
+    countryType: "DAC"
   },
 
   {
@@ -624,18 +624,6 @@ const DESTINATIONS = [
 
   {
     id: 53,
-    source: require('../images/Poland.webp'),
-    title: '09 JAN 11:00 AM',
-    countrName: 'Poland',
-    VisaManagerFee: "2950",
-    AuthorityCharges: "0",
-    GovernmentFee: "9200",
-    currency: "",
-    countryType: "Schengen"
-  },
-
-  {
-    id: 54,
     source: require('../images/Portugal.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Portugal',
@@ -647,7 +635,7 @@ const DESTINATIONS = [
   },
 
   {
-    id: 55,
+    id: 54,
     source: require('../images/Romania.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Romania',
@@ -659,19 +647,7 @@ const DESTINATIONS = [
   },
 
   {
-    id: 56,
-    source: require('../images/Poland.webp'),
-    title: '09 JAN 11:00 AM',
-    countrName: 'Poland',
-    VisaManagerFee: "2950",
-    AuthorityCharges: "0",
-    GovernmentFee: "9200",
-    currency: "",
-    countryType: "Schengen"
-  },
-
-  {
-    id: 57,
+    id: 55,
     source: require('../images/Slovakia.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Slovakia',
@@ -683,31 +659,31 @@ const DESTINATIONS = [
   },
 
   {
+    id: 56,
+    source: require('../images/Spain.webp'),
+    title: '09 JAN 11:00 AM',
+    countrName: 'Spain',
+    VisaManagerFee: "2950",
+    AuthorityCharges: "0",
+    GovernmentFee: "9200",
+    currency: "",
+    countryType: "Schengen"
+  },
+
+  {
+    id: 57,
+    source: require('../images/Slovenia.webp'),
+    title: '09 JAN 11:00 AM',
+    countrName: 'Slovenia',
+    VisaManagerFee: "2950",
+    AuthorityCharges: "0",
+    GovernmentFee: "9200",
+    currency: "",
+    countryType: "Schengen"
+  },
+
+  {
     id: 58,
-    source: require('../images/Slovenia.webp'),
-    title: '09 JAN 11:00 AM',
-    countrName: 'Slovenia',
-    VisaManagerFee: "2950",
-    AuthorityCharges: "0",
-    GovernmentFee: "9200",
-    currency: "",
-    countryType: "Schengen"
-  },
-
-  {
-    id: 59,
-    source: require('../images/Slovenia.webp'),
-    title: '09 JAN 11:00 AM',
-    countrName: 'Slovenia',
-    VisaManagerFee: "2950",
-    AuthorityCharges: "0",
-    GovernmentFee: "9200",
-    currency: "",
-    countryType: "Schengen"
-  },
-
-  {
-    id: 60,
     source: require('../images/Switzerland.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Switzerland',
@@ -718,5 +694,160 @@ const DESTINATIONS = [
     countryType: "Schengen"
   },
 
+  {
+    id: 59,
+    source: require('../images/Cyprus.webp'),
+    title: '09 JAN 11:00 AM',
+    countrName: 'Cyprus',
+    VisaManagerFee: "3540",
+    AuthorityCharges: "944",
+    GovernmentFee: "9743",
+    currency: "",
+    countryType: "Schengen"
+  },
+
+  {
+    id: 60,
+    source: require('../images/Bhutan.webp'),
+    title: '09 JAN 11:00 AM',
+    countrName: 'Bhutan',
+    VisaManagerFee: "800",
+    AuthorityCharges: "0",
+    GovernmentFee: "0",
+    currency: "",
+    countryType: "DAC"
+  },
+
+  {
+    id: 61,
+    source: require('../images/Nepal.webp'),
+    title: '09 JAN 11:00 AM',
+    countrName: 'Nepal',
+    VisaManagerFee: "800",
+    AuthorityCharges: "0",
+    GovernmentFee: "0",
+    currency: "",
+    countryType: "DAC"
+  },
+
+  {
+    id: 62,
+    source: require('../images/Azerbaijan.webp'),
+    title: '09 JAN 11:00 AM',
+    countrName: 'Azerbaijan',
+    VisaManagerFee: "1770",
+    AuthorityCharges: "750",
+    GovernmentFee: "550",
+    currency: "",
+    countryType: "evisa"
+  },
+
+  {
+    id: 63,
+    source: require('../images/Egypt.webp'),
+    title: '09 JAN 11:00 AM',
+    countrName: 'Egypt',
+    VisaManagerFee: "1770",
+    AuthorityCharges: "750",
+    GovernmentFee: "550",
+    currency: "",
+    countryType: "evisa"
+  },
+
+  {
+    id: 64,
+    source: require('../images/Kenya.webp'),
+    title: '09 JAN 11:00 AM',
+    countrName: 'Kenya',
+    VisaManagerFee: "1770",
+    AuthorityCharges: "750",
+    GovernmentFee: "550",
+    currency: "",
+    countryType: "evisa"
+  },
+
+  {
+    id: 65,
+    source: require('../images/Mauritius.webp'),
+    title: '09 JAN 11:00 AM',
+    countrName: 'Mauritius',
+    VisaManagerFee: "1770",
+    AuthorityCharges: "750",
+    GovernmentFee: "550",
+    currency: "",
+    countryType: "evisa"
+  },
+
+  {
+    id: 66,
+    source: require('../images/Morocco.webp'),
+    title: '09 JAN 11:00 AM',
+    countrName: 'Morocco',
+    VisaManagerFee: "1770",
+    AuthorityCharges: "750",
+    GovernmentFee: "550",
+    currency: "",
+    countryType: "evisa"
+  },
+
+  {
+    id: 67,
+    source: require('../images/New Zealand.webp'),
+    title: '09 JAN 11:00 AM',
+    countrName: 'New Zealand',
+    VisaManagerFee: "1770",
+    AuthorityCharges: "750",
+    GovernmentFee: "550",
+    currency: "",
+    countryType: "evisa"
+  },
+
+  {
+    id: 68,
+    source: require('../images/Oman.webp'),
+    title: '09 JAN 11:00 AM',
+    countrName: 'Oman',
+    VisaManagerFee: "1770",
+    AuthorityCharges: "750",
+    GovernmentFee: "550",
+    currency: "",
+    countryType: "evisa"
+  },
+
+  {
+    id: 69,
+    source: require('../images/Turkey.webp'),
+    title: '09 JAN 11:00 AM',
+    countrName: 'Turkey',
+    VisaManagerFee: "1770",
+    AuthorityCharges: "750",
+    GovernmentFee: "550",
+    currency: "",
+    countryType: "evisa"
+  },
+
+  {
+    id: 70,
+    source: require('../images/Ukraine.webp'),
+    title: '09 JAN 11:00 AM',
+    countrName: 'Ukraine',
+    VisaManagerFee: "1770",
+    AuthorityCharges: "750",
+    GovernmentFee: "550",
+    currency: "",
+    countryType: "evisa"
+  },
+
+  {
+    id: 71,
+    source: require('../images/Georgia.webp'),
+    title: '09 JAN 11:00 AM',
+    countrName: 'Georgia',
+    VisaManagerFee: "1770",
+    AuthorityCharges: "750",
+    GovernmentFee: "550",
+    currency: "",
+    countryType: "evisa"
+  },
 ];
 export default DESTINATIONS;

@@ -312,7 +312,7 @@ export default function LoginScreen({ navigation }) {
         return;
       }
 
-      navigation.navigate("Destination", { user: authResult.user });
+      //navigation.navigate("Destination", { user: authResult.user });
 
     } catch (error) {
       console.log("GOOGLE LOGIN ERROR:", error);

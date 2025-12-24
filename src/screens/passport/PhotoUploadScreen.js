@@ -893,7 +893,7 @@ export default function PhotoUploadScreen({ navigation, route }) {
   const addMode = route?.params?.addMode || false;
   const editMode = route?.params?.editMode || false;
   const ORANGE = "#FF7A00";
-
+console.log("ROUTEDATA===",route.params)
   const pickPhoto = async () => {
     const result = await launchImageLibrary({
       mediaType: "photo",

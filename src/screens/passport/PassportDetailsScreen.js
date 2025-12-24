@@ -8,13 +8,40 @@ import {
   Image,
   ScrollView,
 } from "react-native";
+import { Platform } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import { Picker } from "@react-native-picker/picker";
 import { savePassportData } from "../../api/user/passportService";
 import ScreenWrapper from "../../components/ScreenWrapper";
 import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../../utils/metrics";
+import { useSelector } from "react-redux";
+import DateTimePicker from "@react-native-community/datetimepicker";
+
+
 
 const ORANGE = "#FF5C00";
+const ORANGE_LIGHT = "#FFE1CC";
+const BLACK = "#000";
+const GRAY = "#777";
+const GOLD = "#D6B25E";
+const THAILAND_LOCATIONS = [
+  "Bangkok",
+  "Chiang Mai",
+  "Phuket",
+  "Pattaya",
+  "Krabi",
+  "Ayutthaya",
+  "Chiang Rai",
+  "Hua Hin",
+  "Kanchanaburi",
+  "Koh Samui",
+  "Koh Phi Phi",
+  "Surat Thani",
+  "Trang",
+  "Udon Thani",
+  "Ubon Ratchathani",
+  "Chai Nat",
+];
 
 export default function PassportDetailsScreen({ navigation, route }) {
   // === Helpers ===
@@ -44,6 +71,24 @@ export default function PassportDetailsScreen({ navigation, route }) {
       "Nov",
       "Dec",
     ];
+    const THAILAND_LOCATIONS = [
+      "Bangkok",
+      "Chiang Mai",
+      "Phuket",
+      "Pattaya",
+      "Krabi",
+      "Ayutthaya",
+      "Chiang Rai",
+      "Hua Hin",
+      "Kanchanaburi",
+      "Koh Samui",
+      "Koh Phi Phi",
+      "Surat Thani",
+      "Trang",
+      "Udon Thani",
+      "Ubon Ratchathani",
+      "Chai Nat",
+    ];
 
     return `${day} ${months[parseInt(month, 10) - 1]} ${fullYear}`;
   }
@@ -58,6 +103,12 @@ export default function PassportDetailsScreen({ navigation, route }) {
   // MAIN PASSPORT STATE
   const [passportState, setPassportState] = useState(basePassport);
   const [date, setDate] = useState("");
+  const [flightno, setflightno] = useState("");
+  const [arrivaldate, setarrivaldate] = useState("");
+  const [hotelname, sethotelname] = useState("");
+  const [location, setlocation] = useState("");
+  const selected = useSelector((state) => state.destinations.selected);
+
 
   useEffect(() => {
     if (route?.params?.updatedPassport) {
@@ -70,7 +121,7 @@ export default function PassportDetailsScreen({ navigation, route }) {
   // CO-TRAVELLERS
   const initialCoTravellers = toArray(route?.params?.coTravellers);
   const [coTravellers, setCoTravellers] = useState(initialCoTravellers);
-  console.log("COTRAVELLERS===>", route?.params?.coTravellers)
+  console.log("COTRAVELLERS===>", basePassport)
   useEffect(() => {
     if (route?.params?.coTravellers) {
       setCoTravellers(toArray(route.params.coTravellers));
@@ -114,6 +165,8 @@ export default function PassportDetailsScreen({ navigation, route }) {
   const [phoneNumber, setphoneNumber] = useState(
     formatMRZDate(passportState?.phoneNumber)
   );
+  const [showArrivalPicker, setShowArrivalPicker] = useState(false);
+
 
 
   // update fields when passportState changes
@@ -175,6 +228,13 @@ export default function PassportDetailsScreen({ navigation, route }) {
 
   // === Confirm ===
   const onConfirm = async () => {
+
+    if (!firstName || !lastName || !passportNumber || !nationality || !birthDate || !expiryDate || !photoUrl || !phoneNumber || !flightno || !arrivaldate || !hotelname || !location) {
+      Alert.alert("Missing Info", "Please fill all details");
+      return false;
+    }
+
+
     const payload = {
       ...passportState,
       firstName,
@@ -187,7 +247,7 @@ export default function PassportDetailsScreen({ navigation, route }) {
       coTravellers,
       phoneNumber
     };
-
+    console.log("DATACOUNTRY==", basePassport)
     await savePassportData(payload);
 
     navigation.navigate("CheckoutScreen", {
@@ -512,6 +572,108 @@ export default function PassportDetailsScreen({ navigation, route }) {
             value={phoneNumber}
             onChangeText={setphoneNumber}
           />
+          {selected.countrName === "Malaysia" ? (
+            <View style={styles.form}>
+              <Label text="Please enter your flight number to" />
+              <Input value={flightno} onChangeText={setflightno} />
+              <Label text="Arrival Date" />
+
+              <TouchableOpacity
+                style={styles.input}
+                onPress={() => setShowArrivalPicker(true)}
+              >
+                <Text style={{ color: arrivaldate ? "#000" : GRAY }}>
+                  {arrivaldate || "Select arrival date"}
+                </Text>
+              </TouchableOpacity>
+
+              {showArrivalPicker && (
+                <DateTimePicker
+                  value={arrivaldate ? new Date(arrivaldate) : new Date()}
+                  mode="date"
+                  display={Platform.OS === "android" ? "default" : "spinner"}
+                  minimumDate={new Date()}
+                  themeVariant="light"
+                  onChange={(event, selectedDate) => {
+                    setShowArrivalPicker(false);
+
+                    // Android cancel fix
+                    if (event.type === "dismissed") return;
+
+                    if (selectedDate) {
+                      setarrivaldate(
+                        selectedDate.toLocaleDateString("en-GB", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        })
+                      );
+                    }
+                  }}
+                />
+              )}
+
+            </View>
+          ) : selected.countrName === "Thailand" ?
+            <View style={styles.form}>
+              <Label text="Please enter your flight number to" />
+              <Input value={flightno} onChangeText={setflightno} />
+              <Label text="Arrival Date" />
+
+              <TouchableOpacity
+                style={styles.input}
+                onPress={() => setShowArrivalPicker(true)}
+              >
+                <Text style={{ color: arrivaldate ? "#000" : GRAY }}>
+                  {arrivaldate || "Select arrival date"}
+                </Text>
+              </TouchableOpacity>
+
+
+              {showArrivalPicker && (
+                <DateTimePicker
+                  value={arrivaldate ? new Date(arrivaldate) : new Date()}
+                  mode="date"
+                  display={Platform.OS === "android" ? "default" : "spinner"}
+                  minimumDate={new Date()}
+                  themeVariant="light"
+                  onChange={(event, selectedDate) => {
+                    setShowArrivalPicker(false);
+
+                    // Android cancel fix
+                    if (event.type === "dismissed") return;
+
+                    if (selectedDate) {
+                      setarrivaldate(
+                        selectedDate.toLocaleDateString("en-GB", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        })
+                      );
+                    }
+                  }}
+                />
+              )}
+              <Label text="Enter the hotel name in thailand" />
+              <Input value={hotelname} onChangeText={sethotelname} />
+
+              <Label text="Location in Thailand" />
+
+              <View style={styles.input}>
+                <Picker
+                  selectedValue={location}
+                  onValueChange={(value) => setlocation(value)}
+                  dropdownIconColor="#000"
+                >
+                  <Picker.Item label="Select location" value="" color={GRAY} />
+                  {THAILAND_LOCATIONS.map((item) => (
+                    <Picker.Item key={item} label={item} value={item} />
+                  ))}
+                </Picker>
+              </View>
+            </View> : null
+          }
         </View>
 
         {/* Confirm */}
@@ -523,6 +685,17 @@ export default function PassportDetailsScreen({ navigation, route }) {
   );
 }
 
+
+const Label = ({ text }) => <Text style={styles.label}>{text}</Text>;
+
+const Input = ({ value, ...props }) => (
+  <TextInput
+    {...props}
+    value={value}
+    style={styles.input}
+    placeholderTextColor={GRAY}
+  />
+);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -594,10 +767,10 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: RFValue(15),
   },
- sectionTMinoritle: {
+  sectionTMinoritle: {
     fontWeight: "700",
     fontSize: RFValue(15),
-    color:"green",
+    color: "green",
   },
   sectionHeader: {
     flexDirection: "row",
@@ -695,6 +868,55 @@ const styles = StyleSheet.create({
     fontSize: RFValue(16),
     fontWeight: "700",
   },
+  modalOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 999,
+  },
+
+  modalContainer: {
+    width: "85%",
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 16,
+    maxHeight: hp("70%"), // ✅ FIXED HEIGHT
+  },
+
+
+  modalTitle: {
+    fontSize: RFValue(16),
+    fontWeight: "700",
+    marginBottom: 12,
+  },
+
+  modalItem: {
+    paddingVertical: 18,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+  },
+
+  modalItemText: {
+    fontSize: RFValue(14),
+  },
+
+  modalClose: {
+    marginTop: 12,
+    alignItems: "center",
+  },
+
+  modalCloseText: {
+    color: ORANGE,
+    fontWeight: "700",
+    fontSize: RFValue(14),
+  },
+  
+
 });
 
 

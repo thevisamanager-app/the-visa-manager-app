@@ -102,7 +102,7 @@ export default function PassportListScreen() {
 
       setPassports(docs);
       setFilteredList(docs);
-      await loadAllVisaStatuses(docs); 
+      await loadAllVisaStatuses(docs);
     } catch (e) {
       Alert.alert("Error", e.message);
     } finally {
@@ -634,24 +634,9 @@ export default function PassportListScreen() {
             >
               <Text style={styles.actionText}>Update Status</Text>
             </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.actionBtn, { backgroundColor: "#FF5C00" }]}
-              onPress={() => uploadUserDocument(item.userId)}
-            >
-              <Text style={styles.actionText}>Upload Document</Text>
-            </TouchableOpacity>
-            {/* DOWNLOAD */}
-            <TouchableOpacity
-              style={[styles.actionBtn, { backgroundColor: "#FF5C00" }]}
-              onPress={() => handleDownloadDocuments(item)}
-            >
-              <Text style={styles.actionText}>Download ZIP</Text>
-            </TouchableOpacity>
             <Text style={styles.lastStatus}>
               Assigned To: {visa?.assignee || "Not Assigned"}
             </Text>
-
             <TextInput
               style={styles.input}
               placeholder="Enter assignee"
@@ -669,6 +654,20 @@ export default function PassportListScreen() {
             >
               <Text style={styles.actionText}>Assign assignee</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.actionBtn, { backgroundColor: "#FF5C00" }]}
+              onPress={() => uploadUserDocument(item.userId)}
+            >
+              <Text style={styles.actionText}>Upload Document</Text>
+            </TouchableOpacity>
+            {/* DOWNLOAD */}
+            <TouchableOpacity
+              style={[styles.actionBtn, { backgroundColor: "#FF5C00" }]}
+              onPress={() => handleDownloadDocuments(item)}
+            >
+              <Text style={styles.actionText}>Download ZIP</Text>
+            </TouchableOpacity>
+
             {/* <TextInput
               style={styles.input}
               placeholder="Banner Start Color"

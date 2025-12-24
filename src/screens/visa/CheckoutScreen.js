@@ -706,7 +706,9 @@ export default function CheckoutScreen({ navigation, route }) {
   const minorFeePerPerson = baseTotal / 2;
   const totalMinorFee = minorFeePerPerson * minors;
 
-  const totalAmount = baseTotal + totalMinorFee;
+ const totalAmount =
+  (Math.round(baseTotal * 100) +
+   Math.round(totalMinorFee * 100)) / 100;
 
 
   const handlePay = async () => {

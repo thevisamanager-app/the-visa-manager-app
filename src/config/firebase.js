@@ -1,13 +1,14 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import Config from "react-native-config";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB0QcbuM61VpUwy5rOHXbbcbR7qXfSCogE",
-  authDomain: "thevisamanager-bea80.firebaseapp.com",
-  projectId: "thevisamanager-bea80",
-  storageBucket: "thevisamanager-bea80.firebasestorage.app",
-  messagingSenderId: "973458787565",
-  appId: "1:973458787565:web:76d2b5c721d9fa447410e4"
+  apiKey: Config.FIREBASE_API_KEY,
+  authDomain: Config.FIREBASE_AUTH_DOMAIN,
+  projectId: Config.FIREBASE_PROJECT_ID,
+  storageBucket: Config.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: Config.FIREBASE_MESSAGING_SENDER_ID,
+  appId: Config.FIREBASE_APP_ID
 };
 
 const app = initializeApp(firebaseConfig);

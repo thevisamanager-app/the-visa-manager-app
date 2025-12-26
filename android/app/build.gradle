@@ -3,6 +3,7 @@ apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 apply plugin: "com.google.gms.google-services"
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
+apply from: project(":react-native-config").projectDir.getPath() + "/dotenv.gradle"
 
 
 
@@ -92,7 +93,7 @@ android {
 
     manifestPlaceholders = [
         appAuthRedirectScheme: "com.thevisamanagerapp",
-        razorpayKey: "rzp_live_Raqt382mPwe1Di"
+        razorpayKey: project.env.get("RAZORPAY_KEY")
     ]
     
 }

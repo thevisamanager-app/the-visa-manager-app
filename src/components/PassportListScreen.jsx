@@ -10,6 +10,7 @@ import {
   TextInput,
   StyleSheet,
   SafeAreaView,
+  ScrollView
 } from "react-native";
 
 import auth from "@react-native-firebase/auth";
@@ -31,6 +32,12 @@ const COLORS = {
   gray: "#777",
   lightGray: "#F5F5F5",
 };
+const FILTERS = [
+  { key: 'submitted', label: 'submitted' },
+  { key: 'processing', label: 'processing' },
+  { key: 'approved', label: 'approved' },
+  { key: 'rejected', label: 'rejected' },
+];
 /* =====================================================
    STATUS COLOR HELPER
 ===================================================== */
@@ -55,6 +62,7 @@ export default function PassportListScreen() {
   const [statusText, setStatusText] = useState("");
   const [startColor, setStartColor] = useState("");
   const [endColor, setEndColor] = useState("");
+  const [activeFilter, setActiveFilter] = useState('ALL');
 
   /* =====================================================
      ADMIN CHECK
@@ -102,7 +110,7 @@ export default function PassportListScreen() {
 
       setPassports(docs);
       setFilteredList(docs);
-      await loadAllVisaStatuses(docs); 
+      await loadAllVisaStatuses(docs);
     } catch (e) {
       Alert.alert("Error", e.message);
     } finally {
@@ -260,211 +268,6 @@ export default function PassportListScreen() {
     }
   };
 
-  // =============================
-  // DOWNLOAD ZIP
-  // =============================
-  //  const handleDownloadDocuments = async (item) => {
-  //   try {
-  //     const images = [
-  //       item.frontImageURL,
-  //       item.backImageURL,
-  //       item.photoUrl,
-  //     ];
-
-  //     const zipName = `documents_${item.firstName}_${item.lastName}.zip`;
-
-  //     const zipPath = await downloadAndZipImages(images, zipName);
-
-  //     Alert.alert(
-  //       "Download Complete",
-  //       `Saved to Downloads\n${zipName}`,
-  //       [
-  //         {
-  //           text: "Open",
-  //           onPress: () => Linking.openURL(`file://${zipPath}`),
-  //         },
-  //         { text: "OK" },
-  //       ]
-  //     );
-  //   } catch (err) {
-  //     Alert.alert("Download Failed", err.message);
-  //   }
-  // };
-  // const handleDownloadDocuments = async (item) => {
-  //   try {
-  //     const images = [
-  //       item.frontImageURL,
-  //       item.backImageURL,
-  //       item.photoUrl,
-  //     ];
-
-  //     const zipName = `documents_${item.firstName}_${item.lastName}.zip`;
-
-  //     const zipPath = await downloadAndZipImages(images, zipName);
-  //     Alert.alert(
-  //       "Download Complete",
-  //       "ZIP saved to Downloads",
-
-  //       [
-  //         {
-  //           text: "Share",
-  //           onPress: async () => {
-  //             // await Share.open({
-  //             //   urls: [`file://${zipPath}`],
-  //             //   type: "application/pdf",
-  //             //   failOnCancel: false,
-  //             // });
-  //             await Share.open({
-  //               message: `Download passport documents: ${downloadUrl}`,
-  //             });
-
-
-  //           },
-  //         },
-  //         { text: "OK" },
-  //       ]
-  //     );
-  //   } catch (err) {
-  //     Alert.alert("Download Failed", err.message);
-  //   }
-  // };
-
-  // const handleDownloadDocuments = async (item) => {
-  //   try {
-  //     const images = [
-  //       item.frontImageURL,
-  //       item.backImageURL,
-  //       item.photoUrl,
-  //     ];
-
-  //     const zipName = `documents_${item.firstName}_${item.lastName}.zip`;
-
-  //     const zipPath = await downloadAndZipImages(images, zipName);
-
-  //     const zipUrl = await uploadZipAndGetLink(zipPath, zipName);
-
-  //     Alert.alert(
-  //       "ZIP Ready",
-  //       "How would you like to share?",
-  //       [
-  //         {
-  //           text: "Share ZIP Link",
-  //           onPress: async () => {
-  //             await Share.open({
-  //               message: `Download documents:\n${zipUrl}`,
-  //               failOnCancel: false,
-  //             });
-  //           },
-  //         },
-  //         { text: "Cancel", style: "cancel" },
-  //       ]
-  //     );
-  //   } catch (err) {
-  //     Alert.alert("Error", err.message);
-  //   }
-  // };
-
-  // const handleDownloadDocuments = async (item) => {
-  //   try {
-  //     const images = [
-  //       item.frontImageURL,
-  //       item.backImageURL,
-  //       item.photoUrl,
-  //     ];
-
-  //     const zipName = `documents_${item.firstName}_${item.lastName}.zip`;
-
-  //     // 1️⃣ Create ZIP locally
-  //     const zipPath = await downloadAndZipImages(images, zipName);
-
-  //     // 2️⃣ Upload ZIP (for link sharing)
-  //     const zipUrl = await uploadZipAndGetLink(zipPath, zipName);
-
-  //     Alert.alert(
-  //       "ZIP Ready",
-  //       "Choose what you want to do",
-  //       [
-  //         // 🔹 DOWNLOAD LOCALLY
-  //         {
-  //           text: "Download here",
-  //           onPress: async () => {
-  //             try {
-  //               await saveZipToDevice(zipPath, zipName);
-  //               Alert.alert("Downloaded", "ZIP saved successfully");
-  //             } catch (e) {
-  //               if (e.message !== "No directory selected") {
-  //                 Alert.alert("Download failed", e.message);
-  //               }
-  //             }
-  //           },
-  //         },
-
-  //         // 🔹 SHARE LINK
-  //         {
-  //           text: "Share ZIP Link",
-  //           onPress: async () => {
-  //             await Share.open({
-  //               message: `Download documents:\n${zipUrl}`,
-  //               failOnCancel: false,
-  //             });
-  //           },
-  //         },
-
-  //         { text: "Cancel", style: "cancel" },
-  //       ]
-  //     );
-  //   } catch (err) {
-  //     Alert.alert("Error", err.message);
-  //   }
-  // };
-
-
-  // const handleDownloadDocuments = async (item) => {
-  //   try {
-  //     const images = [
-  //       item.frontImageURL,
-  //       item.backImageURL,
-  //       item.photoUrl,
-  //     ];
-
-  //     const zipName = `documents_${item.firstName}_${item.lastName}.zip`;
-
-  //     // 1️⃣ Create ZIP locally
-  //     const zipPath = await downloadAndZipImages(images, zipName);
-
-  //     // 2️⃣ Upload ZIP & get URL
-  //     const zipUrl = await uploadZipAndGetLink(zipPath, zipName);
-
-  //     Alert.alert(
-  //       "ZIP Ready",
-  //       "Choose an action",
-  //       [
-  //         {
-  //           text: "Download here",
-  //           onPress: async () => {
-  //             const savedPath = await downloadZipToDevice(zipUrl, zipName);
-  //             Alert.alert(
-  //               "Downloaded",
-  //               `Saved to:\n${savedPath}`
-  //             );
-  //           },
-  //         },
-  //         {
-  //           text: "Share ZIP Link",
-  //           onPress: async () => {
-  //             await Share.open({
-  //               message: `Download documents:\n${zipUrl}`,
-  //               failOnCancel: false,
-  //             });
-  //           },
-  //         },
-  //         { text: "Cancel", style: "cancel" },
-  //       ]
-  //     );
-  //   } catch (err) {
-  //     Alert.alert("Error", err.message);
-  //   }
-  // };
   const handleDownloadDocuments = async (item) => {
     try {
       let allFiles = [];
@@ -616,7 +419,7 @@ export default function PassportListScreen() {
             <Text style={styles.label}>Passport: {item.passportNumber}</Text>
             <Text style={styles.label}>DOB: {item.birthDate}</Text>
             <Text style={styles.label}>Expiry: {item.expiryDate}</Text>
-
+            <Text style={styles.lastStatus}>Created At: {item.createdAt}</Text>
             <Text style={styles.lastStatus}>
               Last Status: {status || "Not updated"}
             </Text>
@@ -706,7 +509,34 @@ export default function PassportListScreen() {
         onChangeText={handleSearch}
         placeholderTextColor={"#000"}
       />
+      <View style={styles.filterRow}>
+        {FILTERS.map((filter) => {
+          const isActive =
+            activeFilter.toLowerCase() === filter.key.toLowerCase();
 
+          return (
+            <ScrollView showsHorizontalScrollIndicator={true}>
+              <TouchableOpacity
+                key={filter.key}
+                onPress={() => setActiveFilter(filter.key)}
+                style={[
+                  styles.filterBtn,
+                  isActive && styles.activeFilterBtn,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.filterText,
+                    isActive && styles.activeFilterText,
+                  ]}
+                >
+                  {filter.label}
+                </Text>
+              </TouchableOpacity>
+            </ScrollView>
+          );
+        })}
+      </View>
       <FlatList
         data={filteredList}
         keyExtractor={(item) => item.id}
@@ -806,5 +636,38 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontWeight: "700",
     fontSize: RFValue(16),
+  },
+  filterRow: {
+    flexDirection: 'row',
+    paddingHorizontal: wp('4%'),
+    marginBottom: verticalScale(10),
+    alignSelf: "center"
+  },
+
+  filterBtn: {
+    paddingVertical: verticalScale(6),
+    paddingHorizontal: moderateScale(5),
+    borderRadius: moderateScale(10),
+    borderWidth: 1,
+    borderColor: '#DDD',
+    marginRight: moderateScale(8),
+    backgroundColor: COLORS.primary,
+  },
+
+  activeFilterBtn: {
+    backgroundColor: '#FFE5D6',
+    borderColor: '#FF5C00 ',
+  },
+
+  filterText: {
+    fontSize: RFValue(13),
+    color: '#555',
+    fontWeight: '500',
+    alignSelf: "center"
+  },
+
+  activeFilterText: {
+    color: '#FF5C00',
+    fontWeight: '700',
   },
 });

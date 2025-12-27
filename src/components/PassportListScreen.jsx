@@ -705,7 +705,8 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(10),
     borderWidth: 1,
     borderColor: "#fff",
-    marginTop: verticalScale(50)
+    marginTop: verticalScale(50),
+    color:"#fff"
   },
   card: {
     marginHorizontal: scale(16),

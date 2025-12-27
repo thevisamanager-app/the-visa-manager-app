@@ -33,11 +33,29 @@ const COLORS = {
   lightGray: "#F5F5F5",
 };
 const FILTERS = [
-  { key: 'submitted', label: 'submitted' },
-  { key: 'processing', label: 'processing' },
-  { key: 'approved', label: 'approved' },
-  { key: 'rejected', label: 'rejected' },
+  { key: 'submitted', label: 'Submitted' },
+  { key: 'processing', label: 'Processing' },
+  { key: 'approved', label: 'Approved' },
+  { key: 'rejected', label: 'Rejected' },
+   { key: 'all', label: 'All' },
 ];
+
+const formatDate = (v) => {
+  if (!v) return "N/A";
+
+  // Firestore Timestamp (RN Firebase)
+  if (typeof v?.toDate === "function") return v.toDate().toLocaleString();
+
+  // Firestore Timestamp-like object
+  if (v?._seconds) return new Date(v._seconds * 1000).toLocaleString();
+
+  // Milliseconds number
+  if (typeof v === "number") return new Date(v).toLocaleString();
+
+  // Already a string
+  return String(v);
+};
+
 /* =====================================================
    STATUS COLOR HELPER
 ===================================================== */
@@ -47,7 +65,7 @@ const getStatusColor = (status = "") => {
   if (s.includes("processing")) return "#FB923C";
   if (s.includes("approved")) return "#16A34A";
   if (s.includes("rejected")) return "#DC2626";
-  return "#6B7280";
+  return "#d20ff0ff";
 };
 
 export default function PassportListScreen() {
@@ -63,6 +81,8 @@ export default function PassportListScreen() {
   const [startColor, setStartColor] = useState("");
   const [endColor, setEndColor] = useState("");
   const [activeFilter, setActiveFilter] = useState('ALL');
+  const [paymentMap, setPaymentMap] = useState({});
+
 
   /* =====================================================
      ADMIN CHECK
@@ -118,6 +138,17 @@ export default function PassportListScreen() {
     }
   };
 
+  // const getAllPayments = async () => {
+  //   const snap = await firestore()
+  //     .collection("payments")
+  //     .orderBy("createdAt", "desc")
+  //     .get();
+
+  //   return snap.docs.map(d => ({
+  //     id: d.id,
+  //     ...d.data(),
+  //   }));
+  // };
 
   const loadAllVisaStatuses = async (docs) => {
     try {
@@ -140,28 +171,108 @@ export default function PassportListScreen() {
     }
   };
 
+
+  useEffect(() => {
+    const fetchPayments = async () => {
+      try {
+        const snap = await firestore()
+          .collection("payments")
+          .orderBy("createdAt", "desc") // ✅ MUST EXIST
+          .get();
+
+        const map = {};
+
+        snap.docs.forEach(doc => {
+          const data = doc.data();
+          const uid = data.userId;
+
+          // keep ONLY the latest payment per user
+          if (uid && !map[uid]) {
+            map[uid] = {
+              id: doc.id,
+              ...data,
+            };
+          }
+        });
+
+        setPaymentMap(map);
+      } catch (e) {
+        console.log("PAYMENT FETCH ERROR:", e);
+      }
+    };
+
+    fetchPayments();
+  }, []);
+
+
+  console.log("PAYMENTDATA==>", paymentMap)
+  // console.log("PAYMENETS===>", payments)
   useEffect(() => {
     loadData();
     requestAllFilesPermission();
-    getVisaStatus();
+    // getVisaStatus();
   }, []);
+  /* =====================================================
+     FILTER HANDLER
+  ===================================================== */
+ /* =====================================================
+   FILTER HANDLER (FIXED)
+===================================================== */
+const handleFilterPress = (filterKey) => {
+  setActiveFilter(filterKey);
+
+  // Safety check
+  if (!passports.length) {
+    setFilteredList([]);
+    return;
+  }
+
+  // ✅ ALL filter
+  if (filterKey.toLowerCase() === "all") {
+    setFilteredList(passports);
+    return;
+  }
+
+  const filtered = passports.filter((item) => {
+    const rawStatus = visaStatusMap[item.userId]?.currentStatus;
+
+    if (!rawStatus) return false;
+
+    const normalized = rawStatus
+      .toString()
+      .trim()
+      .toLowerCase();
+
+    // ✅ FIX: use includes instead of ===
+    return normalized.includes(filterKey.toLowerCase());
+  });
+
+  setFilteredList(filtered);
+};
+
 
   /* =====================================================
      SEARCH
   ===================================================== */
-  const handleSearch = (text) => {
-    setSearchText(text);
-    if (!text.trim()) return setFilteredList(passports);
+ const handleSearch = (text) => {
+  setSearchText(text);
 
-    const q = text.toLowerCase();
-    setFilteredList(
-      passports.filter(
-        (i) =>
-          `${i.firstName} ${i.lastName}`.toLowerCase().includes(q) ||
-          i.passportNumber?.toLowerCase().includes(q)
-      )
-    );
-  };
+  if (!text.trim()) {
+    handleFilterPress(activeFilter || "all");
+    return;
+  }
+
+  const q = text.toLowerCase();
+
+  setFilteredList(
+    passports.filter((i) =>
+      `${i.firstName} ${i.lastName}`.toLowerCase().includes(q) ||
+      i.passportNumber?.toLowerCase().includes(q)
+    )
+  );
+};
+
+
 
   /* =====================================================
      UPDATE VISA STATUS
@@ -376,11 +487,23 @@ export default function PassportListScreen() {
     const status = visaStatusMap[item.userId]?.currentStatus;
     const visa = visaStatusMap[item.userId];
     const statusColor = getStatusColor(status || "");
+    const payment = paymentMap[item.userId];
+    const paymentStatus = (payment?.status || "pending").toUpperCase();
+
+    const paymentColor =
+      paymentStatus === "CREATED"
+        ? "#2563EB"
+        : paymentStatus === "FAILED"
+          ? "#DC2626"
+          : "#FB923C";
+
+
     const truncateText = (text, max = 10) => {
-      console.log("TEXT==>", text)
+      console.log("TEXT==>", item)
       if (!text) return "N/A";
       return text.length > max ? `${text.slice(0, max)}...` : text;
     };
+
     return (
       <View style={styles.card}>
         <TouchableOpacity
@@ -398,7 +521,7 @@ export default function PassportListScreen() {
               : "N/A"}    {item.lastName
                 ? item.lastName.length > 10
                   ? `${item.lastName.slice(0, 10)}...`
-                  : item.lastNamee
+                  : item.lastName
                 : "N/A"}
           </Text>
           <View style={[styles.statusBadge, { backgroundColor: statusColor }]}>
@@ -415,11 +538,30 @@ export default function PassportListScreen() {
         </TouchableOpacity>
 
         {expanded && (
+
+          console.log("Status==>", paymentStatus, item),
           <View style={styles.detailsBox}>
             <Text style={styles.label}>Passport: {item.passportNumber}</Text>
             <Text style={styles.label}>DOB: {item.birthDate}</Text>
             <Text style={styles.label}>Expiry: {item.expiryDate}</Text>
-            <Text style={styles.lastStatus}>Created At: {item.createdAt}</Text>
+            <Text style={styles.lastStatus}>Created At: {formatDate(item.createdAt)}</Text>
+            <Text>
+              Payment Status:{" "}
+              <Text
+                style={{
+                  color: paymentColor,
+                  fontWeight: "700",
+                }}
+              >
+                {paymentStatus}
+              </Text>
+            </Text>
+
+            <Text>Amount: ₹{payment?.amount}</Text>
+
+            <Text>Method: {payment?.method || "N/A"}</Text>
+            <Text>Order Id: {payment?.id || "N/A"}</Text>
+
             <Text style={styles.lastStatus}>
               Last Status: {status || "Not updated"}
             </Text>
@@ -500,24 +642,24 @@ export default function PassportListScreen() {
     return <ActivityIndicator size="large" style={{ marginTop: 40 }} />;
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1 ,backgroundColor:"#222831"}}>
       <TextInput
         style={styles.searchInput}
         placeholder="Search name or passport"
         value={searchText}
         onChangeText={handleSearch}
-        placeholderTextColor={"#000"}
+        placeholderTextColor={"#fff"}
       />
       <View style={styles.filterRow}>
-        {FILTERS.map((filter) => {
-          const isActive =
-            activeFilter.toLowerCase() === filter.key.toLowerCase();
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {FILTERS.map((filter) => {
+            const isActive =
+              activeFilter.toLowerCase() === filter.key.toLowerCase();
 
-          return (
-            <ScrollView showsHorizontalScrollIndicator={true}>
+            return (
               <TouchableOpacity
                 key={filter.key}
-                onPress={() => setActiveFilter(filter.key)}
+                onPress={() => handleFilterPress(filter.key)}   // ✅ onPress added
                 style={[
                   styles.filterBtn,
                   isActive && styles.activeFilterBtn,
@@ -532,10 +674,11 @@ export default function PassportListScreen() {
                   {filter.label}
                 </Text>
               </TouchableOpacity>
-            </ScrollView>
-          );
-        })}
+            );
+          })}
+        </ScrollView>
       </View>
+
       <FlatList
         data={filteredList}
         keyExtractor={(item) => item.id}
@@ -561,14 +704,14 @@ const styles = StyleSheet.create({
     padding: moderateScale(12),
     borderRadius: moderateScale(10),
     borderWidth: 1,
-    borderColor: "#000",
+    borderColor: "#fff",
     marginTop: verticalScale(50)
   },
   card: {
     marginHorizontal: scale(16),
     marginTop: verticalScale(10),
     padding: moderateScale(16),
-    backgroundColor: "#222831",
+    backgroundColor: "gray",
     borderRadius: moderateScale(14),
   },
   rowBetween: {
@@ -660,9 +803,10 @@ const styles = StyleSheet.create({
 
   filterText: {
     fontSize: RFValue(13),
-    color: '#555',
+    color: '#FFF',
     fontWeight: '500',
-    alignSelf: "center"
+    alignSelf: "center",
+    padding:moderateScale(5)
   },
 
   activeFilterText: {

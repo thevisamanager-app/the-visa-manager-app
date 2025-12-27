@@ -715,13 +715,13 @@ export default function CheckoutScreen({ navigation, route }) {
     // try {
     //   const userId = auth().currentUser?.uid;
 
-  //   const result = await startPayment(finalTotal, userId, passport);
+  //   const result = await startPayment(totalAmount, userId, passport);
 
   //   ✅ PAYMENT SUCCESS
   //   if (result?.success) {
   //     navigation.navigate("RatingScreen", {
   //       passport,
-  //       totalAmount: finalTotal,
+  //       totalAmount: totalAmount,
   //       selected,
   //       minors,
   //     });

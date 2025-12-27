@@ -72,9 +72,37 @@ app.post("/createRazorpayOrder", async (req, res) => {
 });
 
 // ===================== VERIFY PAYMENT ======================
+// app.post("/verifyRazorpayPayment", async (req, res) => {
+//   try {
+//     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+
+//     const sign = `${razorpay_order_id}|${razorpay_payment_id}`;
+//     const expected = crypto
+//       .createHmac("sha256", RAZORPAY_KEY_SECRET.value())
+//       .update(sign)
+//       .digest("hex");
+
+//     const verified = expected === razorpay_signature;
+
+//     await db.collection("payments").doc(razorpay_order_id).update({
+//       status: verified ? "paid" : "failed",
+//       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+//     });
+
+//     return res.status(200).json({ valid: verified });
+
+//   } catch (e) {
+//     return res.status(500).json({ error: e.message });
+//   }
+// });
+
 app.post("/verifyRazorpayPayment", async (req, res) => {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+    } = req.body;
 
     const sign = `${razorpay_order_id}|${razorpay_payment_id}`;
     const expected = crypto
@@ -84,18 +112,44 @@ app.post("/verifyRazorpayPayment", async (req, res) => {
 
     const verified = expected === razorpay_signature;
 
+    if (!verified) {
+      await db.collection("payments").doc(razorpay_order_id).update({
+        status: "failed",
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+
+      return res.json({ valid: false });
+    }
+
+    // 🔥 FETCH PAYMENT DETAILS (BACKEND ONLY)
+    const razorpay = getRazorpay();
+    const payment = await razorpay.payments.fetch(
+      razorpay_payment_id
+    );
+
     await db.collection("payments").doc(razorpay_order_id).update({
-      status: verified ? "paid" : "failed",
+      paymentId: razorpay_payment_id,
+      orderId: razorpay_order_id,
+      amount: payment.amount,           // paise
+      currency: payment.currency,
+      method: payment.method,           // upi / card / netbanking
+      status: payment.status,            // captured / failed
+      email: payment.email || null,
+      contact: payment.contact || null,
+      verified: true,
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 
-    return res.status(200).json({ valid: verified });
+    return res.json({
+      valid: true,
+      status: payment.status,
+    });
 
   } catch (e) {
+    console.error("VERIFY ERROR:", e);
     return res.status(500).json({ error: e.message });
   }
 });
-
 
 
 exports.generateInvoice = onCall(async (req) => {

@@ -161,7 +161,7 @@ exports.generateInvoice = onCall(async (req) => {
       throw new HttpsError("unauthenticated", "User not authenticated");
     }
 
-    const { invoiceId, userName, date, amount, userId, country } = req.data;
+    const { invoiceId, userName, date, amount, userId, country, email } = req.data;
 
     // --------- BASIC VALIDATION ----------
     if (!invoiceId || !date || amount == null || !userId || !country) {
@@ -210,6 +210,7 @@ exports.generateInvoice = onCall(async (req) => {
     doc.fillColor("#000").fontSize(12);
     doc.text(`Customer ID: ${userId}`);
     doc.text(`Mobile: ${displayName}`);
+    doc.text(`Email: ${email}`);
     doc.moveDown(2);
 
     doc.fontSize(14).fillColor("#FF6A00").text("Company Details:", 40);

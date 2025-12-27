@@ -1108,7 +1108,7 @@ export default function CongratsScreen({ navigation, route }) {
 
             const invoiceId = `INV-${Date.now()}`;
             const callGenerateInvoice = functions().httpsCallable("generateInvoice");
-
+            console.log("PHONENO==>",user.email)
             const response = await callGenerateInvoice({
                 invoiceId,
                 userName: user.displayName ?? user.email ?? user.phoneNumber ?? "Guest User",
@@ -1116,6 +1116,7 @@ export default function CongratsScreen({ navigation, route }) {
                 amount: Number(amount),
                 country: selected.countrName,
                 date: new Date().toLocaleString(),
+                email:user.email ?? " "
             });
 
             if (!response?.data?.url) {

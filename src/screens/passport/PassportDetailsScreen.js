@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  Alert
 } from "react-native";
 import { Platform } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -97,8 +98,8 @@ export default function PassportDetailsScreen({ navigation, route }) {
   const travel = route?.params?.travelDate || route?.params?.travel || null;
 
   // base main passport (initial from params)
-  const basePassport =
-    route?.params?.updatedPassport || route?.params?.passport || {};
+  const basePassport = route?.params?.passport || {};
+
 
   // MAIN PASSPORT STATE
   const [passportState, setPassportState] = useState(basePassport);
@@ -110,13 +111,28 @@ export default function PassportDetailsScreen({ navigation, route }) {
   const selected = useSelector((state) => state.destinations.selected);
 
 
+  // useEffect(() => {
+  //   if (route?.params?.updatedPassport) {
+  //     setPassportState(route.params.updatedPassport);
+  //   } else if (route?.params?.passport) {
+  //     setPassportState(route.params.passport);
+  //   }
+  // }, [route?.params?.updatedPassport, route?.params?.passport]);
+
+  const shouldUpdatePassport =
+    route?.params?.updatedPassport && !route?.params?.addMode;
   useEffect(() => {
-    if (route?.params?.updatedPassport) {
+    if (shouldUpdatePassport) {
       setPassportState(route.params.updatedPassport);
-    } else if (route?.params?.passport) {
-      setPassportState(route.params.passport);
     }
-  }, [route?.params?.updatedPassport, route?.params?.passport]);
+  }, [shouldUpdatePassport]);
+
+  useEffect(() => {
+    // ✅ Update MAIN traveller only when explicitly edited
+    if (route?.params?.updatedPassport && !route?.params?.addMode) {
+      setPassportState(route.params.updatedPassport);
+    }
+  }, [route?.params?.updatedPassport]);
 
   // CO-TRAVELLERS
   const initialCoTravellers = toArray(route?.params?.coTravellers);
@@ -186,13 +202,21 @@ export default function PassportDetailsScreen({ navigation, route }) {
 
   // === Add Co Traveller Flow ===
   const handleAddCoTraveller = () => {
+    // navigation.navigate("PhotoUploadScreen", {
+    //   addMode: true,
+    //   travelDate: travel,
+    //   // passportState,           // should not be called as cotraveller initially will be blank details for passport
+    //   coTravellers,
+    //   mainPhotoUrl: photoUrlState, // so main photo is preserved
+    // });
     navigation.navigate("PhotoUploadScreen", {
       addMode: true,
       travelDate: travel,
-      passportState,           // your existing prop name
+      passport: passportState,        // ✅ PASS MAIN PASSPORT
       coTravellers,
-      mainPhotoUrl: photoUrlState, // so main photo is preserved
+      mainPhotoUrl: photoUrlState,
     });
+
   };
 
   // Edit MAIN passport (only main, not co-travellers)
@@ -229,7 +253,7 @@ export default function PassportDetailsScreen({ navigation, route }) {
   // === Confirm ===
   const onConfirm = async () => {
 
-    if (!firstName || !lastName || !passportNumber || !nationality || !birthDate || !expiryDate || !photoUrl || !phoneNumber || !flightno || !arrivaldate || !hotelname || !location) {
+    if (!firstName || !lastName || !passportNumber || !nationality || !birthDate || !expiryDate  || !phoneNumber ) {
       Alert.alert("Missing Info", "Please fill all details");
       return false;
     }
@@ -915,7 +939,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: RFValue(14),
   },
-  
+
 
 });
 

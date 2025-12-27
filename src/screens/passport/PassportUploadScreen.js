@@ -29,7 +29,7 @@ export default function PassportUploadScreen({ navigation, route }) {
   const travel = route?.params?.travelDate || null;
   const selected = useSelector((state) => state.destinations.selected);
   const currentPhotoUrl = route?.params?.photoUrl || null;
-
+  const isCoTraveller = route?.params?.addMode === true;
   const addMode = route?.params?.addMode || false;
   const editMode = route?.params?.editMode || false;
 
@@ -44,16 +44,16 @@ export default function PassportUploadScreen({ navigation, route }) {
   const [city, setCity] = useState("");
   const [zip, setZip] = useState("");
   const [phone, setPhone] = useState("");
-   const [date, setDate] = useState("");
+  const [date, setDate] = useState("");
 
-     const getDateAfterFiveDays = () => {
+  const getDateAfterFiveDays = () => {
     const currentDate = new Date();
-   
+
 
     const options = { day: "2-digit", month: "short", year: "numeric" };
     return currentDate.toLocaleDateString("en-GB", options);
   };
- useEffect(() => {
+  useEffect(() => {
     setDate(getDateAfterFiveDays());
   }, []);
   const pickFront = async () => {
@@ -90,7 +90,7 @@ export default function PassportUploadScreen({ navigation, route }) {
   const validateCompanyDetails = () => {
     if (selected.countryType !== "Schengen") return true;
 
-    if (!companyName || !address || !city || !zip || !phone)  {
+    if (!companyName || !address || !city || !zip || !phone) {
       Alert.alert("Missing Info", "Please fill all company details");
       return false;
     }
@@ -133,18 +133,33 @@ export default function PassportUploadScreen({ navigation, route }) {
             : null,
       };
 
+      // if (addMode) {
+      //   navigation.navigate("PassportDetailsScreen", {
+      //     passport: passportPayload,
+      //     travelDate: travel,
+      //     photoUrl: currentPhotoUrl,
+      //     coTravellers: [
+      //       ...(route?.params?.coTravellers || []),
+      //       { id: Date.now().toString(), ...passportPayload },
+      //     ],
+      //   });
+      //   return;
       if (addMode) {
         navigation.navigate("PassportDetailsScreen", {
-          passport: passportPayload,
+          passport: route.params.passport, // 👈 KEEP MAIN
           travelDate: travel,
-          photoUrl: currentPhotoUrl,
+          photoUrl: route.params.mainPhotoUrl,
           coTravellers: [
             ...(route?.params?.coTravellers || []),
-            { id: Date.now().toString(), ...passportPayload },
+            {
+              id: Date.now().toString(),
+              ...passportPayload, // ✅ co-traveller stored ONLY here
+            },
           ],
         });
         return;
       }
+      // }
 
       if (editMode) {
         navigation.navigate(route.params.returnTo, {
@@ -167,16 +182,16 @@ export default function PassportUploadScreen({ navigation, route }) {
   };
 
   return (
-    <ScreenWrapper style={styles.container}>      
-    <View style={styles.topNav}>
-      <TouchableOpacity onPress={() => navigation.goBack()}>
-        <Icon name="arrow-back" size={26} color="black" />
-      </TouchableOpacity>
-      <View style={styles.stepBadge}>
-        <Icon name="check-circle" size={18} color="white" />
-        <Text style={styles.stepBadgeText}>Visa on {date}</Text>
-      </View>
-      
+    <ScreenWrapper style={styles.container}>
+      <View style={styles.topNav}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Icon name="arrow-back" size={26} color="black" />
+        </TouchableOpacity>
+        <View style={styles.stepBadge}>
+          <Icon name="check-circle" size={18} color="white" />
+          <Text style={styles.stepBadgeText}>Visa on {date}</Text>
+        </View>
+
         <TouchableOpacity onPress={() => navigation.navigate("Tabs", {
           screen: "Destination",
         })
@@ -184,61 +199,61 @@ export default function PassportUploadScreen({ navigation, route }) {
           <Icon name="home" size={moderateScale(24)} color={ORANGE} />
         </TouchableOpacity>
 
-      
-    </View>
+
+      </View>
 
 
       {/* PROGRESS BAR */}
       {selected.countryType === "Schengen" ?
-      <View style={styles.progressContainer}>
-        <View style={styles.stepItem}>
-          <Icon name="check-circle" size={22} color={ORANGE} />
-          <Text style={[styles.stepLabel, { color: ORANGE }]}>Passport</Text>
-        </View>
-        <View style={styles.line} />
+        <View style={styles.progressContainer}>
+          <View style={styles.stepItem}>
+            <Icon name="check-circle" size={22} color={ORANGE} />
+            <Text style={[styles.stepLabel, { color: ORANGE }]}>Passport</Text>
+          </View>
+          <View style={styles.line} />
 
-        <View style={styles.stepItem}>
-          <Icon name="radio-button-unchecked" size={22} color="#777" />
-          <Text style={styles.stepLabel}>Detail</Text>
-        </View>
-        <View style={styles.line} />
+          <View style={styles.stepItem}>
+            <Icon name="radio-button-unchecked" size={22} color="#777" />
+            <Text style={styles.stepLabel}>Detail</Text>
+          </View>
+          <View style={styles.line} />
 
-        <View style={styles.stepItem}>
-          <Icon name="radio-button-unchecked" size={22} color="#777" />
-          <Text style={styles.stepLabel}>Checkout</Text>
+          <View style={styles.stepItem}>
+            <Icon name="radio-button-unchecked" size={22} color="#777" />
+            <Text style={styles.stepLabel}>Checkout</Text>
+          </View>
         </View>
-      </View>
-:
-      <View style={styles.progressContainer}>
-        <View style={styles.stepItem}>
-          <Icon name="check-circle" size={22} color={ORANGE} />
-          <Text style={styles.stepLabel}>Dates</Text>
-        </View>
-        <View style={styles.line} />
+        :
+        <View style={styles.progressContainer}>
+          <View style={styles.stepItem}>
+            <Icon name="check-circle" size={22} color={ORANGE} />
+            <Text style={styles.stepLabel}>Dates</Text>
+          </View>
+          <View style={styles.line} />
 
-        <View style={styles.stepItem}>
-          <Icon name="check-circle" size={22} color={ORANGE} />
-          <Text style={styles.stepLabel}>Photo</Text>
-        </View>
-        <View style={styles.line} />
+          <View style={styles.stepItem}>
+            <Icon name="check-circle" size={22} color={ORANGE} />
+            <Text style={styles.stepLabel}>Photo</Text>
+          </View>
+          <View style={styles.line} />
 
-        <View style={styles.stepItem}>
-          <Icon name="check-circle" size={22} color={ORANGE} />
-          <Text style={[styles.stepLabel, { color: ORANGE }]}>Passport</Text>
-        </View>
-        <View style={styles.line} />
+          <View style={styles.stepItem}>
+            <Icon name="check-circle" size={22} color={ORANGE} />
+            <Text style={[styles.stepLabel, { color: ORANGE }]}>Passport</Text>
+          </View>
+          <View style={styles.line} />
 
-        <View style={styles.stepItem}>
-          <Icon name="radio-button-unchecked" size={22} color="#777" />
-          <Text style={styles.stepLabel}>Detail</Text>
-        </View>
-        <View style={styles.line} />
+          <View style={styles.stepItem}>
+            <Icon name="radio-button-unchecked" size={22} color="#777" />
+            <Text style={styles.stepLabel}>Detail</Text>
+          </View>
+          <View style={styles.line} />
 
-        <View style={styles.stepItem}>
-          <Icon name="radio-button-unchecked" size={22} color="#777" />
-          <Text style={styles.stepLabel}>Checkout</Text>
-        </View>
-      </View>}
+          <View style={styles.stepItem}>
+            <Icon name="radio-button-unchecked" size={22} color="#777" />
+            <Text style={styles.stepLabel}>Checkout</Text>
+          </View>
+        </View>}
 
 
       <ScrollView>

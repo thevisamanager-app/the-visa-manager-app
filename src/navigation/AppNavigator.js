@@ -118,21 +118,21 @@
 //     <Stack.Navigator screenOptions={{ headerShown: false }}>
 //       <Stack.Screen name="Tabs" component={TabNavigator} />
 
-      // <Stack.Screen name="PassportUploadScreen" component={PassportUploadScreen} />
-      // <Stack.Screen name="PassportDetailsScreen" component={PassportDetailsScreen} />
-      // <Stack.Screen name="QuestionScreen" component={QuestionScreen} />
-      // <Stack.Screen name="ReviewAnswersScreen" component={ReviewAnswersScreen} />
-      // <Stack.Screen name="Destination" component={DestinationScreen} />
-      // <Stack.Screen name="VisaQuestionScreen" component={VisaQuestionScreen} />
-      // <Stack.Screen name="CheckoutScreen" component={CheckoutScreen} />
-      // <Stack.Screen name="StartApplicationScreen" component={StartApplicationScreen} />
-      // <Stack.Screen name="TravelDateScreen" component={TravelDateScreen} />
-      // <Stack.Screen name="PhotoUploadScreen" component={PhotoUploadScreen} />
-      // <Stack.Screen name="AddTravellerScreen" component={AddTravellerScreen} />
-      // <Stack.Screen name="RatingScreen" component={RatingScreen} />
-      // <Stack.Screen name="VisaStatusScreen" component={VisaStatusScreen} />
-      // <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} />
-      // <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+// <Stack.Screen name="PassportUploadScreen" component={PassportUploadScreen} />
+// <Stack.Screen name="PassportDetailsScreen" component={PassportDetailsScreen} />
+// <Stack.Screen name="QuestionScreen" component={QuestionScreen} />
+// <Stack.Screen name="ReviewAnswersScreen" component={ReviewAnswersScreen} />
+// <Stack.Screen name="Destination" component={DestinationScreen} />
+// <Stack.Screen name="VisaQuestionScreen" component={VisaQuestionScreen} />
+// <Stack.Screen name="CheckoutScreen" component={CheckoutScreen} />
+// <Stack.Screen name="StartApplicationScreen" component={StartApplicationScreen} />
+// <Stack.Screen name="TravelDateScreen" component={TravelDateScreen} />
+// <Stack.Screen name="PhotoUploadScreen" component={PhotoUploadScreen} />
+// <Stack.Screen name="AddTravellerScreen" component={AddTravellerScreen} />
+// <Stack.Screen name="RatingScreen" component={RatingScreen} />
+// <Stack.Screen name="VisaStatusScreen" component={VisaStatusScreen} />
+// <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} />
+// <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
 //     </Stack.Navigator>
 //   );
 // }
@@ -148,10 +148,76 @@
 // }
 
 
+// import React from "react";
+// import { createStackNavigator } from "@react-navigation/stack";
+// import TabNavigator from "./TabNavigator";
+// import PassportListScreen from "../components/PassportListScreen";
+// import PassportUploadScreen from "../screens/passport/PassportUploadScreen";
+// import PassportDetailsScreen from "../screens/passport/PassportDetailsScreen";
+// import QuestionScreen from "../screens/questions/QuestionScreen";
+// import ReviewAnswersScreen from "../screens/questions/ReviewAnswerScreen";
+// import DestinationScreen from "../screens/DestinationScreen";
+// import VisaQuestionScreen from "../screens/visa/VisaQuestionScreen";
+// import CheckoutScreen from "../screens/visa/CheckoutScreen";
+// import StartApplicationScreen from "../screens/start/StartApllicationScreen";
+// import TravelDateScreen from "../screens/date/TravelDateScreen";
+// import PhotoUploadScreen from "../screens/passport/PhotoUploadScreen";
+// import AddTravellerScreen from "../screens/passport/AddTravellerScreen";
+// import RatingScreen from "../screens/visa/RatingScreen";
+// import VisaStatusScreen from "../screens/visa/VisaStatusScreen";
+// import EditProfileScreen from "../screens/profile/EditProfileScreen";
+// import ProfileScreen from "../screens/profile/ProfileScreen";
+
+
+
+// const Stack = createStackNavigator();
+
+// function AdminStack() {
+//   return (
+//     <Stack.Navigator screenOptions={{ headerShown: false }}>
+//       <Stack.Screen name="PassportListScreen" component={PassportListScreen} />
+//     </Stack.Navigator>
+//   );
+// }
+
+// function UserStack() {
+//   return (
+//     <Stack.Navigator screenOptions={{ headerShown: false }}>
+//       <Stack.Screen name="Tabs" component={TabNavigator} />
+//       <Stack.Screen name="PassportUploadScreen" component={PassportUploadScreen} />
+//       <Stack.Screen name="PassportDetailsScreen" component={PassportDetailsScreen} />
+//       <Stack.Screen name="QuestionScreen" component={QuestionScreen} />
+//       <Stack.Screen name="ReviewAnswersScreen" component={ReviewAnswersScreen} />
+//       <Stack.Screen name="DestinationScreen" component={DestinationScreen} />
+//       <Stack.Screen name="VisaQuestionScreen" component={VisaQuestionScreen} />
+//       <Stack.Screen name="CheckoutScreen" component={CheckoutScreen} />
+//       <Stack.Screen name="StartApplicationScreen" component={StartApplicationScreen} />
+//       <Stack.Screen name="TravelDateScreen" component={TravelDateScreen} />
+//       <Stack.Screen name="PhotoUploadScreen" component={PhotoUploadScreen} />
+//       <Stack.Screen name="AddTravellerScreen" component={AddTravellerScreen} />
+//       <Stack.Screen name="RatingScreen" component={RatingScreen} />
+//       <Stack.Screen name="VisaStatusScreen" component={VisaStatusScreen} />
+//       <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} />
+//       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+
+//     </Stack.Navigator>
+//   );
+// }
+
+// export default function AppNavigator({ isAdmin }) {
+//   return isAdmin ? <AdminStack /> : <UserStack />;
+// }
+
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
+
+/* -------------------- NAVIGATORS -------------------- */
 import TabNavigator from "./TabNavigator";
+
+/* -------------------- ADMIN -------------------- */
 import PassportListScreen from "../components/PassportListScreen";
+
+/* -------------------- USER SCREENS -------------------- */
 import PassportUploadScreen from "../screens/passport/PassportUploadScreen";
 import PassportDetailsScreen from "../screens/passport/PassportDetailsScreen";
 import QuestionScreen from "../screens/questions/QuestionScreen";
@@ -168,39 +234,85 @@ import VisaStatusScreen from "../screens/visa/VisaStatusScreen";
 import EditProfileScreen from "../screens/profile/EditProfileScreen";
 import ProfileScreen from "../screens/profile/ProfileScreen";
 
+/* -------------------- SCHENGEN SCREENS -------------------- */
+import SchengenPersonalDetailsScreen from "../screens/Schengen/SchengenPersonalDetailsScreen";
+import SchengenSponsorScreen from "../screens/Schengen/SchengenSponsorScreen";
+import SchengenAddressScreen from "../screens/Schengen/SchengenAddressScreen";
+import SchengenAppointmentScreen from "../screens/Schengen/SchengenAppointmentScreen";
+import SchengenCountriesVisitScreen from "../screens/Schengen/SchengenCountriesVisitScreen";
+import SchengenDocumentsScreen from "../screens/Schengen/SchengenDocumentsScreen";
+import SchengenStepper from "../components/SchengenStepper"
 const Stack = createStackNavigator();
 
+/* ===================== ADMIN STACK ===================== */
 function AdminStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="PassportListScreen" component={PassportListScreen} />
+      <Stack.Screen
+        name="PassportListScreen"
+        component={PassportListScreen}
+      />
     </Stack.Navigator>
   );
 }
 
+/* ===================== USER STACK ===================== */
 function UserStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {/* MAIN */}
       <Stack.Screen name="Tabs" component={TabNavigator} />
+      <Stack.Screen name="DestinationScreen" component={DestinationScreen} />
+      <Stack.Screen name="StartApplicationScreen" component={StartApplicationScreen} />
+      <Stack.Screen name="TravelDateScreen" component={TravelDateScreen} />
+
+      {/* SCHENGEN FLOW (ALWAYS REGISTERED) */}
+      <Stack.Screen
+        name="SchengenPersonalDetails"
+        component={SchengenPersonalDetailsScreen}
+      />
+      <Stack.Screen
+        name="SchengenSponsor"
+        component={SchengenSponsorScreen}
+      />
+      <Stack.Screen
+        name="SchengenAddress"
+        component={SchengenAddressScreen}
+      />
+      <Stack.Screen
+        name="SchengenAppointment"
+        component={SchengenAppointmentScreen}
+      />
+      <Stack.Screen
+        name="SchengenCountriesVisit"
+        component={SchengenCountriesVisitScreen}
+      />
+      <Stack.Screen
+        name="SchengenDocuments"
+        component={SchengenDocumentsScreen}
+      />
+
+      {/* EXISTING FLOW */}
+      <Stack.Screen name="PhotoUploadScreen" component={PhotoUploadScreen} />
       <Stack.Screen name="PassportUploadScreen" component={PassportUploadScreen} />
       <Stack.Screen name="PassportDetailsScreen" component={PassportDetailsScreen} />
       <Stack.Screen name="QuestionScreen" component={QuestionScreen} />
       <Stack.Screen name="ReviewAnswersScreen" component={ReviewAnswersScreen} />
-      <Stack.Screen name="DestinationScreen" component={DestinationScreen} />
       <Stack.Screen name="VisaQuestionScreen" component={VisaQuestionScreen} />
       <Stack.Screen name="CheckoutScreen" component={CheckoutScreen} />
-      <Stack.Screen name="StartApplicationScreen" component={StartApplicationScreen} />
-      <Stack.Screen name="TravelDateScreen" component={TravelDateScreen} />
-      <Stack.Screen name="PhotoUploadScreen" component={PhotoUploadScreen} />
-      <Stack.Screen name="AddTravellerScreen" component={AddTravellerScreen} />
       <Stack.Screen name="RatingScreen" component={RatingScreen} />
       <Stack.Screen name="VisaStatusScreen" component={VisaStatusScreen} />
+
+      {/* EXTRA */}
+      <Stack.Screen name="AddTravellerScreen" component={AddTravellerScreen} />
       <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} />
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+        <Stack.Screen name="SchengenStepper" component={SchengenStepper} />
     </Stack.Navigator>
   );
 }
 
+/* ===================== ROOT ===================== */
 export default function AppNavigator({ isAdmin }) {
   return isAdmin ? <AdminStack /> : <UserStack />;
 }

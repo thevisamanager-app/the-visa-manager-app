@@ -1,6 +1,4 @@
-import axios from "axios";
-
-const VISION_API_KEY = "AIzaSyDfM3G4mFUg2sgEiYAZ2zzZ6qDgjV4dCgU";
+import functions from "@react-native-firebase/functions";
 
 export async function extractTextFromImage(base64Image) {
   // Log the input base64
@@ -11,20 +9,7 @@ export async function extractTextFromImage(base64Image) {
 
   console.log("Base64 AFTER cleanup:", base64Image.substring(0, 80));
 
-  const body = {
-    requests: [
-      {
-        image: { content: base64Image },
-        features: [{ type: "TEXT_DETECTION" }],
-      },
-    ],
-  };
-
-  const response = await axios.post(
-    `https://vision.googleapis.com/v1/images:annotate?key=${VISION_API_KEY}`,
-    body
-  );
-
-  const text = response.data.responses[0].fullTextAnnotation?.text || "";
-  return text;
+  const callable = functions().httpsCallable("extractTextFromImage");
+  const response = await callable({ base64Image });
+  return response.data?.text || "";
 }

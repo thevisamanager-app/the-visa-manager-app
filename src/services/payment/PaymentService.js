@@ -67,15 +67,22 @@ export async function startPayment(amount, userId, userDetails) {
   console.log("USER DETAILS =>", userDetails);
 
   try {
-    const response = await fetch(CREATE_ORDER, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ amount, userId }),
-    });
+const response = await fetch(CREATE_ORDER, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ amount, userId }),
+});
 
-    // Read raw response instead of json, to avoid crash
-    const raw = await response.text();
-    console.log("RAW ORDER RESPONSE ===>", raw);
+if (!response.ok) {
+  console.log("CREATE ORDER HTTP ERROR:", response.status);
+  const errText = await response.text();
+  console.log("ERROR BODY:", errText);
+  return { success: false };
+}
+
+const raw = await response.text();
+console.log("RAW ORDER RESPONSE ===>", raw);
+
 
     let data = {};
     try {

@@ -712,35 +712,35 @@ export default function CheckoutScreen({ navigation, route }) {
 
 
   const handlePay = async () => {
-    // try {
-    //   const userId = auth().currentUser?.uid;
+    try {
+      const userId = auth().currentUser?.uid;
 
-  //   const result = await startPayment(totalAmount, userId, passport);
+    const result = await startPayment(totalAmount, userId, passport);
 
-  //   ✅ PAYMENT SUCCESS
-  //   if (result?.success) {
-  //     navigation.navigate("RatingScreen", {
-  //       passport,
-  //       totalAmount: totalAmount,
-  //       selected,
-  //       minors,
-  //     });
-  //     return;
-  //   }
+  //  ✅ PAYMENT SUCCESS
+    if (result?.success) {
+      navigation.navigate("RatingScreen", {
+        passport,
+        totalAmount: totalAmount,
+        selected,
+        minors,
+      });
+      return;
+    }
 
-  //   ❌ PAYMENT FAILED / CANCELLED
-  //   Alert.alert(
-  //     "Payment Failed",
-  //     "Payment was not completed. Please try again."
-  //   );
-  // } catch (error) {
-  //   // ❌ PAYMENT ERROR
-  //   Alert.alert(
-  //     "Payment Error",
-  //     error.message || "Something went wrong. Please try again."
-  //   );
-  // }
-  navigation.navigate("RatingScreen",{passport,totalAmount,selected})
+   // ❌ PAYMENT FAILED / CANCELLED
+    Alert.alert(
+      "Payment Failed",
+      "Payment was not completed. Please try again."
+    );
+  } catch (error) {
+    // ❌ PAYMENT ERROR
+    Alert.alert(
+      "Payment Error",
+      error.message || "Something went wrong. Please try again."
+    );
+  }
+ // navigation.navigate("RatingScreen",{passport,totalAmount,selected})
 };
 
   return (

@@ -12,7 +12,14 @@ const fs = require("fs");
 const os = require("os");
 
 // ===================== FIREBASE INIT ======================
-admin.initializeApp();
+// admin.initializeApp();
+admin.initializeApp({
+  storageBucket:
+    process.env.FIREBASE_CONFIG
+      ? JSON.parse(process.env.FIREBASE_CONFIG).storageBucket
+      : "thevisamanager-bea80.appspot.com",
+});
+
 const db = admin.firestore();
 const bucket = admin.storage().bucket(); // <--- important for file upload
 
@@ -414,7 +421,13 @@ exports.generateVisaPDF = functions.https.onCall(async (data, context) => {
 
   await new Promise(res => writeStream.on("finish", res));
 
-  const bucket = admin.storage().bucket();
+  // const bucket = admin.storage().bucket();
+  const bucketName =
+    process.env.FIREBASE_CONFIG
+      ? JSON.parse(process.env.FIREBASE_CONFIG).storageBucket
+      : "thevisamanager-bea80.appspot.com";
+
+  const bucket = admin.storage().bucket(bucketName);
   await bucket.upload(tempFilePath, {
     destination: `visas/pdf/${passportNumber}.pdf`,
     contentType: "application/pdf",

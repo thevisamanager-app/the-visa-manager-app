@@ -2,7 +2,14 @@ apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 apply plugin: "com.google.gms.google-services"
+<<<<<<< HEAD
 apply from: project(":react-native-config").projectDir.getPath() + "/dotenv.gradle"
+=======
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
+//apply from: project(":react-native-config").projectDir.getPath() + "/dotenv.gradle"
+apply from: file("../../node_modules/react-native-config/android/dotenv.gradle")
+
+>>>>>>> d389c7b91d6d00f94104ba56295a4cf2fb60882a
 
 
 

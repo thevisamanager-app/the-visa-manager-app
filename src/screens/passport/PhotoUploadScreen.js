@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
+import  FaceDetector  from "@react-native-ml-kit/face-detection";
 import { launchImageLibrary } from "react-native-image-picker";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { uploadUserPhoto } from "../../api/user/photoService";
@@ -20,31 +21,86 @@ import {
 } from "../../utils/metrics";
 import ScreenWrapper from "../../components/ScreenWrapper";
 
+
 export default function PhotoUploadScreen({ navigation, route }) {
   const travelDate = route?.params?.travelDate || null;
   const [photo, setPhoto] = useState(null);
   const [date, setDate] = useState("");
+  const [detecting, setDetecting] = useState(false);
+
   const addMode = route?.params?.addMode || false;
   const editMode = route?.params?.editMode || false;
   const ORANGE = "#FF7A00";
   console.log("ROUTEDATA===", route.params)
+  const getMLKitUri = (uri) => {
+    return uri.startsWith('file://') ? uri : `file://${uri}`;
+  };
+
   const pickPhoto = async () => {
+    if (detecting) return;
+    setDetecting(true);
+
     const result = await launchImageLibrary({
       mediaType: "photo",
-      includeBase64: false,
       quality: 0.8,
     });
 
-    if (!result.assets) return;
+    if (!result.assets || !result.assets[0]) {
+      setDetecting(false);
+      return;
+    }
+
+    const image = result.assets[0];
+
+    if (!image.uri) {
+      Alert.alert("Invalid Image", "Could not read image file.");
+      setDetecting(false);
+      return;
+    }
 
     try {
-      const uploadedUrl = await uploadUserPhoto(result.assets[0]);
+      const faces = await FaceDetector.detect(
+        getMLKitUri(image.uri),
+        {
+          performanceMode: 'accurate',
+          landmarkMode: 'none',
+          contourMode: 'none',
+
+        }
+      );
+
+      if (!faces || faces.length === 0) {
+        Alert.alert(
+          "Invalid Photo",
+          "Please upload a clear photo showing a human face."
+        );
+        return;
+      }
+
+      if (faces.length > 1) {
+        Alert.alert(
+          "Multiple Faces Detected",
+          "Please upload a photo with only one person."
+        );
+        return;
+      }
+
+      const uploadedUrl = await uploadUserPhoto(image);
       setPhoto(uploadedUrl);
-    } catch (err) {
-      console.log("UPLOAD PHOTO ERROR:", err);
-      Alert.alert("Error", "Failed to upload photo.");
+
+    } catch (error) {
+      console.log("FACE DETECTION ERROR:", error);
+      Alert.alert(
+        "Face Detection Failed",
+        "Please try another clear photo."
+      );
+    } finally {
+      setDetecting(false);
     }
   };
+
+
+
 
   const confirmPhoto = () => {
     if (!photo) {

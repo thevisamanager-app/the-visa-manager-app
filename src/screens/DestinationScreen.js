@@ -451,7 +451,7 @@ export default function DestinationScreen() {
             activeFilter.toLowerCase() === filter.key.toLowerCase();
 
           return (
-                  <ScrollView showsHorizontalScrollIndicator={true}>
+            <ScrollView showsHorizontalScrollIndicator={true}  key={filter.key}>
             <TouchableOpacity
               key={filter.key}
               onPress={() => setActiveFilter(filter.key)}
@@ -459,6 +459,7 @@ export default function DestinationScreen() {
                 styles.filterBtn,
                 isActive && styles.activeFilterBtn,
               ]}
+              activeOpacity={0.8}
             >
               <Text
                 style={[
@@ -474,10 +475,13 @@ export default function DestinationScreen() {
         })}
       </View>
 
+
+
+
       {/* Country List */}
       <FlatList
         data={filteredData}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.countrName.toString()}
         contentContainerStyle={{ paddingBottom: 120 }}
         renderItem={({ item }) => (
           <CountryCards
@@ -518,18 +522,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: wp('4%'),
     marginBottom: verticalScale(10),
-    alignSelf:"center"
   },
 
   filterBtn: {
-    paddingVertical: verticalScale(6),
-    paddingHorizontal: moderateScale(5),
+    flex: 1, // 🔥 THIS IS THE KEY
+    paddingVertical: verticalScale(8),
+    marginRight: moderateScale(8),
     borderRadius: moderateScale(10),
     borderWidth: 1,
     borderColor: '#DDD',
-    marginRight: moderateScale(8),
     backgroundColor: '#FFF',
+    alignItems: 'center',
   },
+
+  // remove marginRight from last item visually
+  // filterBtnLast: {
+  //   marginRight: 0,
+  // },
 
   activeFilterBtn: {
     backgroundColor: '#FFE5D6',
@@ -540,7 +549,7 @@ const styles = StyleSheet.create({
     fontSize: RFValue(13),
     color: '#555',
     fontWeight: '500',
-    alignSelf:"center"
+    alignSelf: "center"
   },
 
   activeFilterText: {

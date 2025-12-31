@@ -10,6 +10,7 @@ import {
 import { launchImageLibrary } from "react-native-image-picker";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { uploadUserPhoto } from "../../api/user/photoService";
+import LottieView from "lottie-react-native";
 import {
   wp,
   hp,
@@ -24,6 +25,7 @@ export default function PhotoUploadScreen({ navigation, route }) {
   const travelDate = route?.params?.travelDate || null;
   const [photo, setPhoto] = useState(null);
   const [date, setDate] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
   const addMode = route?.params?.addMode || false;
   const editMode = route?.params?.editMode || false;
   const ORANGE = "#FF7A00";
@@ -37,12 +39,40 @@ export default function PhotoUploadScreen({ navigation, route }) {
 
     if (!result.assets) return;
 
+    //   try {
+    //     const uploadedUrl = await uploadUserPhoto(result.assets[0]);
+    //     setPhoto(uploadedUrl);
+    //   } catch (err) {
+    //     console.log("UPLOAD PHOTO ERROR:", err);
+    //     Alert.alert("Error", "Failed to upload photo.");
+    //   }
+    // };
+
+    // const confirmPhoto = () => {
+    //   if (!photo) {
+    //     Alert.alert("Upload Required", "Please upload a photo.");
+    //     return;
+    //   }
+
+    //   if (editMode) {
+    //     navigation.navigate(route.params.returnTo, {
+    //       updatedPhotoUrl: photo,
+    //       passport: route.params.passport,
+    //       coTravellers: route?.params?.coTravellers || [],
+    //       travelDate,
+    //     });
+    //     return;
+    //   }
     try {
+      setIsUploading(true); // ✅ show loader
+
       const uploadedUrl = await uploadUserPhoto(result.assets[0]);
       setPhoto(uploadedUrl);
     } catch (err) {
       console.log("UPLOAD PHOTO ERROR:", err);
       Alert.alert("Error", "Failed to upload photo.");
+    } finally {
+      setIsUploading(false); // ✅ hide loader
     }
   };
 
@@ -101,6 +131,18 @@ export default function PhotoUploadScreen({ navigation, route }) {
 
   return (
     <ScreenWrapper style={styles.container}>
+      {/* 🔥 LOTTIE LOADER OVERLAY */}
+      {isUploading && (
+        <View style={styles.loaderOverlay}>
+          <LottieView
+            source={require("../../assets/lottie/Loading.json")}
+            autoPlay
+            loop
+            style={styles.loader}
+          />
+          <Text style={styles.loadingText}>Uploading photo...</Text>
+        </View>
+      )}
       {/* TOP NAV */}
       <View style={styles.topNav}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -200,7 +242,24 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: wp("4%"),
   },
+  loaderOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(255,255,255,0.9)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 10,
+  },
+  loader: {
+    width: 120,
+    height: 120,
+  },
 
+  loadingText: {
+    marginTop: verticalScale(10),
+    fontSize: RFValue(14),
+    color: "#555",
+    fontWeight: "600",
+  },
   topNav: {
     flexDirection: "row",
     justifyContent: "space-between",

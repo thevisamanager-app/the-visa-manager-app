@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { launchImageLibrary } from "react-native-image-picker";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import LottieView from "lottie-react-native";
 import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../../utils/metrics";
 import { extractTextFromImage } from "../../api/ocr/visionApi";
 import { parseMRZ } from "../../api/ocr/mrzParser";
@@ -183,6 +184,18 @@ export default function PassportUploadScreen({ navigation, route }) {
 
   return (
     <ScreenWrapper style={styles.container}>
+      {/* 🔥 FULL SCREEN LOADER */}
+      {loading && (
+        <View style={styles.loaderOverlay}>
+          <LottieView
+            source={require("../../assets/lottie/Loading.json")}
+            autoPlay
+            loop
+            style={styles.loader}
+          />
+          <Text style={styles.loadingText}>Processing passport...</Text>
+        </View>
+      )}
       <View style={styles.topNav}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Icon name="arrow-back" size={26} color="black" />
@@ -367,6 +380,20 @@ const styles = StyleSheet.create({
     height: scale(2),
     backgroundColor: ORANGE,
     marginHorizontal: wp("1%"),
+  },
+  loaderOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(255,255,255,0.9)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 20,
+  },
+  loader: { width: 130, height: 130 },
+  loadingText: {
+    marginTop: 12,
+    fontSize: RFValue(14),
+    fontWeight: "600",
+    color: "#555",
   },
   title: {
     fontSize: RFValue(17),

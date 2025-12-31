@@ -41,8 +41,26 @@ function getRazorpay() {
 }
 
 // ===================== TEST ROUTE ======================
-app.get("/", (_, res) => {
-  res.send("API working 🚀");
+// app.get("/", (_, res) => {
+//   res.send("API working 🚀");
+// });
+app.get("/users/:uid", async (req, res) => {
+  try {
+    const { uid } = req.params;
+
+    const doc = await db.collection("users").doc(uid).get();
+
+    if (!doc.exists) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      id: doc.id,
+      ...doc.data()
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // ===================== CREATE RAZORPAY ORDER ======================

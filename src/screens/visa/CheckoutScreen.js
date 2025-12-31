@@ -658,7 +658,6 @@ import {
 import Icon from "react-native-vector-icons/Ionicons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import ScreenWrapper from "../../components/ScreenWrapper";
-import LottieView from "lottie-react-native";
 import { useSelector } from "react-redux";
 import {
   wp,
@@ -694,7 +693,6 @@ export default function CheckoutScreen({ navigation, route }) {
   /* ---------------- MINOR INPUTS (NEW) ---------------- */
   const [hasMinor, setHasMinor] = useState(false);
   const [minorCount, setMinorCount] = useState("1");
-  const [loading, setLoading] = useState(false);
 
   /* ---------------- BASE FEES (1 MAIN TRAVELLER) ---------------- */
   const visaFee = parseFee(selected?.GovernmentFee);
@@ -708,9 +706,9 @@ export default function CheckoutScreen({ navigation, route }) {
   const minorFeePerPerson = baseTotal / 2;
   const totalMinorFee = minorFeePerPerson * minors;
 
-  const totalAmount =
-    (Math.round(baseTotal * 100) +
-      Math.round(totalMinorFee * 100)) / 100;
+ const totalAmount =
+  (Math.round(baseTotal * 100) +
+   Math.round(totalMinorFee * 100)) / 100;
 
 
   const handlePay = async () => {
@@ -751,18 +749,6 @@ export default function CheckoutScreen({ navigation, route }) {
 
   return (
     <ScreenWrapper style={styles.container}>
-      {/* 🔥 FULL SCREEN LOADER */}
-      {loading && (
-        <View style={styles.loaderOverlay}>
-          <LottieView
-            source={require("../../assets/lottie/Loading.json")}
-            autoPlay
-            loop
-            style={styles.loader}
-          />
-          <Text style={styles.loadingText}>Redirecting to payment...</Text>
-        </View>
-      )}
       {/* HEADER */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -879,24 +865,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FAFAFA",
     marginTop: verticalScale(30),
-  },
-
-  loaderOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(255,255,255,0.9)",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 30,
-  },
-  loader: {
-    width: 130,
-    height: 130,
-  },
-  loadingText: {
-    marginTop: 12,
-    fontSize: RFValue(14),
-    fontWeight: "600",
-    color: "#555",
   },
   header: {
     flexDirection: "row",

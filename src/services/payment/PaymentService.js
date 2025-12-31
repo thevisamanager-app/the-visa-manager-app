@@ -58,7 +58,6 @@
 
 import RazorpayCheckout from "react-native-razorpay";
 
-
 const BASE_URL = "https://api-fdkefcllsq-uc.a.run.app";
 
 const CREATE_ORDER = `${BASE_URL}/createRazorpayOrder`;

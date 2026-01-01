@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
-import  FaceDetector  from "@react-native-ml-kit/face-detection";
+import FaceDetector from "@react-native-ml-kit/face-detection";
 import { launchImageLibrary } from "react-native-image-picker";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { uploadUserPhoto } from "../../api/user/photoService";
@@ -20,6 +20,7 @@ import {
   RFValue,
 } from "../../utils/metrics";
 import ScreenWrapper from "../../components/ScreenWrapper";
+import LottieView from "lottie-react-native";
 
 
 export default function PhotoUploadScreen({ navigation, route }) {
@@ -27,6 +28,7 @@ export default function PhotoUploadScreen({ navigation, route }) {
   const [photo, setPhoto] = useState(null);
   const [date, setDate] = useState("");
   const [detecting, setDetecting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const addMode = route?.params?.addMode || false;
   const editMode = route?.params?.editMode || false;
@@ -84,7 +86,7 @@ export default function PhotoUploadScreen({ navigation, route }) {
         );
         return;
       }
-
+      setIsUploading(true);
       const uploadedUrl = await uploadUserPhoto(image);
       setPhoto(uploadedUrl);
 
@@ -95,6 +97,7 @@ export default function PhotoUploadScreen({ navigation, route }) {
         "Please try another clear photo."
       );
     } finally {
+      setIsUploading(false);
       setDetecting(false);
     }
   };
@@ -158,6 +161,18 @@ export default function PhotoUploadScreen({ navigation, route }) {
   return (
     <ScreenWrapper style={styles.container}>
       {/* TOP NAV */}
+      {/* 🔥 LOTTIE LOADER OVERLAY */}
+      {isUploading && (
+        <View style={styles.loaderOverlay}>
+          <LottieView
+            source={require("../../assets/lottie/Loading.json")}
+            autoPlay
+            loop
+            style={styles.loader}
+          />
+          <Text style={styles.loadingText}>Uploading photo...</Text>
+        </View>
+      )}
       <View style={styles.topNav}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Icon name="arrow-back" size={26} color="black" />
@@ -263,7 +278,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: verticalScale(5),
   },
+  loaderOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(255,255,255,0.9)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 10,
+  },
+  loader: {
+    width: 120,
+    height: 120,
+  },
 
+  loadingText: {
+    marginTop: verticalScale(10),
+    fontSize: RFValue(14),
+    color: "#555",
+    fontWeight: "600",
+  },
   stepBadge: {
     backgroundColor: "#FF5C00",
     paddingHorizontal: moderateScale(12),

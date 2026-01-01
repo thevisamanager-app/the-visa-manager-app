@@ -18,6 +18,7 @@ import ScreenWrapper from "../../components/ScreenWrapper";
 import { useSelector } from "react-redux";
 import { uploadPassportImage } from "../../api/user/passportService";
 import auth from "@react-native-firebase/auth";
+import LottieView from "lottie-react-native";
 
 const ORANGE = "#FF5C00";
 const ORANGE_LIGHT = "#FFE1CC";
@@ -97,6 +98,9 @@ export default function PassportUploadScreen({ navigation, route }) {
     return true;
   };
 
+  useEffect(() => {
+  console.log("LOADING STATE:", loading);
+}, [loading]);
   /* ✅ MAIN SAVE */
   const onContinue = async () => {
     if (!front || !back || !mrzData) {
@@ -183,6 +187,19 @@ export default function PassportUploadScreen({ navigation, route }) {
 
   return (
     <ScreenWrapper style={styles.container}>
+            {/* 🔥 FULL SCREEN LOADER */}
+      {loading && (
+        <View style={styles.loaderOverlay}>
+          <LottieView
+            source={require("../../assets/lottie/Loading.json")}
+            autoPlay
+            loop
+            style={styles.loader}
+          />
+          <Text style={styles.loadingText}>Processing passport...</Text>
+        </View>
+      )}
+
       <View style={styles.topNav}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Icon name="arrow-back" size={26} color="black" />
@@ -301,7 +318,7 @@ export default function PassportUploadScreen({ navigation, route }) {
         )}
       </ScrollView>
 
-      <TouchableOpacity style={styles.bottomButton} onPress={onContinue}>
+      <TouchableOpacity style={styles.bottomButton} onPress={onContinue} disabled={loading}>
         <Text style={styles.bottomButtonText}>
           {loading ? "Saving..." : "Continue"}
         </Text>
@@ -329,6 +346,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     padding: wp("4%"),
+  },
+  loaderOverlay: {
+    ...StyleSheet.absoluteFill,
+    backgroundColor: "rgba(255,255,255,0.9)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 20,
+  },
+  loader: { width: 130, height: 130 },
+  loadingText: {
+    marginTop: 12,
+    fontSize: RFValue(14),
+    fontWeight: "600",
+    color: "#555",
   },
   topNav: {
     flexDirection: "row",

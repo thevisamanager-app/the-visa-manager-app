@@ -1,7 +1,7 @@
 {
   "functions": {
-    "source": "functions/api",
-    "runtime": "nodejs18"
+    "source": "functions",
+    "runtime": "nodejs20"
 
   },
   "firestore": {

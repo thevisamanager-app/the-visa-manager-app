@@ -2,6 +2,13 @@ apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 apply plugin: "com.google.gms.google-services"
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
+//apply from: project(":react-native-config").projectDir.getPath() + "/dotenv.gradle"
+apply from: file("../../node_modules/react-native-config/android/dotenv.gradle")
+
+
+
+
 
 
 /**
@@ -81,12 +88,18 @@ android {
 
     namespace "com.thevisamanagerapp"
     defaultConfig {
-        applicationId "com.thevisamanagerapp"
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
-    }
+    applicationId "com.thevisamanagerapp"
+    minSdkVersion rootProject.ext.minSdkVersion
+    targetSdkVersion rootProject.ext.targetSdkVersion
+    versionCode 1
+    versionName "1.0"
+
+    manifestPlaceholders = [
+        appAuthRedirectScheme: "com.thevisamanagerapp",
+        razorpayKey: project.env.get("RAZORPAY_KEY")
+    ]
+    
+}
     signingConfigs {
         debug {
             storeFile file('debug.keystore')
@@ -107,6 +120,11 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
+      sourceSets {
+        main {
+            assets.srcDirs = ['src/main/assets', 'src/main/assets/fonts']
+        }
+    }
 }
 
 dependencies {
@@ -125,6 +143,12 @@ dependencies {
 
     // ⭐ REQUIRED FOR GOOGLE SIGN-IN ON ANDROID
     implementation 'com.google.android.gms:play-services-auth:20.7.0'
+    implementation project(':react-native-razorpay')
+    implementation project(':react-native-vector-icons')
+    implementation project(':react-native-linear-gradient')
+    implementation 'com.facebook.fresco:fresco:2.6.0'
+
+
 
     // OPTIONAL (Uncomment if you want Firestore, Storage later)
     // implementation 'com.google.firebase:firebase-firestore'

@@ -76,101 +76,183 @@
 
 
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { getApp } from '@react-native-firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithCredential, signInWithPhoneNumber } from '@react-native-firebase/auth';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  Alert,
+  Linking
+} from 'react-native';
 
-// Configure Google Sign-In
-GoogleSignin.configure({
-  webClientId: '973458787565-asdh334k3841q64mcmi17tk993jrqf07.apps.googleusercontent.com', // Firebase Console → Project Settings → Web Client ID
-});
+import { sendOtp } from '../services/auth/otpLogin';
+import { googleLogin } from "../services/auth/googleLogin";
+import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../utils/metrics";
 
-export default function LoginScreen() {
-  const navigation = useNavigation();
-  const [phoneNumber, setPhoneNumber] = useState('');
+export default function LoginScreen({ navigation }) {
+  const [phone, setPhone] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  // Google Login handler
-  const handleGoogleLogin = async () => {
+  // ========== OTP Login ==========
+  const handlePhoneLogin = async () => {
     try {
-      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-      const { idToken } = await GoogleSignin.signIn();
+      if (phone.length < 10) {
+        Alert.alert("Validation", "Enter valid phone number");
+        return;
+      }
+      setLoading(true);
+      const confirmation = await sendOtp("+91" + phone);
+      setLoading(false);
 
-      const googleCredential = GoogleAuthProvider.credential(idToken);
-      const auth = getAuth(getApp());
-      const userCredential = await signInWithCredential(auth, googleCredential);
+      navigation.navigate("OtpScreen", { confirmation });
 
-      console.log('Google User:', userCredential.user);
-      navigation.replace('HomeScreen');
     } catch (error) {
-      console.error('Google Sign-in error:', error);
-      alert(error?.message || 'Google Sign-in failed');
+      setLoading(false);
+      Alert.alert("OTP Error", error.message);
     }
   };
 
-  // OTP Login handler
-//   const handleOtpLogin = async () => {
-//     try {
-//       const auth = getAuth(getApp());
-//       const confirmation = await signInWithPhoneNumber(auth, phoneNumber);
-//       navigation.navigate('OtpScreen', { confirmation });
-//    } catch (err) {
-//   console.error('OTP Request error:', JSON.stringify(err, null, 2));
-//   alert(err.message || 'Failed to send OTP');
-// }
+  // ========== Google Login ==========
+  const handleGoogleLogin = async () => {
+    try {
+      const authResult = await googleLogin();
+      console.log("GOOGLE LOGIN SUCCESS:", authResult);
 
-//   };
-const handleOtpLogin = async () => {
-  let formattedPhone = phoneNumber.trim();
+      if (!authResult?.user) {
+        Alert.alert("Google Sign-In Failed", "Please try again.");
+        return;
+      }
 
-  // Auto prepend country code if missing
-  if (!formattedPhone.startsWith('+')) {
-    formattedPhone = `+91${formattedPhone}`;
-  }
+      //navigation.navigate("Destination", { user: authResult.user });
 
-  try {
-    const auth = getAuth(getApp());
-    const confirmation = await signInWithPhoneNumber(auth, formattedPhone);
-    navigation.navigate('OtpScreen', { confirmation });
-  } catch (err) {
-    console.error('OTP Request error:', err);
-    alert(err.message || 'Failed to send OTP');
-  }
-};
-
+    } catch (error) {
+      console.log("GOOGLE LOGIN ERROR:", error);
+      Alert.alert("Google Login Failed", error.message);
+    }
+  };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Login to App</Text>
 
-      {/* Phone Number Input */}
-      <TextInput
-        style={styles.input}
-        placeholder="+1234567890"
-        keyboardType="phone-pad"
-        value={phoneNumber}
-        onChangeText={setPhoneNumber}
+      <Image
+        source={require("../../tvm_assets/tvmlogo.png")}
+        style={{
+          width: wp("65%"),
+          height: hp("25%"),
+          borderRadius: moderateScale(10),
+          alignSelf: "center",
+          marginBottom: verticalScale(30),   // ✅ FIXED SPACING UNDER LOGO
+        }}
       />
 
-      <TouchableOpacity style={styles.button} onPress={handleOtpLogin}>
-        <Text style={styles.buttonText}>Send OTP</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Enter Phone Number"
+        placeholderTextColor="#000"
+        keyboardType="number-pad"
+        value={phone}
+        onChangeText={setPhone}
+      />
+
+      <TouchableOpacity style={styles.button} onPress={handlePhoneLogin}>
+        <Text style={styles.buttonText}>
+          {loading ? "Sending..." : "Login with OTP"}
+        </Text>
       </TouchableOpacity>
 
       {/* Google Button */}
       <TouchableOpacity style={styles.googleButton} onPress={handleGoogleLogin}>
         <Text style={styles.buttonText}>Sign in with Google</Text>
       </TouchableOpacity>
+      <Text style={styles.termsText}>
+        By continuing you agree to our{' '}
+        <Text
+          style={styles.linkText}
+          onPress={() =>
+            Linking.openURL('https://www.thevisamanager.com/privacy-policy')
+          }
+        >
+          terms of use and privacy policy
+        </Text>
+        .
+      </Text>
+
     </View>
   );
 }
 
-// Styles
+// ===== STYLES =====
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', paddingHorizontal: 20 },
-  title: { fontSize: 24, textAlign: 'center', marginBottom: 20 },
-  input: { borderWidth: 1, padding: 12, borderRadius: 8, marginBottom: 20 },
-  button: { backgroundColor: '#2ecc71', padding: 15, borderRadius: 8, marginBottom: 10 },
-  googleButton: { backgroundColor: '#db4437', padding: 15, borderRadius: 8 },
-  buttonText: { color: '#fff', textAlign: 'center', fontWeight: 'bold' },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    padding: wp("5%"),
+    backgroundColor: "#fff",
+  },
+
+  title: {
+    fontSize: RFValue(34),
+    textAlign: "center",
+    fontWeight: "700",
+    marginBottom: verticalScale(20),
+  },
+
+  input: {
+    borderWidth: scale(1),
+    borderColor: "#ccc",
+    padding: moderateScale(12),
+    borderRadius: moderateScale(8),
+    marginBottom: verticalScale(20),
+    color: "#000",
+    fontSize: RFValue(14),
+  },
+
+  button: {
+    backgroundColor: "#FF5C00",
+    paddingVertical: verticalScale(14),
+    borderRadius: moderateScale(8),
+  },
+
+  buttonText: {
+    color: "#fff",
+    textAlign: "center",
+    fontSize: RFValue(16),
+    fontWeight: "600",
+  },
+
+  orText: {
+    textAlign: "center",
+    marginVertical: verticalScale(20),
+    color: "#666",
+    fontSize: RFValue(14),
+  },
+
+  googleButton: {
+    backgroundColor: "#111",
+    paddingVertical: verticalScale(14),
+    borderRadius: moderateScale(8),
+    marginTop: verticalScale(4),
+  },
+
+  googleText: {
+    color: "#fff",
+    textAlign: "center",
+    fontSize: RFValue(16),
+    fontWeight: "600",
+  },
+  termsText: {
+  marginTop: verticalScale(20),
+  textAlign: 'center',
+  fontSize: RFValue(12),
+  color: '#666',
+},
+
+linkText: {
+  color: '#FF5C00',
+  textDecorationLine: 'underline',
+  fontWeight: '600',
+},
 });

@@ -1,48 +1,32 @@
-// import auth from '@react-native-firebase/auth';
-
-// // Send OTP to phone number
-// export async function sendOtp(phoneNumber) {
-//   try {
-//     const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
-//     return confirmation;
-//   } catch (error) {
-//     console.log('OTP Send Error:', error);
-//     throw error;
-//   }
-// }
-
-// // Confirm OTP code
-// export async function confirmOtp(confirmation, code) {
-//   try {
-//     const result = await confirmation.confirm(code);
-//     return result;
-//   } catch (error) {
-//     console.log('OTP Verify Error:', error);
-//     throw error;
-//   }
-// }
-
-
-import { getApp } from '@react-native-firebase/app';
-import { getAuth, signInWithPhoneNumber } from '@react-native-firebase/auth';
+import auth from "@react-native-firebase/auth";
+import { Alert } from "react-native";
 
 export async function sendOtp(phoneNumber) {
+  console.log("PHONE==>", phoneNumber);
+
   try {
     const auth = getAuth(getApp());
     const confirmation = await signInWithPhoneNumber(auth, phoneNumber);
     return confirmation;
-  } catch (error) {
-    console.log('OTP Send Error:', error);
-    throw error;
+  } catch (err) {
+    console.log("OTP Send Error:", err);
+
+    if (err.code === "auth/too-many-requests") {
+      Alert.alert("Too many attempts", "Try again after some time.");
+    }
+
+    throw err;
   }
 }
+
 
 export async function confirmOtp(confirmation, code) {
   try {
     const result = await confirmation.confirm(code);
     return result;
-  } catch (error) {
-    console.log('OTP Verify Error:', error);
-    throw error;
+  } catch (err) {
+    console.log("OTP Verify Error:", err);
+    Alert.alert("Invalid OTP", "Please enter correct OTP");
+    throw err;
   }
 }

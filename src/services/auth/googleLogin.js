@@ -1,59 +1,132 @@
-// import auth from '@react-native-firebase/auth';
+// // import auth from '@react-native-firebase/auth';
+// // import { GoogleSignin } from '@react-native-google-signin/google-signin';
+
+// // export async function signInWithGoogle() {
+// //   await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+
+// //   // Step 1: Google popup
+// //   const { idToken } = await GoogleSignin.signIn();
+
+// //   // Step 2: Create Firebase credential
+// //   const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+// //   // Step 3: Login into Firebase
+// //   return auth().signInWithCredential(googleCredential);
+// // }
+
+
+// // import { GoogleSignin } from '@react-native-google-signin/google-signin';
+// // import auth from '@react-native-firebase/auth';
+
+// // GoogleSignin.configure({
+// //   webClientId: '973458787565-asdh334k3841q64mcmi17tk993jrqf07.apps.googleusercontent.com',
+// // });
+
+// // export async function googleLogin() {
+// //   try {
+// //     await GoogleSignin.hasPlayServices();
+// //     const { idToken } = await GoogleSignin.signIn();
+
+// //     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+// //     return auth().signInWithCredential(googleCredential);
+// //   } catch (error) {
+// //     console.log("GOOGLE LOGIN ERROR", error);
+// //   }
+// // }
+
+
 // import { GoogleSignin } from '@react-native-google-signin/google-signin';
+// import auth from '@react-native-firebase/auth';
 
-// export async function signInWithGoogle() {
-//   await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+// GoogleSignin.configure({
+//   webClientId: '973458787565-asdh334k3841q64mcmi17tk993jrqf07.apps.googleusercontent.com', // from Firebase console
+// });
 
-//   // Step 1: Google popup
-//   const { idToken } = await GoogleSignin.signIn();
+// export async function googleLogin() {
+//   try {
+//     await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+//     const { idToken } = await GoogleSignin.signIn();
 
-//   // Step 2: Create Firebase credential
-//   const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+//     if (!idToken) {
+//       throw new Error("Failed to fetch idToken from Google");
+//     }
 
-//   // Step 3: Login into Firebase
-//   return auth().signInWithCredential(googleCredential);
+//     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+//     return await auth().signInWithCredential(googleCredential);
+//   // } catch (error) {
+//   //   console.log("GoogleSignIn error code:", error.code);
+//   //   console.log("GoogleSignIn error message:", error.message);
+//   //   console.log("GoogleSignIn raw error:", error);
+
+//   //   // console.log("LOGIN_CREDENTIAL",error)
+//   //   // console.error("GOOGLE LOGIN ERROR:", JSON.stringify(error, null, 2));
+//   //   alert(error.message || 'Google sign-in failed');
+//   // }
+//    } catch (error) {
+//   console.error("GOOGLE SIGNIN ERROR:", error);
+//   throw error;  // 🔥 REQUIRED — let LoginScreen catch it
+// }
 // }
 
 
-import React from 'react';
-import { View, TouchableOpacity, Text, Alert } from 'react-native';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { getApp } from '@react-native-firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithCredential } from '@react-native-firebase/auth';
+// import { GoogleSignin } from "@react-native-google-signin/google-signin";
+// import auth from "@react-native-firebase/auth";
+
+// GoogleSignin.configure({
+//   webClientId: "973458787565-asdh334k3841q64mcmi17tk993jrqf07.apps.googleusercontent.com",
+//   offlineAccess: true,
+// });
+
+// export const googleLogin = async () => {
+//   try {
+//     await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+
+//     // Sign in
+//     const userInfo = await GoogleSignin.signIn();
+//     console.log("USERINFO==>",userInfo)
+//     const { idToken } = userInfo.data;
+
+//     if (!idToken) {
+//       throw new Error("No ID Token returned from Google");
+//     }
+
+//     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+//     return await auth().signInWithCredential(googleCredential);
+    
+//   } catch (error) {
+//     console.log("GOOGLE SIGNIN ERROR:", error);
+//     throw error;
+//   }
+// };
+
+
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import auth from "@react-native-firebase/auth";
 
 GoogleSignin.configure({
-  webClientId: '973458787565-asdh334k3841q64mcmi17tk993jrqf07.apps.googleusercontent.com', // Found in Firebase Console → Project Settings → OAuth client type: Web
+  webClientId: "973458787565-asdh334k3841q64mcmi17tk993jrqf07.apps.googleusercontent.com",
+  offlineAccess: true,
 });
 
-export default function GoogleLoginButton() {
-  const handleGoogleLogin = async () => {
-    try {
-      // Ensure Google Play Services are available
-      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+export const googleLogin = async () => {
+  try {
+    await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
 
-      // Get the user's ID token
-      const { idToken } = await GoogleSignin.signIn();
+    const userInfo = await GoogleSignin.signIn();
+    console.log("USERINFO =>", userInfo);
 
-      // Create a Google credential using the token
-      const googleCredential = GoogleAuthProvider.credential(idToken);
+    const { idToken } = userInfo.data;   // <===== FIXED
 
-      // Sign in with the credential using the modular API
-      const auth = getAuth(getApp());
-      const result = await signInWithCredential(auth, googleCredential);
+    if (!idToken) throw new Error("No ID Token returned from Google");
 
-      console.log('User signed in:', result.user);
-      // Navigate or update UI on success
-    } catch (error) {
-      console.error('Google Sign-in error:', error);
-      Alert.alert('Login Failed', error?.message || 'Unknown error during Google sign-in');
-    }
-  };
+    const credential = auth.GoogleAuthProvider.credential(idToken);
 
-  return (
-    <View>
-      <TouchableOpacity onPress={handleGoogleLogin}>
-        <Text>Sign in with Google</Text>
-      </TouchableOpacity>
-    </View>
-  );
-}
+    return await auth().signInWithCredential(credential);
+
+  } catch (error) {
+    console.log("GOOGLE SIGNIN ERROR:", error);
+    throw error;
+  }
+};

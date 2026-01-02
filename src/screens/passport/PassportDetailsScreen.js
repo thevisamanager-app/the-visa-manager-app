@@ -118,6 +118,49 @@ export default function PassportDetailsScreen({ navigation, route }) {
   //     setPassportState(route.params.passport);
   //   }
   // }, [route?.params?.updatedPassport, route?.params?.passport]);
+  // ===============================
+  // 📞 INDIAN PHONE NUMBER VALIDATION
+  // ===============================
+  const validateIndianPhoneNumber = (number) => {
+    if (!number) {
+      return { valid: false, message: "Phone number is required" };
+    }
+
+    // Remove spaces
+    const cleaned = number.replace(/\s+/g, "");
+
+    // Must be digits only
+    if (!/^\d+$/.test(cleaned)) {
+      return { valid: false, message: "Phone number must contain only digits" };
+    }
+
+    // Must be exactly 10 digits
+    if (cleaned.length !== 10) {
+      return { valid: false, message: "Phone number must be 10 digits" };
+    }
+
+    // Must start with 6–9 (Indian mobile series)
+    if (!/^[6-9]/.test(cleaned)) {
+      return { valid: false, message: "Enter a valid Indian mobile number" };
+    }
+
+    // Block repeated digits (0000000000, 1111111111, etc.)
+    if (/^(\d)\1{9}$/.test(cleaned)) {
+      return { valid: false, message: "Invalid phone number pattern" };
+    }
+
+    // Block sequential numbers
+    const sequentialPatterns = [
+      "0123456789",
+      "1234567890",
+      "9876543210",
+    ];
+    if (sequentialPatterns.includes(cleaned)) {
+      return { valid: false, message: "Invalid phone number pattern" };
+    }
+
+    return { valid: true };
+  };
 
   const shouldUpdatePassport =
     route?.params?.updatedPassport && !route?.params?.addMode;
@@ -179,8 +222,9 @@ export default function PassportDetailsScreen({ navigation, route }) {
     formatMRZDate(passportState?.expiryDate)
   );
   const [phoneNumber, setphoneNumber] = useState(
-    formatMRZDate(passportState?.phoneNumber)
+    passportState?.phoneNumber || ""
   );
+
   const [showArrivalPicker, setShowArrivalPicker] = useState(false);
 
 
@@ -252,12 +296,25 @@ export default function PassportDetailsScreen({ navigation, route }) {
 
   // === Confirm ===
   const onConfirm = async () => {
-
-    if (!firstName || !lastName || !passportNumber || !nationality || !birthDate || !expiryDate  || !phoneNumber ) {
+    if (
+      !firstName ||
+      !lastName ||
+      !passportNumber ||
+      !nationality ||
+      !birthDate ||
+      !expiryDate ||
+      !phoneNumber
+    ) {
       Alert.alert("Missing Info", "Please fill all details");
-      return false;
+      return;
     }
 
+    // ✅ PHONE VALIDATION
+    const phoneCheck = validateIndianPhoneNumber(phoneNumber);
+    if (!phoneCheck.valid) {
+      Alert.alert("Invalid Phone Number", phoneCheck.message);
+      return;
+    }
 
     const payload = {
       ...passportState,
@@ -269,9 +326,9 @@ export default function PassportDetailsScreen({ navigation, route }) {
       expiryDate,
       photoUrl: photoUrlState,
       coTravellers,
-      phoneNumber
+      phoneNumber: `+91${phoneNumber}`, // ✅ STORE WITH COUNTRY CODE
     };
-    console.log("DATACOUNTRY==", basePassport)
+
     await savePassportData(payload);
 
     navigation.navigate("CheckoutScreen", {
@@ -281,6 +338,7 @@ export default function PassportDetailsScreen({ navigation, route }) {
       coTravellers,
     });
   };
+
   // Generate a date 5 days ahead
   const getDateAfterFiveDays = () => {
     const currentDate = new Date();
@@ -591,11 +649,26 @@ export default function PassportDetailsScreen({ navigation, route }) {
             onChangeText={setExpiryDate}
           />
           <Text style={styles.inputLabel}>Phone Number</Text>
-          <TextInput
-            style={styles.input}
-            value={phoneNumber}
-            onChangeText={setphoneNumber}
-          />
+
+          <View style={styles.phoneRow}>
+            <View style={styles.countryCodeBox}>
+              <Text style={styles.countryCodeText}>+91</Text>
+            </View>
+
+            <TextInput
+              style={[styles.input, { flex: 1 }]}
+              value={phoneNumber}
+              onChangeText={(text) => {
+                // Allow digits only & max 10
+                const cleaned = text.replace(/[^0-9]/g, "").slice(0, 10);
+                setphoneNumber(cleaned);
+              }}
+              keyboardType="number-pad"
+              placeholder="Enter 10-digit mobile number"
+              maxLength={10}
+            />
+          </View>
+
           {selected.countrName === "Malaysia" ? (
             <View style={styles.form}>
               <Label text="Please enter your flight number to" />
@@ -938,6 +1011,27 @@ const styles = StyleSheet.create({
     color: ORANGE,
     fontWeight: "700",
     fontSize: RFValue(14),
+  },
+  phoneRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: verticalScale(4),
+  },
+
+  countryCodeBox: {
+    borderWidth: scale(1),
+    borderColor: "#ddd",
+    backgroundColor: "#f2f2f2",
+    paddingHorizontal: moderateScale(12),
+    paddingVertical: moderateScale(10),
+    borderRadius: moderateScale(8),
+    marginRight: scale(8),
+  },
+
+  countryCodeText: {
+    fontSize: RFValue(13),
+    fontWeight: "600",
+    color: BLACK,
   },
 
 

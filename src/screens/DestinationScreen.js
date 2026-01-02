@@ -430,7 +430,7 @@ export default function DestinationScreen() {
 
   const handleCardPress = (item) => {
     dispatch(setSelectedDestination(item));
-    navigation.navigate('StartApplicationScreen');
+    navigation.navigate('StartApplicationScreen', { date});
   };
 
   return (

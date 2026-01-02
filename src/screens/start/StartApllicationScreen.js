@@ -543,8 +543,8 @@ import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../../util
 
 const ORANGE = "#FF5C00";
 
-export default function StartApplicationScreen() {
-  const navigation = useNavigation();
+export default function StartApplicationScreen({ navigation, route }) {
+  const date = route.params?.date;
   const selected = useSelector((state) => state.destinations.selected);
 
   const country = selected?.countrName || "Country";
@@ -552,7 +552,7 @@ export default function StartApplicationScreen() {
   const rotation = useRef(new Animated.Value(0)).current;
   const planeAnimRef = useRef(null);
   const scaleAnim = useRef(new Animated.Value(1)).current;
-  const [date, setDate] = useState("");
+  // const [date, setDate] = useState("");
 
   // Animate button
   useEffect(() => {
@@ -585,6 +585,7 @@ export default function StartApplicationScreen() {
   const handleStart = () => {
     navigation.navigate("TravelDateScreen", {
       countryType: selected?.countryType,
+      date:date
     });
   };
 
@@ -598,10 +599,10 @@ export default function StartApplicationScreen() {
     return currentDate.toLocaleDateString("en-GB", options);
   };
 
-  useEffect(() => {
-    setDate(getDateAfterFiveDays());
-  }, []);
-
+  // useEffect(() => {
+  //   setDate(getDateAfterFiveDays());
+  // }, []);
+  console.log("DATE===>", date)
   return (
     <View style={styles.container}>
 

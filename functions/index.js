@@ -189,7 +189,7 @@ exports.generateInvoice = onCall(async (req) => {
     const { invoiceId, userName, date, amount, userId, country, email,phoneNumber } = req.data;
 
     // --------- BASIC VALIDATION ----------
-    if (!invoiceId || !date || amount == null || !userId || !country ||phoneNumber) {
+    if (!invoiceId || !date || amount == null || !userId || !country) {
       throw new HttpsError("invalid-argument", "Missing required fields");
     }
 

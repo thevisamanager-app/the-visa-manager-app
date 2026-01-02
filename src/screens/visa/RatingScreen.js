@@ -1116,7 +1116,8 @@ export default function CongratsScreen({ navigation, route }) {
                 amount: Number(amount),
                 country: selected.countrName,
                 date: new Date().toLocaleString(),
-                email:user.email ?? " "
+                email:user.email ?? " ",
+                phoneNumber:user.phoneNumber
             });
 
             if (!response?.data?.url) {

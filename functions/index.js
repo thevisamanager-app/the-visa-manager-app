@@ -186,10 +186,10 @@ exports.generateInvoice = onCall(async (req) => {
       throw new HttpsError("unauthenticated", "User not authenticated");
     }
 
-    const { invoiceId, userName, date, amount, userId, country, email } = req.data;
+    const { invoiceId, userName, date, amount, userId, country, email,phoneNumber } = req.data;
 
     // --------- BASIC VALIDATION ----------
-    if (!invoiceId || !date || amount == null || !userId || !country) {
+    if (!invoiceId || !date || amount == null || !userId || !country ||phoneNumber) {
       throw new HttpsError("invalid-argument", "Missing required fields");
     }
 
@@ -234,7 +234,7 @@ exports.generateInvoice = onCall(async (req) => {
     doc.fontSize(14).fillColor("#FF6A00").text("Bill To:", 40);
     doc.fillColor("#000").fontSize(12);
     doc.text(`Customer ID: ${userId}`);
-    doc.text(`Mobile: ${displayName}`);
+    doc.text(`Mobile: ${phoneNumber}`);
     doc.text(`Email: ${email}`);
     doc.moveDown(2);
 

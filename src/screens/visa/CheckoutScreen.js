@@ -42,6 +42,15 @@ const parseFee = (fee) => {
 
 export default function CheckoutScreen({ navigation, route }) {
   const selected = useSelector((state) => state.destinations.selected);
+  const coTravellers = route?.params?.coTravellers ?? [];
+
+  const coTravellersCount = Array.isArray(coTravellers)
+    ? coTravellers.length
+    : 0;
+
+  const totalTravelers = coTravellersCount + 1; // main + co
+
+
   const passport =
     route?.params?.passport || route?.params?.updatedPassport || {};
 
@@ -55,16 +64,17 @@ export default function CheckoutScreen({ navigation, route }) {
   const tvmFee = parseFee(selected?.VisaManagerFee);
   const authorityFee = parseFee(selected?.AuthorityCharges);
 
-  const baseTotal = visaFee + tvmFee + authorityFee;
+  const adultFeePerPerson = visaFee + tvmFee + authorityFee;
+  const adultTotal = adultFeePerPerson * totalTravelers;
+
 
   /* ---------------- MINOR CALCULATION ---------------- */
   const minors = hasMinor ? Number(minorCount) || 0 : 0;
-  const minorFeePerPerson = baseTotal / 2;
-  const totalMinorFee = minorFeePerPerson * minors;
-
-  const totalAmount =
-    (Math.round(baseTotal * 100) +
-      Math.round(totalMinorFee * 100)) / 100;
+  const minorFeePerPerson = adultFeePerPerson * 0.5;
+  const minorTotal = minorFeePerPerson * minors;
+  const totalAmount = Number(
+    (adultTotal + minorTotal).toFixed(2)
+  );
 
 
   const handlePay = async () => {
@@ -74,7 +84,7 @@ export default function CheckoutScreen({ navigation, route }) {
       const userId = auth().currentUser?.uid;
 
       const result = await startPayment(totalAmount, userId, passport);
-      console.log("RESULT==>", result)
+
       //✅ PAYMENT SUCCESS
       if (result?.success) {
         navigation.navigate("RatingScreen", {
@@ -102,7 +112,7 @@ export default function CheckoutScreen({ navigation, route }) {
     }
     // navigation.navigate("RatingScreen",{passport,totalAmount,selected})
   };
-
+  console.log("totalTravelers==>", totalTravelers)
   return (
     <ScreenWrapper style={styles.container}>
       {/* 🔥 FULL SCREEN LOADER */}
@@ -138,18 +148,21 @@ export default function CheckoutScreen({ navigation, route }) {
         {/* VISA CARD */}
         <View style={styles.card}>
           <View style={styles.rowSpace}>
-            <Text style={styles.itemTitle}>Visa Fee x 1</Text>
-            <Text style={styles.price}>₹{visaFee}</Text>
+            <Text style={styles.itemTitle}>
+              Visa Fee x {totalTravelers}
+            </Text>
+
+            <Text style={styles.price}>  ₹{(visaFee * totalTravelers).toLocaleString("en-IN")}</Text>
           </View>
 
           <View style={styles.rowSpace}>
-            <Text style={styles.itemTitle}>TVM Fee x 1</Text>
-            <Text style={styles.price}>₹{tvmFee}</Text>
+            <Text style={styles.itemTitle}>TVM Fee x {totalTravelers}</Text>
+            <Text style={styles.price}>  ₹{(tvmFee * totalTravelers).toLocaleString("en-IN")}</Text>
           </View>
 
           <View style={styles.rowSpace}>
-            <Text style={styles.itemTitle}>Authority Fee x 1</Text>
-            <Text style={styles.price}>₹{authorityFee}</Text>
+            <Text style={styles.itemTitle}> Authority Fee x {totalTravelers}</Text>
+            <Text style={styles.price}> ₹{(authorityFee * totalTravelers).toLocaleString("en-IN")}</Text>
           </View>
 
           <View style={styles.divider} />
@@ -187,7 +200,7 @@ export default function CheckoutScreen({ navigation, route }) {
                 <Text style={styles.itemTitle}>
                   Minor Fee x {minors}
                 </Text>
-                <Text style={styles.price}>₹{totalMinorFee}</Text>
+                <Text style={styles.price}>₹{minorTotal}</Text>
               </View>
             </View>
           )}
@@ -296,7 +309,7 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(10),
   },
   minorLabel: {
-    fontSize: RFValue(13),
+    fontSize: RFValue(10),
     marginBottom: verticalScale(6),
   },
   input: {

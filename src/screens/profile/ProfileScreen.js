@@ -560,6 +560,7 @@ import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import { getPassportData } from "../../services/passport/passportService";
 import { Linking } from "react-native";
+import ScreenWrapper from "../../components/ScreenWrapper";
 
 const COLORS = {
   primary: "#FF5C00",
@@ -675,30 +676,30 @@ export default function ProfileScreen({ navigation }) {
     );
   };
 
- const deleteAccount = async () => {
-  try {
-    const user = auth().currentUser;
-    if (!user) return;
+  const deleteAccount = async () => {
+    try {
+      const user = auth().currentUser;
+      if (!user) return;
 
-    // Delete Firestore data
-    await firestore().collection("users").doc(user.uid).delete();
+      // Delete Firestore data
+      await firestore().collection("users").doc(user.uid).delete();
 
-    // Delete Auth account
-    await user.delete();
+      // Delete Auth account
+      await user.delete();
 
-    Alert.alert("Account Deleted", "Your account has been removed.");
-  } catch (error) {
-    if (error.code === "auth/requires-recent-login") {
-      Alert.alert(
-        "Re-login Required",
-        "Please log in again to delete your account.",
-        [{ text: "OK", onPress: logout }]
-      );
-    } else {
-      Alert.alert("Error", error.message);
+      Alert.alert("Account Deleted", "Your account has been removed.");
+    } catch (error) {
+      if (error.code === "auth/requires-recent-login") {
+        Alert.alert(
+          "Re-login Required",
+          "Please log in again to delete your account.",
+          [{ text: "OK", onPress: logout }]
+        );
+      } else {
+        Alert.alert("Error", error.message);
+      }
     }
-  }
-};
+  };
 
 
 
@@ -720,85 +721,87 @@ export default function ProfileScreen({ navigation }) {
 
 
   return (
-    <ScrollView
-      style={[
-        styles.container,
-        isDark && { backgroundColor: "#000" },
-      ]}
-      contentContainerStyle={{ paddingBottom: hp("5%") }}
-    >
-      {/* Header */}
-      <Text style={[styles.header, isDark && { color: "#FFF" }]}>
-        My Profile
-      </Text>
-
-      {/* Profile Section */}
-      <TouchableOpacity
+    <ScreenWrapper style={styles.container}>
+      <ScrollView
         style={[
-          styles.profileBox,
-          isDark && { backgroundColor: "#1A1A1A" },
+          styles.container,
+          isDark && { backgroundColor: "#000" },
         ]}
-        onPress={() => navigation.navigate("EditProfileScreen")}
+        contentContainerStyle={{ paddingBottom: hp("5%") }}
       >
-        <Icon name="account-circle" size={58} color={COLORS.primary} />
+        {/* Header */}
+        <Text style={[styles.header, isDark && { color: "#FFF" }]}>
+          My Profile
+        </Text>
 
-        <View>
-          <Text style={[styles.name, isDark && { color: "#FFF" }]}>
-            {profile?.fullName ||
-              (passport?.firstName
-                ? `${passport.firstName} ${passport.lastName || ""}`
-                : user?.displayName || "User")}
-          </Text>
+        {/* Profile Section */}
+        <TouchableOpacity
+          style={[
+            styles.profileBox,
+            isDark && { backgroundColor: "#1A1A1A" },
+          ]}
+          onPress={() => navigation.navigate("EditProfileScreen")}
+        >
+          <Icon name="account-circle" size={58} color={COLORS.primary} />
 
-          <Text style={[styles.email, isDark && { color: "#CCC" }]}>
-            {profile?.phone ||
-              profile?.email ||
-              user?.phoneNumber ||
-              user?.email ||
-              "No phone/email"}
-          </Text>
-
-          {passport?.passportNumber && (
-            <Text style={[styles.email, isDark && { color: "#CCC" }]}>
-              Passport: {passport.passportNumber}
+          <View>
+            <Text style={[styles.name, isDark && { color: "#FFF" }]}>
+              {profile?.fullName ||
+                (passport?.firstName
+                  ? `${passport.firstName} ${passport.lastName || ""}`
+                  : user?.displayName || "User")}
             </Text>
-          )}
+
+            <Text style={[styles.email, isDark && { color: "#CCC" }]}>
+              {profile?.phone ||
+                profile?.email ||
+                user?.phoneNumber ||
+                user?.email ||
+                "No phone/email"}
+            </Text>
+
+            {passport?.passportNumber && (
+              <Text style={[styles.email, isDark && { color: "#CCC" }]}>
+                Passport: {passport.passportNumber}
+              </Text>
+            )}
+          </View>
+        </TouchableOpacity>
+
+        {/* Menu */}
+        <View style={styles.section}>
+          <MenuItem
+            title="Start New Application"
+            isDark={isDark}
+            onPress={() =>
+              navigation.navigate("Tabs", {
+                screen: "Home",
+                params: { screen: "Destination" },
+              })
+            }
+          />
         </View>
-      </TouchableOpacity>
 
-      {/* Menu */}
-      <View style={styles.section}>
-        <MenuItem
-          title="Start New Application"
-          isDark={isDark}
-          onPress={() =>
-            navigation.navigate("Tabs", {
-              screen: "Home",
-              params: { screen: "Destination" },
-            })
-          }
-        />
-      </View>
+        {/* Support */}
+        <View style={styles.section}>
+          <MenuItem title="Help Center" onPress={showHelp} isDark={isDark} />
+          <MenuItem title="About" onPress={showAbout} isDark={isDark} />
 
-      {/* Support */}
-      <View style={styles.section}>
-        <MenuItem title="Help Center" onPress={showHelp} isDark={isDark} />
-        <MenuItem title="About" onPress={showAbout} isDark={isDark} />
-        
-        <MenuItem
-          title="Privacy & Policy"
-          onPress={showPrivacyPolicy}
-          isDark={isDark}
-        />
-      </View>
-      <TouchableOpacity style={styles.logoutBtn} onPress={handleDeleteAccount}>
-        <Text style={styles.logoutText}>Delete My Accountt</Text>
-      </TouchableOpacity>
-    
-      <TouchableOpacity style={styles.logoutBtn} onPress={logout}>
-        <Text style={styles.logoutText}>Log out</Text>
-      </TouchableOpacity>
-    </ScrollView>
+          <MenuItem
+            title="Privacy & Policy"
+            onPress={showPrivacyPolicy}
+            isDark={isDark}
+          />
+        </View>
+        <TouchableOpacity style={styles.logoutBtn} onPress={handleDeleteAccount}>
+          <Text style={styles.logoutText}>Delete My Accountt</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.logoutBtn} onPress={logout}>
+          <Text style={styles.logoutText}>Log out</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </ScreenWrapper>
   );
 }
 

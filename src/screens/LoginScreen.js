@@ -13,6 +13,7 @@ import {
 import { sendOtp } from '../services/auth/otpLogin';
 import { googleLogin } from "../services/auth/googleLogin";
 import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../utils/metrics";
+import ScreenWrapper from "../components/ScreenWrapper";
 
 export default function LoginScreen({ navigation }) {
   const [phone, setPhone] = useState('');
@@ -57,8 +58,8 @@ export default function LoginScreen({ navigation }) {
   };
 
   return (
+      <ScreenWrapper style={styles.container}>
     <View style={styles.container}>
-
       <Image
         source={require("../../tvm_assets/tvmlogo.png")}
         style={{
@@ -104,6 +105,7 @@ export default function LoginScreen({ navigation }) {
       </Text>
 
     </View>
+    </ScreenWrapper>
   );
 }
 

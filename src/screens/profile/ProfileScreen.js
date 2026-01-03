@@ -626,11 +626,7 @@ export default function ProfileScreen({ navigation }) {
   }, []);
 
   const showAbout = () => {
-    Alert.alert(
-      "About",
-      "The Visa Manager is an entity of Ishwa Holidays Private Limited.\n\n" +
-      "We are dedicated to simplifying international travel and visa services."
-    );
+  Linking.openURL('https://www.thevisamanager.com/about#page-top')
   };
 
   const showHelp = () => {
@@ -655,24 +651,7 @@ export default function ProfileScreen({ navigation }) {
 
   /* ---------------- Privacy Policy ---------------- */
   const showPrivacyPolicy = () => {
-    Alert.alert(
-      "Privacy & Policy",
-      "The Visa Manager Private Limited (“The Visa Manager”, “we”, “us” or “our”) respects your privacy.\n\n" +
-      "This Privacy Policy explains how your personal data is collected, stored, and processed through our App or our offices.\n\n" +
-      "By using our services, you agree to the processing of your personal data.\n\n" +
-      "PURPOSE OF COLLECTING PERSONAL INFORMATION:\n\n" +
-      "• Communicate with you regarding visa applications\n" +
-      "• Send visa application confirmations\n" +
-      "• Keep you updated on transaction status\n" +
-      "• Send visa service-related updates\n" +
-      "• Send verification or alert messages\n" +
-      "• Notify you of changes in visa applications\n" +
-      "• Resolve complaints and disputes\n" +
-      "• Allow customer service contact\n" +
-      "• Detect and prevent fraud or criminal activity\n" +
-      "• Fulfil contractual obligations\n" +
-      "• Ensure effective website content presentation"
-    );
+     Linking.openURL('https://www.thevisamanager.com/privacy-policy')
   };
 
  const deleteAccount = async () => {

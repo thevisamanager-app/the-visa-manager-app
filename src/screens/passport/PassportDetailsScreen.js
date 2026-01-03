@@ -95,7 +95,7 @@ export default function PassportDetailsScreen({ navigation, route }) {
   }
 
   // === PARAMS ===
-  const travel = route?.params?.travelDate || route?.params?.travel || null;
+  const travelDate = route?.params?.travelDate || route?.params?.travel || null;
 
   // base main passport (initial from params)
   const basePassport = route?.params?.passport || {};
@@ -241,8 +241,8 @@ export default function PassportDetailsScreen({ navigation, route }) {
     }
   }, [passportState]);
 
-  const fromDate = travel?.departureDate || "";
-  const toDate = travel?.returnDate || "";
+  const fromDate = travelDate?.departureDate || "";
+  const toDate = travelDate?.returnDate || "";
 
   // === Add Co Traveller Flow ===
   const handleAddCoTraveller = () => {
@@ -255,7 +255,7 @@ export default function PassportDetailsScreen({ navigation, route }) {
     // });
     navigation.navigate("PhotoUploadScreen", {
       addMode: true,
-      travelDate: travel,
+      travelDate: travelDate,
       passport: passportState,        // ✅ PASS MAIN PASSPORT
       coTravellers,
       mainPhotoUrl: photoUrlState,
@@ -268,7 +268,7 @@ export default function PassportDetailsScreen({ navigation, route }) {
     navigation.navigate("PassportUploadScreen", {
       editMode: true,
       returnTo: "PassportDetailsScreen",
-      travelDate: travel,
+      travelDate: travelDate,
       passport: passportState,
       photoUrl: photoUrlState,
       coTravellers, // keep co-travellers when we come back
@@ -280,7 +280,7 @@ export default function PassportDetailsScreen({ navigation, route }) {
     navigation.navigate("PhotoUploadScreen", {
       editMode: true,
       returnTo: "PassportDetailsScreen",
-      travelDate: travel,
+      travelDate: travelDate,
       passport: passportState,
       photoUrl: photoUrlState,
       coTravellers,
@@ -333,7 +333,7 @@ export default function PassportDetailsScreen({ navigation, route }) {
 
     navigation.navigate("CheckoutScreen", {
       passport: payload,
-      travel,
+      travelDate,
       photoUrlState,
       coTravellers,
     });
@@ -362,7 +362,7 @@ export default function PassportDetailsScreen({ navigation, route }) {
 
         <View style={styles.stepBadge}>
           <Icon name="check-circle" size={16} color="#fff" />
-          <Text style={styles.stepBadgeText}>Review Visa {date}</Text>
+          <Text style={styles.stepBadgeText}>Review Visa {travelDate}</Text>
         </View>
 
         {/* <TouchableOpacity onPress={() => navigation.navigate("Destination")}>

@@ -291,7 +291,7 @@ const DESTINATIONS = [
 
   {
     id: 25,
-    source: require('../images/Monoglia.webp'),
+    source: require('../images/Mongolia.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Monoglia',
     VisaManagerFee: "3540",

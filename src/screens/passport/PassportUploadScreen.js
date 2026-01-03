@@ -27,7 +27,7 @@ const GRAY = "#777";
 const GOLD = "#D6B25E";
 
 export default function PassportUploadScreen({ navigation, route }) {
-  const travel = route?.params?.travelDate || null;
+  const travelDate = route?.params?.travelDate || null;
   const selected = useSelector((state) => state.destinations.selected);
   const currentPhotoUrl = route?.params?.photoUrl || null;
   const isCoTraveller = route?.params?.addMode === true;
@@ -121,7 +121,7 @@ export default function PassportUploadScreen({ navigation, route }) {
         ...mrzData,
         frontImageURL: frontUrl,
         backImageURL: backUrl,
-        travel,
+        travelDate,
         photoUrl: currentPhotoUrl,
         userId: auth().currentUser.uid,
 
@@ -151,7 +151,7 @@ export default function PassportUploadScreen({ navigation, route }) {
       if (addMode) {
         navigation.navigate("PassportDetailsScreen", {
           passport: route.params.passport, // 👈 KEEP MAIN
-          travelDate: travel,
+          travelDate: travelDate,
           photoUrl: route.params.mainPhotoUrl,
           coTravellers: [
             ...(route?.params?.coTravellers || []),
@@ -174,7 +174,7 @@ export default function PassportUploadScreen({ navigation, route }) {
 
       navigation.navigate("PassportDetailsScreen", {
         passport: passportPayload,
-        travelDate: travel,
+        travelDate: travelDate,
         photoUrl: currentPhotoUrl,
         coTravellers: [],
       });
@@ -206,7 +206,7 @@ export default function PassportUploadScreen({ navigation, route }) {
         </TouchableOpacity>
         <View style={styles.stepBadge}>
           <Icon name="check-circle" size={18} color="white" />
-          <Text style={styles.stepBadgeText}>Visa on {date}</Text>
+          <Text style={styles.stepBadgeText}>Visa on {travelDate}</Text>
         </View>
 
         <TouchableOpacity onPress={() => navigation.navigate("Tabs", {

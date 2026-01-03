@@ -25,6 +25,7 @@ import LottieView from "lottie-react-native";
 
 export default function PhotoUploadScreen({ navigation, route }) {
   const travelDate = route?.params?.travelDate || null;
+  console.log("TRAVELDATE==",travelDate)
   const [photo, setPhoto] = useState(null);
   const [date, setDate] = useState("");
   const [detecting, setDetecting] = useState(false);
@@ -180,7 +181,7 @@ export default function PhotoUploadScreen({ navigation, route }) {
 
         <View style={styles.stepBadge}>
           <Icon name="check-circle" size={18} color="white" />
-          <Text style={styles.stepBadgeText}>Visa on {date}</Text>
+          <Text style={styles.stepBadgeText}>Visa on {travelDate}</Text>
         </View>
 
         <TouchableOpacity
@@ -389,7 +390,7 @@ const styles = StyleSheet.create({
   instructionText: {
     marginTop: verticalScale(15),
     textAlign: "center",
-    fontSize: RFValue(15),
+    fontSize: RFValue(10),
     color: "#666",
     lineHeight: RFValue(16),
   },

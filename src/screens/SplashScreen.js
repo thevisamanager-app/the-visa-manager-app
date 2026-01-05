@@ -92,9 +92,10 @@ export default function SplashScreen({ navigation }) {
     animRef.current?.play();
 
     const timer = setTimeout(() => {
-      navigation.replace("Auth", {
-        screen: "Login",
-      });
+      // navigation.replace("AuthNavigator", {
+      //   screen: "Login",
+      // });
+        navigation.replace( "Login");
 
     }, 3000);
 

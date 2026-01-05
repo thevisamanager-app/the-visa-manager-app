@@ -69,7 +69,7 @@ export default function SchengenSponsorScreen({ navigation, route }) {
         </Text>
       </TouchableOpacity>
 
-      <Text style={styles.orText}>— OR —</Text>
+      {/* <Text style={styles.orText}>— OR —</Text> */}
 
       {/* SOMEONE ELSE */}
       <TouchableOpacity
@@ -126,8 +126,8 @@ const styles = StyleSheet.create({
   optionCard: {
     marginTop: hp("4%"),
     backgroundColor: "#fff",
-    borderRadius: 20,
-    padding: moderateScale(16),
+    borderRadius: 10,
+    padding: moderateScale(12),
     flexDirection: "row",
     alignItems: "center",
     elevation: 3,
@@ -149,15 +149,15 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   orText: {
-    marginVertical: hp("3%"),
+    //marginVertical: hp("3%"),
     textAlign: "center",
     color: "#999",
   },
   inputBox: {
-    marginTop: hp("2%"),
+    marginTop: hp("1%"),
     backgroundColor: "#fff",
     borderRadius: 16,
-    padding: moderateScale(12),
+    padding: moderateScale(10),
     elevation: 2,
   },
   input: {
@@ -165,13 +165,13 @@ const styles = StyleSheet.create({
     color: "#111",
   },
   note: {
-    marginTop: hp("4%"),
+    marginTop: hp("1%"),
     fontSize: RFValue(12),
     color: "#666",
     lineHeight: RFValue(18),
   },
   nextButton: {
-    marginTop: hp("6%"),
+    marginTop: hp("2%"),
     alignSelf: "flex-end",
     backgroundColor: ORANGE,
     paddingHorizontal: moderateScale(22),

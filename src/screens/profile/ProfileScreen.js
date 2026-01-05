@@ -629,7 +629,9 @@ export default function ProfileScreen({ navigation }) {
   const showAbout = () => {
   Linking.openURL('https://www.thevisamanager.com/about#page-top')
   };
-
+  const showContactUs = () => {
+  Linking.openURL('https://www.thevisamanager.com/contact#page-top')
+  };
   const showHelp = () => {
     Alert.alert(
       "Help Center",
@@ -763,7 +765,7 @@ export default function ProfileScreen({ navigation }) {
 
         {/* Support */}
         <View style={styles.section}>
-          <MenuItem title="Help Center" onPress={showHelp} isDark={isDark} />
+          <MenuItem title="Contact Us" onPress={showContactUs} isDark={isDark} />
           <MenuItem title="About" onPress={showAbout} isDark={isDark} />
 
           <MenuItem

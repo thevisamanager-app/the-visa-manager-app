@@ -3,7 +3,7 @@ import { View, Text, StyleSheet ,TouchableOpacity} from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../utils/metrics";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute  } from "@react-navigation/native";
 
 
 const ORANGE = "#FF5C00";
@@ -15,6 +15,10 @@ export default function SchengenStepper({
   hasValue = false,
 }) {
   // ✅ 6 Schengen steps
+console.log("DATE==>",route?.params?.travelDate)
+const route = useRoute();
+const travelDate =
+  route?.params?.travelDate
   const STEPS = useMemo(
     () => [
       { label: "Name", icon: "account-outline" },
@@ -38,7 +42,7 @@ export default function SchengenStepper({
       return currentDate.toLocaleDateString("en-GB", options);
     };
      
-   
+      // const travelDate = route?.params?.travelDate || route?.params?.travel || null;
   return (
     <View style={styles.container}>
           <View style={styles.topNav}>
@@ -47,7 +51,7 @@ export default function SchengenStepper({
                         </TouchableOpacity>
                         <View style={styles.stepBadge}>
                           <Icon name="check-circle" size={18} color="white" />
-                          <Text style={styles.stepBadgeText}>Visa on {date}</Text>
+                          <Text style={styles.stepBadgeText}>Visa on {travelDate}</Text>
                         </View>
                         
                           <TouchableOpacity onPress={() => navigation.navigate("Tabs", {

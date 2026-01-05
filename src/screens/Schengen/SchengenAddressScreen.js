@@ -140,6 +140,7 @@ export default function SchengenAddressScreen({ navigation, route }) {
             style={styles.input}
             value={address}
             onChangeText={setAddress}
+            placeholderTextColor="#999"
           />
 
           <View style={styles.split}>
@@ -148,12 +149,14 @@ export default function SchengenAddressScreen({ navigation, route }) {
               style={[styles.input, styles.half]}
               value={zip}
               onChangeText={setZip}
+              placeholderTextColor="#999"
             />
             <TextInput
               placeholder="City*"
               style={[styles.input, styles.half]}
               value={city}
               onChangeText={setCity}
+              placeholderTextColor="#999"
             />
           </View>
 
@@ -162,6 +165,7 @@ export default function SchengenAddressScreen({ navigation, route }) {
             style={styles.input}
             value={state}
             onChangeText={setState}
+            placeholderTextColor="#999"
           />
 
           {/* BUTTONS */}
@@ -175,7 +179,7 @@ export default function SchengenAddressScreen({ navigation, route }) {
               disabled={!isComplete}
               onPress={next}
             >
-              <Text style={{ color: "#fff", fontWeight: "700" ,justifyContent:"center"}}>
+              <Text style={{ color: "#fff", fontWeight: "700", justifyContent: "center" }}>
                 Complete
               </Text>
             </TouchableOpacity>
@@ -252,7 +256,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: 10,
-    alignSelf:"center"
+    alignSelf: "center"
   },
   mapBtn: {
     backgroundColor: BLACK,
@@ -265,6 +269,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 28,
     borderRadius: 20,
-    justifyContent:"center"
+    justifyContent: "center"
   },
 });

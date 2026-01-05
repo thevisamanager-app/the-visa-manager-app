@@ -425,6 +425,7 @@ export default function PassportDetailsScreen({ navigation, route }) {
           {/* MAIN TRAVELLER DOCUMENTS */}
           <View style={{ marginTop: 8 }}>
             {/* Photo */}
+            {selected.countryType === "Schengen" ? null :
             <View style={styles.docRow}>
               <View style={styles.docHeader}>
                 <View style={styles.docHeaderLeft}>
@@ -445,7 +446,7 @@ export default function PassportDetailsScreen({ navigation, route }) {
                   <Text style={styles.docPlaceholder}>No Photo</Text>
                 )}
               </View>
-            </View>
+            </View>}
 
             {/* Passport Front (main) */}
             <View style={styles.docRow}>

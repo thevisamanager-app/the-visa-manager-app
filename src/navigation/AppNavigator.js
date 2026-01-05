@@ -233,6 +233,7 @@ import RatingScreen from "../screens/visa/RatingScreen";
 import VisaStatusScreen from "../screens/visa/VisaStatusScreen";
 import EditProfileScreen from "../screens/profile/EditProfileScreen";
 import ProfileScreen from "../screens/profile/ProfileScreen";
+import VisaDetailsScreen from "../screens/moreinfo/VisaDetailsScreen";
 
 /* -------------------- SCHENGEN SCREENS -------------------- */
 import SchengenPersonalDetailsScreen from "../screens/Schengen/SchengenPersonalDetailsScreen";
@@ -302,6 +303,7 @@ function UserStack() {
       <Stack.Screen name="CheckoutScreen" component={CheckoutScreen} />
       <Stack.Screen name="RatingScreen" component={RatingScreen} />
       <Stack.Screen name="VisaStatusScreen" component={VisaStatusScreen} />
+       <Stack.Screen name="VisaDetailsScreen" component={VisaDetailsScreen} />
 
       {/* EXTRA */}
       <Stack.Screen name="AddTravellerScreen" component={AddTravellerScreen} />

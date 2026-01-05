@@ -376,6 +376,7 @@ const FILTERS = [
   { key: 'Schengen', label: 'Schengen' },
   { key: 'DAC', label: 'DAC' },
   { key: 'evisa', label: 'eVisa' },
+   { key: 'Stamp Visa', label: 'Stamp Visa' },
 ];
 
 export default function DestinationScreen() {

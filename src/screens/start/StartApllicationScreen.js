@@ -585,7 +585,7 @@ export default function StartApplicationScreen({ navigation, route }) {
   const handleStart = () => {
     navigation.navigate("TravelDateScreen", {
       countryType: selected?.countryType,
-      date:date
+      date: date
     });
   };
 
@@ -632,7 +632,19 @@ export default function StartApplicationScreen({ navigation, route }) {
             <Text style={styles.startButtonText}>Start</Text>
           </TouchableOpacity>
         </Animated.View>
+        
       </View>
+      <Text
+        style={styles.linkText}
+        onPress={() =>
+          navigation.navigate("VisaDetailsScreen")
+        }
+      >
+        More Info
+      </Text>
+
+      MoreInfo
+      Vietnam_MoreInfo.js
     </View>
   );
 }
@@ -654,13 +666,13 @@ const styles = StyleSheet.create({
 
   centerArea: {
     alignItems: "center",
-    marginTop: verticalScale(60),
+    marginTop: verticalScale(10),
   },
 
   lottie: {
     width: wp("80%"),
     height: hp("40%"),
-    marginBottom: verticalScale(10),
+    marginBottom: verticalScale(5),
   },
 
   title: {
@@ -705,4 +717,12 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     letterSpacing: 1,
   },
+  linkText: {
+  color: '#FF5C00',
+  textDecorationLine: 'underline',
+  fontWeight: '600',
+  marginTop: verticalScale(20),
+  textAlign: 'center',
+  fontSize: RFValue(20),
+},
 });

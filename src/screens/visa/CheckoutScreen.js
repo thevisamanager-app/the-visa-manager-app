@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
   },
   checkboxText: {
     marginLeft: scale(8),
-    fontSize: RFValue(14),
+    fontSize: RFValue(12),
     fontWeight: "600",
   },
   minorBox: {

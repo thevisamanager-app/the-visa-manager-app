@@ -23,6 +23,56 @@ admin.initializeApp({
 const db = admin.firestore();
 const bucket = admin.storage().bucket(); // <--- important for file upload
 
+
+const functions = require("firebase-functions");
+// ===================== GOOGLE REVIEWS ======================
+const fetch = require("node-fetch");
+
+const PLACE_ID = "ChIJke63Xoce5zsR4p85W1nuuiA";
+
+exports.getGoogleReviews = onRequest(
+  { region: "us-central1" },
+  async (req, res) => {
+    try {
+      const cacheRef = db.collection("meta").doc("google_reviews");
+      const cacheSnap = await cacheRef.get();
+
+      if (cacheSnap.exists) {
+        const cached = cacheSnap.data();
+        if (Date.now() - cached.updatedAt < 24 * 60 * 60 * 1000) {
+          return res.json(cached.reviews);
+        }
+      }
+
+      const apiKey = functions.config().google.places_key;
+
+
+      const url =
+        `https://maps.googleapis.com/maps/api/place/details/json` +
+        `?place_id=${PLACE_ID}&fields=rating,reviews&key=${apiKey}`;
+
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.status !== "OK") {
+        return res.status(400).json({ error: data.status });
+      }
+
+      const reviews = data.result.reviews || [];
+
+      await cacheRef.set({
+        reviews,
+        updatedAt: Date.now(),
+      });
+
+      return res.json(reviews);
+    } catch (err) {
+      console.error("getGoogleReviews error:", err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  }
+);
+
 // ===================== RAZORPAY SECRETS ======================
 const RAZORPAY_KEY_ID = defineSecret("RAZORPAY_KEY_ID");
 const RAZORPAY_KEY_SECRET = defineSecret("RAZORPAY_KEY_SECRET");
@@ -392,7 +442,7 @@ exports.api = onRequest(
 );
 
 
-const functions = require("firebase-functions");
+
 
 // const PDFDocument = require("pdfkit");
 // const path = require("path");
@@ -461,3 +511,5 @@ exports.generateVisaPDF = functions.https.onCall(async (data, context) => {
 
   return { downloadUrl: url };
 });
+
+

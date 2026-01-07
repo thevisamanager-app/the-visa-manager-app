@@ -7,6 +7,8 @@ import {
   Switch,
   ScrollView,
   Alert,
+  ActivityIndicator,
+  FlatList
 } from "react-native";
 import { logout } from "../../services/auth/logoutService";
 import { wp, hp, verticalScale, RFValue, moderateScale } from "../../utils/metrics";
@@ -16,7 +18,9 @@ import firestore from "@react-native-firebase/firestore";
 import { getPassportData } from "../../services/passport/passportService";
 import { Linking } from "react-native";
 import ScreenWrapper from "../../components/ScreenWrapper";
-import { openGoogleReview } from "../../utils/openGoogleReview";
+import { fetchGoogleReviews } from "../../services/reviews/googleReviews";
+import { openGoogleReview } from "../../utils/openGoogleReview"
+
 
 
 const COLORS = {
@@ -26,6 +30,8 @@ const COLORS = {
   gray: "#777",
   lightGray: "#F5F5F5",
 };
+
+
 
 /* ---------------- MenuItem ---------------- */
 function MenuItem({ title, onPress, isDark }) {
@@ -54,6 +60,9 @@ export default function ProfileScreen({ navigation }) {
   const [passport, setPassport] = useState(null);
   const [profile, setProfile] = useState(null);
   const [isDark, setIsDark] = useState(false);
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+
 
   /* ---------------- Passport Data ---------------- */
   useEffect(() => {
@@ -67,6 +76,12 @@ export default function ProfileScreen({ navigation }) {
     })();
   }, []);
 
+  useEffect(() => {
+    fetchGoogleReviews()
+      .then(setReviews)
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
   /* ---------------- User Profile (Realtime) ---------------- */
   useEffect(() => {
     if (!user) return;
@@ -84,10 +99,10 @@ export default function ProfileScreen({ navigation }) {
   }, []);
 
   const showAbout = () => {
-  Linking.openURL('https://www.thevisamanager.com/about#page-top')
+    Linking.openURL('https://www.thevisamanager.com/about#page-top')
   };
   const showContactUs = () => {
-  Linking.openURL('https://www.thevisamanager.com/contact#page-top')
+    Linking.openURL('https://www.thevisamanager.com/contact#page-top')
   };
   const showHelp = () => {
     Alert.alert(
@@ -111,7 +126,7 @@ export default function ProfileScreen({ navigation }) {
 
   /* ---------------- Privacy Policy ---------------- */
   const showPrivacyPolicy = () => {
-     Linking.openURL('https://www.thevisamanager.com/privacy-policy')
+    Linking.openURL('https://www.thevisamanager.com/privacy-policy')
   };
 
   const deleteAccount = async () => {
@@ -157,7 +172,32 @@ export default function ProfileScreen({ navigation }) {
     );
   };
 
+useEffect(() => {
+  const load = async () => {
+    try {
+      const res = await fetch(
+        "https://getgooglereviews-fdkefcllsq-uc.a.run.app"
+      );
 
+      console.log("STATUS:", res.status);
+
+      const text = await res.text();
+      console.log("RAW RESPONSE:", text);
+
+      const json = JSON.parse(text);
+      setReviews(json);
+    } catch (err) {
+      console.error("FETCH ERROR:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  load();
+}, []);
+
+
+  if (loading) return <ActivityIndicator />;
   return (
     <ScreenWrapper style={styles.container}>
       <ScrollView
@@ -210,7 +250,7 @@ export default function ProfileScreen({ navigation }) {
 
         {/* Support */}
         <View style={styles.section}>
-              <MenuItem
+          <MenuItem
             title="Start New Application"
             isDark={isDark}
             onPress={() =>
@@ -220,7 +260,7 @@ export default function ProfileScreen({ navigation }) {
               })
             }
           />
-                  <MenuItem
+          <MenuItem
             title="My Trips"
             isDark={isDark}
             onPress={() =>
@@ -239,7 +279,23 @@ export default function ProfileScreen({ navigation }) {
             isDark={isDark}
           />
         </View>
-           <TouchableOpacity style={styles.logoutBtn} onPress={openGoogleReview}>
+        <FlatList
+          data={reviews}
+          keyExtractor={(_, i) => i.toString()}
+          horizontal
+          renderItem={({ item }) => (
+            <View style={{ padding: 12, width: 280 }}>
+              <Text style={{ fontWeight: "bold" }}>{item.author_name}</Text>
+              <Text>⭐ {item.rating}</Text>
+              <Text numberOfLines={4}>{item.text}</Text>
+              <Text style={{ color: "#888", marginTop: 6 }}>
+                {item.relative_time_description}
+              </Text>
+            </View>
+          )}
+        />
+
+        <TouchableOpacity style={styles.logoutBtn} onPress={openGoogleReview}>
           <Text style={styles.logoutText}>Rate Us on Google</Text>
         </TouchableOpacity>
 

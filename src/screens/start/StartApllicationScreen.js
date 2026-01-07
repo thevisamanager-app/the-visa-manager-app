@@ -642,9 +642,6 @@ export default function StartApplicationScreen({ navigation, route }) {
       >
         More Info
       </Text>
-
-      MoreInfo
-      Vietnam_MoreInfo.js
     </View>
   );
 }

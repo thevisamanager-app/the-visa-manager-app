@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, StatusBar } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import useNetworkStatus from "../hooks/useNetworkStatus";
 import OfflineBanner from "../components/OfflineBanner";
@@ -10,7 +10,12 @@ export default function ScreenWrapper({ children, style }) {
 
   return (
     <SafeAreaView style={styles.safe}>
-      {/* Offline banner should NOT use extra padding */}
+      {/* ✅ FORCE STATUS BAR COLOR */}
+      <StatusBar
+        backgroundColor="#000"
+        barStyle="light-content"
+      />
+
       {!isOnline && <OfflineBanner />}
 
       <View
@@ -32,9 +37,10 @@ export default function ScreenWrapper({ children, style }) {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#000", // ✅ BLACK
   },
   container: {
     flex: 1,
+    backgroundColor: "#fff", // 👈 OPTIONAL (content stays white)
   },
 });

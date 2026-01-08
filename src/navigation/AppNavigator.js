@@ -234,6 +234,7 @@ import VisaStatusScreen from "../screens/visa/VisaStatusScreen";
 import EditProfileScreen from "../screens/profile/EditProfileScreen";
 import ProfileScreen from "../screens/profile/ProfileScreen";
 import VisaDetailsScreen from "../screens/moreinfo/VisaDetailsScreen";
+import VisaTypeScreen from "../screens/visa/VisaTypeScreen";
 
 /* -------------------- SCHENGEN SCREENS -------------------- */
 import SchengenPersonalDetailsScreen from "../screens/Schengen/SchengenPersonalDetailsScreen";
@@ -303,13 +304,14 @@ function UserStack() {
       <Stack.Screen name="CheckoutScreen" component={CheckoutScreen} />
       <Stack.Screen name="RatingScreen" component={RatingScreen} />
       <Stack.Screen name="VisaStatusScreen" component={VisaStatusScreen} />
-       <Stack.Screen name="VisaDetailsScreen" component={VisaDetailsScreen} />
+      <Stack.Screen name="VisaDetailsScreen" component={VisaDetailsScreen} />
+      <Stack.Screen name="VisaTypeScreen" component={VisaTypeScreen} />
 
       {/* EXTRA */}
       <Stack.Screen name="AddTravellerScreen" component={AddTravellerScreen} />
       <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} />
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
-        <Stack.Screen name="SchengenStepper" component={SchengenStepper} />
+      <Stack.Screen name="SchengenStepper" component={SchengenStepper} />
     </Stack.Navigator>
   );
 }

@@ -52,11 +52,12 @@ export default function VisaDetailsScreen({ navigation }) {
         {/* VISA INFO */}
         <Text style={styles.sectionTitle}>Visa Information</Text>
         <View style={styles.infoGrid}>
-          <InfoItem label="Visa Type" value="Tourist" />
-          <InfoItem label="Validity Period" value="30 days" />
-          <InfoItem label="Entry" value="Single / Multiple Entry" />
-          <InfoItem label="Length of Stay" value="30 days" />
-          <InfoItem label="Visa Accepted At" value="All Ports Of Entry" />
+          <InfoItem label="Visa Type" value="Tourist / Business / Transit" index={0} />
+          <InfoItem label="Validity Period" value="30 days" index={1} />
+          <InfoItem label="Entry" value="Single / Multiple Entry" index={2} />
+          <InfoItem label="Length of Stay" value="30 days" index={3} />
+          <InfoItem label="Visa Accepted At" value="All Ports Of Entry" index={4} />
+
         </View>
 
         {/* DOCUMENTS */}
@@ -108,9 +109,15 @@ export default function VisaDetailsScreen({ navigation }) {
 /* =======================
    REUSABLE INFO ITEM
 ======================== */
-function InfoItem({ label, value }) {
+function InfoItem({ label, value, index }) {
   return (
-    <View style={styles.infoItem}>
+    <View
+      style={[
+        styles.infoItem,
+        index % 2 === 1 && styles.rightColumn, // 👈 move right column
+      ]}
+    >
+
       <Text style={styles.infoLabel}>{label}</Text>
       <Text style={styles.infoValue}>{value}</Text>
     </View>
@@ -310,5 +317,9 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#FFFFFF",
   },
+  rightColumn: {
+  paddingLeft: 40,   // 👈 adjust (6–12 works best)
+},
+
 
 });

@@ -96,7 +96,8 @@ export default function PassportDetailsScreen({ navigation, route }) {
 
   // === PARAMS ===
   const travelDate = route?.params?.travelDate || route?.params?.travel || null;
-
+  const visatype = route.params?.visaType;
+    console.log("VISATYPE=>",visatype)
   // base main passport (initial from params)
   const basePassport = route?.params?.passport || {};
 
@@ -256,6 +257,7 @@ export default function PassportDetailsScreen({ navigation, route }) {
     navigation.navigate("PhotoUploadScreen", {
       addMode: true,
       travelDate: travelDate,
+      visatype: visaType,
       passport: passportState,        // ✅ PASS MAIN PASSPORT
       coTravellers,
       mainPhotoUrl: photoUrlState,

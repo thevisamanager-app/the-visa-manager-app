@@ -581,11 +581,9 @@ export default function StartApplicationScreen({ navigation, route }) {
     inputRange: [0, 1],
     outputRange: ["0deg", "360deg"],
   });
-
   const handleStart = () => {
-    navigation.navigate("TravelDateScreen", {
-      countryType: selected?.countryType,
-      date: date
+    navigation.navigate("VisaTypeScreen", {
+      date: date,
     });
   };
 
@@ -632,7 +630,7 @@ export default function StartApplicationScreen({ navigation, route }) {
             <Text style={styles.startButtonText}>Start</Text>
           </TouchableOpacity>
         </Animated.View>
-        
+
       </View>
       <Text
         style={styles.linkText}
@@ -715,11 +713,11 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   linkText: {
-  color: '#FF5C00',
-  textDecorationLine: 'underline',
-  fontWeight: '600',
-  marginTop: verticalScale(20),
-  textAlign: 'center',
-  fontSize: RFValue(20),
-},
+    color: '#FF5C00',
+    textDecorationLine: 'underline',
+    fontWeight: '600',
+    marginTop: verticalScale(20),
+    textAlign: 'center',
+    fontSize: RFValue(20),
+  },
 });

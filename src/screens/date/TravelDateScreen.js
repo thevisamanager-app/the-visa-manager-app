@@ -1404,7 +1404,10 @@ function formatBadgeDate(dateString) {
 
 
 /* ===================== SCREEN ===================== */
-export default function TravelDateScreen({ navigation }) {
+export default function TravelDateScreen({ navigation, route }) {
+
+  const visatype = route.params?.visaType;
+  console.log("VISATYPE=>", visatype)
 
   // 1️⃣ STATE HOOKS FIRST
   const [selectedDate, setSelectedDate] = useState(null);
@@ -1464,10 +1467,12 @@ export default function TravelDateScreen({ navigation }) {
       if (isSchengen) {
         navigation.navigate("SchengenPersonalDetails", {
           travelDate: formattedSelectedDate,
+          visatype: visatype
         });
       } else {
         navigation.navigate("PhotoUploadScreen", {
           travelDate: formattedSelectedDate,
+          visatype: visatype
         });
       }
     } catch (err) {

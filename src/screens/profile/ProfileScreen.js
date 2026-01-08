@@ -266,7 +266,7 @@ useEffect(() => {
             onPress={() =>
               navigation.navigate("Tabs", {
                 screen: "Home",
-                params: { screen: "Destination" },
+                params: { screen: "MyTripScreen" },
               })
             }
           />

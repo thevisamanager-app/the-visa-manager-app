@@ -585,7 +585,8 @@ export default function StartApplicationScreen({ navigation, route }) {
   const handleStart = () => {
     navigation.navigate("TravelDateScreen", {
       countryType: selected?.countryType,
-      date:date
+      date:date,
+      country:selected
     });
   };
 

@@ -20,20 +20,33 @@ admin.initializeApp({
       : "thevisamanager-bea80.appspot.com",
 });
 
-const db = admin.firestore();
+
+
 const bucket = admin.storage().bucket(); // <--- important for file upload
 
 
-const functions = require("firebase-functions");
+//const functions = require("firebase-functions");
 // ===================== GOOGLE REVIEWS ======================
-const fetch = require("node-fetch");
+//const fetch = require("node-fetch");
 
+// if (!admin.apps.length) {
+//   admin.initializeApp();
+// }
+
+const db = admin.firestore();
+const GOOGLE_PLACES_KEY = defineSecret("GOOGLE_PLACES_KEY");
 const PLACE_ID = "ChIJke63Xoce5zsR4p85W1nuuiA";
 
 exports.getGoogleReviews = onRequest(
-  { region: "us-central1" },
+  {
+    region: "us-central1",
+    secrets: [GOOGLE_PLACES_KEY],
+  },
   async (req, res) => {
     try {
+      res.set("Access-Control-Allow-Origin", "*");
+
+      const db = admin.firestore();
       const cacheRef = db.collection("meta").doc("google_reviews");
       const cacheSnap = await cacheRef.get();
 
@@ -44,18 +57,16 @@ exports.getGoogleReviews = onRequest(
         }
       }
 
-      const apiKey = functions.config().google.places_key;
-
-
       const url =
         `https://maps.googleapis.com/maps/api/place/details/json` +
-        `?place_id=${PLACE_ID}&fields=rating,reviews&key=${apiKey}`;
+        `?place_id=${PLACE_ID}&fields=rating,reviews&key=${GOOGLE_PLACES_KEY.value()}`;
 
       const response = await fetch(url);
       const data = await response.json();
 
       if (data.status !== "OK") {
-        return res.status(400).json({ error: data.status });
+        console.error("Google API Error:", data);
+        return res.status(500).json({ error: data.status });
       }
 
       const reviews = data.result.reviews || [];
@@ -67,11 +78,13 @@ exports.getGoogleReviews = onRequest(
 
       return res.json(reviews);
     } catch (err) {
-      console.error("getGoogleReviews error:", err);
-      return res.status(500).json({ error: "Internal server error" });
+      console.error("REVIEWS ERROR:", err);
+      return res.status(500).json({ error: err.message });
     }
   }
 );
+
+
 
 // ===================== RAZORPAY SECRETS ======================
 const RAZORPAY_KEY_ID = defineSecret("RAZORPAY_KEY_ID");
@@ -451,65 +464,65 @@ exports.api = onRequest(
 
 // admin.initializeApp();
 
-exports.generateVisaPDF = functions.https.onCall(async (data, context) => {
-  const {
-    firstName,
-    lastName,
-    passportNumber,
-    nationality,
-    birthDate,
-    expiryDate,
-    logoUrl
-  } = data;
+// exports.generateVisaPDF = functions.https.onCall(async (data, context) => {
+//   const {
+//     firstName,
+//     lastName,
+//     passportNumber,
+//     nationality,
+//     birthDate,
+//     expiryDate,
+//     logoUrl
+//   } = data;
 
-  const tempFilePath = path.join(os.tmpdir(), `Visa_${passportNumber}.pdf`);
-  const doc = new PDFDocument();
+//   const tempFilePath = path.join(os.tmpdir(), `Visa_${passportNumber}.pdf`);
+//   const doc = new PDFDocument();
 
-  const writeStream = fs.createWriteStream(tempFilePath);
-  doc.pipe(writeStream);
+//   const writeStream = fs.createWriteStream(tempFilePath);
+//   doc.pipe(writeStream);
 
-  // Logo + Company Name
-  doc.image("logo/tvm.png", 40, 40, { width: 80 });
-  doc.fontSize(28).fillColor("black").text("The Visa ", 140, 50, { continued: true });
-  doc.fillColor("#FF5C00").text("Manager");
+//   // Logo + Company Name
+//   doc.image("logo/tvm.png", 40, 40, { width: 80 });
+//   doc.fontSize(28).fillColor("black").text("The Visa ", 140, 50, { continued: true });
+//   doc.fillColor("#FF5C00").text("Manager");
 
-  doc.moveDown(2);
+//   doc.moveDown(2);
 
-  // Header line
-  doc.moveTo(40, 120).lineTo(550, 120).stroke("#FF5C00");
+//   // Header line
+//   doc.moveTo(40, 120).lineTo(550, 120).stroke("#FF5C00");
 
-  // Data
-  doc.fontSize(16).fillColor("black").text(`Traveller Name: ${firstName} ${lastName}`);
-  doc.text(`Passport Number: ${passportNumber}`);
-  doc.text(`Nationality: ${nationality}`);
-  doc.text(`Birth Date: ${birthDate}`);
-  doc.text(`Passport Expiry: ${expiryDate}`);
+//   // Data
+//   doc.fontSize(16).fillColor("black").text(`Traveller Name: ${firstName} ${lastName}`);
+//   doc.text(`Passport Number: ${passportNumber}`);
+//   doc.text(`Nationality: ${nationality}`);
+//   doc.text(`Birth Date: ${birthDate}`);
+//   doc.text(`Passport Expiry: ${expiryDate}`);
 
-  doc.end();
+//   doc.end();
 
-  await new Promise(res => writeStream.on("finish", res));
+//   await new Promise(res => writeStream.on("finish", res));
 
-  // const bucket = admin.storage().bucket();
-  const bucketName =
-    process.env.FIREBASE_CONFIG
-      ? JSON.parse(process.env.FIREBASE_CONFIG).storageBucket
-      : "thevisamanager-bea80.appspot.com";
+//   // const bucket = admin.storage().bucket();
+//   const bucketName =
+//     process.env.FIREBASE_CONFIG
+//       ? JSON.parse(process.env.FIREBASE_CONFIG).storageBucket
+//       : "thevisamanager-bea80.appspot.com";
 
-  const bucket = admin.storage().bucket(bucketName);
-  await bucket.upload(tempFilePath, {
-    destination: `visas/pdf/${passportNumber}.pdf`,
-    contentType: "application/pdf",
-  });
+//   const bucket = admin.storage().bucket(bucketName);
+//   await bucket.upload(tempFilePath, {
+//     destination: `visas/pdf/${passportNumber}.pdf`,
+//     contentType: "application/pdf",
+//   });
 
-  fs.unlinkSync(tempFilePath);
+//   fs.unlinkSync(tempFilePath);
 
-  const file = bucket.file(`visas/pdf/${passportNumber}.pdf`);
-  const [url] = await file.getSignedUrl({
-    action: "read",
-    expires: "03-09-2030"
-  });
+//   const file = bucket.file(`visas/pdf/${passportNumber}.pdf`);
+//   const [url] = await file.getSignedUrl({
+//     action: "read",
+//     expires: "03-09-2030"
+//   });
 
-  return { downloadUrl: url };
-});
+//   return { downloadUrl: url };
+// });
 
 

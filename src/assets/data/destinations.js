@@ -165,7 +165,7 @@ const DESTINATIONS = [
     AuthorityCharges: "0",
     GovernmentFee: "17020",
     currency: "",
-    countryType: "evisa"
+    countryType: "Stamp Visa"
   },
 
   {
@@ -186,9 +186,9 @@ const DESTINATIONS = [
     source: require('../images/Qatar.webp'),
     title: '09 JAN 11:00 AM',
     countrName: 'Qatar',
-    VisaManagerFee: "2948.82",
-    AuthorityCharges: "944",
-    GovernmentFee: "5000",
+    VisaManagerFee: "0",
+    AuthorityCharges: "500",
+    GovernmentFee: "2000",
     currency: "",
     countryType: "evisa"
   },
@@ -226,7 +226,7 @@ const DESTINATIONS = [
     AuthorityCharges: "0",
     GovernmentFee: "15400 ",
     currency: "",
-    countryType: "evisa"
+    countryType: "Stamp Visa"
   },
 
   {
@@ -382,7 +382,7 @@ const DESTINATIONS = [
     AuthorityCharges: "0",
     GovernmentFee: "12400",
     currency: "",
-    countryType: "evisa"
+    countryType: "Stamp Visa"
   },
 
   {
@@ -431,7 +431,7 @@ const DESTINATIONS = [
     AuthorityCharges: "750",
     GovernmentFee: "550",
     currency: "",
-    countryType: "evisa"
+    countryType: "Stamp Visa"
   },
 
   {
@@ -851,6 +851,42 @@ const DESTINATIONS = [
     GovernmentFee: "550",
     currency: "",
     countryType: "evisa"
+  },
+
+  {
+    id: 72,
+    source: require('../images/China.webp'),
+    title: '09 JAN 11:00 AM',
+    countrName: 'China',
+    VisaManagerFee: "3540",
+    AuthorityCharges: "1951",
+    GovernmentFee: "2900",
+    currency: "",
+    countryType: "Stamp Visa"
+  },
+
+   {
+    id: 73,
+    source: require('../images/Canada.webp'),
+    title: '09 JAN 11:00 AM',
+    countrName: 'Canada',
+    VisaManagerFee: "3540",
+    AuthorityCharges: "900",
+    GovernmentFee: "11700",
+    currency: "",
+    countryType: "Stamp Visa"
+  },
+
+  {
+    id: 74,
+    source: require('../images/Ireland.webp'),
+    title: '09 JAN 11:00 AM',
+    countrName: 'Ireland',
+    VisaManagerFee: "3540",
+    AuthorityCharges: "3700",
+    GovernmentFee: "9318",
+    currency: "",
+    countryType: "Stamp Visa"
   },
 ];
 export default DESTINATIONS;

@@ -584,6 +584,7 @@ export default function StartApplicationScreen({ navigation, route }) {
   const handleStart = () => {
     navigation.navigate("VisaTypeScreen", {
       date: date,
+      country:country
     });
   };
 

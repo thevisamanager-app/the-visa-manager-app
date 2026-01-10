@@ -8,14 +8,19 @@ import {
 } from "react-native";
 import LottieView from "lottie-react-native";
 import ScreenWrapper from "../../components/ScreenWrapper";
+import { useSelector } from 'react-redux';
 
 export default function VisaTypeScreen({ navigation }) {
+
+    const selected = useSelector((state) => state.destinations.selected);
+    const country = selected?.countrName || "Country";
     const handleSelect = (visaTypeSelected) => {
         navigation.navigate("TravelDateScreen", {
             visaType: visaTypeSelected,
+            country: country
         });
     };
-    
+
 
     return (
         <ScreenWrapper style={styles.screen}>

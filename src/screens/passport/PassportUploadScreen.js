@@ -19,6 +19,8 @@ import { useSelector } from "react-redux";
 import { uploadPassportImage } from "../../api/user/passportService";
 import auth from "@react-native-firebase/auth";
 import LottieView from "lottie-react-native";
+import { useSelector } from 'react-redux';
+
 
 const ORANGE = "#FF5C00";
 const ORANGE_LIGHT = "#FFE1CC";
@@ -28,12 +30,13 @@ const GOLD = "#D6B25E";
 
 export default function PassportUploadScreen({ navigation, route }) {
   const travelDate = route?.params?.travelDate || null;
+    const visatype = route?.params?.visatype || null;
   const selected = useSelector((state) => state.destinations.selected);
   const currentPhotoUrl = route?.params?.photoUrl || null;
   const isCoTraveller = route?.params?.addMode === true;
   const addMode = route?.params?.addMode || false;
   const editMode = route?.params?.editMode || false;
-
+  const country = selected?.countrName || "Country";
   const [front, setFront] = useState(null);
   const [back, setBack] = useState(null);
   const [mrzData, setMrzData] = useState(null);
@@ -124,7 +127,7 @@ export default function PassportUploadScreen({ navigation, route }) {
         travelDate,
         photoUrl: currentPhotoUrl,
         userId: auth().currentUser.uid,
-
+        
         companyDetails:
           selected.countryType === "Schengen"
             ? {
@@ -152,6 +155,8 @@ export default function PassportUploadScreen({ navigation, route }) {
         navigation.navigate("PassportDetailsScreen", {
           passport: route.params.passport, // 👈 KEEP MAIN
           travelDate: travelDate,
+          country:country,
+          visatype:visatype,
           photoUrl: route.params.mainPhotoUrl,
           coTravellers: [
             ...(route?.params?.coTravellers || []),
@@ -168,6 +173,8 @@ export default function PassportUploadScreen({ navigation, route }) {
       if (editMode) {
         navigation.navigate(route.params.returnTo, {
           updatedPassport: passportPayload,
+          visatype,
+          country:country
         });
         return;
       }
@@ -176,6 +183,8 @@ export default function PassportUploadScreen({ navigation, route }) {
         passport: passportPayload,
         travelDate: travelDate,
         photoUrl: currentPhotoUrl,
+        country:country,
+        visatype,
         coTravellers: [],
       });
     } catch {

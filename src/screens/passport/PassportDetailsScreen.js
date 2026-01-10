@@ -17,6 +17,7 @@ import ScreenWrapper from "../../components/ScreenWrapper";
 import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../../utils/metrics";
 import { useSelector } from "react-redux";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { count } from "console";
 
 
 
@@ -97,7 +98,7 @@ export default function PassportDetailsScreen({ navigation, route }) {
   // === PARAMS ===
   const travelDate = route?.params?.travelDate || route?.params?.travel || null;
   const visatype = route.params?.visaType;
-    console.log("VISATYPE=>",visatype)
+  console.log("VISATYPE=>", visatype)
   // base main passport (initial from params)
   const basePassport = route?.params?.passport || {};
 
@@ -110,7 +111,7 @@ export default function PassportDetailsScreen({ navigation, route }) {
   const [hotelname, sethotelname] = useState("");
   const [location, setlocation] = useState("");
   const selected = useSelector((state) => state.destinations.selected);
-
+  const country = selected?.countrName || "Country";
 
   // useEffect(() => {
   //   if (route?.params?.updatedPassport) {
@@ -257,7 +258,8 @@ export default function PassportDetailsScreen({ navigation, route }) {
     navigation.navigate("PhotoUploadScreen", {
       addMode: true,
       travelDate: travelDate,
-      visatype: visaType,
+      visatype: visatype,
+      country: country,
       passport: passportState,        // ✅ PASS MAIN PASSPORT
       coTravellers,
       mainPhotoUrl: photoUrlState,
@@ -273,6 +275,8 @@ export default function PassportDetailsScreen({ navigation, route }) {
       travelDate: travelDate,
       passport: passportState,
       photoUrl: photoUrlState,
+      visatype: visatype,
+      country: country,
       coTravellers, // keep co-travellers when we come back
     });
   };
@@ -285,6 +289,8 @@ export default function PassportDetailsScreen({ navigation, route }) {
       travelDate: travelDate,
       passport: passportState,
       photoUrl: photoUrlState,
+      visatype: visatype,
+      country: country,
       coTravellers,
     });
   };
@@ -428,27 +434,27 @@ export default function PassportDetailsScreen({ navigation, route }) {
           <View style={{ marginTop: 8 }}>
             {/* Photo */}
             {selected.countryType === "Schengen" ? null :
-            <View style={styles.docRow}>
-              <View style={styles.docHeader}>
-                <View style={styles.docHeaderLeft}>
-                  <Icon name="check-circle" size={18} color="#09B66E" />
-                  <Text style={styles.docLabel}>Photo (You)</Text>
+              <View style={styles.docRow}>
+                <View style={styles.docHeader}>
+                  <View style={styles.docHeaderLeft}>
+                    <Icon name="check-circle" size={18} color="#09B66E" />
+                    <Text style={styles.docLabel}>Photo (You)</Text>
+                  </View>
+                  <TouchableOpacity onPress={handleEditPhoto}>
+                    <Icon name="edit" size={18} color={ORANGE} />
+                  </TouchableOpacity>
                 </View>
-                <TouchableOpacity onPress={handleEditPhoto}>
-                  <Icon name="edit" size={18} color={ORANGE} />
-                </TouchableOpacity>
-              </View>
-              <View style={styles.thumbBox}>
-                {photoUrlState ? (
-                  <Image
-                    source={{ uri: photoUrlState }}
-                    style={styles.docImage}
-                  />
-                ) : (
-                  <Text style={styles.docPlaceholder}>No Photo</Text>
-                )}
-              </View>
-            </View>}
+                <View style={styles.thumbBox}>
+                  {photoUrlState ? (
+                    <Image
+                      source={{ uri: photoUrlState }}
+                      style={styles.docImage}
+                    />
+                  ) : (
+                    <Text style={styles.docPlaceholder}>No Photo</Text>
+                  )}
+                </View>
+              </View>}
 
             {/* Passport Front (main) */}
             <View style={styles.docRow}>

@@ -32,6 +32,9 @@ function getRazorpay() {
     key_secret: RAZORPAY_KEY_SECRET.value(),
   });
 }
+app.post("/createRazorpayOrder", async (req, res) => {
+  res.json({ ok: true });
+});
 
 // ===================== TEST ROUTE ======================
 app.get("/", (_, res) => {

@@ -19,7 +19,6 @@ import { useSelector } from "react-redux";
 import { uploadPassportImage } from "../../api/user/passportService";
 import auth from "@react-native-firebase/auth";
 import LottieView from "lottie-react-native";
-import { useSelector } from 'react-redux';
 
 
 const ORANGE = "#FF5C00";

@@ -383,6 +383,8 @@ import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import Icon from "react-native-vector-icons/Ionicons";
 import LinearGradient from "react-native-linear-gradient";
+import LottieView from "lottie-react-native";
+
 
 const ORANGE = "#FF5C00";
 const BLACK = "#000";
@@ -478,6 +480,7 @@ export default function VisaStatusScreen({ navigation }) {
 
       <ScrollView>
         {/* STATUS BANNER */}
+      
         <LinearGradient colors={bannerGradient} style={styles.bannerCard}>
           <Text style={styles.bannerText}>{titleText}</Text>
         </LinearGradient>
@@ -515,9 +518,18 @@ export default function VisaStatusScreen({ navigation }) {
                 </Text>
                 <Icon name="download-outline" size={20} color="#fff" />
               </TouchableOpacity>
+              <View style={styles.lottieWrapper}>
+                <LottieView
+                  source={require("../../assets/lottie/visiting abroad .json")}
+                  autoPlay
+                  loop
+                  style={styles.lottie}
+                />
+              </View>
             </View>
           </>
         )}
+       
       </ScrollView>
     </SafeAreaView>
   );
@@ -607,4 +619,17 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "white",
   },
+  lottieWrapper: {
+  marginTop: 20,
+  alignItems: "center",
+  justifyContent: "center",
+  backgroundColor: "transparent", // ✅ ensure no white layer
+},
+
+lottie: {
+  width: "190%",        // ✅ MUCH BIGGER
+  height: 260,         // ✅ CLEAR & READABLE
+  backgroundColor: "transparent", // ✅ force transparency
+},
+
 });

@@ -12,9 +12,79 @@ const fs = require("fs");
 const os = require("os");
 
 // ===================== FIREBASE INIT ======================
-admin.initializeApp();
-const db = admin.firestore();
+// admin.initializeApp();
+admin.initializeApp({
+  storageBucket:
+    process.env.FIREBASE_CONFIG
+      ? JSON.parse(process.env.FIREBASE_CONFIG).storageBucket
+      : "thevisamanager-bea80.appspot.com",
+});
+
+
+
 const bucket = admin.storage().bucket(); // <--- important for file upload
+
+
+//const functions = require("firebase-functions");
+// ===================== GOOGLE REVIEWS ======================
+//const fetch = require("node-fetch");
+
+// if (!admin.apps.length) {
+//   admin.initializeApp();
+// }
+
+const db = admin.firestore();
+const GOOGLE_PLACES_KEY = defineSecret("GOOGLE_PLACES_KEY");
+const PLACE_ID = "ChIJke63Xoce5zsR4p85W1nuuiA";
+
+exports.getGoogleReviews = onRequest(
+  {
+    region: "us-central1",
+    secrets: [GOOGLE_PLACES_KEY],
+  },
+  async (req, res) => {
+    try {
+      res.set("Access-Control-Allow-Origin", "*");
+
+      const db = admin.firestore();
+      const cacheRef = db.collection("meta").doc("google_reviews");
+      const cacheSnap = await cacheRef.get();
+
+      if (cacheSnap.exists) {
+        const cached = cacheSnap.data();
+        if (Date.now() - cached.updatedAt < 24 * 60 * 60 * 1000) {
+          return res.json(cached.reviews);
+        }
+      }
+
+      const url =
+        `https://maps.googleapis.com/maps/api/place/details/json` +
+        `?place_id=${PLACE_ID}&fields=rating,reviews&key=${GOOGLE_PLACES_KEY.value()}`;
+
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.status !== "OK") {
+        console.error("Google API Error:", data);
+        return res.status(500).json({ error: data.status });
+      }
+
+      const reviews = data.result.reviews || [];
+
+      await cacheRef.set({
+        reviews,
+        updatedAt: Date.now(),
+      });
+
+      return res.json(reviews);
+    } catch (err) {
+      console.error("REVIEWS ERROR:", err);
+      return res.status(500).json({ error: err.message });
+    }
+  }
+);
+
+
 
 // ===================== RAZORPAY SECRETS ======================
 const RAZORPAY_KEY_ID = defineSecret("RAZORPAY_KEY_ID");
@@ -37,8 +107,26 @@ app.post("/createRazorpayOrder", async (req, res) => {
 });
 
 // ===================== TEST ROUTE ======================
-app.get("/", (_, res) => {
-  res.send("API working 🚀");
+// app.get("/", (_, res) => {
+//   res.send("API working 🚀");
+// });
+app.get("/users/:uid", async (req, res) => {
+  try {
+    const { uid } = req.params;
+
+    const doc = await db.collection("users").doc(uid).get();
+
+    if (!doc.exists) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      id: doc.id,
+      ...doc.data()
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // ===================== CREATE RAZORPAY ORDER ======================
@@ -164,7 +252,7 @@ exports.generateInvoice = onCall(async (req) => {
       throw new HttpsError("unauthenticated", "User not authenticated");
     }
 
-    const { invoiceId, userName, date, amount, userId, country, email } = req.data;
+    const { invoiceId, userName, date, amount, userId, country, email,phoneNumber } = req.data;
 
     // --------- BASIC VALIDATION ----------
     if (!invoiceId || !date || amount == null || !userId || !country) {
@@ -212,7 +300,7 @@ exports.generateInvoice = onCall(async (req) => {
     doc.fontSize(14).fillColor("#FF6A00").text("Bill To:", 40);
     doc.fillColor("#000").fontSize(12);
     doc.text(`Customer ID: ${userId}`);
-    doc.text(`Mobile: ${displayName}`);
+    doc.text(`Mobile: ${phoneNumber}`);
     doc.text(`Email: ${email}`);
     doc.moveDown(2);
 
@@ -370,7 +458,7 @@ exports.api = onRequest(
 );
 
 
-const functions = require("firebase-functions");
+
 
 // const PDFDocument = require("pdfkit");
 // const path = require("path");
@@ -379,57 +467,65 @@ const functions = require("firebase-functions");
 
 // admin.initializeApp();
 
-exports.generateVisaPDF = functions.https.onCall(async (data, context) => {
-  const {
-    firstName,
-    lastName,
-    passportNumber,
-    nationality,
-    birthDate,
-    expiryDate,
-    logoUrl
-  } = data;
+// exports.generateVisaPDF = functions.https.onCall(async (data, context) => {
+//   const {
+//     firstName,
+//     lastName,
+//     passportNumber,
+//     nationality,
+//     birthDate,
+//     expiryDate,
+//     logoUrl
+//   } = data;
 
-  const tempFilePath = path.join(os.tmpdir(), `Visa_${passportNumber}.pdf`);
-  const doc = new PDFDocument();
+//   const tempFilePath = path.join(os.tmpdir(), `Visa_${passportNumber}.pdf`);
+//   const doc = new PDFDocument();
 
-  const writeStream = fs.createWriteStream(tempFilePath);
-  doc.pipe(writeStream);
+//   const writeStream = fs.createWriteStream(tempFilePath);
+//   doc.pipe(writeStream);
 
-  // Logo + Company Name
-  doc.image("logo/tvm.png", 40, 40, { width: 80 });
-  doc.fontSize(28).fillColor("black").text("The Visa ", 140, 50, { continued: true });
-  doc.fillColor("#FF5C00").text("Manager");
+//   // Logo + Company Name
+//   doc.image("logo/tvm.png", 40, 40, { width: 80 });
+//   doc.fontSize(28).fillColor("black").text("The Visa ", 140, 50, { continued: true });
+//   doc.fillColor("#FF5C00").text("Manager");
 
-  doc.moveDown(2);
+//   doc.moveDown(2);
 
-  // Header line
-  doc.moveTo(40, 120).lineTo(550, 120).stroke("#FF5C00");
+//   // Header line
+//   doc.moveTo(40, 120).lineTo(550, 120).stroke("#FF5C00");
 
-  // Data
-  doc.fontSize(16).fillColor("black").text(`Traveller Name: ${firstName} ${lastName}`);
-  doc.text(`Passport Number: ${passportNumber}`);
-  doc.text(`Nationality: ${nationality}`);
-  doc.text(`Birth Date: ${birthDate}`);
-  doc.text(`Passport Expiry: ${expiryDate}`);
+//   // Data
+//   doc.fontSize(16).fillColor("black").text(`Traveller Name: ${firstName} ${lastName}`);
+//   doc.text(`Passport Number: ${passportNumber}`);
+//   doc.text(`Nationality: ${nationality}`);
+//   doc.text(`Birth Date: ${birthDate}`);
+//   doc.text(`Passport Expiry: ${expiryDate}`);
 
-  doc.end();
+//   doc.end();
 
-  await new Promise(res => writeStream.on("finish", res));
+//   await new Promise(res => writeStream.on("finish", res));
 
-  const bucket = admin.storage().bucket();
-  await bucket.upload(tempFilePath, {
-    destination: `visas/pdf/${passportNumber}.pdf`,
-    contentType: "application/pdf",
-  });
+//   // const bucket = admin.storage().bucket();
+//   const bucketName =
+//     process.env.FIREBASE_CONFIG
+//       ? JSON.parse(process.env.FIREBASE_CONFIG).storageBucket
+//       : "thevisamanager-bea80.appspot.com";
 
-  fs.unlinkSync(tempFilePath);
+//   const bucket = admin.storage().bucket(bucketName);
+//   await bucket.upload(tempFilePath, {
+//     destination: `visas/pdf/${passportNumber}.pdf`,
+//     contentType: "application/pdf",
+//   });
 
-  const file = bucket.file(`visas/pdf/${passportNumber}.pdf`);
-  const [url] = await file.getSignedUrl({
-    action: "read",
-    expires: "03-09-2030"
-  });
+//   fs.unlinkSync(tempFilePath);
 
-  return { downloadUrl: url };
-});
+//   const file = bucket.file(`visas/pdf/${passportNumber}.pdf`);
+//   const [url] = await file.getSignedUrl({
+//     action: "read",
+//     expires: "03-09-2030"
+//   });
+
+//   return { downloadUrl: url };
+// });
+
+

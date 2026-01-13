@@ -1,47 +1,23 @@
-// import React from "react";
-// import { View, StyleSheet, Platform } from "react-native";
-// import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
-
-// export default function ScreenWrapper({ children, style }) {
-//   const insets = useSafeAreaInsets();
-
-//   return (
-//     <SafeAreaView style={styles.safe} edges={["top"]}>
-//       <View
-//         style={[
-//           styles.container,
-//           {
-//             paddingTop: insets.top,
-//             paddingBottom: Platform.OS === "android" ? insets.bottom : 0,
-//           },
-//           style,
-//         ]}
-//       >
-//         {children}
-//       </View>
-//     </SafeAreaView>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   safe: {
-//     flex: 1,
-//     backgroundColor: "#FFF",
-//   },
-//   container: {
-//     flex: 1,
-//   },
-// });
-
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, StatusBar } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import useNetworkStatus from "../hooks/useNetworkStatus";
+import OfflineBanner from "../components/OfflineBanner";
 
 export default function ScreenWrapper({ children, style }) {
   const insets = useSafeAreaInsets();
+  const isOnline = useNetworkStatus();
 
   return (
     <SafeAreaView style={styles.safe}>
+      {/* ✅ FORCE STATUS BAR COLOR */}
+      <StatusBar
+        backgroundColor="#000"
+        barStyle="light-content"
+      />
+
+      {!isOnline && <OfflineBanner />}
+
       <View
         style={[
           styles.container,
@@ -61,9 +37,10 @@ export default function ScreenWrapper({ children, style }) {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#000", // ✅ BLACK
   },
   container: {
     flex: 1,
+    backgroundColor: "#fff", // 👈 OPTIONAL (content stays white)
   },
 });

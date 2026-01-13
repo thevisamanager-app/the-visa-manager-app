@@ -18,6 +18,9 @@ import ScreenWrapper from "../../components/ScreenWrapper";
 import { useSelector } from "react-redux";
 import { uploadPassportImage } from "../../api/user/passportService";
 import auth from "@react-native-firebase/auth";
+import LottieView from "lottie-react-native";
+import { useSelector } from 'react-redux';
+
 
 const ORANGE = "#FF5C00";
 const ORANGE_LIGHT = "#FFE1CC";
@@ -26,13 +29,14 @@ const GRAY = "#777";
 const GOLD = "#D6B25E";
 
 export default function PassportUploadScreen({ navigation, route }) {
-  const travel = route?.params?.travelDate || null;
+  const travelDate = route?.params?.travelDate || null;
+    const visatype = route?.params?.visatype || null;
   const selected = useSelector((state) => state.destinations.selected);
   const currentPhotoUrl = route?.params?.photoUrl || null;
   const isCoTraveller = route?.params?.addMode === true;
   const addMode = route?.params?.addMode || false;
   const editMode = route?.params?.editMode || false;
-
+  const country = selected?.countrName || "Country";
   const [front, setFront] = useState(null);
   const [back, setBack] = useState(null);
   const [mrzData, setMrzData] = useState(null);
@@ -97,6 +101,9 @@ export default function PassportUploadScreen({ navigation, route }) {
     return true;
   };
 
+  useEffect(() => {
+  console.log("LOADING STATE:", loading);
+}, [loading]);
   /* ✅ MAIN SAVE */
   const onContinue = async () => {
     if (!front || !back || !mrzData) {
@@ -117,10 +124,10 @@ export default function PassportUploadScreen({ navigation, route }) {
         ...mrzData,
         frontImageURL: frontUrl,
         backImageURL: backUrl,
-        travel,
+        travelDate,
         photoUrl: currentPhotoUrl,
         userId: auth().currentUser.uid,
-
+        
         companyDetails:
           selected.countryType === "Schengen"
             ? {
@@ -147,7 +154,9 @@ export default function PassportUploadScreen({ navigation, route }) {
       if (addMode) {
         navigation.navigate("PassportDetailsScreen", {
           passport: route.params.passport, // 👈 KEEP MAIN
-          travelDate: travel,
+          travelDate: travelDate,
+          country:country,
+          visatype:visatype,
           photoUrl: route.params.mainPhotoUrl,
           coTravellers: [
             ...(route?.params?.coTravellers || []),
@@ -164,14 +173,18 @@ export default function PassportUploadScreen({ navigation, route }) {
       if (editMode) {
         navigation.navigate(route.params.returnTo, {
           updatedPassport: passportPayload,
+          visatype,
+          country:country
         });
         return;
       }
 
       navigation.navigate("PassportDetailsScreen", {
         passport: passportPayload,
-        travelDate: travel,
+        travelDate: travelDate,
         photoUrl: currentPhotoUrl,
+        country:country,
+        visatype,
         coTravellers: [],
       });
     } catch {
@@ -183,13 +196,26 @@ export default function PassportUploadScreen({ navigation, route }) {
 
   return (
     <ScreenWrapper style={styles.container}>
+            {/* 🔥 FULL SCREEN LOADER */}
+      {loading && (
+        <View style={styles.loaderOverlay}>
+          <LottieView
+            source={require("../../assets/lottie/Loading.json")}
+            autoPlay
+            loop
+            style={styles.loader}
+          />
+          <Text style={styles.loadingText}>Processing passport...</Text>
+        </View>
+      )}
+
       <View style={styles.topNav}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Icon name="arrow-back" size={26} color="black" />
         </TouchableOpacity>
         <View style={styles.stepBadge}>
           <Icon name="check-circle" size={18} color="white" />
-          <Text style={styles.stepBadgeText}>Visa on {date}</Text>
+          <Text style={styles.stepBadgeText}>Visa on {travelDate}</Text>
         </View>
 
         <TouchableOpacity onPress={() => navigation.navigate("Tabs", {
@@ -301,7 +327,7 @@ export default function PassportUploadScreen({ navigation, route }) {
         )}
       </ScrollView>
 
-      <TouchableOpacity style={styles.bottomButton} onPress={onContinue}>
+      <TouchableOpacity style={styles.bottomButton} onPress={onContinue} disabled={loading}>
         <Text style={styles.bottomButtonText}>
           {loading ? "Saving..." : "Continue"}
         </Text>
@@ -329,6 +355,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     padding: wp("4%"),
+  },
+  loaderOverlay: {
+    ...StyleSheet.absoluteFill,
+    backgroundColor: "rgba(255,255,255,0.9)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 20,
+  },
+  loader: { width: 130, height: 130 },
+  loadingText: {
+    marginTop: 12,
+    fontSize: RFValue(14),
+    fontWeight: "600",
+    color: "#555",
   },
   topNav: {
     flexDirection: "row",

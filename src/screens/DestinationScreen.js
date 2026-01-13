@@ -374,10 +374,10 @@ import { wp, hp, scale, verticalScale, moderateScale, RFValue } from '../utils/m
 const FILTERS = [
   { key: 'ALL', label: 'All' },
   { key: 'Schengen', label: 'Schengen' },
+  { key: 'Stamp Visa', label: 'Stamp Visa' },
   { key: 'DAC', label: 'DAC' },
   { key: 'evisa', label: 'eVisa' },
 ];
-
 export default function DestinationScreen() {
   const [searchText, setSearchText] = useState('');
   const [date, setDate] = useState('');
@@ -430,7 +430,7 @@ export default function DestinationScreen() {
 
   const handleCardPress = (item) => {
     dispatch(setSelectedDestination(item));
-    navigation.navigate('StartApplicationScreen');
+    navigation.navigate('StartApplicationScreen', { date });
   };
 
   return (
@@ -451,33 +451,35 @@ export default function DestinationScreen() {
             activeFilter.toLowerCase() === filter.key.toLowerCase();
 
           return (
-                  <ScrollView showsHorizontalScrollIndicator={true}>
-            <TouchableOpacity
-              key={filter.key}
-              onPress={() => setActiveFilter(filter.key)}
-              style={[
-                styles.filterBtn,
-                isActive && styles.activeFilterBtn,
-              ]}
-            >
-              <Text
+            <ScrollView showsHorizontalScrollIndicator={true} key={filter.key}>
+              <TouchableOpacity
+                key={filter.key}
+                onPress={() => setActiveFilter(filter.key)}
                 style={[
-                  styles.filterText,
-                  isActive && styles.activeFilterText,
+                  styles.filterBtn,
+                  isActive && styles.activeFilterBtn,
                 ]}
+                activeOpacity={0.8}
               >
-                {filter.label}
-              </Text>
-            </TouchableOpacity>
+                <Text
+                  style={[
+                    styles.filterText,
+                    isActive && styles.activeFilterText,
+                  ]}
+                >
+                  {filter.label}
+                </Text>
+              </TouchableOpacity>
             </ScrollView>
           );
         })}
       </View>
 
+
       {/* Country List */}
       <FlatList
         data={filteredData}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.countrName.toString()}
         contentContainerStyle={{ paddingBottom: 120 }}
         renderItem={({ item }) => (
           <CountryCards
@@ -509,7 +511,7 @@ const styles = StyleSheet.create({
     borderWidth: scale(1),
     padding: moderateScale(10),
     borderRadius: moderateScale(10),
-    borderColor: 'grey',
+    borderColor: 'grey  ',
     color: '#111',
     fontSize: RFValue(14),
   },
@@ -518,18 +520,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: wp('4%'),
     marginBottom: verticalScale(10),
-    alignSelf:"center"
   },
 
   filterBtn: {
-    paddingVertical: verticalScale(6),
-    paddingHorizontal: moderateScale(5),
+    flex: 1, // 🔥 THIS IS THE KEY
+    paddingVertical: verticalScale(8),
+    marginRight: moderateScale(8),
     borderRadius: moderateScale(10),
     borderWidth: 1,
     borderColor: '#DDD',
-    marginRight: moderateScale(8),
     backgroundColor: '#FFF',
+    alignItems: 'center',
   },
+
+  // remove marginRight from last item visually
+  // filterBtnLast: {
+  //   marginRight: 0,
+  // },
 
   activeFilterBtn: {
     backgroundColor: '#FFE5D6',
@@ -540,7 +547,7 @@ const styles = StyleSheet.create({
     fontSize: RFValue(13),
     color: '#555',
     fontWeight: '500',
-    alignSelf:"center"
+    alignSelf: "center"
   },
 
   activeFilterText: {

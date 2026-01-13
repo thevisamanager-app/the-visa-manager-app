@@ -543,8 +543,8 @@ import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../../util
 
 const ORANGE = "#FF5C00";
 
-export default function StartApplicationScreen() {
-  const navigation = useNavigation();
+export default function StartApplicationScreen({ navigation, route }) {
+  const date = route.params?.date;
   const selected = useSelector((state) => state.destinations.selected);
 
   const country = selected?.countrName || "Country";
@@ -552,7 +552,7 @@ export default function StartApplicationScreen() {
   const rotation = useRef(new Animated.Value(0)).current;
   const planeAnimRef = useRef(null);
   const scaleAnim = useRef(new Animated.Value(1)).current;
-  const [date, setDate] = useState("");
+  // const [date, setDate] = useState("");
 
   // Animate button
   useEffect(() => {
@@ -581,10 +581,10 @@ export default function StartApplicationScreen() {
     inputRange: [0, 1],
     outputRange: ["0deg", "360deg"],
   });
-
   const handleStart = () => {
-    navigation.navigate("TravelDateScreen", {
-      countryType: selected?.countryType,
+    navigation.navigate("VisaTypeScreen", {
+      date: date,
+      country:country
     });
   };
 
@@ -598,10 +598,10 @@ export default function StartApplicationScreen() {
     return currentDate.toLocaleDateString("en-GB", options);
   };
 
-  useEffect(() => {
-    setDate(getDateAfterFiveDays());
-  }, []);
-
+  // useEffect(() => {
+  //   setDate(getDateAfterFiveDays());
+  // }, []);
+  console.log("DATE===>", date)
   return (
     <View style={styles.container}>
 
@@ -631,7 +631,16 @@ export default function StartApplicationScreen() {
             <Text style={styles.startButtonText}>Start</Text>
           </TouchableOpacity>
         </Animated.View>
+
       </View>
+      <Text
+        style={styles.linkText}
+        onPress={() =>
+          navigation.navigate("VisaDetailsScreen")
+        }
+      >
+        More Info
+      </Text>
     </View>
   );
 }
@@ -653,13 +662,13 @@ const styles = StyleSheet.create({
 
   centerArea: {
     alignItems: "center",
-    marginTop: verticalScale(60),
+    marginTop: verticalScale(10),
   },
 
   lottie: {
     width: wp("80%"),
     height: hp("40%"),
-    marginBottom: verticalScale(10),
+    marginBottom: verticalScale(5),
   },
 
   title: {
@@ -703,5 +712,13 @@ const styles = StyleSheet.create({
     color: "#fff",
     textTransform: "uppercase",
     letterSpacing: 1,
+  },
+  linkText: {
+    color: '#FF5C00',
+    textDecorationLine: 'underline',
+    fontWeight: '600',
+    marginTop: verticalScale(20),
+    textAlign: 'center',
+    fontSize: RFValue(20),
   },
 });

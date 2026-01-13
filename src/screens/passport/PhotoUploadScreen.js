@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
+import FaceDetector from "@react-native-ml-kit/face-detection";
 import { launchImageLibrary } from "react-native-image-picker";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { uploadUserPhoto } from "../../api/user/photoService";
@@ -19,32 +20,96 @@ import {
   RFValue,
 } from "../../utils/metrics";
 import ScreenWrapper from "../../components/ScreenWrapper";
+import LottieView from "lottie-react-native";
+import { useSelector } from 'react-redux';
+
 
 export default function PhotoUploadScreen({ navigation, route }) {
+  
   const travelDate = route?.params?.travelDate || null;
+  const visatype = route?.params?.visatype || null;
+  console.log("TRAVELDATE==",travelDate)
   const [photo, setPhoto] = useState(null);
   const [date, setDate] = useState("");
+  const [detecting, setDetecting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const selected = useSelector((state) => state.destinations.selected);
+  const country = selected?.countrName || "Country";
+
   const addMode = route?.params?.addMode || false;
   const editMode = route?.params?.editMode || false;
   const ORANGE = "#FF7A00";
   console.log("ROUTEDATA===", route.params)
+  const getMLKitUri = (uri) => {
+    return uri.startsWith('file://') ? uri : `file://${uri}`;
+  };
+
   const pickPhoto = async () => {
+    if (detecting) return;
+    setDetecting(true);
+
     const result = await launchImageLibrary({
       mediaType: "photo",
-      includeBase64: false,
       quality: 0.8,
     });
 
-    if (!result.assets) return;
+    if (!result.assets || !result.assets[0]) {
+      setDetecting(false);
+      return;
+    }
+
+    const image = result.assets[0];
+
+    if (!image.uri) {
+      Alert.alert("Invalid Image", "Could not read image file.");
+      setDetecting(false);
+      return;
+    }
 
     try {
-      const uploadedUrl = await uploadUserPhoto(result.assets[0]);
+      const faces = await FaceDetector.detect(
+        getMLKitUri(image.uri),
+        {
+          performanceMode: 'accurate',
+          landmarkMode: 'none',
+          contourMode: 'none',
+
+        }
+      );
+
+      if (!faces || faces.length === 0) {
+        Alert.alert(
+          "Invalid Photo",
+          "Please upload a clear photo showing a human face."
+        );
+        return;
+      }
+
+      if (faces.length > 1) {
+        Alert.alert(
+          "Multiple Faces Detected",
+          "Please upload a photo with only one person."
+        );
+        return;
+      }
+      setIsUploading(true);
+      const uploadedUrl = await uploadUserPhoto(image);
       setPhoto(uploadedUrl);
-    } catch (err) {
-      console.log("UPLOAD PHOTO ERROR:", err);
-      Alert.alert("Error", "Failed to upload photo.");
+
+    } catch (error) {
+      console.log("FACE DETECTION ERROR:", error);
+      Alert.alert(
+        "Face Detection Failed",
+        "Please try another clear photo."
+      );
+    } finally {
+      setIsUploading(false);
+      setDetecting(false);
     }
   };
+
+
+
 
   const confirmPhoto = () => {
     if (!photo) {
@@ -58,6 +123,8 @@ export default function PhotoUploadScreen({ navigation, route }) {
         passport: route.params.passport,
         coTravellers: route?.params?.coTravellers || [],
         travelDate,
+        visatype,
+        country:country
       });
       return;
     }
@@ -78,6 +145,8 @@ export default function PhotoUploadScreen({ navigation, route }) {
         coTravellers: route?.params?.coTravellers || [],
         photoUrl: photo,
         mainPhotoUrl: route.params.mainPhotoUrl,
+        visatype,
+        country:country
       });
 
       return;
@@ -86,6 +155,7 @@ export default function PhotoUploadScreen({ navigation, route }) {
     navigation.navigate("PassportUploadScreen", {
       travelDate,
       photoUrl: photo,
+      country:country
     });
   };
 
@@ -102,6 +172,18 @@ export default function PhotoUploadScreen({ navigation, route }) {
   return (
     <ScreenWrapper style={styles.container}>
       {/* TOP NAV */}
+      {/* 🔥 LOTTIE LOADER OVERLAY */}
+      {isUploading && (
+        <View style={styles.loaderOverlay}>
+          <LottieView
+            source={require("../../assets/lottie/Loading.json")}
+            autoPlay
+            loop
+            style={styles.loader}
+          />
+          <Text style={styles.loadingText}>Uploading photo...</Text>
+        </View>
+      )}
       <View style={styles.topNav}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Icon name="arrow-back" size={26} color="black" />
@@ -109,7 +191,7 @@ export default function PhotoUploadScreen({ navigation, route }) {
 
         <View style={styles.stepBadge}>
           <Icon name="check-circle" size={18} color="white" />
-          <Text style={styles.stepBadgeText}>Visa on {date}</Text>
+          <Text style={styles.stepBadgeText}>Visa on {travelDate}</Text>
         </View>
 
         <TouchableOpacity
@@ -207,7 +289,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: verticalScale(5),
   },
+  loaderOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(255,255,255,0.9)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 10,
+  },
+  loader: {
+    width: 120,
+    height: 120,
+  },
 
+  loadingText: {
+    marginTop: verticalScale(10),
+    fontSize: RFValue(14),
+    color: "#555",
+    fontWeight: "600",
+  },
   stepBadge: {
     backgroundColor: "#FF5C00",
     paddingHorizontal: moderateScale(12),
@@ -301,7 +400,7 @@ const styles = StyleSheet.create({
   instructionText: {
     marginTop: verticalScale(15),
     textAlign: "center",
-    fontSize: RFValue(15),
+    fontSize: RFValue(10),
     color: "#666",
     lineHeight: RFValue(16),
   },

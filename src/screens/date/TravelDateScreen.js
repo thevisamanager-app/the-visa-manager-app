@@ -1050,7 +1050,7 @@
 //   const onDayPress = (day) => {
 //     setSelectedDate(day.dateString);
 //   };
-  
+
 //   const markedDates = useMemo(() => {
 //     if (!selectedDate) return {};
 //     return {
@@ -1393,18 +1393,38 @@ function formatDisplayDate(dateString) {
   return `${d}/${m}/${y}`;
 }
 
+function formatBadgeDate(dateString) {
+  if (!dateString) return "";
+  return new Date(dateString).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+
 /* ===================== SCREEN ===================== */
-export default function TravelDateScreen({ navigation }) {
+export default function TravelDateScreen({ navigation, route}) {
+    const selected = useSelector((state) => state.destinations.selected);
+    const country = selected?.countrName || "Country";
+  const visatype = route.params?.visaType;
+  console.log("VISATYPE=>", visatype)
+
+  // 1️⃣ STATE HOOKS FIRST
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [mode, setMode] = useState("fixed");
+  const [saving, setSaving] = useState(false);
+
+  // 2️⃣ MEMO HOOKS AFTER STATE
+  const formattedSelectedDate = useMemo(() => {
+    return selectedDate ? formatBadgeDate(selectedDate) : null;
+  }, [selectedDate]);
+
   const today = useMemo(() => new Date(), []);
   const minDate = useMemo(() => toYMD(addDays(today, 3)), [today]);
   const maxDate = useMemo(() => toYMD(addMonths(today, 3)), [today]);
 
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [mode, setMode] = useState("fixed");
-  const [saving, setSaving] = useState(false);
-  const [date, setDate] = useState("");
-
-  /* 🔥 READ SELECTED DESTINATION FROM REDUX (ONLY SOURCE OF TRUTH) */
+  // 3️⃣ REDUX / OTHER HOOKS
   const selectedDestination = useSelector(
     (state) => state.destinations.selected
   );
@@ -1412,6 +1432,7 @@ export default function TravelDateScreen({ navigation }) {
   const isSchengen =
     selectedDestination?.countryType?.toLowerCase() === "schengen";
 
+  // 4️⃣ HANDLERS (NOT HOOKS)
   const onDayPress = (day) => {
     setSelectedDate(day.dateString);
   };
@@ -1446,11 +1467,15 @@ export default function TravelDateScreen({ navigation }) {
       /* 🔥 CONDITIONAL FLOW */
       if (isSchengen) {
         navigation.navigate("SchengenPersonalDetails", {
-          travelDate: payload,
+          travelDate: formattedSelectedDate,
+          visatype: visatype,
+          country:country
         });
       } else {
         navigation.navigate("PhotoUploadScreen", {
-          travelDate: payload,
+          travelDate: formattedSelectedDate,
+          visatype: visatype,
+          country:country
         });
       }
     } catch (err) {
@@ -1466,9 +1491,9 @@ export default function TravelDateScreen({ navigation }) {
     return currentDate.toLocaleDateString("en-GB", options);
   };
 
-  useEffect(() => {
-    setDate(getDateAfterFiveDays());
-  }, []);
+  // useEffect(() => {
+  //   setDate(getDateAfterFiveDays());
+  // }, []);
 
   return (
     <ScreenWrapper style={styles.safe}>
@@ -1481,8 +1506,12 @@ export default function TravelDateScreen({ navigation }) {
         <View style={styles.badge}>
           <Ionicons name="checkmark-circle" size={moderateScale(16)} color="#fff" />
           <Text style={styles.badgeText}>
-            Visa on <Text style={{ fontWeight: "700" }}>{date}</Text>
+            Visa on{" "}
+            <Text style={{ fontWeight: "700" }}>
+              {formattedSelectedDate || "Select date"}
+            </Text>
           </Text>
+
         </View>
 
         <TouchableOpacity

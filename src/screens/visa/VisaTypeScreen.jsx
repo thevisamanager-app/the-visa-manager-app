@@ -11,11 +11,11 @@ import ScreenWrapper from "../../components/ScreenWrapper";
 
 export default function VisaTypeScreen({ navigation }) {
     const handleSelect = (visaTypeSelected) => {
-        navigation.navigate("TravelDateScreen", {
+        navigation.navigate("EntryTypeScreen", {
             visaType: visaTypeSelected,
         });
     };
-    
+
 
     return (
         <ScreenWrapper style={styles.screen}>

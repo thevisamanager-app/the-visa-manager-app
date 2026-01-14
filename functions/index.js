@@ -129,6 +129,8 @@ app.get("/users/:uid", async (req, res) => {
 // ===================== CREATE RAZORPAY ORDER ======================
 app.post("/createRazorpayOrder", async (req, res) => {
   try {
+    console.log("KEY_ID present:", !!RAZORPAY_KEY_ID.value());
+    console.log("KEY_SECRET present:", !!RAZORPAY_KEY_SECRET.value());
     const { amount, userId } = req.body;
     if (!amount || !userId) {
       return res.status(400).json({ error: "Missing fields" });
@@ -155,6 +157,7 @@ app.post("/createRazorpayOrder", async (req, res) => {
       currency: order.currency,
     });
   } catch (e) {
+    console.error("RAZORPAY ORDER ERROR:", e);
     return res.status(500).json({ error: "Order creation failed", details: e.message });
   }
 });
@@ -249,7 +252,7 @@ exports.generateInvoice = onCall(async (req) => {
       throw new HttpsError("unauthenticated", "User not authenticated");
     }
 
-    const { invoiceId, userName, date, amount, userId, country, email,phoneNumber } = req.data;
+    const { invoiceId, userName, date, amount, userId, country, email, phoneNumber } = req.data;
 
     // --------- BASIC VALIDATION ----------
     if (!invoiceId || !date || amount == null || !userId || !country) {
@@ -448,7 +451,8 @@ exports.extractTextFromImage = onCall(
 // ===================== EXPORT EXPRESS API ======================
 exports.api = onRequest(
   {
-    region: "us-central1",
+
+    region: "asia-south1",
     secrets: [RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET],
   },
   app

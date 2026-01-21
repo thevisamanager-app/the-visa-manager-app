@@ -229,7 +229,7 @@ export default function PassportUploadScreen({ navigation, route }) {
 
 
       {/* PROGRESS BAR */}
-      {selected.countryType === "Schengen" ?
+      {selected.countryType === "Schengen"&& "Thailand"?
         <View style={styles.progressContainer}>
           <View style={styles.stepItem}>
             <Icon name="check-circle" size={22} color={ORANGE} />

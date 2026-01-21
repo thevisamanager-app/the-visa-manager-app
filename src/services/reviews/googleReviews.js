@@ -3,6 +3,11 @@ const GOOGLE_REVIEWS_URL =
 
 export const fetchGoogleReviews = async () => {
   const res = await fetch(GOOGLE_REVIEWS_URL);
-  if (!res.ok) throw new Error("Failed to fetch reviews");
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error("Failed to fetch reviews: " + text);
+  }
+
   return res.json();
 };

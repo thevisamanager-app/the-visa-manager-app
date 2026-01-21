@@ -1404,9 +1404,9 @@ function formatBadgeDate(dateString) {
 
 
 /* ===================== SCREEN ===================== */
-export default function TravelDateScreen({ navigation, route}) {
-    const selected = useSelector((state) => state.destinations.selected);
-    const country = selected?.countrName || "Country";
+export default function TravelDateScreen({ navigation, route }) {
+  const selected = useSelector((state) => state.destinations.selected);
+  const country = selected?.countrName || "Country";
   const visatype = route.params?.visaType;
   // console.log("VISATYPE=>", visatype)
 
@@ -1431,7 +1431,7 @@ export default function TravelDateScreen({ navigation, route}) {
 
   const isSchengen =
     selectedDestination?.countryType?.toLowerCase() === "schengen";
-
+  
   // 4️⃣ HANDLERS (NOT HOOKS)
   const onDayPress = (day) => {
     setSelectedDate(day.dateString);
@@ -1469,13 +1469,13 @@ export default function TravelDateScreen({ navigation, route}) {
         navigation.navigate("SchengenPersonalDetails", {
           travelDate: formattedSelectedDate,
           visatype: visatype,
-          country:country
+          country: country
         });
       } else {
         navigation.navigate("PhotoUploadScreen", {
           travelDate: formattedSelectedDate,
           visatype: visatype,
-          country:country
+          country: country
         });
       }
     } catch (err) {

@@ -146,6 +146,9 @@ dependencies {
     implementation project(':react-native-razorpay')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-linear-gradient')
+      implementation(project(":react-native-video")) {
+        exclude group: "com.facebook.react", module: "react-native-webrtc"
+    }
     implementation 'com.facebook.fresco:fresco:2.6.0'
 
 

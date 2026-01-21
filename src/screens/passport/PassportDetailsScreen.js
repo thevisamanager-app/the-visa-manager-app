@@ -17,6 +17,10 @@ import ScreenWrapper from "../../components/ScreenWrapper";
 import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../../utils/metrics";
 import { useSelector } from "react-redux";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { launchImageLibrary } from "react-native-image-picker";
+import { uploadUserDocument } from "../../utils/uploadUserDocument";
+
+
 
 
 
@@ -25,26 +29,62 @@ const ORANGE_LIGHT = "#FFE1CC";
 const BLACK = "#000";
 const GRAY = "#777";
 const GOLD = "#D6B25E";
-const THAILAND_LOCATIONS = [
-  "Bangkok",
-  "Chiang Mai",
-  "Phuket",
-  "Pattaya",
-  "Krabi",
-  "Ayutthaya",
-  "Chiang Rai",
-  "Hua Hin",
-  "Kanchanaburi",
-  "Koh Samui",
-  "Koh Phi Phi",
-  "Surat Thani",
-  "Trang",
-  "Udon Thani",
-  "Ubon Ratchathani",
-  "Chai Nat",
+// const THAILAND_LOCATIONS = [
+//   "Bangkok",
+//   "Chiang Mai",
+//   "Phuket",
+//   "Pattaya",
+//   "Krabi",
+//   "Ayutthaya",
+//   "Chiang Rai",
+//   "Hua Hin",
+//   "Kanchanaburi",
+//   "Koh Samui",
+//   "Koh Phi Phi",
+//   "Surat Thani",
+//   "Trang",
+//   "Udon Thani",
+//   "Ubon Ratchathani",
+//   "Chai Nat",
+// ];
+
+const INDIAN_STATES = [
+  "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Delhi",
+  "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala",
+  "Madhya Pradesh", "Maharashtra", "Odisha", "Punjab", "Rajasthan", "Tamil Nadu",
+  "Telangana", "Uttar Pradesh", "Uttarakhand", "West Bengal"
 ];
 
+const PURPOSE_OF_TRAVEL = [
+  "Tourism",
+  "Business",
+  "Family Visit",
+  "Transit",
+  "Other"
+];
+
+const OCCUPATIONS = [
+  "Employee",
+  "Self-Employed",
+  "Housewife",
+  "Student"
+];
+
+const MODE_OF_TRAVEL = ["Air", "Land", "Sea"];
+
+const MODE_OF_TRANSPORT = [
+  "Commercial Flight",
+  "Cargo",
+  "Private Aircraft",
+  "Car",
+  "Train",
+  "Cruise",
+  "Commercial Vessel"
+];
+
+
 export default function PassportDetailsScreen({ navigation, route }) {
+
   // === Helpers ===
   const toArray = (value) => {
     if (!value) return [];
@@ -72,24 +112,7 @@ export default function PassportDetailsScreen({ navigation, route }) {
       "Nov",
       "Dec",
     ];
-    const THAILAND_LOCATIONS = [
-      "Bangkok",
-      "Chiang Mai",
-      "Phuket",
-      "Pattaya",
-      "Krabi",
-      "Ayutthaya",
-      "Chiang Rai",
-      "Hua Hin",
-      "Kanchanaburi",
-      "Koh Samui",
-      "Koh Phi Phi",
-      "Surat Thani",
-      "Trang",
-      "Udon Thani",
-      "Ubon Ratchathani",
-      "Chai Nat",
-    ];
+
 
     return `${day} ${months[parseInt(month, 10) - 1]} ${fullYear}`;
   }
@@ -97,7 +120,7 @@ export default function PassportDetailsScreen({ navigation, route }) {
   // === PARAMS ===
   const travelDate = route?.params?.travelDate || route?.params?.travel || null;
   const visatype = route.params?.visaType;
-    console.log("VISATYPE=>",visatype)
+  console.log("VISATYPE=>", visatype)
   // base main passport (initial from params)
   const basePassport = route?.params?.passport || {};
 
@@ -105,11 +128,60 @@ export default function PassportDetailsScreen({ navigation, route }) {
   // MAIN PASSPORT STATE
   const [passportState, setPassportState] = useState(basePassport);
   const [date, setDate] = useState("");
-  const [flightno, setflightno] = useState("");
-  const [arrivaldate, setarrivaldate] = useState("");
   const [hotelname, sethotelname] = useState("");
-  const [location, setlocation] = useState("");
   const selected = useSelector((state) => state.destinations.selected);
+  const countryName =
+    selected?.countrName?.trim().toLowerCase() || "";
+const TRAVEL_DETAILS_COUNTRIES = [
+  "thailand",
+  "malaysia",
+  "sri lanka",
+  "maldives",
+  "bhutan",
+  "mauritius",
+  "hong kong",
+  "singapore",
+  "barbados",
+];
+
+  const showTravelDetails =
+  TRAVEL_DETAILS_COUNTRIES.includes(countryName);
+
+  // 🇹🇭 Thailand extra fields
+  const [indiaResidence, setIndiaResidence] = useState("");
+  const [purposeOfTravel, setPurposeOfTravel] = useState("");
+  const [occupation, setOccupation] = useState("");
+  const [stayAddress, setStayAddress] = useState("");
+
+
+  const [entryDate, setEntryDate] = useState("");
+  const [exitDate, setExitDate] = useState("");
+
+  const [entryMode, setEntryMode] = useState("");
+  const [entryTransport, setEntryTransport] = useState("");
+  const [exitMode, setExitMode] = useState("");
+  const [exitTransport, setExitTransport] = useState("");
+
+  const [visitedLast14Days, setVisitedLast14Days] = useState(false);
+  // const [visitedCountries, setVisitedCountries] = useState("");
+
+  const [email, setEmail] = useState("");
+
+  const [showEntryPicker, setShowEntryPicker] = useState(false);
+  const [showExitPicker, setShowExitPicker] = useState(false);
+
+  // ✈️ Air ticket upload
+  const [airTicketUrl, setAirTicketUrl] = useState("");
+  const [airTicketUploading, setAirTicketUploading] = useState(false);
+
+  // ✈️ Exit / Return ticket upload
+  const [returnTicketUrl, setReturnTicketUrl] = useState("");
+  const [returnTicketUploading, setReturnTicketUploading] = useState(false);
+
+  // const [malaysiaTicketUrl, setMalaysiaTicketUrl] = useState("");
+  // const [malaysiaTicketUploading, setMalaysiaTicketUploading] = useState(false);
+
+
 
 
   // useEffect(() => {
@@ -122,6 +194,74 @@ export default function PassportDetailsScreen({ navigation, route }) {
   // ===============================
   // 📞 INDIAN PHONE NUMBER VALIDATION
   // ===============================
+
+  const handleUploadAirTicket = async () => {
+    try {
+      const res = await launchImageLibrary({
+        mediaType: "mixed",
+        selectionLimit: 1,
+      });
+
+      if (res.didCancel) return;
+
+      const asset = res.assets?.[0];
+      if (!asset?.uri) {
+        Alert.alert("Error", "Unable to read file");
+        return;
+      }
+
+      setAirTicketUploading(true);
+
+      const localPath = asset.uri.replace("file://", "");
+      const fileName = asset.fileName || "air_ticket.pdf";
+
+      const url = await uploadUserDocument(localPath, fileName);
+
+
+      setAirTicketUrl(url);
+      setAirTicketUploading(false);
+
+      Alert.alert("Success", "Air ticket uploaded successfully");
+    } catch (err) {
+      setAirTicketUploading(false);
+      Alert.alert("Upload Failed", err.message || "Something went wrong");
+    }
+  };
+
+  const handleUploadReturnTicket = async () => {
+    try {
+      const res = await launchImageLibrary({
+        mediaType: "mixed",
+        selectionLimit: 1,
+      });
+
+      if (res.didCancel) return;
+
+      const asset = res.assets?.[0];
+      if (!asset?.uri) {
+        Alert.alert("Error", "Unable to read file");
+        return;
+      }
+
+      setReturnTicketUploading(true);
+
+      const localPath = asset.uri.replace("file://", "");
+      const fileName = asset.fileName || "return_ticket.pdf";
+
+      const url = await uploadUserDocument(localPath, fileName);
+
+
+      setReturnTicketUrl(url);
+      setReturnTicketUploading(false);
+
+      Alert.alert("Success", "Return ticket uploaded successfully");
+    } catch (err) {
+      setReturnTicketUploading(false);
+      Alert.alert("Upload Failed", err.message || "Something went wrong");
+    }
+  };
+
+
   const validateIndianPhoneNumber = (number) => {
     if (!number) {
       return { valid: false, message: "Phone number is required" };
@@ -226,9 +366,6 @@ export default function PassportDetailsScreen({ navigation, route }) {
     passportState?.phoneNumber || ""
   );
 
-  const [showArrivalPicker, setShowArrivalPicker] = useState(false);
-
-
 
   // update fields when passportState changes
   useEffect(() => {
@@ -257,7 +394,6 @@ export default function PassportDetailsScreen({ navigation, route }) {
     navigation.navigate("PhotoUploadScreen", {
       addMode: true,
       travelDate: travelDate,
-      visatype: visaType,
       passport: passportState,        // ✅ PASS MAIN PASSPORT
       coTravellers,
       mainPhotoUrl: photoUrlState,
@@ -298,38 +434,67 @@ export default function PassportDetailsScreen({ navigation, route }) {
 
   // === Confirm ===
   const onConfirm = async () => {
-    if (
-      !firstName ||
-      !lastName ||
-      !passportNumber ||
-      !nationality ||
-      !birthDate ||
-      !expiryDate ||
-      !phoneNumber
-    ) {
-      Alert.alert("Missing Info", "Please fill all details");
+    if (!firstName || !lastName || !passportNumber || !nationality) {
+      Alert.alert("Missing Info", "Fill all required fields");
       return;
     }
 
-    // ✅ PHONE VALIDATION
-    const phoneCheck = validateIndianPhoneNumber(phoneNumber);
-    if (!phoneCheck.valid) {
-      Alert.alert("Invalid Phone Number", phoneCheck.message);
+    if (entryMode === "Air" && !airTicketUrl) {
+      Alert.alert("Missing Ticket", "Please upload air ticket");
+      return;
+    }
+
+    if (exitMode === "Air" && !returnTicketUrl) {
+      Alert.alert(
+        "Missing Return Ticket",
+        "Please upload your return air ticket"
+      );
       return;
     }
 
     const payload = {
-      ...passportState,
+      ...passportState,   // ✅ IMPORTANT
       firstName,
       lastName,
       passportNumber,
       nationality,
       birthDate,
       expiryDate,
-      photoUrl: photoUrlState,
+      phoneNumber: `+91${phoneNumber}`,
+
+      // 🔥 THESE ARE THE MISSING PIECES
+      photoUrl: photoUrlState || null,
+      frontImageURL: passportState.frontImageURL || null,
+      backImageURL: passportState.backImageURL || null,
+
       coTravellers,
-      phoneNumber: `+91${phoneNumber}`, // ✅ STORE WITH COUNTRY CODE
+
+      travelDate: {
+        country: selected.countrName,
+        indiaResidence,
+        purposeOfTravel,
+        occupation,
+        hotelname,
+        stayAddress,
+        entry: {
+          date: entryDate,
+          mode: entryMode,
+          transport: entryTransport,
+          airTicketUrl: airTicketUrl || null,
+        },
+        exit: {
+          date: exitDate,
+          mode: exitMode,
+          transport: exitTransport,
+          returnTicketUrl: returnTicketUrl || null,
+        },
+        visitedLast14Days,
+        email,
+      },
     };
+
+    // ✅ STORE WITH COUNTRY CODE
+
 
     await savePassportData(payload);
 
@@ -356,6 +521,7 @@ export default function PassportDetailsScreen({ navigation, route }) {
 
   return (
     <ScreenWrapper style={styles.container}>
+
       {/* NAV */}
       <View style={styles.topNav}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -671,108 +837,180 @@ export default function PassportDetailsScreen({ navigation, route }) {
             />
           </View>
 
-          {selected.countrName === "Malaysia" ? (
-            <View style={styles.form}>
-              <Label text="Please enter your flight number to" />
-              <Input value={flightno} onChangeText={setflightno} />
-              <Label text="Arrival Date" />
-
-              <TouchableOpacity
-                style={styles.input}
-                onPress={() => setShowArrivalPicker(true)}
-              >
-                <Text style={{ color: arrivaldate ? "#000" : GRAY }}>
-                  {arrivaldate || "Select arrival date"}
-                </Text>
-              </TouchableOpacity>
-
-              {showArrivalPicker && (
-                <DateTimePicker
-                  value={arrivaldate ? new Date(arrivaldate) : new Date()}
-                  mode="date"
-                  display={Platform.OS === "android" ? "default" : "spinner"}
-                  minimumDate={new Date()}
-                  themeVariant="light"
-                  onChange={(event, selectedDate) => {
-                    setShowArrivalPicker(false);
-
-                    // Android cancel fix
-                    if (event.type === "dismissed") return;
-
-                    if (selectedDate) {
-                      setarrivaldate(
-                        selectedDate.toLocaleDateString("en-GB", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                        })
-                      );
-                    }
-                  }}
-                />
-              )}
-
-            </View>
-          ) : selected.countrName === "Thailand" ?
-            <View style={styles.form}>
-              <Label text="Please enter your flight number to" />
-              <Input value={flightno} onChangeText={setflightno} />
-              <Label text="Arrival Date" />
-
-              <TouchableOpacity
-                style={styles.input}
-                onPress={() => setShowArrivalPicker(true)}
-              >
-                <Text style={{ color: arrivaldate ? "#000" : GRAY }}>
-                  {arrivaldate || "Select arrival date"}
-                </Text>
-              </TouchableOpacity>
-
-
-              {showArrivalPicker && (
-                <DateTimePicker
-                  value={arrivaldate ? new Date(arrivaldate) : new Date()}
-                  mode="date"
-                  display={Platform.OS === "android" ? "default" : "spinner"}
-                  minimumDate={new Date()}
-                  themeVariant="light"
-                  onChange={(event, selectedDate) => {
-                    setShowArrivalPicker(false);
-
-                    // Android cancel fix
-                    if (event.type === "dismissed") return;
-
-                    if (selectedDate) {
-                      setarrivaldate(
-                        selectedDate.toLocaleDateString("en-GB", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                        })
-                      );
-                    }
-                  }}
-                />
-              )}
-              <Label text="Enter the hotel name in thailand" />
-              <Input value={hotelname} onChangeText={sethotelname} />
-
-              <Label text="Location in Thailand" />
-
-              <View style={styles.input}>
+          {/* THAILAND + MALAYSIA (SAME FIELDS) */}
+          {showTravelDetails && (
+            <View style={[styles.sectionCard, { marginTop: 16 }]}>
+              <Text style={styles.travelDetailsTitle}>Travel Details</Text>
+              <Label text="Purpose of Travel" />
+              <View style={styles.pickerContainer}>
                 <Picker
-                  selectedValue={location}
-                  onValueChange={(value) => setlocation(value)}
-                  dropdownIconColor="#000"
+                  selectedValue={purposeOfTravel}
+                  onValueChange={setPurposeOfTravel}
+                  mode="dropdown"                 // 🔥 mandatory
+                  dropdownIconColor={BLACK}
+                  style={styles.pickerAndroid}
                 >
-                  <Picker.Item label="Select location" value="" color={GRAY} />
-                  {THAILAND_LOCATIONS.map((item) => (
-                    <Picker.Item key={item} label={item} value={item} />
+                  <Picker.Item label="Select purpose" value="" color={GRAY} />
+                  {PURPOSE_OF_TRAVEL.map(p => (
+                    <Picker.Item key={p} label={p} value={p} />
                   ))}
                 </Picker>
               </View>
-            </View> : null
-          }
+
+
+              <Label text="Occupation" />
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={occupation}
+                  onValueChange={setOccupation}
+                  mode="dropdown"
+                  dropdownIconColor={BLACK}
+                  style={styles.pickerAndroid}
+                >
+                  <Picker.Item label="Select occupation" value="" color={GRAY} />
+                  {OCCUPATIONS.map(o => (
+                    <Picker.Item key={o} label={o} value={o} />
+                  ))}
+                </Picker>
+              </View>
+
+
+              <Label text="Hotel / Accommodation Name" />
+              <Input value={hotelname} onChangeText={sethotelname} />
+
+              <Label
+                text={`Complete Address in ${selected?.countrName || "Destination"}`}
+              />
+
+
+              <Input
+                value={stayAddress}
+                onChangeText={setStayAddress}
+              />
+
+              {/* ENTRY */}
+              <Label text="Entry Date" />
+              <TouchableOpacity style={styles.input} onPress={() => setShowEntryPicker(true)}>
+                <Text style={{ color: entryDate ? BLACK : GRAY }}>
+                  {entryDate || "Select entry date"}
+                </Text>
+
+              </TouchableOpacity>
+
+              {showEntryPicker && (
+                <DateTimePicker
+                  value={new Date()}
+                  mode="date"
+                  onChange={(e, d) => {
+                    setShowEntryPicker(false);
+                    d && setEntryDate(d.toLocaleDateString("en-GB"));
+                  }}
+                />
+              )}
+
+              <Text style={styles.label}>Entry Mode of Travel</Text>
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={entryMode}
+                  onValueChange={setEntryMode}
+                  style={styles.pickerAndroid}
+                >
+                  <Picker.Item label="Select mode" value="" color={GRAY} />
+                  {MODE_OF_TRAVEL.map(m => (
+                    <Picker.Item key={m} label={m} value={m} />
+                  ))}
+                </Picker>
+              </View>
+
+              {["Air", "Land", "Sea"].includes(entryMode) && (
+
+                <>
+                 <Text style={styles.label}>Upload Travel Ticket / Proof</Text>
+                  <TouchableOpacity
+                    style={styles.uploadBtn}
+                    onPress={handleUploadAirTicket}
+                    disabled={airTicketUploading}
+                  >
+                    <Icon
+                      name={airTicketUrl ? "check-circle" : "upload-file"}
+                      size={20}
+                      color={airTicketUrl ? "#0a0" : ORANGE}
+                    />
+                    <Text style={styles.uploadText}>
+                      {airTicketUploading
+                        ? "Uploading..."
+                        : airTicketUrl
+                          ? "Uploaded"
+                          : "Upload Ticket"}
+                    </Text>
+                  </TouchableOpacity>
+                </>
+              )}
+
+
+              <Label text="Entry Mode of Transport" />
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={entryTransport}
+                  onValueChange={setEntryTransport}
+                  mode="dropdown"
+                  dropdownIconColor={BLACK}
+                  style={styles.pickerAndroid}
+                >
+                  <Picker.Item label="Select transport" value="" color={GRAY} />
+                  {MODE_OF_TRANSPORT.map(t => (
+                    <Picker.Item key={t} label={t} value={t} />
+                  ))}
+                </Picker>
+              </View>
+
+
+              <Label text="Visited any country in last 14 days?" />
+
+              <View style={styles.radioContainer}>
+                <View style={styles.radioRow}>
+                  <TouchableOpacity
+                    style={styles.radioOption}
+                    onPress={() => setVisitedLast14Days(true)}
+                  >
+                    <Icon
+                      name={visitedLast14Days ? "radio-button-checked" : "radio-button-unchecked"}
+                      size={20}
+                      color={ORANGE}
+                    />
+                    <Text style={styles.radioText}>Yes</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.radioOption}
+                    onPress={() => {
+                      setVisitedLast14Days(false);
+                      setVisitedCountries("");
+                    }}
+                  >
+                    <Icon
+                      name={!visitedLast14Days ? "radio-button-checked" : "radio-button-unchecked"}
+                      size={20}
+                      color={ORANGE}
+                    />
+                    <Text style={styles.radioText}>No</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+
+              <Label text="Email ID" />
+              <Input
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+
+            </View>
+          )}
+          {/* : null */}
+
         </View>
 
         {/* Confirm */}
@@ -895,21 +1133,33 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: RFValue(13),
   },
+  label: {
+    marginTop: verticalScale(14),      // 🔥 same rhythm as old labels
+    marginBottom: verticalScale(4),    // 🔥 clear gap before field
+    fontWeight: "700",                 // 🔥 bold like premium fields
+    fontSize: RFValue(13),
+    color: "#111",
+  },
+
 
   inputLabel: {
-    marginTop: verticalScale(10),
-    fontWeight: "600",
+    marginTop: verticalScale(14),
+    marginBottom: verticalScale(4),
+    fontWeight: "700",      // 🔥 match Label
     fontSize: RFValue(13),
+    color: "#111",
   },
+
 
   input: {
     borderWidth: scale(1),
     borderColor: "#ddd",
-    padding: moderateScale(8),
-    marginTop: verticalScale(4),
-    borderRadius: moderateScale(8),
+    paddingHorizontal: moderateScale(12),
+    paddingVertical: verticalScale(12),
+    marginTop: 0,                    // 🔥 IMPORTANT
+    borderRadius: moderateScale(10),
     backgroundColor: "#fff",
-    fontSize: RFValue(13),
+    fontSize: RFValue(14),
   },
 
   docRow: {
@@ -1035,6 +1285,68 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: BLACK,
   },
+  radioContainer: {
+    borderWidth: scale(1),
+    borderColor: "#ddd",
+    borderRadius: moderateScale(10),
+    paddingVertical: verticalScale(12),
+    paddingHorizontal: moderateScale(12),
+    marginTop: verticalScale(6),
+    backgroundColor: "#fff",
+  },
+
+  radioRow: {
+    flexDirection: "row",
+  },
+
+  radioOption: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: scale(24),
+  },
+
+  radioText: {
+    marginLeft: scale(6),
+    fontSize: RFValue(14),
+    fontWeight: "500",
+    color: "#222",
+  },
+
+  picker: {
+    color: BLACK,              // ✅ selected text color
+    fontSize: RFValue(13),
+  },
+
+  pickerItem: {
+    color: BLACK,              // ✅ iOS wheel items
+    fontSize: RFValue(13),
+  },
+  pickerContainer: {
+    borderWidth: scale(1),
+    borderColor: "#ddd",
+    borderRadius: moderateScale(10),
+    backgroundColor: "#fff",
+    paddingHorizontal: moderateScale(8),
+    marginBottom: verticalScale(12),
+  },
+
+  pickerAndroid: {
+    height: verticalScale(44),   // ✅ minimum safe height
+    color: BLACK,
+    fontSize: RFValue(14),
+  },
+
+travelDetailsTitle: {
+  textAlign: "center",
+  fontSize: RFValue(18),
+  fontWeight: "800",
+  marginBottom: verticalScale(12),
+  color: "#111",
+},
+
+
+
+
 
 
 });

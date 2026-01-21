@@ -58,7 +58,7 @@
 
 import RazorpayCheckout from "react-native-razorpay";
 
-const BASE_URL = "https://api-fdkefcllsq-uc.a.run.app";
+const BASE_URL = "https://us-central1-thevisamanager-bea80.cloudfunctions.net/api";
 
 const CREATE_ORDER = `${BASE_URL}/createRazorpayOrder`;
 const VERIFY_PAYMENT = `${BASE_URL}/verifyRazorpayPayment`;
@@ -110,8 +110,9 @@ console.log("RAW ORDER RESPONSE ===>", raw);
       prefill: {
         name: userDetails?.firstName || "Guest",
         email: "guest@email.com",
-        contact: "0000000000",
+        contact: "9999999999",
       },
+
     };
 
     const paymentResponse = await RazorpayCheckout.open(options);

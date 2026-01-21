@@ -96,7 +96,7 @@ export default function SplashScreen({ navigation }) {
       //   screen: "Login",
       // });
       navigation.replace("Login");
-    }, 3000);
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, [navigation]);

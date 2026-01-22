@@ -73,7 +73,7 @@ useEffect(() => {
             
                   
                 </View> */}
-            <SchengenStepper step={0} />
+            <SchengenStepper step={0} traveldate={travelDate}/>
 
             {/* HEADER BADGE */}
             <View style={styles.headerBadge}>

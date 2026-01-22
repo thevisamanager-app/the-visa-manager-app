@@ -221,7 +221,6 @@ import PassportListScreen from "../components/PassportListScreen";
 import PassportUploadScreen from "../screens/passport/PassportUploadScreen";
 import PassportDetailsScreen from "../screens/passport/PassportDetailsScreen";
 import QuestionScreen from "../screens/questions/QuestionScreen";
-import ReviewAnswersScreen from "../screens/questions/ReviewAnswerScreen";
 import DestinationScreen from "../screens/DestinationScreen";
 import VisaQuestionScreen from "../screens/visa/VisaQuestionScreen";
 import CheckoutScreen from "../screens/visa/CheckoutScreen";
@@ -233,6 +232,7 @@ import RatingScreen from "../screens/visa/RatingScreen";
 import VisaStatusScreen from "../screens/visa/VisaStatusScreen";
 import EditProfileScreen from "../screens/profile/EditProfileScreen";
 import ProfileScreen from "../screens/profile/ProfileScreen";
+import MyTripsScreen from "../screens/profile/MyTripsScreen"
 import VisaDetailsScreen from "../screens/moreinfo/VisaDetailsScreen";
 import VisaTypeScreen from "../screens/visa/VisaTypeScreen";
 import EntrytypeScreen from "../screens/visa/EntryTypeScreen";
@@ -278,6 +278,10 @@ function UserStack() {
         name="SchengenSponsor"
         component={SchengenSponsorScreen}
       />
+        <Stack.Screen
+        name="MyTripScreen"
+        component={MyTripsScreen}
+      />
       <Stack.Screen
         name="SchengenAddress"
         component={SchengenAddressScreen}
@@ -300,7 +304,6 @@ function UserStack() {
       <Stack.Screen name="PassportUploadScreen" component={PassportUploadScreen} />
       <Stack.Screen name="PassportDetailsScreen" component={PassportDetailsScreen} />
       <Stack.Screen name="QuestionScreen" component={QuestionScreen} />
-      <Stack.Screen name="ReviewAnswersScreen" component={ReviewAnswersScreen} />
       <Stack.Screen name="VisaQuestionScreen" component={VisaQuestionScreen} />
       <Stack.Screen name="CheckoutScreen" component={CheckoutScreen} />
       <Stack.Screen name="RatingScreen" component={RatingScreen} />

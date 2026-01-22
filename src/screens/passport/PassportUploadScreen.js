@@ -20,6 +20,7 @@ import { uploadPassportImage } from "../../api/user/passportService";
 import auth from "@react-native-firebase/auth";
 import LottieView from "lottie-react-native";
 
+
 const ORANGE = "#FF5C00";
 const ORANGE_LIGHT = "#FFE1CC";
 const BLACK = "#000";
@@ -28,6 +29,7 @@ const GOLD = "#D6B25E";
 
 export default function PassportUploadScreen({ navigation, route }) {
   const travelDate = route?.params?.travelDate || null;
+    const visatype = route?.params?.visatype || null;
   const selected = useSelector((state) => state.destinations.selected);
   const countryName = selected?.countrName?.toLowerCase();
 const shouldSkipPhoto =
@@ -37,7 +39,7 @@ const shouldSkipPhoto =
   const isCoTraveller = route?.params?.addMode === true;
   const addMode = route?.params?.addMode || false;
   const editMode = route?.params?.editMode || false;
-
+  const country = selected?.countrName || "Country";
   const [front, setFront] = useState(null);
   const [back, setBack] = useState(null);
   const [mrzData, setMrzData] = useState(null);
@@ -128,7 +130,7 @@ const shouldSkipPhoto =
         travelDate,
         photoUrl: currentPhotoUrl,
         userId: auth().currentUser.uid,
-
+        
         companyDetails:
           selected.countryType === "Schengen"
             ? {
@@ -156,6 +158,8 @@ const shouldSkipPhoto =
         navigation.navigate("PassportDetailsScreen", {
           passport: route.params.passport, // 👈 KEEP MAIN
           travelDate: travelDate,
+          country:country,
+          visatype:visatype,
           photoUrl: route.params.mainPhotoUrl,
           coTravellers: [
             ...(route?.params?.coTravellers || []),
@@ -172,6 +176,8 @@ const shouldSkipPhoto =
       if (editMode) {
         navigation.navigate(route.params.returnTo, {
           updatedPassport: passportPayload,
+          visatype,
+          country:country
         });
         return;
       }
@@ -180,6 +186,8 @@ const shouldSkipPhoto =
         passport: passportPayload,
         travelDate: travelDate,
         photoUrl: currentPhotoUrl,
+        country:country,
+        visatype,
         coTravellers: [],
       });
     } catch {
@@ -225,7 +233,7 @@ const shouldSkipPhoto =
 
 
       {/* PROGRESS BAR */}
-      {selected.countryType === "Schengen" ?
+      {selected.countryType === "Schengen"&& "Thailand"?
         <View style={styles.progressContainer}>
           <View style={styles.stepItem}>
             <Icon name="check-circle" size={22} color={ORANGE} />

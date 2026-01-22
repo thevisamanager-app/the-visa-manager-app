@@ -70,3 +70,14 @@ export const COUNTRY_ISO_MAP = {
     Slovakia: "sk",
     Slovenia: "SI"
 };
+export const getFlagEmoji = (countryName) => {
+  const iso = COUNTRY_ISO_MAP[countryName];
+
+  if (!iso) return "🏳️";
+
+  return iso
+    .toUpperCase()
+    .replace(/./g, char =>
+      String.fromCodePoint(127397 + char.charCodeAt())
+    );
+};

@@ -6,6 +6,7 @@ import VisaQuestionScreen from "../screens/visa/VisaQuestionScreen";
 import CheckoutScreen from "../screens/visa/CheckoutScreen";
 import StartApplicationScreen from "../screens/start/StartApllicationScreen";
 import TravelDateScreen from "../screens/date/TravelDateScreen";
+import MyTripsScreen from "../screens/profile/MyTripsScreen";
 
 const Stack = createStackNavigator();
 
@@ -17,6 +18,7 @@ export default function HomeStack() {
             <Stack.Screen name="CheckoutScreen" component={CheckoutScreen} />
             <Stack.Screen name="StartApplicationScreen" component={StartApplicationScreen} />
             <Stack.Screen name="TravelDateScreen" component={TravelDateScreen} />
+            <Stack.Screen name="MyTripScreen" component={MyTripsScreen} />
         </Stack.Navigator>
     );
 }

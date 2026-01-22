@@ -1405,9 +1405,10 @@ function formatBadgeDate(dateString) {
 
 /* ===================== SCREEN ===================== */
 export default function TravelDateScreen({ navigation, route }) {
-
+  const selected = useSelector((state) => state.destinations.selected);
+  const country = selected?.countrName || "Country";
   const visatype = route.params?.visaType;
-  console.log("VISATYPE=>", visatype)
+  // console.log("VISATYPE=>", visatype)
 
 
   // 1️⃣ STATE HOOKS FIRST

@@ -409,6 +409,8 @@ const TRAVEL_DETAILS_COUNTRIES = [
       travelDate: travelDate,
       passport: passportState,
       photoUrl: photoUrlState,
+      visatype: visatype,
+      country: country,
       coTravellers, // keep co-travellers when we come back
     });
   };
@@ -421,6 +423,8 @@ const TRAVEL_DETAILS_COUNTRIES = [
       travelDate: travelDate,
       passport: passportState,
       photoUrl: photoUrlState,
+      visatype: visatype,
+      country: country,
       coTravellers,
     });
   };
@@ -593,27 +597,28 @@ const TRAVEL_DETAILS_COUNTRIES = [
           {/* MAIN TRAVELLER DOCUMENTS */}
           <View style={{ marginTop: 8 }}>
             {/* Photo */}
-            <View style={styles.docRow}>
-              <View style={styles.docHeader}>
-                <View style={styles.docHeaderLeft}>
-                  <Icon name="check-circle" size={18} color="#09B66E" />
-                  <Text style={styles.docLabel}>Photo (You)</Text>
+            {selected.countryType === "Schengen" ? null :
+              <View style={styles.docRow}>
+                <View style={styles.docHeader}>
+                  <View style={styles.docHeaderLeft}>
+                    <Icon name="check-circle" size={18} color="#09B66E" />
+                    <Text style={styles.docLabel}>Photo (You)</Text>
+                  </View>
+                  <TouchableOpacity onPress={handleEditPhoto}>
+                    <Icon name="edit" size={18} color={ORANGE} />
+                  </TouchableOpacity>
                 </View>
-                <TouchableOpacity onPress={handleEditPhoto}>
-                  <Icon name="edit" size={18} color={ORANGE} />
-                </TouchableOpacity>
-              </View>
-              <View style={styles.thumbBox}>
-                {photoUrlState ? (
-                  <Image
-                    source={{ uri: photoUrlState }}
-                    style={styles.docImage}
-                  />
-                ) : (
-                  <Text style={styles.docPlaceholder}>No Photo</Text>
-                )}
-              </View>
-            </View>
+                <View style={styles.thumbBox}>
+                  {photoUrlState ? (
+                    <Image
+                      source={{ uri: photoUrlState }}
+                      style={styles.docImage}
+                    />
+                  ) : (
+                    <Text style={styles.docPlaceholder}>No Photo</Text>
+                  )}
+                </View>
+              </View>}
 
             {/* Passport Front (main) */}
             <View style={styles.docRow}>

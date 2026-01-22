@@ -737,17 +737,23 @@ app.post("/createRazorpayOrder", async (req, res) => {
     console.log("KEY_SECRET present:", !!RAZORPAY_KEY_SECRET.value());
 
     const { amount, userId } = req.body;
-    if (!amount || !userId) {
-      return res.status(400).json({ error: "Missing fields" });
-    }
+
+const rupees = Number(amount);
+if (!Number.isFinite(rupees) || rupees <= 0) {
+  return res.status(400).json({ error: "Invalid amount" });
+}
+
+const amountPaise = Math.round(rupees * 100);
+
 
     const razorpay = getRazorpay();
 
     const order = await razorpay.orders.create({
-      amount: amount * 100,
-      currency: "INR",
-      receipt: "receipt_" + Date.now(),
-    });
+  amount: amountPaise,
+  currency: "INR",
+  receipt: "receipt_" + Date.now(),
+});
+
 
     await db.collection("payments").doc(order.id).set({
       userId,
@@ -763,9 +769,15 @@ app.post("/createRazorpayOrder", async (req, res) => {
       currency: order.currency,
     });
   } catch (e) {
-    console.error("RAZORPAY ORDER ERROR:", e);
-    return res.status(500).json({ error: "Order creation failed", details: e.message });
-  }
+  console.error("RAZORPAY ORDER ERROR:", e);
+
+  return res.status(500).json({
+    error: "Order creation failed",
+    message: e?.message || null,
+    razorpay: e?.error || null, // Razorpay SDK often puts details here
+  });
+}
+
 });
 
 // ===================== VERIFY PAYMENT ======================
@@ -1005,7 +1017,8 @@ exports.extractTextFromImage = onCall(
 // ===================== EXPORT EXPRESS API ======================
 exports.api = onRequest(
   {
-    region: "us-central1",
+
+    region: "asia-south1",
     secrets: [RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET],
   },
   app

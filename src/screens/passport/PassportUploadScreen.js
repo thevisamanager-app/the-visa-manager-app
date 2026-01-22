@@ -31,6 +31,10 @@ export default function PassportUploadScreen({ navigation, route }) {
   const travelDate = route?.params?.travelDate || null;
     const visatype = route?.params?.visatype || null;
   const selected = useSelector((state) => state.destinations.selected);
+  const countryName = selected?.countrName?.toLowerCase();
+const shouldSkipPhoto =
+  countryName === "thailand" || countryName === "malaysia";
+
   const currentPhotoUrl = route?.params?.photoUrl || null;
   const isCoTraveller = route?.params?.addMode === true;
   const addMode = route?.params?.addMode || false;
@@ -250,34 +254,41 @@ export default function PassportUploadScreen({ navigation, route }) {
         </View>
         :
         <View style={styles.progressContainer}>
-          <View style={styles.stepItem}>
-            <Icon name="check-circle" size={22} color={ORANGE} />
-            <Text style={styles.stepLabel}>Dates</Text>
-          </View>
-          <View style={styles.line} />
+  <View style={styles.stepItem}>
+    <Icon name="check-circle" size={22} color={ORANGE} />
+    <Text style={styles.stepLabel}>Dates</Text>
+  </View>
 
-          <View style={styles.stepItem}>
-            <Icon name="check-circle" size={22} color={ORANGE} />
-            <Text style={styles.stepLabel}>Photo</Text>
-          </View>
-          <View style={styles.line} />
+  <View style={styles.line} />
 
-          <View style={styles.stepItem}>
-            <Icon name="check-circle" size={22} color={ORANGE} />
-            <Text style={[styles.stepLabel, { color: ORANGE }]}>Passport</Text>
-          </View>
-          <View style={styles.line} />
+  {!shouldSkipPhoto && (
+    <>
+      <View style={styles.stepItem}>
+        <Icon name="check-circle" size={22} color={ORANGE} />
+        <Text style={styles.stepLabel}>Photo</Text>
+      </View>
+      <View style={styles.line} />
+    </>
+  )}
 
-          <View style={styles.stepItem}>
-            <Icon name="radio-button-unchecked" size={22} color="#777" />
-            <Text style={styles.stepLabel}>Detail</Text>
-          </View>
-          <View style={styles.line} />
+  <View style={styles.stepItem}>
+    <Icon name="check-circle" size={22} color={ORANGE} />
+    <Text style={[styles.stepLabel, { color: ORANGE }]}>Passport</Text>
+  </View>
 
-          <View style={styles.stepItem}>
-            <Icon name="radio-button-unchecked" size={22} color="#777" />
-            <Text style={styles.stepLabel}>Checkout</Text>
-          </View>
+  <View style={styles.line} />
+
+  <View style={styles.stepItem}>
+    <Icon name="radio-button-unchecked" size={22} color="#777" />
+    <Text style={styles.stepLabel}>Detail</Text>
+  </View>
+
+  <View style={styles.line} />
+
+  <View style={styles.stepItem}>
+    <Icon name="radio-button-unchecked" size={22} color="#777" />
+    <Text style={styles.stepLabel}>Checkout</Text>
+  </View>
         </View>}
 
 

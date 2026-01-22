@@ -22,7 +22,7 @@ const DESTINATIONS = [
     AuthorityCharges: "999",
     GovernmentFee: "1900",
     currency: "",
-    countryType: "evisa"
+    countryType: "DAC"
 
   },
   {
@@ -56,7 +56,7 @@ const DESTINATIONS = [
     AuthorityCharges: "0",
     GovernmentFee: "0",
     currency: "",
-    countryType: "evisa"
+    countryType: "DAC"
   },
   {
     id: 6,
@@ -778,7 +778,7 @@ const DESTINATIONS = [
     AuthorityCharges: "750",
     GovernmentFee: "550",
     currency: "",
-    countryType: "evisa"
+    countryType: "DSC"
   },
 
   {
@@ -888,5 +888,6 @@ const DESTINATIONS = [
     currency: "",
     countryType: "Stamp Visa"
   },
+
 ];
 export default DESTINATIONS;

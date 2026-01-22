@@ -1410,6 +1410,7 @@ export default function TravelDateScreen({ navigation, route }) {
   const visatype = route.params?.visaType;
   // console.log("VISATYPE=>", visatype)
 
+
   // 1️⃣ STATE HOOKS FIRST
   const [selectedDate, setSelectedDate] = useState(null);
   const [mode, setMode] = useState("fixed");
@@ -1431,7 +1432,38 @@ export default function TravelDateScreen({ navigation, route }) {
 
   const isSchengen =
     selectedDestination?.countryType?.toLowerCase() === "schengen";
+const countryName =
+  selectedDestination?.countrName?.toLowerCase();
   
+
+  const SKIP_PHOTO_COUNTRIES = [
+  "thailand",
+  "malaysia",
+  "sri lanka",
+  "maldives",
+  "bhutan",
+  "mauritius",
+  "hong kong",
+  "singapore",
+  "barbados",
+];
+
+const shouldSkipPhoto =
+  SKIP_PHOTO_COUNTRIES.includes(countryName);
+
+  const steps = [
+  { key: "dates", label: "Dates", icon: "calendar-blank" },
+
+  ...(shouldSkipPhoto
+    ? []
+    : [{ key: "photo", label: "Photo", icon: "camera-outline" }]),
+
+  { key: "passport", label: "Passport", icon: "passport-biometric" },
+  { key: "detail", label: "Detail", icon: "account-outline" },
+  { key: "checkout", label: "Checkout", icon: "check-circle-outline" },
+];
+
+
   // 4️⃣ HANDLERS (NOT HOOKS)
   const onDayPress = (day) => {
     setSelectedDate(day.dateString);
@@ -1449,6 +1481,7 @@ export default function TravelDateScreen({ navigation, route }) {
   }, [selectedDate]);
 
   const disabledContinue = !selectedDate || saving;
+
 
   const handleContinue = async () => {
     if (!selectedDate) return;
@@ -1468,16 +1501,24 @@ export default function TravelDateScreen({ navigation, route }) {
       if (isSchengen) {
         navigation.navigate("SchengenPersonalDetails", {
           travelDate: formattedSelectedDate,
-          visatype: visatype,
-          country: country
+          visatype,
         });
+
+      } else if (shouldSkipPhoto) {
+        // ✅ Thailand & Malaysia flow
+        navigation.navigate("PassportUploadScreen", {
+          travelDate: formattedSelectedDate,
+          visatype,
+        });
+
       } else {
+        // ✅ All other countries
         navigation.navigate("PhotoUploadScreen", {
           travelDate: formattedSelectedDate,
-          visatype: visatype,
-          country: country
+          visatype,
         });
       }
+
     } catch (err) {
       alert("Could not save date. Please try again.");
     } finally {
@@ -1523,32 +1564,27 @@ export default function TravelDateScreen({ navigation, route }) {
 
       {/* STEPPER */}
       <View style={styles.stepperRow}>
-        {[
-          { key: "dates", label: "Dates", icon: "calendar-blank" },
-          { key: "photo", label: "Photo", icon: "camera-outline" },
-          { key: "passport", label: "Passport", icon: "passport-biometric" },
-          { key: "detail", label: "Detail", icon: "account-outline" },
-          { key: "checkout", label: "Checkout", icon: "check-circle-outline" },
-        ].map((step, index) => {
-          const isActive = step.key === "dates";
-          const color = isActive ? ORANGE : "#A0A0A0";
+  {steps.map((step, index) => {
+    const isActive = step.key === "dates";
+    const color = isActive ? ORANGE : "#A0A0A0";
 
-          return (
-            <View key={step.key} style={styles.stepItem}>
-              <MaterialCommunityIcons
-                name={step.icon}
-                size={moderateScale(22)}
-                color={color}
-              />
-              <Text style={[styles.stepLabel, { color: isActive ? ORANGE : "#444" }]}>
-                {step.label}
-              </Text>
-              {isActive && <View style={styles.stepUnderline} />}
-              {index < 4 && <View style={styles.stepConnector} />}
-            </View>
-          );
-        })}
+    return (
+      <View key={step.key} style={styles.stepItem}>
+        <MaterialCommunityIcons
+          name={step.icon}
+          size={moderateScale(22)}
+          color={color}
+        />
+        <Text style={[styles.stepLabel, { color: isActive ? ORANGE : "#444" }]}>
+          {step.label}
+        </Text>
+        {isActive && <View style={styles.stepUnderline} />}
+        {index < steps.length - 1 && <View style={styles.stepConnector} />}
       </View>
+    );
+  })}
+</View>
+
 
       {/* TITLE */}
       <Text style={styles.question}>What is your departure date?</Text>

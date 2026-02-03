@@ -473,6 +473,7 @@ import { getCountryFaqs } from "../../utils/countryFaqs";
 import { COUNTRY_ISO_MAP } from "../../utils/countryIsoMap";
 import ScreenWrapper from "../../components/ScreenWrapper";
 import DESTINATIONS from "../../assets/data/destinations";
+import { fetchGoogleReviews } from "../../services/reviews/googleReviews";
 
 
 export default function VisaDetailsScreen({ navigation }) {
@@ -595,7 +596,7 @@ export default function VisaDetailsScreen({ navigation }) {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => navigation.navigate("Home")}
+            onPress={() => navigation.navigate("DestinationScreen")}
             style={styles.headerBtn}
           >
             <Icon name="home-outline" size={22} color="#FF5C00" />

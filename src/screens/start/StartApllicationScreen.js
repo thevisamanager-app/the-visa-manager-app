@@ -582,7 +582,7 @@ export default function StartApplicationScreen({ navigation, route }) {
     outputRange: ["0deg", "360deg"],
   });
   const handleStart = () => {
-    navigation.navigate("VisaTypeScreen", {
+    navigation.navigate("TravelDateScreen", {
       date: date,
       country:country
     });
@@ -713,6 +713,7 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     letterSpacing: 1,
   },
+
   linkText: {
     color: '#FF5C00',
     textDecorationLine: 'underline',

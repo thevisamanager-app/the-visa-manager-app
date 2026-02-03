@@ -66,22 +66,24 @@ const VERIFY_PAYMENT = `${BASE_URL}/verifyRazorpayPayment`;
 export async function startPayment(amount, userId, userDetails) {
   console.log("USER DETAILS =>", userDetails);
 
+  console.log("FINAL CREATE_ORDER URL =>", CREATE_ORDER);
+
   try {
-const response = await fetch(CREATE_ORDER, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ amount, userId }),
-});
+    const response = await fetch(CREATE_ORDER, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ amount, userId }),
+    });
 
-if (!response.ok) {
-  console.log("CREATE ORDER HTTP ERROR:", response.status);
-  const errText = await response.text();
-  console.log("ERROR BODY:", errText);
-  return { success: false };
-}
+    if (!response.ok) {
+      console.log("CREATE ORDER HTTP ERROR:", response.status);
+      const errText = await response.text();
+      console.log("ERROR BODY:", errText);
+      return { success: false };
+    }
 
-const raw = await response.text();
-console.log("RAW ORDER RESPONSE ===>", raw);
+    const raw = await response.text();
+    console.log("RAW ORDER RESPONSE ===>", raw);
 
 
     let data = {};

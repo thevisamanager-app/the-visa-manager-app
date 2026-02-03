@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+
 // import React from "react";
 // import { useSelector } from "react-redux";
 // import CountryFlag from "react-native-country-flag";
@@ -459,7 +459,8 @@ import { useSelector } from "react-redux";
 import CountryFlag from "react-native-country-flag";
 import Icon from "react-native-vector-icons/Ionicons";
 import DESTINATIONS from "../../assets/data/destinations";
-
+import { TextInput } from "react-native";
+import WhyChooseTVM from "../../components/WhyChooseTVM";
 import {
   View,
   Text,
@@ -475,10 +476,25 @@ import { getCountryFaqs } from "../../utils/countryFaqs";
 import { COUNTRY_ISO_MAP } from "../../utils/countryIsoMap";
 import ScreenWrapper from "../../components/ScreenWrapper";
 import { fetchGoogleReviews } from "../../services/reviews/googleReviews";
+import { COUNTRY_VISA_CONFIG } from "../../assets/data/countryVisaConfig";
+import { useDispatch } from "react-redux";
+import { setSelectedDestination } from "../../Redux/destinationsSlice";
+
+
+const HIGHLIGHT_COUNTRIES = [
+  "Singapore",
+  "Japan",
+  "USA",
+  "Uk",
+  "Italy",
+];
+
 
 export default function VisaDetailsScreen({ navigation }) {
+  const dispatch = useDispatch();
   const selected = useSelector((state) => state.destinations.selected);
   const countryName = selected?.countrName || "Country";
+  const [faqSearch, setFaqSearch] = useState("");
   const toNumber = (val) => {
     if (!val) return 0;
     if (typeof val === "number") return val;
@@ -501,66 +517,47 @@ export default function VisaDetailsScreen({ navigation }) {
   const totalAmount = payNow + payLater;
   const isoCode = (COUNTRY_ISO_MAP[countryName] || "un").toLowerCase();
   const [activeStep, setActiveStep] = useState(0);
+  const normalizedCountryName = countryName?.trim();
+  const countryConfig = COUNTRY_VISA_CONFIG[normalizedCountryName];
+  const highlightCountries = DESTINATIONS.filter((item) =>
+    HIGHLIGHT_COUNTRIES.includes(item.countrName)
+  );
+  const isVisaFree = countryConfig?.isVisaFree === true;
+  const handleCountryPress = (item) => {
+    dispatch(setSelectedDestination(item));
+    navigation.push("VisaDetailsScreen");
+  };
+  const STEP_META = countryConfig?.stepMeta ?? [];
+  const PROCESS_STEPS = countryConfig?.processSteps ?? [];
   useEffect(() => {
+    setActiveStep(0);
+  }, [normalizedCountryName]);
+  useEffect(() => {
+    if (PROCESS_STEPS.length <= 1) return;
+
     const interval = setInterval(() => {
       setActiveStep((prev) =>
         prev < PROCESS_STEPS.length - 1 ? prev + 1 : 0
       );
-    }, 3500); // 3.5 seconds (you can tune 3000–4000)
+    }, 3500);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [normalizedCountryName, PROCESS_STEPS.length]);
 
-
-  const PROCESS_STEPS = [
-    {
-      title: "Share traveler details",
-      points: [
-        "Provide passport, photo, and itinerary securely.",
-        "Our team reviews documents before submission.",
-        "Confirm details so we can proceed."
-      ],
-    },
-    {
-      title: "Pay visa fees",
-      points: [
-        "Clear government and service charges securely.",
-        "Instant payment confirmation.",
-        "We track and ticket your application."
-      ],
-    },
-    {
-      title: "Submit to immigration",
-      points: [
-        "Application forwarded to immigration authority.",
-        "Queries handled on your behalf.",
-        "Status updates until decision."
-      ],
-    },
-    {
-      title: "Receive approval",
-      points: [
-        "Download approval letter once issued.",
-        "Carry it with your passport.",
-        "You are all set to travel."
-      ],
-    },
-  ];
-
-  const STEP_META = [
-    { icon: "document-text-outline", label: "Details" },
-    { icon: "card-outline", label: "Payment" },
-    { icon: "send-outline", label: "Submit" },
-    { icon: "checkmark-done-outline", label: "Approved" },
-  ];
+  const processTitle =
+    countryConfig?.processTitle || `${countryName} Visa Process`;
 
 
   const faqs = getCountryFaqs(countryName);
-
+  const filteredFaqs = faqs.filter((faq) =>
+    faq.question.toLowerCase().includes(faqSearch.toLowerCase()) ||
+    faq.answer.toLowerCase().includes(faqSearch.toLowerCase())
+  );
   // 🔹 Google Reviews state
   const [reviews, setReviews] = useState([]);
   const [loadingReviews, setLoadingReviews] = useState(true);
   const [showAllReviews, setShowAllReviews] = useState(false);
+
 
 
   // 🔹 Fetch reviews once
@@ -592,11 +589,11 @@ export default function VisaDetailsScreen({ navigation }) {
             style={styles.headerBtn}
           >
             <Icon name="arrow-back-outline" size={22} color="#FF5C00" />
-            
+
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => navigation.navigate("Destination")}
+            onPress={() => navigation.navigate("DestinationScreen")}
             style={styles.headerBtn}
           >
             <Icon name="home-outline" size={22} color="#FF5C00" />
@@ -606,38 +603,55 @@ export default function VisaDetailsScreen({ navigation }) {
         {/* COUNTRY VISA CARD */}
         <View style={styles.countryCard}>
           <View style={styles.countryHeader}>
-            <CountryFlag isoCode={isoCode} size={48} />
-            <Text style={styles.countryName}>{countryName}</Text>
-
-            <Text style={styles.processingText}>
-              Apply Now & Get Visa By<Text style={styles.bold}> 3-5 Working Days </Text>
+            <CountryFlag isoCode={isoCode} size={50} />
+            <Text style={styles.countryName}>
+              {countryConfig?.headerTitle || countryName}
             </Text>
 
-            <Text style={styles.subText}>Quick & Easy Process</Text>
+            <Text style={styles.processingText}>
+              {countryConfig?.processingText}
+            </Text>
           </View>
-        </View>
-        {/* VISA PROCESS */}
-        <View style={styles.processWrapper}>
 
+          <WhyChooseTVM />
+
+        </View>
+
+        {/* VISA PROCESS TITLE */}
+        {PROCESS_STEPS.length > 0 && (
+          <View style={styles.processWrapper}>
+            {/* stepper UI */}
+          </View>
+        )}
+
+        <Text
+          style={styles.centerSectionTitle}
+          numberOfLines={2}
+          ellipsizeMode="tail"
+        >
+          {processTitle}
+        </Text>
+
+
+        <View style={styles.processWrapper}>
           {/* STEP INDICATOR */}
           <View style={styles.stepperContainer}>
-
-            {/* BASE LINE */}
             <View style={styles.stepLineBase} />
 
-            {/* ACTIVE LINE */}
             <View
               style={[
                 styles.stepLineActive,
                 {
-                  width: `${(activeStep / (PROCESS_STEPS.length - 1)) * 100}%`,
+                  width:
+                    PROCESS_STEPS.length > 1
+                      ? `${(activeStep / (PROCESS_STEPS.length - 1)) * 100}%`
+                      : "0%",
                 },
               ]}
             />
 
-            {/* STEP CIRCLES */}
             <View style={styles.stepRow}>
-              {PROCESS_STEPS.map((_, index) => (
+              {STEP_META.map((step, index) => (
                 <TouchableOpacity
                   key={index}
                   style={[
@@ -647,21 +661,14 @@ export default function VisaDetailsScreen({ navigation }) {
                   onPress={() => setActiveStep(index)}
                 >
                   <Icon
-                    name={
-                      index < activeStep
-                        ? "checkmark"
-                        : STEP_META[index].icon
-                    }
+                    name={index < activeStep ? "checkmark" : step.icon}
                     size={18}
                     color={index <= activeStep ? "#FFFFFF" : "#FF5C00"}
                   />
-
                 </TouchableOpacity>
               ))}
             </View>
-
           </View>
-
 
           {/* STEP LABELS */}
           <View style={styles.stepLabelRow}>
@@ -678,184 +685,113 @@ export default function VisaDetailsScreen({ navigation }) {
             ))}
           </View>
 
-
           {/* STEP CONTENT */}
-          <View style={styles.processCard}>
-            <Text style={styles.processTitle}>
-              {PROCESS_STEPS[activeStep].title}
-            </Text>
+          {PROCESS_STEPS[activeStep] && (
+            <View style={styles.processCardCentered}>
+              <Text style={styles.processTitleCentered}>
+                {PROCESS_STEPS[activeStep].title}
+              </Text>
 
-            {PROCESS_STEPS[activeStep].points.map((p, i) => (
-              <View key={i} style={styles.processPoint}>
-                <Text style={styles.tick}>✓</Text>
-                <Text style={styles.processText}>{p}</Text>
-              </View>
-            ))}
-          </View>
+              {PROCESS_STEPS[activeStep].points.map((p, i) => (
+                <View key={i} style={styles.processPointCentered}>
+                  <Icon name="checkmark-circle" size={18} color="#FF5C00" />
+                  <Text style={styles.processTextCentered}>{p}</Text>
+                </View>
+              ))}
+            </View>
 
+          )}
         </View>
 
 
+
         {/* VISA INFO */}
-        <Text style={styles.sectionTitle}>Visa Information</Text>
+        <Text
+          style={styles.centerSectionTitle}
+          numberOfLines={2}
+        >
+          {countryConfig?.visaInfoTitle || "Visa Information"}
+        </Text>
+
+
         <View style={styles.infoGrid}>
           <InfoItem
             label="Visa Type"
-            value="Tourist & Business"
+            value={countryConfig?.visaInfo.visaType}
             icon="document-text-outline"
             iconBg="#EEF2FF"
           />
 
           <InfoItem
             label="Length of Stay"
-            value="30 days"
+            value={countryConfig?.visaInfo.stay}
             icon="calendar-outline"
             iconBg="#EFF6FF"
           />
 
           <InfoItem
             label="Validity"
-            value="90 days"
+            value={countryConfig?.visaInfo.validity}
             icon="time-outline"
             iconBg="#ECFDF5"
           />
 
           <InfoItem
             label="Entry"
-            value="Single / Multiple"
+            value={countryConfig?.visaInfo.entry}
             icon="repeat-outline"
             iconBg="#F5F3FF"
           />
 
           <InfoItem
             label="Method"
-            value="Paperless"
+            value={countryConfig?.visaInfo.method}
             icon="cloud-done-outline"
             iconBg="#FFF7ED"
           />
-
         </View>
 
+
         {/* VISA REQUIREMENTS */}
-        <Text style={styles.sectionTitle}>
-          {countryName} Visa Requirements
+        <Text
+          style={styles.centerSectionTitle}
+          numberOfLines={2}
+        >
+          {countryConfig?.requirementsTitle ||
+            `${countryName} Visa Requirements`}
         </Text>
+
+
 
         <View style={styles.requirementsCard}>
           <Text style={styles.requirementsSubTitle}>
             Keep these ready before you apply
           </Text>
 
-          <View style={styles.requirementsGrid}>
+          <View style={styles.requirementsGridCentered}>
+            {(countryConfig?.requirements || []).map((req, index) => (
+              <View key={index} style={styles.requirementItemCentered}>
+                <View style={styles.requirementIconBox}>
+                  <Icon name="checkmark-outline" size={20} color="#FF5C00" />
+                </View>
 
-            <View style={styles.requirementItem}>
-              <Text style={styles.checkIcon}>✓</Text>
-              <Text style={styles.requirementText}>
-                Valid passport with at least six months validity
-              </Text>
-            </View>
-
-            <View style={styles.requirementItem}>
-              <Text style={styles.checkIcon}>✓</Text>
-              <Text style={styles.requirementText}>
-                Recent passport-size photograph with a white background
-              </Text>
-            </View>
-
-            <View style={styles.requirementItem}>
-              <Text style={styles.checkIcon}>✓</Text>
-              <Text style={styles.requirementText}>
-                Confirmed flights and return itinerary
-              </Text>
-            </View>
-
-            <View style={styles.requirementItem}>
-              <Text style={styles.checkIcon}>✓</Text>
-              <Text style={styles.requirementText}>
-                Hotel bookings or host contact details
-              </Text>
-            </View>
-
-            <View style={styles.requirementItem}>
-              <Text style={styles.checkIcon}>✓</Text>
-              <Text style={styles.requirementText}>
-                Bank statement or proof of funds
-              </Text>
-            </View>
-
-          </View>
-        </View>
-
-
-        {/* FAQs */}
-        <Text style={styles.sectionTitle}>FAQs</Text>
-        <View style={styles.faqCard}>
-          {faqs.map((faq, index) => (
-            <View key={index} style={styles.faqItem}>
-              <Text style={styles.faqQuestion}>{faq.question}</Text>
-              <Text style={styles.faqAnswer}>{faq.answer}</Text>
-            </View>
-          ))}
-        </View>
-        {/* PRICE SUMMARY */}
-        <View style={styles.priceCard}>
-          <View style={styles.priceHeader}>
-            <Icon name="people-outline" size={18} color="#374151" />
-            <Text style={styles.priceHeaderText}>Travellers</Text>
-
-            <View style={styles.counter}>
-              <Text style={styles.counterBtn}>−</Text>
-              <Text style={styles.counterValue}>{travellers}</Text>
-              <Text style={styles.counterBtn}>+</Text>
-            </View>
-          </View>
-
-          <View style={styles.payNowSection}>
-            <Text style={styles.amountBig}>₹{payNow}</Text>
-            <Text style={styles.payNowLabel}>TO BE PAID NOW</Text>
-          </View>
-
-          <View style={styles.divider} />
-
-          <View style={styles.priceRow}>
-            <View style={styles.rowLeft}>
-              <Icon name="card-outline" size={18} color="#374151" />
-              <View>
-                <Text style={styles.rowTitle}>Pay Now</Text>
-                <Text style={styles.rowSub}>Government Fees × {travellers}</Text>
+                <Text style={styles.requirementTextCentered}>{req}</Text>
               </View>
-            </View>
-            <Text style={styles.rowAmount}>₹{payNow}</Text>
+            ))}
           </View>
 
-          <View style={styles.priceRow}>
-            <View style={styles.rowLeft}>
-              <Icon name="time-outline" size={18} color="#374151" />
-              <View>
-                <Text style={styles.rowTitle}>Pay Later</Text>
-                <Text style={styles.rowSub}>TVM Fees × {travellers}</Text>
-              </View>
-            </View>
-            <Text style={styles.rowAmount}>₹{payLater}</Text>
-          </View>
 
-          <View style={styles.divider} />
-
-          <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>Total Amount</Text>
-            <Text style={styles.totalAmount}>₹{totalAmount}</Text>
-          </View>
         </View>
-
-
 
         {/* GOOGLE REVIEWS (UNDER FAQ) */}
-        <Text style={styles.sectionTitle}>Latest Google Reviews</Text>
+        <Text style={styles.centerSectionTitle}>Latest Google Reviews</Text>
+
+
 
         <View style={styles.reviewCard}>
           {loadingReviews ? (
             <ActivityIndicator color="#FF5C00" />
-          ) :(
+          ) : (
             displayReviews.map((item, index) => (
 
               // (showAllReviews ? reviews : displayReviews).map((item, index) => (
@@ -886,7 +822,7 @@ export default function VisaDetailsScreen({ navigation }) {
                 </Text>
               </View>
             ))
-            )}
+          )}
 
           {!loadingReviews && reviews.length > 3 && (
             <TouchableOpacity
@@ -912,15 +848,166 @@ export default function VisaDetailsScreen({ navigation }) {
           </TouchableOpacity>
         </View>
 
+
+        {/* FAQs */}
+        <Text
+          style={styles.centerSectionTitle}
+          numberOfLines={2}
+        >
+          Frequently Asked Questions
+        </Text>
+
+
+        {/* Search bar */}
+        <View style={styles.faqSearchBox}>
+          <Icon name="search-outline" size={18} color="#9CA3AF" />
+          <TextInput
+            value={faqSearch}
+            onChangeText={setFaqSearch}
+            placeholder="Search for answers"
+            placeholderTextColor="#9CA3AF"
+            style={styles.faqSearchInput}
+          />
+        </View>
+
+        {/* FAQ list */}
+        <View style={styles.faqCard}>
+          {filteredFaqs.map((faq, index) => (
+            <View key={index} style={styles.faqItemCentered}>
+              <Text style={styles.faqQuestionCentered}>{faq.question}</Text>
+              <Text style={styles.faqAnswerCentered}>{faq.answer}</Text>
+            </View>
+
+          ))}
+        </View>
+
+        {isVisaFree && (
+          <View style={{ marginTop: 32 }}>
+            <Text style={styles.centerSectionTitle}>
+              Popular Destinations for Indians
+            </Text>
+
+            <View style={{ gap: 12 }}>
+              {highlightCountries.map((item, index) => (
+                <TouchableOpacity
+                  key={index}
+                  activeOpacity={0.8}
+                  onPress={() => handleCountryPress(item)}
+                  style={{
+                    backgroundColor: "#FFFFFF",
+                    borderRadius: 14,
+                    padding: 14,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 12,
+                    elevation: 3,
+                  }}
+                >
+                  <CountryFlag
+                    isoCode={(COUNTRY_ISO_MAP[item.countrName] || "UN").toLowerCase()}
+                    size={28}
+                  />
+                  <Text style={{ fontSize: 14, fontWeight: "600" }}>
+                    {item.countrName}
+                  </Text>
+
+                  <Icon
+                    name="chevron-forward"
+                    size={18}
+                    color="#9CA3AF"
+                    style={{ marginLeft: "auto" }}
+                  />
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+
+
+        )}
+
+
+        {/* PRICE SUMMARY */}
+        {!isVisaFree && (
+          <View style={styles.priceCard}>
+            <View style={styles.priceHeader}>
+              <Icon name="people-outline" size={18} color="#374151" />
+              <Text style={styles.priceHeaderText}>Travellers</Text>
+
+              <View style={styles.counter}>
+                <Text style={styles.counterBtn}>−</Text>
+                <Text style={styles.counterValue}>{travellers}</Text>
+                <Text style={styles.counterBtn}>+</Text>
+              </View>
+            </View>
+
+            <View style={styles.payNowSection}>
+              <Text style={styles.amountBig}>₹{payNow}</Text>
+              <Text style={styles.payNowLabel}>TO BE PAID NOW</Text>
+            </View>
+
+            <View style={styles.divider} />
+
+            <View style={styles.priceRow}>
+              <View style={styles.rowLeft}>
+                <Icon name="card-outline" size={18} color="#374151" />
+                <View>
+                  <Text style={styles.rowTitle}>Pay Now</Text>
+                  <Text style={styles.rowSub}>Government Fees × {travellers}</Text>
+                </View>
+              </View>
+              <Text style={styles.rowAmount}>₹{payNow}</Text>
+            </View>
+
+            <View style={styles.priceRow}>
+              <View style={styles.rowLeft}>
+                <Icon name="time-outline" size={18} color="#374151" />
+                <View>
+                  <Text style={styles.rowTitle}>Pay Later</Text>
+                  <Text style={styles.rowSub}>TVM Fees × {travellers}</Text>
+                </View>
+              </View>
+              <Text style={styles.rowAmount}>₹{payLater}</Text>
+            </View>
+
+            <View style={styles.divider} />
+
+            <View style={styles.totalRow}>
+              <Text style={styles.totalLabel}>Total Amount</Text>
+              <Text style={styles.totalAmount}>₹{totalAmount}</Text>
+            </View>
+          </View>
+        )}
+
+
         {/* ACTION BUTTON */}
         <View style={styles.buttonRow}>
-          <TouchableOpacity
-            style={styles.secondaryBtn}
-            onPress={() => navigation.navigate("TravelDateScreen")}
-          >
-            <Text style={styles.secondaryText}>Start New Application</Text>
-          </TouchableOpacity>
+
+          {/* NON–VISA-FREE → Start Application */}
+          {!isVisaFree && (
+            <TouchableOpacity
+              style={styles.secondaryBtn}
+              onPress={() =>
+                navigation.navigate("TravelDateScreen", {
+                  country: countryName,
+                })
+              }
+            >
+              <Text style={styles.secondaryText}>Start Application</Text>
+            </TouchableOpacity>
+          )}
+
+          {/* VISA-FREE → Explore */}
+          {isVisaFree && (
+            <TouchableOpacity
+              style={styles.secondaryBtn}
+              onPress={() => navigation.navigate("DestinationScreen")}
+            >
+              <Text style={styles.secondaryText}>Explore</Text>
+            </TouchableOpacity>
+          )}
+
         </View>
+
       </ScrollView>
     </ScreenWrapper >
   );
@@ -929,26 +1016,19 @@ export default function VisaDetailsScreen({ navigation }) {
 /* =======================
    REUSABLE INFO ITEM
 ======================== */
-function InfoItem({ label, value, index, icon, iconBg }) {
+function InfoItem({ label, value, icon, iconBg }) {
   return (
-    <View
-      style={[
-        styles.infoItem,
-        index % 2 === 1 && styles.rightColumn,
-        index % 2 === 1 && styles.rightColumn,
-      ]}
-    >
-      <View style={[styles.iconBox, { backgroundColor: iconBg }]}>
+    <View style={styles.infoItemCentered}>
+      <View style={[styles.iconBoxCentered, { backgroundColor: iconBg }]}>
         <Icon name={icon} size={22} color="#111827" />
       </View>
 
-      <View style={{ flex: 1 }}>
-        <Text style={styles.infoLabel}>{label}</Text>
-        <Text style={styles.infoValue}>{value}</Text>
-      </View>
+      <Text style={styles.infoLabelCentered}>{label}</Text>
+      <Text style={styles.infoValueCentered}>{value}</Text>
     </View>
   );
 }
+
 
 /* =======================
    STYLES
@@ -966,9 +1046,29 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
 
-  countryHeader: { alignItems: "center" },
-  countryName: { fontSize: 18, fontWeight: "700", color: "#111827" },
-  processingText: { fontSize: 13, color: "#6B7280", marginTop: 4 },
+  countryHeader: {
+    alignItems: "center",
+    marginBottom: 10,
+  },
+
+  countryName: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: "#111827",
+    textAlign: "center",
+
+    maxWidth: "90%",        // ⬅️ keeps it centered visually
+    lineHeight: 24,         // ⬅️ clean wrapping
+    marginTop: 10,
+  },
+
+  processingText: {
+    fontSize: 13,
+    color: "#6B7280",
+    marginTop: 8,           // ⬅️ space from title
+    textAlign: "center",
+  },
+
   subText: { fontSize: 13, color: "#6B7280", marginTop: 4 },
   bold: { fontWeight: "700" },
 
@@ -977,23 +1077,46 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     color: "#111827",
     marginBottom: 12,
+    marginTop: 24, // ✅ ADD THIS
   },
+
+
 
   infoGrid: {
     backgroundColor: "#FFFFFF",
     borderRadius: 14,
     padding: 16,
-    marginBottom: 16,
+    marginBottom: 32,
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "space-between",
+    justifyContent: "center",   // ✅ key
+    gap: 12,                   // ✅ spacing between items
     elevation: 4,
   },
 
-  infoItem: { width: "48%", marginBottom: 14 },
+
+
+  infoItemCentered: {
+    width: "45%",
+    backgroundColor: "#F9FAFB",
+    borderRadius: 14,
+    paddingVertical: 16,
+    paddingHorizontal: 12,
+    alignItems: "center",      // ✅ center everything
+  },
   rightColumn: { paddingLeft: 40 },
-  infoLabel: { fontSize: 12, color: "#6B7280" },
-  infoValue: { fontSize: 15, fontWeight: "600", color: "#111827" },
+  infoLabelCentered: {
+    fontSize: 12,
+    color: "#6B7280",
+    textAlign: "center",
+    marginBottom: 2,
+  },
+  infoValueCentered: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#111827",
+    textAlign: "center",
+  },
 
   docCard: {
     backgroundColor: "#FFFFFF",
@@ -1014,36 +1137,71 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
 
-  faqItem: {
-    paddingVertical: 14,
+  faqItemCentered: {
+    paddingVertical: 16,
     borderBottomWidth: 1,
     borderColor: "#E5E7EB",
   },
 
-  faqQuestion: { fontSize: 14, fontWeight: "600" },
-  faqAnswer: { fontSize: 13, color: "#6B7280" },
+
+  faqQuestionCentered: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#111827",
+    textAlign: "center",
+    marginBottom: 6,
+  },
+
+  faqAnswerCentered: {
+    fontSize: 13,
+    color: "#6B7280",
+    lineHeight: 19,
+    textAlign: "justify",
+  },
 
   reviewCard: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 14,
+    borderRadius: 16,
     padding: 16,
-    marginBottom: 24,
-    elevation: 4,
+    marginBottom: 32,
+    borderWidth: 1,
+    borderColor: "#F3F4F6",
+    alignSelf: "center",
+    width: "95%",
   },
+
 
   reviewItem: {
-    paddingVertical: 12,
+    paddingVertical: 14,
     borderBottomWidth: 1,
     borderColor: "#E5E7EB",
+    marginTop: 6, // ✅ ADD THIS
   },
 
-  reviewHeader: { flexDirection: "row", alignItems: "center", gap: 10 },
+
+  reviewHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+    gap: 10,
+  },
+
   reviewAvatar: { width: 36, height: 36, borderRadius: 18 },
   reviewName: { fontSize: 14, fontWeight: "700" },
   reviewTime: { fontSize: 12, color: "#6B7280" },
   reviewRating: { fontSize: 13, fontWeight: "700" },
-  reviewText: { fontSize: 13, color: "#6B7280", lineHeight: 18 },
-  reviewLink: { color: "#FF5C00", fontWeight: "700" },
+  reviewText: {
+    fontSize: 13,
+    color: "#6B7280",
+    lineHeight: 18,
+    textAlign: "justify",
+  },
+  reviewText: {
+    fontSize: 13,
+    color: "#6B7280",
+    lineHeight: 18,
+    textAlign: "justify",
+  },
 
   buttonRow: { marginTop: 20 },
   secondaryBtn: {
@@ -1114,29 +1272,31 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 
-  processCard: {
+  processCardCentered: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 14,
-    padding: 16,
+    borderRadius: 16,
+    padding: 18,
     borderWidth: 1,
     borderColor: "#FFE5D0",
-
-    minHeight: 200,          // ✅ KEY FIX
-    justifyContent: "flex-start",
+    minHeight: 260,     // ⬅️ increase
+    justifyContent: "center",
   },
 
 
-  processTitle: {
+
+  processTitleCentered: {
     fontSize: 16,
     fontWeight: "700",
     color: "#111827",
-    marginBottom: 10,
+    textAlign: "center",
+    marginBottom: 14,
   },
 
-  processPoint: {
+  processPointCentered: {
     flexDirection: "row",
     alignItems: "flex-start",
-    marginBottom: 8,
+    gap: 8,
+    marginBottom: 10,
   },
 
   tick: {
@@ -1145,20 +1305,21 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
 
-  processText: {
+
+  processTextCentered: {
     fontSize: 13,
     color: "#374151",
     flex: 1,
   },
+
   requirementsCard: {
     backgroundColor: "#FFF7ED",
     borderRadius: 16,
     padding: 16,
-    marginBottom: 24,
+    marginBottom: 32, // ✅ ADD / INCREASE
     borderWidth: 1,
     borderColor: "#FFE5D0",
   },
-
   requirementsSubTitle: {
     fontSize: 14,
     fontWeight: "600",
@@ -1166,33 +1327,40 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
 
-  requirementsGrid: {
+  requirementsGridCentered: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "space-between",
+    justifyContent: "center",
+    gap: 12,
   },
 
-  requirementItem: {
-    width: "48%",
-    flexDirection: "row",
-    alignItems: "flex-start",
+  requirementItemCentered: {
+    width: "45%",
     backgroundColor: "#FFFFFF",
+    borderRadius: 14,
+    paddingVertical: 16,
+    paddingHorizontal: 12,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#FFE5D0",
+  },
+
+
+  requirementIconBox: {
+    width: 40,
+    height: 40,
     borderRadius: 12,
-    padding: 12,
-    marginBottom: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#FFF7ED",
+    marginBottom: 8,
   },
 
-  checkIcon: {
-    color: "#FF5C00",
-    fontWeight: "800",
-    marginRight: 8,
-    marginTop: 2,
-  },
-
-  requirementText: {
+  requirementTextCentered: {
     fontSize: 13,
     color: "#374151",
-    flex: 1,
+    textAlign: "center",
+    fontWeight: "500",
   },
 
   stepperContainer: {
@@ -1348,27 +1516,90 @@ const styles = StyleSheet.create({
   },
 
   headerRow: {
-  flexDirection: "row",
-  justifyContent: "space-between",
-  alignItems: "center",
-  marginBottom: 12,
-},
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
+  },
 
-headerBtn: {
-  flexDirection: "row",
-  alignItems: "center",
-  paddingVertical: 6,
-  paddingHorizontal: 10,
-  borderRadius: 10,
-  backgroundColor: "#F9FAFB",
-},
+  headerBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    backgroundColor: "#F9FAFB",
+  },
 
-headerText: {
-  marginLeft: 6,
-  fontSize: 14,
-  fontWeight: "600",
-  color: "#111827",
-},
+  headerText: {
+    marginLeft: 6,
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#111827",
+  },
+
+  iconBoxCentered: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 8,
+  },
+
+  processSectionTitle: {
+    fontSize: 20,
+    fontWeight: "800",
+    color: "#111827",
+    marginBottom: 12,
+  },
+
+  reviewCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 14,
+    padding: 16,
+    marginBottom: 32,   // ✅ ADD
+    elevation: 4,
+  },
+
+  faqSearchBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 999,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: "#FFE5D0",
+    alignSelf: "center",
+    width: "95%",
+  },
+
+
+  faqSearchInput: {
+    flex: 1,
+    marginLeft: 8,
+    fontSize: 14,
+    color: "#111827",
+  },
+
+  noFaqText: {
+    textAlign: "center",
+    color: "#6B7280",
+    marginVertical: 20,
+    fontSize: 13,
+  },
+
+  centerSectionTitle: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: "#111827",
+    marginBottom: 16,
+    marginTop: 32,
+    textAlign: "center",
+  },
+
 
 });
 

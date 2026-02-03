@@ -232,10 +232,11 @@ import RatingScreen from "../screens/visa/RatingScreen";
 import VisaStatusScreen from "../screens/visa/VisaStatusScreen";
 import EditProfileScreen from "../screens/profile/EditProfileScreen";
 import ProfileScreen from "../screens/profile/ProfileScreen";
-import MyTripsScreen from "../screens/profile/MyTripsScreen"
+import MyTripsScreen from "../screens/profile/MyTripsScreen";
 import VisaDetailsScreen from "../screens/moreinfo/VisaDetailsScreen";
-import VisaTypeScreen from "../screens/visa/VisaTypeScreen";
-import EntrytypeScreen from "../screens/visa/EntryTypeScreen";
+import JoinAsTravelAgentScreen from "../screens/agent/JoinAsTravelAgentScreen";
+import PartnerLoginScreen from "../screens/agent/PartnerLoginScreen";
+
 
 /* -------------------- SCHENGEN SCREENS -------------------- */
 import SchengenPersonalDetailsScreen from "../screens/Schengen/SchengenPersonalDetailsScreen";
@@ -266,7 +267,6 @@ function UserStack() {
       {/* MAIN */}
       <Stack.Screen name="Tabs" component={TabNavigator} />
       <Stack.Screen name="DestinationScreen" component={DestinationScreen} />
-      <Stack.Screen name="StartApplicationScreen" component={StartApplicationScreen} />
       <Stack.Screen name="TravelDateScreen" component={TravelDateScreen} />
 
       {/* SCHENGEN FLOW (ALWAYS REGISTERED) */}
@@ -278,7 +278,7 @@ function UserStack() {
         name="SchengenSponsor"
         component={SchengenSponsorScreen}
       />
-        <Stack.Screen
+      <Stack.Screen
         name="MyTripScreen"
         component={MyTripsScreen}
       />
@@ -299,6 +299,17 @@ function UserStack() {
         component={SchengenDocumentsScreen}
       />
 
+      <Stack.Screen
+        name="JoinAsTravelAgent"
+        component={JoinAsTravelAgentScreen}
+      />
+
+      <Stack.Screen
+        name="PartnerLoginScreen"
+        component={PartnerLoginScreen}
+      />
+
+
       {/* EXISTING FLOW */}
       <Stack.Screen name="PhotoUploadScreen" component={PhotoUploadScreen} />
       <Stack.Screen name="PassportUploadScreen" component={PassportUploadScreen} />
@@ -309,8 +320,6 @@ function UserStack() {
       <Stack.Screen name="RatingScreen" component={RatingScreen} />
       <Stack.Screen name="VisaStatusScreen" component={VisaStatusScreen} />
       <Stack.Screen name="VisaDetailsScreen" component={VisaDetailsScreen} />
-      <Stack.Screen name="VisaTypeScreen" component={VisaTypeScreen} />
-      <Stack.Screen name="EntryTypeScreen" component={EntrytypeScreen} />
 
       {/* EXTRA */}
       <Stack.Screen name="AddTravellerScreen" component={AddTravellerScreen} />

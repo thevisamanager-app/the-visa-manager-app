@@ -191,25 +191,23 @@ export default function CountryCards({ item, countrName, onPress, date }) {
       <Text style={styles.title}>{countrName}</Text>
 
       {/* PROCESSING */}
-      <Text style={styles.processing}>
-        Get visa by {date ?? "N/A"}
-      </Text>
+      {item.subtitle && (
+        <Text style={styles.processing}>
+          {item.subtitle}
+        </Text>
+      )}
+
+
 
       {/* BULLETS */}
-      <View style={styles.bulletRow}>
-        <View style={styles.dot} />
-        <Text style={styles.bulletText}>Quick & Easy Process</Text>
-      </View>
+      {Array.isArray(item.bullets) &&
+        item.bullets.map((text, index) => (
+          <View key={index} style={styles.bulletRow}>
+            <View style={styles.dot} />
+            <Text style={styles.bulletText}>{text}</Text>
+          </View>
+        ))}
 
-      <View style={styles.bulletRow}>
-        <View style={styles.dot} />
-        <Text style={styles.bulletText}>Visas Processed</Text>
-      </View>
-
-      <View style={styles.bulletRow}>
-        <View style={styles.dot} />
-        <Text style={styles.bulletText}>24×7 Support</Text>
-      </View>
 
       {/* DIVIDER */}
       <View style={styles.divider} />
@@ -229,9 +227,10 @@ export default function CountryCards({ item, countrName, onPress, date }) {
 
       {/* FOOTER */}
       <View style={styles.footer}>
-        <Text style={styles.footerText}>Know More</Text>
         <Text style={styles.footerText}>Apply Now</Text>
+        <Text style={styles.footerText}>Know More</Text>
       </View>
+
 
     </TouchableOpacity>
   );
@@ -260,8 +259,10 @@ const styles = StyleSheet.create({
   },
 
   flag: {
-    fontSize: RFValue(18),
+    fontSize: RFValue(30),
+    lineHeight: RFValue(30),
   },
+
 
   visaType: {
     fontSize: RFValue(12),
@@ -343,15 +344,20 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: verticalScale(12),
-    paddingTop: verticalScale(10),
-    borderTopWidth: 1,
-    borderColor: "#FED7AA",
+    alignItems: "center",
+
+    backgroundColor: "#0F2A52", // ✅ dark navy
+    paddingVertical: verticalScale(12),
+    paddingHorizontal: moderateScale(16),
+
+    marginTop: verticalScale(14),
+    borderBottomLeftRadius: moderateScale(16),
+    borderBottomRightRadius: moderateScale(16),
   },
 
   footerText: {
     fontSize: RFValue(12),
     fontWeight: "700",
-    color: "#EA580C",
+    color: "#FFFFFF", // ✅ white text
   },
 });

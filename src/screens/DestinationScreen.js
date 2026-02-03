@@ -374,7 +374,7 @@ import { wp, hp, scale, verticalScale, moderateScale, RFValue } from '../utils/m
 const FILTERS = [
   { key: 'ALL', label: 'All' },
   { key: 'Schengen', label: 'Schengen' },
-  { key: 'Stamp Visa', label: 'Stamp Visa' },
+  { key: 'Visa Free', label: 'Visa Free' },
   { key: 'DAC', label: 'DAC' },
   { key: 'evisa', label: 'eVisa' },
 ];
@@ -430,7 +430,7 @@ export default function DestinationScreen() {
 
   const handleCardPress = (item) => {
     dispatch(setSelectedDestination(item));
-    navigation.navigate('StartApplicationScreen', { date });
+    navigation.navigate('VisaDetailsScreen', { date });
   };
 
   return (
@@ -479,19 +479,17 @@ export default function DestinationScreen() {
       {/* Country List */}
       <FlatList
         data={filteredData}
-        // keyExtractor={(item) => item.countrName.toString()}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={{ paddingBottom: 120 }}
+        keyExtractor={(item) => String(item.id)}
         renderItem={({ item }) => (
           <CountryCards
-            source={item.source}
-            countrName={item.countrName}
             item={item}
-            onPress={() => handleCardPress(item)}
+            countrName={item.countrName}
             date={date}
+            onPress={() => handleCardPress(item)}
           />
         )}
       />
+
     </SafeAreaView>
   );
 }

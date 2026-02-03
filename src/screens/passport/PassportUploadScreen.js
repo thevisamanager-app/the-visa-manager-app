@@ -29,11 +29,11 @@ const GOLD = "#D6B25E";
 
 export default function PassportUploadScreen({ navigation, route }) {
   const travelDate = route?.params?.travelDate || null;
-    const visatype = route?.params?.visatype || null;
+  const visatype = route?.params?.visatype || null;
   const selected = useSelector((state) => state.destinations.selected);
   const countryName = selected?.countrName?.toLowerCase();
-const shouldSkipPhoto =
-  countryName === "thailand" || countryName === "malaysia";
+  const shouldSkipPhoto =
+    countryName === "thailand" || countryName === "malaysia";
 
   const currentPhotoUrl = route?.params?.photoUrl || null;
   const isCoTraveller = route?.params?.addMode === true;
@@ -105,8 +105,8 @@ const shouldSkipPhoto =
   };
 
   useEffect(() => {
-  console.log("LOADING STATE:", loading);
-}, [loading]);
+    console.log("LOADING STATE:", loading);
+  }, [loading]);
   /* ✅ MAIN SAVE */
   const onContinue = async () => {
     if (!front || !back || !mrzData) {
@@ -130,7 +130,7 @@ const shouldSkipPhoto =
         travelDate,
         photoUrl: currentPhotoUrl,
         userId: auth().currentUser.uid,
-        
+
         companyDetails:
           selected.countryType === "Schengen"
             ? {
@@ -158,8 +158,8 @@ const shouldSkipPhoto =
         navigation.navigate("PassportDetailsScreen", {
           passport: route.params.passport, // 👈 KEEP MAIN
           travelDate: travelDate,
-          country:country,
-          visatype:visatype,
+          country: country,
+          visatype: visatype,
           photoUrl: route.params.mainPhotoUrl,
           coTravellers: [
             ...(route?.params?.coTravellers || []),
@@ -177,7 +177,7 @@ const shouldSkipPhoto =
         navigation.navigate(route.params.returnTo, {
           updatedPassport: passportPayload,
           visatype,
-          country:country
+          country: country
         });
         return;
       }
@@ -186,7 +186,7 @@ const shouldSkipPhoto =
         passport: passportPayload,
         travelDate: travelDate,
         photoUrl: currentPhotoUrl,
-        country:country,
+        country: country,
         visatype,
         coTravellers: [],
       });
@@ -199,7 +199,7 @@ const shouldSkipPhoto =
 
   return (
     <ScreenWrapper style={styles.container}>
-            {/* 🔥 FULL SCREEN LOADER */}
+      {/* 🔥 FULL SCREEN LOADER */}
       {loading && (
         <View style={styles.loaderOverlay}>
           <LottieView
@@ -233,7 +233,7 @@ const shouldSkipPhoto =
 
 
       {/* PROGRESS BAR */}
-      {selected.countryType === "Schengen"&& "Thailand"?
+      {selected.countryType === "Schengen" && "Thailand" ?
         <View style={styles.progressContainer}>
           <View style={styles.stepItem}>
             <Icon name="check-circle" size={22} color={ORANGE} />
@@ -254,41 +254,41 @@ const shouldSkipPhoto =
         </View>
         :
         <View style={styles.progressContainer}>
-  <View style={styles.stepItem}>
-    <Icon name="check-circle" size={22} color={ORANGE} />
-    <Text style={styles.stepLabel}>Dates</Text>
-  </View>
+          <View style={styles.stepItem}>
+            <Icon name="check-circle" size={22} color={ORANGE} />
+            <Text style={styles.stepLabel}>Dates</Text>
+          </View>
 
-  <View style={styles.line} />
+          <View style={styles.line} />
 
-  {!shouldSkipPhoto && (
-    <>
-      <View style={styles.stepItem}>
-        <Icon name="check-circle" size={22} color={ORANGE} />
-        <Text style={styles.stepLabel}>Photo</Text>
-      </View>
-      <View style={styles.line} />
-    </>
-  )}
+          {/* {!shouldSkipPhoto && (
+            <>
+              <View style={styles.stepItem}>
+                <Icon name="check-circle" size={22} color={ORANGE} />
+                <Text style={styles.stepLabel}>Photo</Text>
+              </View>
+              <View style={styles.line} />
+            </>
+          )} */}
 
-  <View style={styles.stepItem}>
-    <Icon name="check-circle" size={22} color={ORANGE} />
-    <Text style={[styles.stepLabel, { color: ORANGE }]}>Passport</Text>
-  </View>
+          <View style={styles.stepItem}>
+            <Icon name="check-circle" size={22} color={ORANGE} />
+            <Text style={[styles.stepLabel, { color: ORANGE }]}>Passport</Text>
+          </View>
 
-  <View style={styles.line} />
+          <View style={styles.line} />
 
-  <View style={styles.stepItem}>
-    <Icon name="radio-button-unchecked" size={22} color="#777" />
-    <Text style={styles.stepLabel}>Detail</Text>
-  </View>
+          <View style={styles.stepItem}>
+            <Icon name="radio-button-unchecked" size={22} color="#777" />
+            <Text style={styles.stepLabel}>Detail</Text>
+          </View>
 
-  <View style={styles.line} />
+          <View style={styles.line} />
 
-  <View style={styles.stepItem}>
-    <Icon name="radio-button-unchecked" size={22} color="#777" />
-    <Text style={styles.stepLabel}>Checkout</Text>
-  </View>
+          <View style={styles.stepItem}>
+            <Icon name="radio-button-unchecked" size={22} color="#777" />
+            <Text style={styles.stepLabel}>Checkout</Text>
+          </View>
         </View>}
 
 

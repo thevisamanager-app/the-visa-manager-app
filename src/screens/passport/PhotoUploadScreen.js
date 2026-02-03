@@ -25,16 +25,30 @@ import { useSelector } from 'react-redux';
 
 
 export default function PhotoUploadScreen({ navigation, route }) {
-  
+
   const travelDate = route?.params?.travelDate || null;
   const visatype = route?.params?.visatype || null;
-  console.log("TRAVELDATE==",travelDate)
+  console.log("TRAVELDATE==", travelDate)
   const [photo, setPhoto] = useState(null);
   const [date, setDate] = useState("");
   const [detecting, setDetecting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const selected = useSelector((state) => state.destinations.selected);
   const country = selected?.countrName || "Country";
+  const SKIP_PHOTO_COUNTRIES = [
+    "thailand",
+    "malaysia",
+    "sri-lanka",
+    "maldives",
+    "mauritius",
+    "hong kong",
+  ];
+
+  const countryName =
+    selected?.countrName?.trim().toLowerCase() || "";
+
+  const shouldSkipPhoto =
+    SKIP_PHOTO_COUNTRIES.includes(countryName);
 
   const addMode = route?.params?.addMode || false;
   const editMode = route?.params?.editMode || false;
@@ -124,7 +138,7 @@ export default function PhotoUploadScreen({ navigation, route }) {
         coTravellers: route?.params?.coTravellers || [],
         travelDate,
         visatype,
-        country:country
+        country: country
       });
       return;
     }
@@ -146,7 +160,7 @@ export default function PhotoUploadScreen({ navigation, route }) {
         photoUrl: photo,
         mainPhotoUrl: route.params.mainPhotoUrl,
         visatype,
-        country:country
+        country: country
       });
 
       return;
@@ -155,7 +169,7 @@ export default function PhotoUploadScreen({ navigation, route }) {
     navigation.navigate("PassportUploadScreen", {
       travelDate,
       photoUrl: photo,
-      country:country
+      country: country
     });
   };
 
@@ -205,6 +219,7 @@ export default function PhotoUploadScreen({ navigation, route }) {
 
       {/* PROGRESS BAR */}
       <View style={styles.progressContainer}>
+        {/* Dates */}
         <View style={styles.stepItem}>
           <Icon name="check-circle" size={22} color="#FF5C00" />
           <Text style={styles.stepLabel}>Dates</Text>
@@ -212,13 +227,18 @@ export default function PhotoUploadScreen({ navigation, route }) {
 
         <View style={styles.line} />
 
-        <View style={styles.stepItem}>
-          <Icon name="check-circle" size={22} color="#FF5C00" />
-          <Text style={[styles.stepLabel, { color: "#FF5C00" }]}>Photo</Text>
-        </View>
+        {/* Photo – ONLY if not skipped */}
+        {!shouldSkipPhoto && (
+          <>
+            <View style={styles.stepItem}>
+              <Icon name="check-circle" size={22} color="#FF5C00" />
+              <Text style={styles.stepLabel}>Photo</Text>
+            </View>
+            <View style={styles.line} />
+          </>
+        )}
 
-        <View style={styles.line} />
-
+        {/* Passport */}
         <View style={styles.stepItem}>
           <Icon name="radio-button-unchecked" size={22} color="#777" />
           <Text style={styles.stepLabel}>Passport</Text>
@@ -226,6 +246,7 @@ export default function PhotoUploadScreen({ navigation, route }) {
 
         <View style={styles.line} />
 
+        {/* Detail */}
         <View style={styles.stepItem}>
           <Icon name="radio-button-unchecked" size={22} color="#777" />
           <Text style={styles.stepLabel}>Detail</Text>
@@ -233,11 +254,13 @@ export default function PhotoUploadScreen({ navigation, route }) {
 
         <View style={styles.line} />
 
+        {/* Checkout */}
         <View style={styles.stepItem}>
           <Icon name="radio-button-unchecked" size={22} color="#777" />
           <Text style={styles.stepLabel}>Checkout</Text>
         </View>
       </View>
+
 
       {/* PAGE TITLE */}
       <Text style={styles.title}>Upload Your Photo</Text>

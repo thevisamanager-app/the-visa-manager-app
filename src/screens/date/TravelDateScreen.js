@@ -1439,12 +1439,11 @@ const countryName =
   const SKIP_PHOTO_COUNTRIES = [
   "thailand",
   "malaysia",
-  "sri lanka",
+  "sri-lanka",
   "maldives",
   "bhutan",
   "mauritius",
   "hong kong",
-  "singapore",
   "barbados",
 ];
 

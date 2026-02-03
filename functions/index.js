@@ -114,12 +114,12 @@
 //         }
 //       }
 
-      // const url =
-      //   `https://maps.googleapis.com/maps/api/place/details/json` +
-      //   `?place_id=ChIJ3bPWBbqVwjsRsIr6lWmT0uA&fields=rating,reviews&key=${GOOGLE_PLACES_KEY.value()}`;
-      // const url =
-      //   `https://maps.googleapis.com/maps/api/place/details/json` +
-      //   `?place_id=${PLACE_ID}&fields=rating,reviews&key=${GOOGLE_PLACES_KEY.value()}`;
+// const url =
+//   `https://maps.googleapis.com/maps/api/place/details/json` +
+//   `?place_id=ChIJ3bPWBbqVwjsRsIr6lWmT0uA&fields=rating,reviews&key=${GOOGLE_PLACES_KEY.value()}`;
+// const url =
+//   `https://maps.googleapis.com/maps/api/place/details/json` +
+//   `?place_id=${PLACE_ID}&fields=rating,reviews&key=${GOOGLE_PLACES_KEY.value()}`;
 
 
 //       const response = await fetch(url);
@@ -194,22 +194,52 @@
 //   }
 // });
 
+<<<<<<<<< Temporary merge branch 1
 // // ===================== CREATE RAZORPAY ORDER ======================
 // app.post("/createRazorpayOrder", async (req, res) => {
 //   try {
 //     console.log("KEY_ID present:", !!RAZORPAY_KEY_ID.value());
 //     console.log("KEY_SECRET present:", !!RAZORPAY_KEY_SECRET.value());
 //     const { amount, userId } = req.body;
-//     if (!amount || !userId) {
-//       return res.status(400).json({ error: "Missing fields" });
+
+//     const rupees = Number(amount);
+//     if (!Number.isFinite(rupees) || rupees <= 0) {
+//       return res.status(400).json({ error: "Invalid amount" });
 //     }
+
+//     const amountPaise = Math.round(rupees * 100);
+
 
 //     const razorpay = getRazorpay();
 //     const order = await razorpay.orders.create({
-//       amount: amount * 100,
+//       amount: amountPaise,
 //       currency: "INR",
 //       receipt: "receipt_" + Date.now(),
 //     });
+=========
+// ===================== CREATE RAZORPAY ORDER ======================
+app.post("/createRazorpayOrder", async (req, res) => {
+  try {
+    console.log("KEY_ID present:", !!RAZORPAY_KEY_ID.value());
+    console.log("KEY_SECRET present:", !!RAZORPAY_KEY_SECRET.value());
+    const { amount, userId } = req.body;
+
+const rupees = Number(amount);
+if (!Number.isFinite(rupees) || rupees <= 0) {
+  return res.status(400).json({ error: "Invalid amount" });
+}
+
+const amountPaise = Math.round(rupees * 100);
+
+
+    const razorpay = getRazorpay();
+    const order = await razorpay.orders.create({
+  amount: amountPaise,
+  currency: "INR",
+  receipt: "receipt_" + Date.now(),
+});
+
+>>>>>>>>> Temporary merge branch 2
 
 //     await db.collection("payments").doc(order.id).set({
 //       userId,
@@ -218,6 +248,7 @@
 //       createdAt: admin.firestore.FieldValue.serverTimestamp(),
 //     });
 
+<<<<<<<<< Temporary merge branch 1
 //     return res.status(200).json({
 //       key: RAZORPAY_KEY_ID.value(),
 //       orderId: order.id,
@@ -226,8 +257,14 @@
 //     });
 //   } catch (e) {
 //     console.error("RAZORPAY ORDER ERROR:", e);
-//     return res.status(500).json({ error: "Order creation failed", details: e.message });
+
+//     return res.status(500).json({
+//       error: "Order creation failed",
+//       message: e?.message || null,
+//       razorpay: e?.error || null, // Razorpay SDK often puts details here
+//     });
 //   }
+
 // });
 
 // ===================== VERIFY PAYMENT ======================
@@ -335,7 +372,7 @@
 
 //     const displayName = userName || "Guest User";
 
-    // --------- PDF SETUP ----------
+// --------- PDF SETUP ----------
 //     const doc = new PDFDocument({ margin: 40, size: "A4" });
 //     const filePath = path.join(os.tmpdir(), `${invoiceId}.pdf`);
 //     const writeStream = fs.createWriteStream(filePath);
@@ -698,6 +735,15 @@ exports.getGoogleReviews = onRequest(
 // ===================== EXPRESS APP ======================
 const app = express();
 app.use(express.json());
+app.use((req, res, next) => {
+  console.log("REQ:", req.method, req.path);
+  next();
+});
+
+app.get("/health", (req, res) => {
+  res.status(200).json({ ok: true });
+});
+
 
 // ✅ Lazy Razorpay init (prevents cold-start/deploy timeout)
 function getRazorpay() {
@@ -1017,8 +1063,11 @@ exports.extractTextFromImage = onCall(
 // ===================== EXPORT EXPRESS API ======================
 exports.api = onRequest(
   {
+<<<<<<<<< Temporary merge branch 1
+=========
 
-    region: "asia-south1",
+>>>>>>>>> Temporary merge branch 2
+    region: "us-central1",
     secrets: [RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET],
   },
   app

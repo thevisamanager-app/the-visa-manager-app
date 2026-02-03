@@ -17,6 +17,9 @@ import ScreenWrapper from "../../components/ScreenWrapper";
 import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../../utils/metrics";
 import { useSelector } from "react-redux";
 import DateTimePicker from "@react-native-community/datetimepicker";
+<<<<<<<<< Temporary merge branch 1
+import { count } from "console";
+=========
 import { launchImageLibrary } from "react-native-image-picker";
 import { uploadUserDocument } from "../../utils/uploadUserDocument";
 
@@ -48,18 +51,14 @@ const GOLD = "#D6B25E";
 //   "Chai Nat",
 // ];
 
-const INDIAN_STATES = [
-  "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Delhi",
-  "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala",
-  "Madhya Pradesh", "Maharashtra", "Odisha", "Punjab", "Rajasthan", "Tamil Nadu",
-  "Telangana", "Uttar Pradesh", "Uttarakhand", "West Bengal"
-];
 
 const PURPOSE_OF_TRAVEL = [
   "Tourism",
   "Business",
-  "Family Visit",
+  "Education",
+  "Employment",
   "Transit",
+  "Wedding",
   "Other"
 ];
 
@@ -70,17 +69,55 @@ const OCCUPATIONS = [
   "Student"
 ];
 
-const MODE_OF_TRAVEL = ["Air", "Land", "Sea"];
-
-const MODE_OF_TRANSPORT = [
-  "Commercial Flight",
-  "Cargo",
-  "Private Aircraft",
-  "Car",
-  "Train",
-  "Cruise",
-  "Commercial Vessel"
+const ACCOMMODATION = [
+  "Hotels",
+  "Friends / Relatives",
+  "others"
 ];
+
+const COUNTRY_FORM_RULES = {
+  malaysia: {
+    email: true,
+    mobile: true,
+    accommodation: true,
+    airTicket: true,
+  },
+
+  "sri lanka": {
+    email: true,
+    mobile: true,
+    purpose: true,
+    airTicket: true,
+  },
+
+  maldives: {
+    email: true,
+    mobile: true,
+    hotel: true,
+    purpose: true,
+    airTicket: true,
+    visitedLast6Days: true, // yes/no
+  },
+
+  "hong kong": {
+    email: true,
+    mobile: true,
+    airTicket: true,
+  },
+
+  thailand: {
+    email: true,
+    mobile: true,
+    purpose: true,
+    hotel: true,
+    airTicket: true,
+    visitedLast14Days: true, // yes/no + country list
+  },
+};
+
+
+
+const MODE_OF_TRAVEL = ["Air", "Land", "Sea"];
 
 
 export default function PassportDetailsScreen({ navigation, route }) {
@@ -128,55 +165,86 @@ export default function PassportDetailsScreen({ navigation, route }) {
   // MAIN PASSPORT STATE
   const [passportState, setPassportState] = useState(basePassport);
   const [date, setDate] = useState("");
-  const [hotelname, sethotelname] = useState("");
   const selected = useSelector((state) => state.destinations.selected);
   const countryName =
     selected?.countrName?.trim().toLowerCase() || "";
-const TRAVEL_DETAILS_COUNTRIES = [
-  "thailand",
-  "malaysia",
-  "sri lanka",
-  "maldives",
-  "bhutan",
-  "mauritius",
-  "hong kong",
-  "singapore",
-  "barbados",
-];
+     const rules = COUNTRY_FORM_RULES[countryName] || {};
+  // ✅ Country-specific rules (SAFE placement)
+
+  const needsOccupation = !!rules.occupation;
+
+  const needsEmail = !!rules.email;
+  const needsMobile = !!rules.mobile;
+  const needsPurpose = !!rules.purpose;
+  const needsAccommodation = !!rules.accommodation || !!rules.hotel;
+  const needsAirTicket = !!rules.airTicket;
+
+  const needsVisited6Days = !!rules.visitedLast6Days;
+  const needsVisited14Days = !!rules.visitedLast14Days;
+
+  const TRAVEL_DETAILS_COUNTRIES = [
+    "malaysia",
+    "sri lanka",
+    "maldives",
+    "mauritius",
+    "hong kong",
+
+  ];
 
   const showTravelDetails =
-  TRAVEL_DETAILS_COUNTRIES.includes(countryName);
+    TRAVEL_DETAILS_COUNTRIES.includes(countryName);
+
+  const HIDE_PHOTO_COUNTRIES = [
+    "thailand",
+    "malaysia",
+    "sri-lanka",
+    "maldives",
+    "mauritius",
+    "hong kong",
+  ];
+
+  const HIDE_PHOTO_STEP_COUNTRIES = [
+    "thailand",
+    "malaysia",
+    "sri-lanka",
+    "maldives",
+    "mauritius",
+    "hong kong",
+  ];
+  const shouldShowPhotoStep =
+    !HIDE_PHOTO_STEP_COUNTRIES.includes(countryName);
+
+  const shouldShowPhotoSection =
+    selected?.countryType !== "Schengen" &&
+    !HIDE_PHOTO_COUNTRIES.includes(countryName);
+
 
   // 🇹🇭 Thailand extra fields
-  const [indiaResidence, setIndiaResidence] = useState("");
   const [purposeOfTravel, setPurposeOfTravel] = useState("");
   const [occupation, setOccupation] = useState("");
-  const [stayAddress, setStayAddress] = useState("");
-
-
-  const [entryDate, setEntryDate] = useState("");
-  const [exitDate, setExitDate] = useState("");
+  const [accommodation, setAccommodation] = useState("");
 
   const [entryMode, setEntryMode] = useState("");
-  const [entryTransport, setEntryTransport] = useState("");
-  const [exitMode, setExitMode] = useState("");
-  const [exitTransport, setExitTransport] = useState("");
+  const [visitedLast6Days, setVisitedLast6Days] = useState(null); // yes / no
+  const [visitedLast14Days, setVisitedLast14Days] = useState(null);
+  const [visitedCountriesText, setVisitedCountriesText] = useState("");
 
-  const [visitedLast14Days, setVisitedLast14Days] = useState(false);
+
+
+
+
   // const [visitedCountries, setVisitedCountries] = useState("");
 
   const [email, setEmail] = useState("");
 
-  const [showEntryPicker, setShowEntryPicker] = useState(false);
-  const [showExitPicker, setShowExitPicker] = useState(false);
+
+
 
   // ✈️ Air ticket upload
   const [airTicketUrl, setAirTicketUrl] = useState("");
   const [airTicketUploading, setAirTicketUploading] = useState(false);
 
-  // ✈️ Exit / Return ticket upload
-  const [returnTicketUrl, setReturnTicketUrl] = useState("");
-  const [returnTicketUploading, setReturnTicketUploading] = useState(false);
+
 
   // const [malaysiaTicketUrl, setMalaysiaTicketUrl] = useState("");
   // const [malaysiaTicketUploading, setMalaysiaTicketUploading] = useState(false);
@@ -228,40 +296,6 @@ const TRAVEL_DETAILS_COUNTRIES = [
     }
   };
 
-  const handleUploadReturnTicket = async () => {
-    try {
-      const res = await launchImageLibrary({
-        mediaType: "mixed",
-        selectionLimit: 1,
-      });
-
-      if (res.didCancel) return;
-
-      const asset = res.assets?.[0];
-      if (!asset?.uri) {
-        Alert.alert("Error", "Unable to read file");
-        return;
-      }
-
-      setReturnTicketUploading(true);
-
-      const localPath = asset.uri.replace("file://", "");
-      const fileName = asset.fileName || "return_ticket.pdf";
-
-      const url = await uploadUserDocument(localPath, fileName);
-
-
-      setReturnTicketUrl(url);
-      setReturnTicketUploading(false);
-
-      Alert.alert("Success", "Return ticket uploaded successfully");
-    } catch (err) {
-      setReturnTicketUploading(false);
-      Alert.alert("Upload Failed", err.message || "Something went wrong");
-    }
-  };
-
-
   const validateIndianPhoneNumber = (number) => {
     if (!number) {
       return { valid: false, message: "Phone number is required" };
@@ -289,6 +323,7 @@ const TRAVEL_DETAILS_COUNTRIES = [
     if (/^(\d)\1{9}$/.test(cleaned)) {
       return { valid: false, message: "Invalid phone number pattern" };
     }
+
 
     // Block sequential numbers
     const sequentialPatterns = [
@@ -379,8 +414,6 @@ const TRAVEL_DETAILS_COUNTRIES = [
     }
   }, [passportState]);
 
-  const fromDate = travelDate?.departureDate || "";
-  const toDate = travelDate?.returnDate || "";
 
   // === Add Co Traveller Flow ===
   const handleAddCoTraveller = () => {
@@ -443,18 +476,23 @@ const TRAVEL_DETAILS_COUNTRIES = [
       return;
     }
 
+    if (needsEmail && !email) {
+      Alert.alert("Missing Info", "Please enter email ID");
+      return;
+    }
     if (entryMode === "Air" && !airTicketUrl) {
       Alert.alert("Missing Ticket", "Please upload air ticket");
       return;
     }
-
-    if (exitMode === "Air" && !returnTicketUrl) {
-      Alert.alert(
-        "Missing Return Ticket",
-        "Please upload your return air ticket"
-      );
+    if (needsAccommodation && !accommodation) {
+      Alert.alert("Missing Info", "Please select accommodation type");
       return;
     }
+    if (needsOccupation && !occupation) {
+      Alert.alert("Missing Info", "Please select occupation");
+      return;
+    }
+
 
     const payload = {
       ...passportState,   // ✅ IMPORTANT
@@ -465,7 +503,10 @@ const TRAVEL_DETAILS_COUNTRIES = [
       birthDate,
       expiryDate,
       phoneNumber: `+91${phoneNumber}`,
+      email: email || null,
 
+       createdAt: new Date().toISOString(),
+       
       // 🔥 THESE ARE THE MISSING PIECES
       photoUrl: photoUrlState || null,
       frontImageURL: passportState.frontImageURL || null,
@@ -474,33 +515,25 @@ const TRAVEL_DETAILS_COUNTRIES = [
       coTravellers,
 
       travelDate: {
+        selectedDate: travelDate || null,
         country: selected.countrName,
-        indiaResidence,
         purposeOfTravel,
         occupation,
-        hotelname,
-        stayAddress,
+        accommodation,
         entry: {
-          date: entryDate,
           mode: entryMode,
-          transport: entryTransport,
           airTicketUrl: airTicketUrl || null,
         },
-        exit: {
-          date: exitDate,
-          mode: exitMode,
-          transport: exitTransport,
-          returnTicketUrl: returnTicketUrl || null,
-        },
+        visitedLast6Days,
         visitedLast14Days,
-        email,
+        visitedCountriesText,
       },
     };
+   
+      // ✅ STORE WITH COUNTRY CODE
 
-    // ✅ STORE WITH COUNTRY CODE
 
-
-    await savePassportData(payload);
+      await savePassportData(payload);
 
     navigation.navigate("CheckoutScreen", {
       passport: payload,
@@ -560,11 +593,15 @@ const TRAVEL_DETAILS_COUNTRIES = [
         <View style={styles.line} />
 
         {/* Photo */}
-        <View style={styles.stepItem}>
-          <Icon name="check-circle" size={22} color={ORANGE} />
-          <Text style={styles.stepLabel}>Photo</Text>
-        </View>
-        <View style={styles.line} />
+        {shouldShowPhotoStep && (
+          <>
+            <View style={styles.stepItem}>
+              <Icon name="check-circle" size={22} color={ORANGE} />
+              <Text style={styles.stepLabel}>Photo</Text>
+            </View>
+            <View style={styles.line} />
+          </>
+        )}
 
         {/* Passport */}
         <View style={styles.stepItem}>
@@ -597,17 +634,19 @@ const TRAVEL_DETAILS_COUNTRIES = [
           {/* MAIN TRAVELLER DOCUMENTS */}
           <View style={{ marginTop: 8 }}>
             {/* Photo */}
-            {selected.countryType === "Schengen" ? null :
+            {shouldShowPhotoSection && (
               <View style={styles.docRow}>
                 <View style={styles.docHeader}>
                   <View style={styles.docHeaderLeft}>
                     <Icon name="check-circle" size={18} color="#09B66E" />
                     <Text style={styles.docLabel}>Photo (You)</Text>
                   </View>
+
                   <TouchableOpacity onPress={handleEditPhoto}>
                     <Icon name="edit" size={18} color={ORANGE} />
                   </TouchableOpacity>
                 </View>
+
                 <View style={styles.thumbBox}>
                   {photoUrlState ? (
                     <Image
@@ -618,7 +657,8 @@ const TRAVEL_DETAILS_COUNTRIES = [
                     <Text style={styles.docPlaceholder}>No Photo</Text>
                   )}
                 </View>
-              </View>}
+              </View>
+            )}
 
             {/* Passport Front (main) */}
             <View style={styles.docRow}>
@@ -777,8 +817,9 @@ const TRAVEL_DETAILS_COUNTRIES = [
         </View>
 
         {/* PERSONAL INFO */}
-        <View style={[styles.sectionCard, { marginTop: 16 }]}>
-          <Text style={styles.sectionTitle}>Personal Information</Text>
+        <View style={{ marginTop: 16 }}>
+          <Text style={styles.travelDetailsTitle}>Travel Details</Text>
+          {/* <Text style={styles.sectionTitle}>Personal Information</Text>
 
           <Text style={styles.inputLabel}>First Name</Text>
           <TextInput
@@ -820,7 +861,7 @@ const TRAVEL_DETAILS_COUNTRIES = [
             style={styles.input}
             value={expiryDate}
             onChangeText={setExpiryDate}
-          />
+          /> */}
           <Text style={styles.inputLabel}>Phone Number</Text>
 
           <View style={styles.phoneRow}>
@@ -844,75 +885,75 @@ const TRAVEL_DETAILS_COUNTRIES = [
 
           {/* THAILAND + MALAYSIA (SAME FIELDS) */}
           {showTravelDetails && (
-            <View style={[styles.sectionCard, { marginTop: 16 }]}>
-              <Text style={styles.travelDetailsTitle}>Travel Details</Text>
-              <Label text="Purpose of Travel" />
-              <View style={styles.pickerContainer}>
-                <Picker
-                  selectedValue={purposeOfTravel}
-                  onValueChange={setPurposeOfTravel}
-                  mode="dropdown"                 // 🔥 mandatory
-                  dropdownIconColor={BLACK}
-                  style={styles.pickerAndroid}
-                >
-                  <Picker.Item label="Select purpose" value="" color={GRAY} />
-                  {PURPOSE_OF_TRAVEL.map(p => (
-                    <Picker.Item key={p} label={p} value={p} />
-                  ))}
-                </Picker>
-              </View>
-
-
-              <Label text="Occupation" />
-              <View style={styles.pickerContainer}>
-                <Picker
-                  selectedValue={occupation}
-                  onValueChange={setOccupation}
-                  mode="dropdown"
-                  dropdownIconColor={BLACK}
-                  style={styles.pickerAndroid}
-                >
-                  <Picker.Item label="Select occupation" value="" color={GRAY} />
-                  {OCCUPATIONS.map(o => (
-                    <Picker.Item key={o} label={o} value={o} />
-                  ))}
-                </Picker>
-              </View>
-
-
-              <Label text="Hotel / Accommodation Name" />
-              <Input value={hotelname} onChangeText={sethotelname} />
-
-              <Label
-                text={`Complete Address in ${selected?.countrName || "Destination"}`}
-              />
-
-
-              <Input
-                value={stayAddress}
-                onChangeText={setStayAddress}
-              />
-
-              {/* ENTRY */}
-              <Label text="Entry Date" />
-              <TouchableOpacity style={styles.input} onPress={() => setShowEntryPicker(true)}>
-                <Text style={{ color: entryDate ? BLACK : GRAY }}>
-                  {entryDate || "Select entry date"}
-                </Text>
-
-              </TouchableOpacity>
-
-              {showEntryPicker && (
-                <DateTimePicker
-                  value={new Date()}
-                  mode="date"
-                  onChange={(e, d) => {
-                    setShowEntryPicker(false);
-                    d && setEntryDate(d.toLocaleDateString("en-GB"));
-                  }}
-                />
+            <View style={{ marginTop: 16 }}>
+              {needsPurpose && (
+                <>
+                  <Label text="Purpose of Travel" />
+                  <View style={styles.pickerContainer}>
+                    <Picker
+                      selectedValue={purposeOfTravel}
+                      onValueChange={setPurposeOfTravel}
+                      mode="dropdown"                 // 🔥 mandatory
+                      dropdownIconColor={BLACK}
+                      style={styles.pickerAndroid}
+                    >
+                      <Picker.Item label="Select purpose" value="" color={GRAY} />
+                      {PURPOSE_OF_TRAVEL.map(p => (
+                        <Picker.Item key={p} label={p} value={p} />
+                      ))}
+                    </Picker>
+                  </View>
+                </>
               )}
+              {needsOccupation && (
+                <>
+                  <Label text="Occupation" />
+                  <View style={styles.pickerContainer}>
+                    <Picker
+                      selectedValue={occupation}
+                      onValueChange={setOccupation}
+                      mode="dropdown"
+                      dropdownIconColor={BLACK}
+                      style={styles.pickerAndroid}
+                    >
+                      <Picker.Item label="Select occupation" value="" color={GRAY} />
+                      {OCCUPATIONS.map(o => (
+                        <Picker.Item key={o} label={o} value={o} />
+                      ))}
+                    </Picker>
+                  </View>
+                </>
+              )}
+              {needsAccommodation && (
+                <>
+                  <Label text="Accommodation" />
 
+                  <View style={styles.pickerContainer}>
+                    <Picker
+                      selectedValue={accommodation}
+                      onValueChange={(value) => setAccommodation(value)}
+                      mode="dropdown"
+                      dropdownIconColor={BLACK}
+                      style={styles.pickerAndroid}
+                    >
+                      <Picker.Item
+                        label="Select accommodation"
+                        value=""
+                        color="#999"   // lighter gray for placeholder
+                      />
+
+
+                      {ACCOMMODATION.map((item) => (
+                        <Picker.Item
+                          key={item}
+                          label={item}
+                          value={item}
+                        />
+                      ))}
+                    </Picker>
+                  </View>
+                </>
+              )}
               <Text style={styles.label}>Entry Mode of Travel</Text>
               <View style={styles.pickerContainer}>
                 <Picker
@@ -929,88 +970,105 @@ const TRAVEL_DETAILS_COUNTRIES = [
 
               {["Air", "Land", "Sea"].includes(entryMode) && (
 
+
                 <>
-                 <Text style={styles.label}>Upload Travel Ticket / Proof</Text>
-                  <TouchableOpacity
-                    style={styles.uploadBtn}
-                    onPress={handleUploadAirTicket}
-                    disabled={airTicketUploading}
-                  >
-                    <Icon
-                      name={airTicketUrl ? "check-circle" : "upload-file"}
-                      size={20}
-                      color={airTicketUrl ? "#0a0" : ORANGE}
-                    />
-                    <Text style={styles.uploadText}>
-                      {airTicketUploading
-                        ? "Uploading..."
-                        : airTicketUrl
-                          ? "Uploaded"
-                          : "Upload Ticket"}
-                    </Text>
-                  </TouchableOpacity>
+                  {needsAirTicket && (
+                    <>
+                      <Text style={styles.label}>Upload Travel Ticket / Proof</Text>
+                      <TouchableOpacity
+                        style={styles.uploadBtn}
+                        onPress={handleUploadAirTicket}
+                        disabled={airTicketUploading}
+                      >
+                        <Icon
+                          name={airTicketUrl ? "check-circle" : "upload-file"}
+                          size={20}
+                          color={airTicketUrl ? "#0a0" : ORANGE}
+                        />
+                        <Text style={styles.uploadText}>
+                          {airTicketUploading
+                            ? "Uploading..."
+                            : airTicketUrl
+                              ? "Uploaded"
+                              : "Upload Ticket"}
+                        </Text>
+                      </TouchableOpacity>
+                    </>
+                  )}
                 </>
               )}
+              {needsEmail && (
+                <>
+                  <Label text="Email ID" />
+                  <Input
+                    value={email}
+                    onChangeText={setEmail}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                  />
+                </>
+              )}
+              {needsVisited6Days && (
+                <>
+                  <Label text="Have you visited any country in last 6 days?" />
+                  <View style={styles.radioRow}>
+                    {["Yes", "No"].map(v => (
+                      <TouchableOpacity
+                        key={v}
+                        style={styles.radioOption}
+                        onPress={() => setVisitedLast6Days(v)}
+                      >
+                        <Icon
+                          name={
+                            visitedLast6Days === v
+                              ? "radio-button-checked"
+                              : "radio-button-unchecked"
+                          }
+                          size={20}
+                          color={ORANGE}
+                        />
+                        <Text style={styles.radioText}>{v}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </>
+              )}
+              {needsVisited14Days && (
+                <>
+                  <Label text="Stayed in any country in last 14 days?" />
+                  <View style={styles.radioRow}>
+                    {["Yes", "No"].map(v => (
+                      <TouchableOpacity
+                        key={v}
+                        style={styles.radioOption}
+                        onPress={() => setVisitedLast14Days(v)}
+                      >
+                        <Icon
+                          name={
+                            visitedLast14Days === v
+                              ? "radio-button-checked"
+                              : "radio-button-unchecked"
+                          }
+                          size={20}
+                          color={ORANGE}
+                        />
+                        <Text style={styles.radioText}>{v}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
 
-
-              <Label text="Entry Mode of Transport" />
-              <View style={styles.pickerContainer}>
-                <Picker
-                  selectedValue={entryTransport}
-                  onValueChange={setEntryTransport}
-                  mode="dropdown"
-                  dropdownIconColor={BLACK}
-                  style={styles.pickerAndroid}
-                >
-                  <Picker.Item label="Select transport" value="" color={GRAY} />
-                  {MODE_OF_TRANSPORT.map(t => (
-                    <Picker.Item key={t} label={t} value={t} />
-                  ))}
-                </Picker>
-              </View>
-
-
-              <Label text="Visited any country in last 14 days?" />
-
-              <View style={styles.radioContainer}>
-                <View style={styles.radioRow}>
-                  <TouchableOpacity
-                    style={styles.radioOption}
-                    onPress={() => setVisitedLast14Days(true)}
-                  >
-                    <Icon
-                      name={visitedLast14Days ? "radio-button-checked" : "radio-button-unchecked"}
-                      size={20}
-                      color={ORANGE}
-                    />
-                    <Text style={styles.radioText}>Yes</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={styles.radioOption}
-                    onPress={() => {
-                      setVisitedLast14Days(false);
-                      setVisitedCountries("");
-                    }}
-                  >
-                    <Icon
-                      name={!visitedLast14Days ? "radio-button-checked" : "radio-button-unchecked"}
-                      size={20}
-                      color={ORANGE}
-                    />
-                    <Text style={styles.radioText}>No</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-
-
-              <Label text="Email ID" />
-              <Input
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
+                  {visitedLast14Days === "Yes" && (
+                    <>
+                      <Label text="Countries visited" />
+                      <Input
+                        value={visitedCountriesText}
+                        onChangeText={setVisitedCountriesText}
+                        placeholder="Example: UAE, Singapore"
+                      />
+                    </>
+                  )}
+                </>
+              )}
 
             </View>
           )}
@@ -1023,7 +1081,7 @@ const TRAVEL_DETAILS_COUNTRIES = [
           <Text style={styles.confirmText}>Continue</Text>
         </TouchableOpacity>
       </ScrollView>
-    </ScreenWrapper>
+    </ScreenWrapper >
   );
 }
 
@@ -1332,22 +1390,26 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(10),
     backgroundColor: "#fff",
     paddingHorizontal: moderateScale(8),
-    marginBottom: verticalScale(12),
+    height: verticalScale(52),   // 🔑 MATCH picker height
+    justifyContent: "center",    // 🔑 vertical centering
   },
+
 
   pickerAndroid: {
-    height: verticalScale(44),   // ✅ minimum safe height
+    height: verticalScale(52),   // 🔑 increase height
     color: BLACK,
     fontSize: RFValue(14),
+    paddingVertical: 0,          // 🔑 reset Android default padding
   },
 
-travelDetailsTitle: {
-  textAlign: "center",
-  fontSize: RFValue(18),
-  fontWeight: "800",
-  marginBottom: verticalScale(12),
-  color: "#111",
-},
+
+  travelDetailsTitle: {
+    textAlign: "center",
+    fontSize: RFValue(18),
+    fontWeight: "800",
+    marginBottom: verticalScale(12),
+    color: "#111",
+  },
 
 
 

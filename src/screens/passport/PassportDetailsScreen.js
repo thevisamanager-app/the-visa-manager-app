@@ -16,10 +16,6 @@ import { savePassportData } from "../../api/user/passportService";
 import ScreenWrapper from "../../components/ScreenWrapper";
 import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../../utils/metrics";
 import { useSelector } from "react-redux";
-import DateTimePicker from "@react-native-community/datetimepicker";
-<<<<<<<<< Temporary merge branch 1
-import { count } from "console";
-=========
 import { launchImageLibrary } from "react-native-image-picker";
 import { uploadUserDocument } from "../../utils/uploadUserDocument";
 

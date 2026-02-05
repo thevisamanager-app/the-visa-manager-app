@@ -194,8 +194,7 @@
 //   }
 // });
 
-<<<<<<<<< Temporary merge branch 1
-// // ===================== CREATE RAZORPAY ORDER ======================
+// ===================== CREATE RAZORPAY ORDER ======================
 // app.post("/createRazorpayOrder", async (req, res) => {
 //   try {
 //     console.log("KEY_ID present:", !!RAZORPAY_KEY_ID.value());
@@ -216,39 +215,15 @@
 //       currency: "INR",
 //       receipt: "receipt_" + Date.now(),
 //     });
-=========
-// ===================== CREATE RAZORPAY ORDER ======================
-app.post("/createRazorpayOrder", async (req, res) => {
-  try {
-    console.log("KEY_ID present:", !!RAZORPAY_KEY_ID.value());
-    console.log("KEY_SECRET present:", !!RAZORPAY_KEY_SECRET.value());
-    const { amount, userId } = req.body;
-
-const rupees = Number(amount);
-if (!Number.isFinite(rupees) || rupees <= 0) {
-  return res.status(400).json({ error: "Invalid amount" });
-}
-
-const amountPaise = Math.round(rupees * 100);
 
 
-    const razorpay = getRazorpay();
-    const order = await razorpay.orders.create({
-  amount: amountPaise,
-  currency: "INR",
-  receipt: "receipt_" + Date.now(),
-});
+//     //     await db.collection("payments").doc(order.id).set({
+//     //       userId,
+//     //       amount,
+//     //       status: "created",
+//     //       createdAt: admin.firestore.FieldValue.serverTimestamp(),
+//     //     });
 
->>>>>>>>> Temporary merge branch 2
-
-//     await db.collection("payments").doc(order.id).set({
-//       userId,
-//       amount,
-//       status: "created",
-//       createdAt: admin.firestore.FieldValue.serverTimestamp(),
-//     });
-
-<<<<<<<<< Temporary merge branch 1
 //     return res.status(200).json({
 //       key: RAZORPAY_KEY_ID.value(),
 //       orderId: order.id,
@@ -639,59 +614,1266 @@ const amountPaise = Math.round(rupees * 100);
 
 
 // ===================== REQUIRED IMPORTS ======================
+// const { onRequest, onCall, HttpsError } = require("firebase-functions/v2/https");
+// const { defineSecret } = require("firebase-functions/params");
+// const admin = require("firebase-admin");
+// const express = require("express");
+// const crypto = require("crypto");
+// const path = require("path");
+// const fs = require("fs");
+// const os = require("os");
+
+// // ✅ LAZY (heavy) imports
+// let Razorpay;      // require("razorpay") inside getRazorpay()
+// let PDFDocument;   // require("pdfkit") inside generateInvoice()
+
+// // ===================== FIREBASE INIT ======================
+// if (!admin.apps.length) {
+//   admin.initializeApp({
+//     storageBucket:
+//       process.env.FIREBASE_CONFIG
+//         ? JSON.parse(process.env.FIREBASE_CONFIG).storageBucket
+//         : "thevisamanager-bea80.appspot.com",
+//   });
+// }
+
+// const db = admin.firestore();
+// const bucket = admin.storage().bucket(); // important for file upload
+
+// // ===================== SECRETS ======================
+// const GOOGLE_PLACES_KEY = defineSecret("GOOGLE_PLACES_KEY");
+// const RAZORPAY_KEY_ID = defineSecret("RAZORPAY_KEY_ID");
+// const RAZORPAY_KEY_SECRET = defineSecret("RAZORPAY_KEY_SECRET");
+// const VISION_API_KEY = defineSecret("VISION_API_KEY");
+// const GOOGLE_SHEETS_SA_JSON = defineSecret("GOOGLE_SHEETS_SA_JSON");
+
+
+// // ===================== CONSTANTS ======================
+// const PLACE_ID = "ChIJ3bPWBbqVwjsRsIr6lWmT0uA";
+
+// // ===================== GOOGLE REVIEWS ======================
+// // ✅ Node.js 20 has global fetch. DO NOT import node-fetch.
+// exports.getGoogleReviews = onRequest(
+//   {
+//     region: "us-central1",
+//     secrets: [GOOGLE_PLACES_KEY],
+//   },
+//   async (req, res) => {
+//     // ✅ CORS FIRST
+//     res.set("Access-Control-Allow-Origin", "*");
+//     res.set("Access-Control-Allow-Methods", "GET,OPTIONS");
+//     res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+//     if (req.method === "OPTIONS") {
+//       return res.status(204).send("");
+//     }
+
+//     try {
+//       const cacheRef = db.collection("meta").doc("google_reviews");
+//       const cacheSnap = await cacheRef.get();
+
+//       if (cacheSnap.exists) {
+//         const cached = cacheSnap.data();
+//         if (cached?.updatedAt && Date.now() - cached.updatedAt < 24 * 60 * 60 * 1000) {
+//           return res.json(cached.reviews || []);
+//         }
+//       }
+
+//       const url =
+//         "https://maps.googleapis.com/maps/api/place/details/json" +
+//         `?place_id=${PLACE_ID}&fields=rating,reviews&key=${GOOGLE_PLACES_KEY.value()}`;
+
+//       const response = await fetch(url);
+//       const data = await response.json();
+
+//       if (data.status !== "OK") {
+//         console.error("Google API Error:", data);
+//         return res.status(500).json(data);
+//       }
+
+//       const reviews = data.result?.reviews || [];
+
+//       await cacheRef.set(
+//         {
+//           reviews,
+//           updatedAt: Date.now(),
+//         },
+//         { merge: true }
+//       );
+
+//       return res.json(reviews);
+//     } catch (err) {
+//       console.error("REVIEWS ERROR:", err);
+//       return res.status(500).json({ error: err.message });
+//     }
+//   }
+// );
+
+// // ===================== EXPRESS APP ======================
+// const app = express();
+// app.use(express.json());
+// app.use((req, res, next) => {
+//   console.log("REQ:", req.method, req.path);
+//   next();
+// });
+
+// app.get("/health", (req, res) => {
+//   res.status(200).json({ ok: true });
+// });
+
+
+// // ✅ Lazy Razorpay init (prevents cold-start/deploy timeout)
+// function getRazorpay() {
+//   if (!Razorpay) {
+//     Razorpay = require("razorpay");
+//   }
+
+//   return new Razorpay({
+//     key_id: RAZORPAY_KEY_ID.value(),
+//     key_secret: RAZORPAY_KEY_SECRET.value(),
+//   });
+// }
+
+// // ===================== TEST ROUTE ======================
+// app.get("/users/:uid", async (req, res) => {
+//   try {
+//     const { uid } = req.params;
+
+//     const doc = await db.collection("users").doc(uid).get();
+//     if (!doc.exists) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+
+//     return res.status(200).json({
+//       id: doc.id,
+//       ...doc.data(),
+//     });
+//   } catch (error) {
+//     return res.status(500).json({ error: error.message });
+//   }
+// });
+
+// // ===================== CREATE RAZORPAY ORDER ======================
+// app.post("/createRazorpayOrder", async (req, res) => {
+//   try {
+//     console.log("KEY_ID present:", !!RAZORPAY_KEY_ID.value());
+//     console.log("KEY_SECRET present:", !!RAZORPAY_KEY_SECRET.value());
+
+//     const { amount, userId } = req.body;
+
+// const rupees = Number(amount);
+// if (!Number.isFinite(rupees) || rupees <= 0) {
+//   return res.status(400).json({ error: "Invalid amount" });
+// }
+
+// const amountPaise = Math.round(rupees * 100);
+
+
+//     const razorpay = getRazorpay();
+
+//     const order = await razorpay.orders.create({
+//   amount: amountPaise,
+//   currency: "INR",
+//   receipt: "receipt_" + Date.now(),
+// });
+
+
+//     await db.collection("payments").doc(order.id).set({
+//       userId,
+//       amount,
+//       status: "created",
+//       createdAt: admin.firestore.FieldValue.serverTimestamp(),
+//     });
+
+//     return res.status(200).json({
+//       key: RAZORPAY_KEY_ID.value(),
+//       orderId: order.id,
+//       amount: order.amount,
+//       currency: order.currency,
+//     });
+//   } catch (e) {
+//   console.error("RAZORPAY ORDER ERROR:", e);
+
+//   return res.status(500).json({
+//     error: "Order creation failed",
+//     message: e?.message || null,
+//     razorpay: e?.error || null, // Razorpay SDK often puts details here
+//   });
+// }
+
+// });
+
+// // ===================== VERIFY PAYMENT ======================
+// app.post("/verifyRazorpayPayment", async (req, res) => {
+//   try {
+//     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+
+//     const sign = `${razorpay_order_id}|${razorpay_payment_id}`;
+//     const expected = crypto
+//       .createHmac("sha256", RAZORPAY_KEY_SECRET.value())
+//       .update(sign)
+//       .digest("hex");
+
+//     const verified = expected === razorpay_signature;
+
+//     if (!verified) {
+//       await db.collection("payments").doc(razorpay_order_id).update({
+//         status: "failed",
+//         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+//       });
+
+//       return res.json({ valid: false });
+//     }
+
+//     const razorpay = getRazorpay();
+//     const payment = await razorpay.payments.fetch(razorpay_payment_id);
+
+//     await db.collection("payments").doc(razorpay_order_id).update({
+//       paymentId: razorpay_payment_id,
+//       orderId: razorpay_order_id,
+//       amount: payment.amount, // paise
+//       currency: payment.currency,
+//       method: payment.method,
+//       status: payment.status,
+//       email: payment.email || null,
+//       contact: payment.contact || null,
+//       verified: true,
+//       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+//     });
+
+//     return res.json({
+//       valid: true,
+//       status: payment.status,
+//     });
+//   } catch (e) {
+//     console.error("VERIFY ERROR:", e);
+//     return res.status(500).json({ error: e.message });
+//   }
+// });
+
+// // ===================== GENERATE INVOICE (PDF) ======================
+// exports.generateInvoice = onCall(
+//   {
+//     region: "us-central1",
+//     secrets: [RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET], // not required but ok if you want
+//   },
+//   async (req) => {
+//     try {
+//       if (!req.auth || !req.auth.uid) {
+//         throw new HttpsError("unauthenticated", "User not authenticated");
+//       }
+
+//       const { invoiceId, userName, date, amount, userId, country, email, phoneNumber } = req.data;
+
+//       if (!invoiceId || !date || amount == null || !userId || !country) {
+//         throw new HttpsError("invalid-argument", "Missing required fields");
+//       }
+
+//       if (typeof amount !== "number") {
+//         throw new HttpsError("invalid-argument", "Amount must be a number");
+//       }
+
+//       // ✅ Lazy load PDFKit here
+//       if (!PDFDocument) {
+//         PDFDocument = require("pdfkit");
+//       }
+
+//       const doc = new PDFDocument({ margin: 40, size: "A4" });
+//       const filePath = path.join(os.tmpdir(), `${invoiceId}.pdf`);
+//       const writeStream = fs.createWriteStream(filePath);
+//       doc.pipe(writeStream);
+
+//       // Logo
+//       try {
+//         const logoPath = path.join(__dirname, "tvm_assets", "tvmLogo.png");
+//         if (fs.existsSync(logoPath)) {
+//           doc.image(logoPath, 40, 40, { width: 140 });
+//         } else {
+//           console.warn("Logo file not found at:", logoPath);
+//         }
+//       } catch (e) {
+//         console.warn("Logo load failed:", e);
+//       }
+
+//       doc.fillColor("#FF6A00").fontSize(26).text("INVOICE", 400, 45, { align: "right" });
+//       doc.moveDown(1);
+
+//       doc.fontSize(12).fillColor("#000").text(`Invoice No: ${invoiceId}`, 40, doc.y);
+//       doc.text(`Date: ${date}`, { align: "right" });
+//       doc.moveDown(2);
+
+//       doc.fontSize(14).fillColor("#FF6A00").text("Bill To:", 40);
+//       doc.fillColor("#000").fontSize(12);
+//       doc.text(`Customer ID: ${userId}`);
+//       doc.text(`Mobile: ${phoneNumber}`);
+//       doc.text(`Email: ${email}`);
+//       doc.moveDown(2);
+
+//       doc.fontSize(14).fillColor("#FF6A00").text("Company Details:", 40);
+//       doc.fillColor("#000").fontSize(12);
+//       doc.text("The Visa Manager");
+//       doc.text("Pune, Maharashtra");
+//       doc.text("Transaction Type: B2C");
+//       doc.moveDown(1);
+
+//       doc.moveTo(40, doc.y + 10).lineTo(550, doc.y + 10).stroke("#FF6A00");
+//       doc.moveDown();
+
+//       doc.fontSize(14).fillColor("#FF6A00")
+//         .text("DESCRIPTION", 40, doc.y, { continued: true })
+//         .text("CURRENCY", 300, doc.y, { continued: true })
+//         .text("AMOUNT", 450, doc.y);
+
+//       doc.moveTo(40, doc.y + 10).lineTo(550, doc.y + 10).stroke("#FF6A00");
+//       doc.moveDown(1.5);
+
+//       doc.fontSize(13).fillColor("#000");
+//       doc.text(`${country}`, 40, doc.y, { continued: true });
+//       doc.text("INR", 300, doc.y, { continued: true });
+//       doc.text(`${amount}`, 450, doc.y);
+
+//       doc.moveDown(2);
+//       doc.fontSize(16).fillColor("#FF6A00").text(`TOTAL: INR ${amount}`, { align: "right" });
+//       doc.moveDown(2);
+
+//       doc.fontSize(11).fillColor("#000").text(
+//         "This is a computer-generated invoice and requires no signature.",
+//         { align: "center" }
+//       );
+
+//       doc.moveDown(1);
+//       doc.fontSize(10).fillColor("gray").text(
+//         "Support: support@thevisamanager.com | +91-XXXXXXXXXX",
+//         { align: "center" }
+//       );
+
+//       doc.end();
+
+//       await new Promise((resolve, reject) => {
+//         writeStream.on("finish", resolve);
+//         writeStream.on("error", reject);
+//       });
+
+//       await bucket.upload(filePath, {
+//         destination: `invoices/${invoiceId}.pdf`,
+//         contentType: "application/pdf",
+//         metadata: { cacheControl: "public,max-age=31536000" },
+//       });
+
+//       try {
+//         fs.unlinkSync(filePath);
+//       } catch (e) {
+//         console.warn("Failed to delete temp file:", e);
+//       }
+
+//       const file = bucket.file(`invoices/${invoiceId}.pdf`);
+//       const [url] = await file.getSignedUrl({
+//         action: "read",
+//         expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
+//       });
+
+//       return {
+//         status: "success",
+//         message: "Invoice generated successfully",
+//         url,
+//       };
+//     } catch (error) {
+//       console.error("Invoice generation failed:", error);
+//       throw new HttpsError("internal", error.message || "Invoice failed");
+//     }
+//   }
+// );
+
+// // ===================== EXTRACT TEXT FROM IMAGE ======================
+// exports.extractTextFromImage = onCall(
+//   {
+//     region: "us-central1",
+//     secrets: [VISION_API_KEY],
+//   },
+//   async (req) => {
+//     if (!req.auth || !req.auth.uid) {
+//       throw new HttpsError("unauthenticated", "User not authenticated");
+//     }
+
+//     const base64Image = req.data?.base64Image;
+//     if (!base64Image || typeof base64Image !== "string") {
+//       throw new HttpsError("invalid-argument", "Missing base64Image");
+//     }
+
+//     const cleaned = base64Image.replace(/^data:image\/[a-z]+;base64,/, "");
+//     if (cleaned.length > 12_000_000) {
+//       throw new HttpsError("invalid-argument", "Image too large");
+//     }
+
+//     const body = {
+//       requests: [
+//         {
+//           image: { content: cleaned },
+//           features: [{ type: "TEXT_DETECTION" }],
+//         },
+//       ],
+//     };
+
+//     const response = await fetch(
+//       `https://vision.googleapis.com/v1/images:annotate?key=${VISION_API_KEY.value()}`,
+//       {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify(body),
+//       }
+//     );
+
+//     if (!response.ok) {
+//       const text = await response.text();
+//       throw new HttpsError("internal", "Vision API error", {
+//         status: response.status,
+//         body: text,
+//       });
+//     }
+
+//     const data = await response.json();
+//     const text = data.responses?.[0]?.fullTextAnnotation?.text || "";
+//     return { text };
+//   }
+// );
+
+// // ===================== EXPORT EXPRESS API ======================
+// exports.api = onRequest(
+//   {
+//     region: "us-central1",
+//     secrets: [RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET],
+//   },
+//   app
+// );
+
+
+// const { onRequest, onCall, HttpsError } = require("firebase-functions/v2/https");
+// const { defineSecret } = require("firebase-functions/params");
+// const admin = require("firebase-admin");
+// const express = require("express");
+// const crypto = require("crypto");
+// const path = require("path");
+// const fs = require("fs");
+// const os = require("os");
+
+// // ===================== LAZY IMPORTS ======================
+// let Razorpay;
+// let PDFDocument;
+
+// // ===================== FIREBASE INIT ======================
+// if (!admin.apps.length) {
+//   admin.initializeApp({
+//     storageBucket:
+//       process.env.FIREBASE_CONFIG
+//         ? JSON.parse(process.env.FIREBASE_CONFIG).storageBucket
+//         : "thevisamanager-bea80.appspot.com",
+//   });
+// }
+
+// const db = admin.firestore();
+// const bucket = admin.storage().bucket();
+
+// // ===================== SECRETS ======================
+// const GOOGLE_PLACES_KEY = defineSecret("GOOGLE_PLACES_KEY");
+// const RAZORPAY_KEY_ID = defineSecret("RAZORPAY_KEY_ID");
+// const RAZORPAY_KEY_SECRET = defineSecret("RAZORPAY_KEY_SECRET");
+// const VISION_API_KEY = defineSecret("VISION_API_KEY");
+
+// // ===================== CONSTANTS ======================
+// const PLACE_ID = "ChIJ3bPWBbqVwjsRsIr6lWmT0uA";
+
+// // ===================== GOOGLE REVIEWS ======================
+// exports.getGoogleReviews = onRequest(
+//   { 
+//     region: "us-central1",
+//      secrets: [GOOGLE_PLACES_KEY] 
+//     },
+//   async (req, res) => {
+//     res.set("Access-Control-Allow-Origin", "*");
+//     res.set("Access-Control-Allow-Methods", "GET,OPTIONS");
+//     res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+//     if (req.method === "OPTIONS") {
+//       return res.status(204).send("");
+//   }
+
+//     try {
+//       const cacheRef = db.collection("meta").doc("google_reviews");
+//       const cacheSnap = await cacheRef.get();
+
+//       if (cacheSnap.exists) {
+//         const cached = cacheSnap.data();
+//         if (Date.now() - cached.updatedAt < 24 * 60 * 60 * 1000) {
+//           return res.json(cached.reviews || []);
+//         }
+//       }
+
+//       const url =
+//         `https://maps.googleapis.com/maps/api/place/details/json` +
+//         `?place_id=${PLACE_ID}&fields=rating,reviews&key=${GOOGLE_PLACES_KEY.value()}`;
+
+//       const response = await fetch(url);
+//       const data = await response.json();
+
+//       if (data.status !== "OK") {
+//         return res.status(500).json(data);
+//       }
+
+//       await cacheRef.set(
+//         { reviews: data.result.reviews || [], updatedAt: Date.now() },
+//         { merge: true }
+//       );
+
+//       res.json(data.result.reviews || []);
+//     } catch (e) {
+//       res.status(500).json({ error: e.message });
+//     }
+//   }
+// );
+
+// // ===================== EXPRESS APP ======================
+// const app = express();
+// app.use(express.json());
+
+// app.get("/health", (_, res) => res.json({ ok: true }));
+
+// function getRazorpay() {
+//   if (!Razorpay) Razorpay = require("razorpay");
+//   return new Razorpay({
+//     key_id: RAZORPAY_KEY_ID.value(),
+//     key_secret: RAZORPAY_KEY_SECRET.value(),
+//   });
+// }
+
+// // ===================== CREATE RAZORPAY ORDER ======================
+// app.post("/createRazorpayOrder", async (req, res) => {
+//   try {
+//     const rupees = Number(req.body.amount);
+//     if (!Number.isFinite(rupees) || rupees <= 0) {
+//       return res.status(400).json({ error: "Invalid amount" });
+//     }
+
+//     const order = await getRazorpay().orders.create({
+//       amount: Math.round(rupees * 100),
+//       currency: "INR",
+//       receipt: `receipt_${Date.now()}`,
+//     });
+
+//     await db.collection("payments").doc(order.id).set({
+//       amount: rupees,
+//       status: "created",
+//       createdAt: admin.firestore.FieldValue.serverTimestamp(),
+//     });
+
+//     res.json({
+//       key: RAZORPAY_KEY_ID.value(),
+//       orderId: order.id,
+//       amount: order.amount,
+//     });
+//   } catch (e) {
+//     res.status(500).json({ error: e.message });
+//   }
+// });
+
+// // ===================== VERIFY PAYMENT ======================
+// app.post("/verifyRazorpayPayment", async (req, res) => {
+//   try {
+//     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+
+//     const expected = crypto
+//       .createHmac("sha256", RAZORPAY_KEY_SECRET.value())
+//       .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+//       .digest("hex");
+
+//     if (expected !== razorpay_signature) {
+//       return res.json({ valid: false });
+//     }
+
+//     res.json({ valid: true });
+//   } catch (e) {
+//     res.status(500).json({ error: e.message });
+//   }
+// });
+
+// // ===================== GENERATE INVOICE ======================
+// exports.generateInvoice = onCall(
+//   { region: "us-central1", secrets: [RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET] },
+//   async (req) => {
+//     try {
+//       if (!PDFDocument) PDFDocument = require("pdfkit");
+
+//       const { invoiceId, amount } = req.data;
+//       if (!invoiceId || typeof amount !== "number") {
+//         throw new HttpsError("invalid-argument", "Invalid invoice data");
+//       }
+
+//       const doc = new PDFDocument();
+//       const filePath = path.join(os.tmpdir(), `${invoiceId}.pdf`);
+//       doc.pipe(fs.createWriteStream(filePath));
+//       doc.text(`Invoice ${invoiceId}\nAmount: ${amount}`);
+//       doc.end();
+
+//       await bucket.upload(filePath, {
+//         destination: `invoices/${invoiceId}.pdf`,
+//       });
+
+//       return { status: "success" };
+//     } catch (e) {
+//       throw new HttpsError("internal", e.message);
+//     }
+//   }
+// );
+
+// // ===================== EXPORT EXPRESS API ======================
+// exports.api = onRequest(
+//   { region: "us-central1", secrets: [RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET] },
+//   app
+// );
+
+
+
+// const { onRequest, onCall, HttpsError } = require("firebase-functions/v2/https");
+// const { defineSecret } = require("firebase-functions/params");
+// const admin = require("firebase-admin");
+// const express = require("express");
+// const crypto = require("crypto");
+// const path = require("path");
+// const fs = require("fs");
+// const os = require("os");
+
+// // ✅ LAZY (heavy) imports
+// let Razorpay;      // require("razorpay") inside getRazorpay()
+// let PDFDocument;   // require("pdfkit") inside generateInvoice()
+
+// // ===================== FIREBASE INIT ======================
+// if (!admin.apps.length) {
+//   admin.initializeApp({
+//     storageBucket:
+//       process.env.FIREBASE_CONFIG
+//         ? JSON.parse(process.env.FIREBASE_CONFIG).storageBucket
+//         : "thevisamanager-bea80.appspot.com",
+//   });
+// }
+
+// const db = admin.firestore();
+// const bucket = admin.storage().bucket(); // important for file upload
+
+// // ===================== SECRETS ======================
+// const GOOGLE_PLACES_KEY = defineSecret("GOOGLE_PLACES_KEY");
+// const RAZORPAY_KEY_ID = defineSecret("RAZORPAY_KEY_ID");
+// const RAZORPAY_KEY_SECRET = defineSecret("RAZORPAY_KEY_SECRET");
+// const VISION_API_KEY = defineSecret("VISION_API_KEY");
+
+// // ===================== CONSTANTS ======================
+// const PLACE_ID = "ChIJ3bPWBbqVwjsRsIr6lWmT0uA";
+
+// // ===================== GOOGLE REVIEWS ======================
+// // ✅ Node.js 20 has global fetch. DO NOT import node-fetch.
+// exports.getGoogleReviews = onRequest(
+//   {
+//     region: "us-central1",
+//     secrets: [GOOGLE_PLACES_KEY],
+//   },
+//   async (req, res) => {
+//     // ✅ CORS FIRST
+//     res.set("Access-Control-Allow-Origin", "*");
+//     res.set("Access-Control-Allow-Methods", "GET,OPTIONS");
+//     res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+//     if (req.method === "OPTIONS") {
+//       return res.status(204).send("");
+//     }
+
+//     try {
+//       const cacheRef = db.collection("meta").doc("google_reviews");
+//       const cacheSnap = await cacheRef.get();
+
+//       if (cacheSnap.exists) {
+//         const cached = cacheSnap.data();
+//         if (cached?.updatedAt && Date.now() - cached.updatedAt < 24 * 60 * 60 * 1000) {
+//           return res.json(cached.reviews || []);
+//         }
+//       }
+
+//       const url =
+//         "https://maps.googleapis.com/maps/api/place/details/json" +
+//         `?place_id=${PLACE_ID}&fields=rating,reviews&key=${GOOGLE_PLACES_KEY.value()}`;
+
+//       const response = await fetch(url);
+//       const data = await response.json();
+
+//       if (data.status !== "OK") {
+//         console.error("Google API Error:", data);
+//         return res.status(500).json(data);
+//       }
+
+//       const reviews = data.result?.reviews || [];
+
+//       await cacheRef.set(
+//         {
+//           reviews,
+//           updatedAt: Date.now(),
+//         },
+//         { merge: true }
+//       );
+
+//       return res.json(reviews);
+//     } catch (err) {
+//       console.error("REVIEWS ERROR:", err);
+//       return res.status(500).json({ error: err.message });
+//     }
+//   }
+// );
+
+// // ===================== EXPRESS APP ======================
+// const app = express();
+// app.use(express.json());
+// app.use((req, res, next) => {
+//   console.log("REQ:", req.method, req.path);
+//   next();
+// });
+
+// app.get("/health", (req, res) => {
+//   res.status(200).json({ ok: true });
+// });
+
+
+// // ✅ Lazy Razorpay init (prevents cold-start/deploy timeout)
+// function getRazorpay() {
+//   if (!Razorpay) {
+//     Razorpay = require("razorpay");
+//   }
+
+//   return new Razorpay({
+//     key_id: RAZORPAY_KEY_ID.value(),
+//     key_secret: RAZORPAY_KEY_SECRET.value(),
+//   });
+// }
+
+// // ===================== TEST ROUTE ======================
+// app.get("/users/:uid", async (req, res) => {
+//   try {
+//     const { uid } = req.params;
+
+//     const doc = await db.collection("users").doc(uid).get();
+//     if (!doc.exists) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+
+//     return res.status(200).json({
+//       id: doc.id,
+//       ...doc.data(),
+//     });
+//   } catch (error) {
+//     return res.status(500).json({ error: error.message });
+//   }
+// });
+
+// // ===================== CREATE RAZORPAY ORDER ======================
+// app.post("/createRazorpayOrder", async (req, res) => {
+//   try {
+//     console.log("KEY_ID present:", !!RAZORPAY_KEY_ID.value());
+//     console.log("KEY_SECRET present:", !!RAZORPAY_KEY_SECRET.value());
+
+//     const { amount, userId } = req.body;
+//     if (!amount || !userId) {
+//       return res.status(400).json({ error: "Missing fields" });
+//     }
+
+//     const razorpay = getRazorpay();
+
+//     const order = await razorpay.orders.create({
+//       amount: amount * 100,
+//       currency: "INR",
+//       receipt: "receipt_" + Date.now(),
+//     });
+
+//     await db.collection("payments").doc(order.id).set({
+//       userId,
+//       amount,
+//       status: "created",
+//       createdAt: admin.firestore.FieldValue.serverTimestamp(),
+//     });
+
+//     return res.status(200).json({
+//       key: RAZORPAY_KEY_ID.value(),
+//       orderId: order.id,
+//       amount: order.amount,
+//       currency: order.currency,
+//     });
+//   } catch (e) {
+//     console.error("RAZORPAY ORDER ERROR:", e);
+//     return res.status(500).json({ error: "Order creation failed", details: e.message });
+//   }
+// });
+
+// // ===================== VERIFY PAYMENT ======================
+// app.post("/verifyRazorpayPayment", async (req, res) => {
+//   try {
+//     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+
+//     const sign = `${razorpay_order_id}|${razorpay_payment_id}`;
+//     const expected = crypto
+//       .createHmac("sha256", RAZORPAY_KEY_SECRET.value())
+//       .update(sign)
+//       .digest("hex");
+
+//     const verified = expected === razorpay_signature;
+
+//     if (!verified) {
+//       await db.collection("payments").doc(razorpay_order_id).update({
+//         status: "failed",
+//         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+//       });
+
+//       return res.json({ valid: false });
+//     }
+
+//     const razorpay = getRazorpay();
+//     const payment = await razorpay.payments.fetch(razorpay_payment_id);
+
+//     await db.collection("payments").doc(razorpay_order_id).update({
+//       paymentId: razorpay_payment_id,
+//       orderId: razorpay_order_id,
+//       amount: payment.amount, // paise
+//       currency: payment.currency,
+//       method: payment.method,
+//       status: payment.status,
+//       email: payment.email || null,
+//       contact: payment.contact || null,
+//       verified: true,
+//       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+//     });
+
+//     return res.json({
+//       valid: true,
+//       status: payment.status,
+//     });
+//   } catch (e) {
+//     console.error("VERIFY ERROR:", e);
+//     return res.status(500).json({ error: e.message });
+//   }
+// });
+
+// // ===================== GENERATE INVOICE (PDF) ======================
+// exports.generateInvoice = onCall(
+//   {
+//     region: "us-central1",
+//     secrets: [RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET], // not required but ok if you want
+//   },
+//   async (req) => {
+//     try {
+//       if (!req.auth || !req.auth.uid) {
+//         throw new HttpsError("unauthenticated", "User not authenticated");
+//       }
+
+//       const { invoiceId, userName, date, amount, userId, country, email, phoneNumber } = req.data;
+
+//       if (!invoiceId || !date || amount == null || !userId || !country) {
+//         throw new HttpsError("invalid-argument", "Missing required fields");
+//       }
+
+//       if (typeof amount !== "number") {
+//         throw new HttpsError("invalid-argument", "Amount must be a number");
+//       }
+
+//       // ✅ Lazy load PDFKit here
+//       if (!PDFDocument) {
+//         PDFDocument = require("pdfkit");
+//       }
+
+//       const doc = new PDFDocument({ margin: 40, size: "A4" });
+//       const filePath = path.join(os.tmpdir(), `${invoiceId}.pdf`);
+//       const writeStream = fs.createWriteStream(filePath);
+//       doc.pipe(writeStream);
+
+//       // Logo
+//       try {
+//         const logoPath = path.join(__dirname, "tvm_assets", "tvmLogo.png");
+//         if (fs.existsSync(logoPath)) {
+//           doc.image(logoPath, 40, 40, { width: 140 });
+//         } else {
+//           console.warn("Logo file not found at:", logoPath);
+//         }
+//       } catch (e) {
+//         console.warn("Logo load failed:", e);
+//       }
+
+//       doc.fillColor("#FF6A00").fontSize(26).text("INVOICE", 400, 45, { align: "right" });
+//       doc.moveDown(1);
+
+//       doc.fontSize(12).fillColor("#000").text(`Invoice No: ${invoiceId}`, 40, doc.y);
+//       doc.text(`Date: ${date}`, { align: "right" });
+//       doc.moveDown(2);
+
+//       doc.fontSize(14).fillColor("#FF6A00").text("Bill To:", 40);
+//       doc.fillColor("#000").fontSize(12);
+//       doc.text(`Customer ID: ${userId}`);
+//       doc.text(`Mobile: ${phoneNumber}`);
+//       doc.text(`Email: ${email}`);
+//       doc.moveDown(2);
+
+//       doc.fontSize(14).fillColor("#FF6A00").text("Company Details:", 40);
+//       doc.fillColor("#000").fontSize(12);
+//       doc.text("The Visa Manager");
+//       doc.text("Pune, Maharashtra");
+//       doc.text("Transaction Type: B2C");
+//       doc.moveDown(1);
+
+//       doc.moveTo(40, doc.y + 10).lineTo(550, doc.y + 10).stroke("#FF6A00");
+//       doc.moveDown();
+
+//       doc.fontSize(14).fillColor("#FF6A00")
+//         .text("DESCRIPTION", 40, doc.y, { continued: true })
+//         .text("CURRENCY", 300, doc.y, { continued: true })
+//         .text("AMOUNT", 450, doc.y);
+
+//       doc.moveTo(40, doc.y + 10).lineTo(550, doc.y + 10).stroke("#FF6A00");
+//       doc.moveDown(1.5);
+
+//       doc.fontSize(13).fillColor("#000");
+//       doc.text(`${country}`, 40, doc.y, { continued: true });
+//       doc.text("INR", 300, doc.y, { continued: true });
+//       doc.text(`${amount}`, 450, doc.y);
+
+//       doc.moveDown(2);
+//       doc.fontSize(16).fillColor("#FF6A00").text(`TOTAL: INR ${amount}`, { align: "right" });
+//       doc.moveDown(2);
+
+//       doc.fontSize(11).fillColor("#000").text(
+//         "This is a computer-generated invoice and requires no signature.",
+//         { align: "center" }
+//       );
+
+//       doc.moveDown(1);
+//       doc.fontSize(10).fillColor("gray").text(
+//         "Support: support@thevisamanager.com | +91-XXXXXXXXXX",
+//         { align: "center" }
+//       );
+
+//       doc.end();
+
+//       await new Promise((resolve, reject) => {
+//         writeStream.on("finish", resolve);
+//         writeStream.on("error", reject);
+//       });
+
+//       await bucket.upload(filePath, {
+//         destination: `invoices/${invoiceId}.pdf`,
+//         contentType: "application/pdf",
+//         metadata: { cacheControl: "public,max-age=31536000" },
+//       });
+
+//       try {
+//         fs.unlinkSync(filePath);
+//       } catch (e) {
+//         console.warn("Failed to delete temp file:", e);
+//       }
+
+//       const file = bucket.file(`invoices/${invoiceId}.pdf`);
+//       const [url] = await file.getSignedUrl({
+//         action: "read",
+//         expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
+//       });
+
+//       return {
+//         status: "success",
+//         message: "Invoice generated successfully",
+//         url,
+//       };
+//     } catch (error) {
+//       console.error("Invoice generation failed:", error);
+//       throw new HttpsError("internal", error.message || "Invoice failed");
+//     }
+//   }
+// );
+
+// // ===================== EXTRACT TEXT FROM IMAGE ======================
+// exports.extractTextFromImage = onCall(
+//   {
+//     region: "us-central1",
+//     secrets: [VISION_API_KEY],
+//   },
+//   async (req) => {
+//     if (!req.auth || !req.auth.uid) {
+//       throw new HttpsError("unauthenticated", "User not authenticated");
+//     }
+
+//     const base64Image = req.data?.base64Image;
+//     if (!base64Image || typeof base64Image !== "string") {
+//       throw new HttpsError("invalid-argument", "Missing base64Image");
+//     }
+
+//     const cleaned = base64Image.replace(/^data:image\/[a-z]+;base64,/, "");
+//     if (cleaned.length > 12_000_000) {
+//       throw new HttpsError("invalid-argument", "Image too large");
+//     }
+
+//     const body = {
+//       requests: [
+//         {
+//           image: { content: cleaned },
+//           features: [{ type: "TEXT_DETECTION" }],
+//         },
+//       ],
+//     };
+
+//     const response = await fetch(
+//       `https://vision.googleapis.com/v1/images:annotate?key=${VISION_API_KEY.value()}`,
+//       {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify(body),
+//       }
+//     );
+
+//     if (!response.ok) {
+//       const text = await response.text();
+//       throw new HttpsError("internal", "Vision API error", {
+//         status: response.status,
+//         body: text,
+//       });
+//     }
+
+//     const data = await response.json();
+//     const text = data.responses?.[0]?.fullTextAnnotation?.text || "";
+//     return { text };
+//   }
+// );
+
+// // ===================== EXPORT EXPRESS API ======================
+// exports.api = onRequest(
+//   {
+//     region: "us-central1",
+//     secrets: [RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET],
+//   },
+//   app
+// );
+
+
+// functions/index.js
+
+
 const { onRequest, onCall, HttpsError } = require("firebase-functions/v2/https");
 const { defineSecret } = require("firebase-functions/params");
-const admin = require("firebase-admin");
-const express = require("express");
-const crypto = require("crypto");
-const path = require("path");
-const fs = require("fs");
-const os = require("os");
 
-// ✅ LAZY (heavy) imports
-let Razorpay;      // require("razorpay") inside getRazorpay()
-let PDFDocument;   // require("pdfkit") inside generateInvoice()
-
-// ===================== FIREBASE INIT ======================
-if (!admin.apps.length) {
-  admin.initializeApp({
-    storageBucket:
-      process.env.FIREBASE_CONFIG
-        ? JSON.parse(process.env.FIREBASE_CONFIG).storageBucket
-        : "thevisamanager-bea80.appspot.com",
-  });
-}
-
-const db = admin.firestore();
-const bucket = admin.storage().bucket(); // important for file upload
-
-// ===================== SECRETS ======================
+// ===== Secrets (safe at top-level) =====
 const GOOGLE_PLACES_KEY = defineSecret("GOOGLE_PLACES_KEY");
 const RAZORPAY_KEY_ID = defineSecret("RAZORPAY_KEY_ID");
 const RAZORPAY_KEY_SECRET = defineSecret("RAZORPAY_KEY_SECRET");
 const VISION_API_KEY = defineSecret("VISION_API_KEY");
 
-// ===================== CONSTANTS ======================
+// ===== Constants =====
 const PLACE_ID = "ChIJ3bPWBbqVwjsRsIr6lWmT0uA";
 
+// ===== Lazy singletons (DO NOT init heavy stuff at top-level) =====
+let _admin;
+let _db;
+let _bucket;
+let _app; // express instance
+
+function getAdmin() {
+  if (_admin) return _admin;
+  _admin = require("firebase-admin");
+  if (_admin.apps.length === 0) {
+    _admin.initializeApp({
+      storageBucket:
+        process.env.FIREBASE_CONFIG
+          ? JSON.parse(process.env.FIREBASE_CONFIG).storageBucket
+          : "thevisamanager-bea80.appspot.com",
+    });
+  }
+  return _admin;
+}
+
+function getDb() {
+  if (_db) return _db;
+  const admin = getAdmin();
+  _db = admin.firestore();
+  return _db;
+}
+
+function getBucket() {
+  if (_bucket) return _bucket;
+  const admin = getAdmin();
+  _bucket = admin.storage().bucket();
+  return _bucket;
+}
+
+function attachCors(app) {
+  app.use((req, res, next) => {
+    res.set("Access-Control-Allow-Origin", "*");
+    res.set("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+    res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    if (req.method === "OPTIONS") return res.status(204).send("");
+    next();
+  });
+}
+
+function getExpressApp() {
+  if (_app) return _app;
+
+  const express = require("express");
+  const crypto = require("crypto");
+
+  _app = express();
+  _app.use(express.json());
+
+  attachCors(_app);
+
+  _app.use((req, res, next) => {
+    console.log("REQ:", req.method, req.path);
+    next();
+  });
+
+  _app.get("/health", (req, res) => {
+    res.status(200).json({ ok: true });
+  });
+
+  // ===================== TEST ROUTE ======================
+  _app.get("/users/:uid", async (req, res) => {
+    try {
+      const db = getDb();
+      const { uid } = req.params;
+
+      const doc = await db.collection("users").doc(uid).get();
+      if (!doc.exists) return res.status(404).json({ message: "User not found" });
+
+      return res.status(200).json({ id: doc.id, ...doc.data() });
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
+  // ===================== CREATE RAZORPAY ORDER ======================
+  // Support both paths just in case you ever proxy with /api prefix.
+  _app.post(["/createRazorpayOrder", "/api/createRazorpayOrder"], async (req, res) => {
+    try {
+      const db = getDb();
+
+      const { amount, userId } = req.body || {};
+      if (amount == null || !userId) {
+        return res.status(400).json({ error: "Missing fields (amount, userId)" });
+      }
+
+      // Ensure integer paise
+      const amountPaise = Math.round(Number(amount) * 100);
+      if (!Number.isFinite(amountPaise) || amountPaise <= 0) {
+        return res.status(400).json({ error: "Invalid amount" });
+      }
+
+      const Razorpay = require("razorpay");
+      const razorpay = new Razorpay({
+        key_id: RAZORPAY_KEY_ID.value(),
+        key_secret: RAZORPAY_KEY_SECRET.value(),
+      });
+
+      const order = await razorpay.orders.create({
+        amount: amountPaise,
+        currency: "INR",
+        receipt: "receipt_" + Date.now(),
+      });
+
+      await db.collection("payments").doc(order.id).set({
+        userId,
+        amount: Number(amount),
+        amountPaise,
+        status: "created",
+        createdAt: getAdmin().firestore.FieldValue.serverTimestamp(),
+      });
+
+      return res.status(200).json({
+        key: RAZORPAY_KEY_ID.value(),
+        orderId: order.id,
+        amount: order.amount,
+        currency: order.currency,
+      });
+    } catch (e) {
+      console.error("RAZORPAY ORDER ERROR:", e);
+      return res.status(500).json({
+        error: "Order creation failed",
+        details: e.message || String(e),
+      });
+    }
+  });
+
+  // ===================== VERIFY PAYMENT ======================
+  _app.post(["/verifyRazorpayPayment", "/api/verifyRazorpayPayment"], async (req, res) => {
+    try {
+      const db = getDb();
+
+      const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body || {};
+      if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+        return res.status(400).json({ error: "Missing Razorpay fields" });
+      }
+
+      const sign = `${razorpay_order_id}|${razorpay_payment_id}`;
+      const expected = crypto
+        .createHmac("sha256", RAZORPAY_KEY_SECRET.value())
+        .update(sign)
+        .digest("hex");
+
+      const verified = expected === razorpay_signature;
+
+      if (!verified) {
+        await db.collection("payments").doc(razorpay_order_id).set(
+          {
+            status: "failed",
+            verified: false,
+            updatedAt: getAdmin().firestore.FieldValue.serverTimestamp(),
+          },
+          { merge: true }
+        );
+        return res.json({ valid: false });
+      }
+
+      const Razorpay = require("razorpay");
+      const razorpay = new Razorpay({
+        key_id: RAZORPAY_KEY_ID.value(),
+        key_secret: RAZORPAY_KEY_SECRET.value(),
+      });
+
+      const payment = await razorpay.payments.fetch(razorpay_payment_id);
+
+      await db.collection("payments").doc(razorpay_order_id).set(
+        {
+          paymentId: razorpay_payment_id,
+          orderId: razorpay_order_id,
+          amount: payment.amount, // paise
+          currency: payment.currency,
+          method: payment.method,
+          status: payment.status,
+          email: payment.email || null,
+          contact: payment.contact || null,
+          verified: true,
+          updatedAt: getAdmin().firestore.FieldValue.serverTimestamp(),
+        },
+        { merge: true }
+      );
+
+      return res.json({ valid: true, status: payment.status });
+    } catch (e) {
+      console.error("VERIFY ERROR:", e);
+      return res.status(500).json({ error: e.message || String(e) });
+    }
+  });
+
+  return _app;
+}
+
 // ===================== GOOGLE REVIEWS ======================
-// ✅ Node.js 20 has global fetch. DO NOT import node-fetch.
 exports.getGoogleReviews = onRequest(
-  {
-    region: "us-central1",
-    secrets: [GOOGLE_PLACES_KEY],
-  },
+  { region: "us-central1", secrets: [GOOGLE_PLACES_KEY] },
   async (req, res) => {
-    // ✅ CORS FIRST
+    // Keep CORS here too (this function is not behind Express)
     res.set("Access-Control-Allow-Origin", "*");
     res.set("Access-Control-Allow-Methods", "GET,OPTIONS");
     res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
-
-    if (req.method === "OPTIONS") {
-      return res.status(204).send("");
-    }
+    if (req.method === "OPTIONS") return res.status(204).send("");
 
     try {
+      const db = getDb();
+
       const cacheRef = db.collection("meta").doc("google_reviews");
       const cacheSnap = await cacheRef.get();
 
@@ -715,14 +1897,7 @@ exports.getGoogleReviews = onRequest(
       }
 
       const reviews = data.result?.reviews || [];
-
-      await cacheRef.set(
-        {
-          reviews,
-          updatedAt: Date.now(),
-        },
-        { merge: true }
-      );
+      await cacheRef.set({ reviews, updatedAt: Date.now() }, { merge: true });
 
       return res.json(reviews);
     } catch (err) {
@@ -732,188 +1907,36 @@ exports.getGoogleReviews = onRequest(
   }
 );
 
-// ===================== EXPRESS APP ======================
-const app = express();
-app.use(express.json());
-app.use((req, res, next) => {
-  console.log("REQ:", req.method, req.path);
-  next();
-});
-
-app.get("/health", (req, res) => {
-  res.status(200).json({ ok: true });
-});
-
-
-// ✅ Lazy Razorpay init (prevents cold-start/deploy timeout)
-function getRazorpay() {
-  if (!Razorpay) {
-    Razorpay = require("razorpay");
-  }
-
-  return new Razorpay({
-    key_id: RAZORPAY_KEY_ID.value(),
-    key_secret: RAZORPAY_KEY_SECRET.value(),
-  });
-}
-
-// ===================== TEST ROUTE ======================
-app.get("/users/:uid", async (req, res) => {
-  try {
-    const { uid } = req.params;
-
-    const doc = await db.collection("users").doc(uid).get();
-    if (!doc.exists) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    return res.status(200).json({
-      id: doc.id,
-      ...doc.data(),
-    });
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
-});
-
-// ===================== CREATE RAZORPAY ORDER ======================
-app.post("/createRazorpayOrder", async (req, res) => {
-  try {
-    console.log("KEY_ID present:", !!RAZORPAY_KEY_ID.value());
-    console.log("KEY_SECRET present:", !!RAZORPAY_KEY_SECRET.value());
-
-    const { amount, userId } = req.body;
-
-const rupees = Number(amount);
-if (!Number.isFinite(rupees) || rupees <= 0) {
-  return res.status(400).json({ error: "Invalid amount" });
-}
-
-const amountPaise = Math.round(rupees * 100);
-
-
-    const razorpay = getRazorpay();
-
-    const order = await razorpay.orders.create({
-  amount: amountPaise,
-  currency: "INR",
-  receipt: "receipt_" + Date.now(),
-});
-
-
-    await db.collection("payments").doc(order.id).set({
-      userId,
-      amount,
-      status: "created",
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    });
-
-    return res.status(200).json({
-      key: RAZORPAY_KEY_ID.value(),
-      orderId: order.id,
-      amount: order.amount,
-      currency: order.currency,
-    });
-  } catch (e) {
-  console.error("RAZORPAY ORDER ERROR:", e);
-
-  return res.status(500).json({
-    error: "Order creation failed",
-    message: e?.message || null,
-    razorpay: e?.error || null, // Razorpay SDK often puts details here
-  });
-}
-
-});
-
-// ===================== VERIFY PAYMENT ======================
-app.post("/verifyRazorpayPayment", async (req, res) => {
-  try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
-
-    const sign = `${razorpay_order_id}|${razorpay_payment_id}`;
-    const expected = crypto
-      .createHmac("sha256", RAZORPAY_KEY_SECRET.value())
-      .update(sign)
-      .digest("hex");
-
-    const verified = expected === razorpay_signature;
-
-    if (!verified) {
-      await db.collection("payments").doc(razorpay_order_id).update({
-        status: "failed",
-        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-      });
-
-      return res.json({ valid: false });
-    }
-
-    const razorpay = getRazorpay();
-    const payment = await razorpay.payments.fetch(razorpay_payment_id);
-
-    await db.collection("payments").doc(razorpay_order_id).update({
-      paymentId: razorpay_payment_id,
-      orderId: razorpay_order_id,
-      amount: payment.amount, // paise
-      currency: payment.currency,
-      method: payment.method,
-      status: payment.status,
-      email: payment.email || null,
-      contact: payment.contact || null,
-      verified: true,
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-    });
-
-    return res.json({
-      valid: true,
-      status: payment.status,
-    });
-  } catch (e) {
-    console.error("VERIFY ERROR:", e);
-    return res.status(500).json({ error: e.message });
-  }
-});
-
 // ===================== GENERATE INVOICE (PDF) ======================
 exports.generateInvoice = onCall(
-  {
-    region: "us-central1",
-    secrets: [RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET], // not required but ok if you want
-  },
+  { region: "us-central1", secrets: [RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET] },
   async (req) => {
     try {
-      if (!req.auth || !req.auth.uid) {
-        throw new HttpsError("unauthenticated", "User not authenticated");
-      }
+      if (!req.auth || !req.auth.uid) throw new HttpsError("unauthenticated", "User not authenticated");
 
-      const { invoiceId, userName, date, amount, userId, country, email, phoneNumber } = req.data;
-
+      const { invoiceId, date, amount, userId, country, email, phoneNumber } = req.data || {};
       if (!invoiceId || !date || amount == null || !userId || !country) {
         throw new HttpsError("invalid-argument", "Missing required fields");
       }
 
-      if (typeof amount !== "number") {
-        throw new HttpsError("invalid-argument", "Amount must be a number");
-      }
+      if (typeof amount !== "number") throw new HttpsError("invalid-argument", "Amount must be a number");
 
-      // ✅ Lazy load PDFKit here
-      if (!PDFDocument) {
-        PDFDocument = require("pdfkit");
-      }
+      const PDFDocument = require("pdfkit");
+      const path = require("path");
+      const fs = require("fs");
+      const os = require("os");
+
+      const bucket = getBucket();
 
       const doc = new PDFDocument({ margin: 40, size: "A4" });
       const filePath = path.join(os.tmpdir(), `${invoiceId}.pdf`);
       const writeStream = fs.createWriteStream(filePath);
       doc.pipe(writeStream);
 
-      // Logo
+      // Logo (optional)
       try {
         const logoPath = path.join(__dirname, "tvm_assets", "tvmLogo.png");
-        if (fs.existsSync(logoPath)) {
-          doc.image(logoPath, 40, 40, { width: 140 });
-        } else {
-          console.warn("Logo file not found at:", logoPath);
-        }
+        if (fs.existsSync(logoPath)) doc.image(logoPath, 40, 40, { width: 140 });
       } catch (e) {
         console.warn("Logo load failed:", e);
       }
@@ -928,8 +1951,8 @@ exports.generateInvoice = onCall(
       doc.fontSize(14).fillColor("#FF6A00").text("Bill To:", 40);
       doc.fillColor("#000").fontSize(12);
       doc.text(`Customer ID: ${userId}`);
-      doc.text(`Mobile: ${phoneNumber}`);
-      doc.text(`Email: ${email}`);
+      doc.text(`Mobile: ${phoneNumber || ""}`);
+      doc.text(`Email: ${email || ""}`);
       doc.moveDown(2);
 
       doc.fontSize(14).fillColor("#FF6A00").text("Company Details:", 40);
@@ -964,12 +1987,6 @@ exports.generateInvoice = onCall(
         { align: "center" }
       );
 
-      doc.moveDown(1);
-      doc.fontSize(10).fillColor("gray").text(
-        "Support: support@thevisamanager.com | +91-XXXXXXXXXX",
-        { align: "center" }
-      );
-
       doc.end();
 
       await new Promise((resolve, reject) => {
@@ -983,11 +2000,7 @@ exports.generateInvoice = onCall(
         metadata: { cacheControl: "public,max-age=31536000" },
       });
 
-      try {
-        fs.unlinkSync(filePath);
-      } catch (e) {
-        console.warn("Failed to delete temp file:", e);
-      }
+      try { fs.unlinkSync(filePath); } catch (e) {}
 
       const file = bucket.file(`invoices/${invoiceId}.pdf`);
       const [url] = await file.getSignedUrl({
@@ -995,11 +2008,7 @@ exports.generateInvoice = onCall(
         expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
       });
 
-      return {
-        status: "success",
-        message: "Invoice generated successfully",
-        url,
-      };
+      return { status: "success", message: "Invoice generated successfully", url };
     } catch (error) {
       console.error("Invoice generation failed:", error);
       throw new HttpsError("internal", error.message || "Invoice failed");
@@ -1009,14 +2018,9 @@ exports.generateInvoice = onCall(
 
 // ===================== EXTRACT TEXT FROM IMAGE ======================
 exports.extractTextFromImage = onCall(
-  {
-    region: "us-central1",
-    secrets: [VISION_API_KEY],
-  },
+  { region: "us-central1", secrets: [VISION_API_KEY] },
   async (req) => {
-    if (!req.auth || !req.auth.uid) {
-      throw new HttpsError("unauthenticated", "User not authenticated");
-    }
+    if (!req.auth || !req.auth.uid) throw new HttpsError("unauthenticated", "User not authenticated");
 
     const base64Image = req.data?.base64Image;
     if (!base64Image || typeof base64Image !== "string") {
@@ -1024,34 +2028,20 @@ exports.extractTextFromImage = onCall(
     }
 
     const cleaned = base64Image.replace(/^data:image\/[a-z]+;base64,/, "");
-    if (cleaned.length > 12_000_000) {
-      throw new HttpsError("invalid-argument", "Image too large");
-    }
+    if (cleaned.length > 12_000_000) throw new HttpsError("invalid-argument", "Image too large");
 
     const body = {
-      requests: [
-        {
-          image: { content: cleaned },
-          features: [{ type: "TEXT_DETECTION" }],
-        },
-      ],
+      requests: [{ image: { content: cleaned }, features: [{ type: "TEXT_DETECTION" }] }],
     };
 
     const response = await fetch(
       `https://vision.googleapis.com/v1/images:annotate?key=${VISION_API_KEY.value()}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      }
+      { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }
     );
 
     if (!response.ok) {
       const text = await response.text();
-      throw new HttpsError("internal", "Vision API error", {
-        status: response.status,
-        body: text,
-      });
+      throw new HttpsError("internal", "Vision API error", { status: response.status, body: text });
     }
 
     const data = await response.json();
@@ -1062,15 +2052,9 @@ exports.extractTextFromImage = onCall(
 
 // ===================== EXPORT EXPRESS API ======================
 exports.api = onRequest(
-  {
-<<<<<<<<< Temporary merge branch 1
-=========
-
->>>>>>>>> Temporary merge branch 2
-    region: "us-central1",
-    secrets: [RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET],
-  },
-  app
+  { region: "us-central1", secrets: [RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET] },
+  (req, res) => {
+    const app = getExpressApp();
+    app(req, res);
+  }
 );
-
-

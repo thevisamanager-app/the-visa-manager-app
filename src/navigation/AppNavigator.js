@@ -238,6 +238,9 @@ import JoinAsTravelAgentScreen from "../screens/agent/JoinAsTravelAgentScreen";
 import PartnerLoginScreen from "../screens/agent/PartnerLoginScreen";
 
 
+
+
+
 /* -------------------- SCHENGEN SCREENS -------------------- */
 import SchengenPersonalDetailsScreen from "../screens/Schengen/SchengenPersonalDetailsScreen";
 import SchengenSponsorScreen from "../screens/Schengen/SchengenSponsorScreen";
@@ -308,6 +311,7 @@ function UserStack() {
         name="PartnerLoginScreen"
         component={PartnerLoginScreen}
       />
+      
 
 
       {/* EXISTING FLOW */}
@@ -326,6 +330,7 @@ function UserStack() {
       <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} />
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
       <Stack.Screen name="SchengenStepper" component={SchengenStepper} />
+
     </Stack.Navigator>
   );
 }

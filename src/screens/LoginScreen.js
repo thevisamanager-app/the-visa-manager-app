@@ -667,6 +667,8 @@ export default function LoginScreen({ navigation }) {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [confirmation, setConfirmation] = useState(null);
   const [loading, setLoading] = useState(false);
+ 
+
 
   const inputs = [];
 

@@ -794,6 +794,61 @@ const COUNTRY_FAQS = {
     },
   ],
 
+  Thailand: [
+    {
+      question: "What is a TDAC?",
+      answer:
+        "TDAC (Thailand Digital Arrival Card) is an online arrival registration form that travellers must complete before entering Thailand. It replaces the traditional paper arrival card and is linked electronically to your passport.",
+    },
+    {
+      question: "Who must submit a TDAC?",
+      answer:
+        "All travellers entering Thailand, including tourists, business travellers, and transit passengers (where applicable), must submit a TDAC before arrival.",
+    },
+    {
+      question: "Do children need to apply for TDAC?",
+      answer:
+        "Yes. Every traveller, including infants and minors, must have a separate TDAC submitted under their own passport details.",
+    },
+    {
+      question: "Do Indians need a visa to visit Thailand?",
+      answer:
+        "Indian passport holders currently enjoy visa-free entry to Thailand for short stays, subject to prevailing government rules. However, TDAC submission is still mandatory.",
+    },
+    {
+      question: "Can I extend my visa-free stay in Thailand?",
+      answer:
+        "Yes. Visa-free stays may be extended by applying at a local Thai immigration office, subject to approval by immigration authorities.",
+    },
+    {
+      question: "Do I need travel insurance for a Thailand Digital Arrival Card (TDAC)?",
+      answer:
+        "Travel insurance is strongly recommended for Thailand travel. While it may not always be mandatory for TDAC, immigration officers can request proof of insurance on arrival.",
+    },
+    {
+      question: "How will I know if my Thailand Digital Arrival Card is approved?",
+      answer:
+        "After successful submission, TDAC confirmation is usually sent to your registered email address. You should carry a digital or printed copy while travelling.",
+    },
+    {
+      question: "Where do I have to send my passport & TDAC application?",
+      answer:
+        "You do not need to send your physical passport anywhere. TDAC is submitted completely online and is electronically linked to your passport details.",
+    },
+    {
+      question: "I am visiting multiple countries before arriving in Thailand. Am I eligible for TDAC?",
+      answer:
+        "Yes. You are eligible to submit a TDAC as long as you meet Thailand’s entry requirements at the time of arrival, regardless of previous travel history.",
+    },
+    {
+      question:
+        "If I have multiple hotel and flight bookings for my trip to Thailand, do I need to include all of them in the TDAC application form?",
+      answer:
+        "You only need to provide details of your first accommodation and initial arrival flight. However, you should carry complete travel and hotel details in case immigration authorities request them.",
+    },
+  ],
+
+
 };
 
 

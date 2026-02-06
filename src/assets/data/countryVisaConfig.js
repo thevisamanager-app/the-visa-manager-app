@@ -1817,4 +1817,136 @@ export const COUNTRY_VISA_CONFIG = {
         // 🔒 Important flag for your UI logic
         isVisaFree: true,
     },
+
+     Malaysia: {
+        headerTitle: "Malaysia Visa Application",
+        processTitle: "Malaysia Visa Process",
+        processingText: "Apply now & get it in 1 working day",
+
+        visaInfoTitle: "Malaysia Travel Digital Form Information",
+        requirementsTitle: "Malaysia Travel Digital Form Requirements",
+
+        stepMeta: [
+            { icon: "document-text-outline", label: "Share traveler details" },
+            { icon: "card-outline", label: "Pay service fees" },
+            { icon: "send-outline", label: "Submit to authorities" },
+            { icon: "checkmark-done-outline", label: "Receive approval" },
+        ],
+
+        processSteps: [
+            {
+                title: "Share traveler details",
+                points: [
+                    "Provide passport, photo, and itinerary details securely.",
+                    "Our team reviews the documents before submission.",
+                    "Confirm everything so we can proceed to payment.",
+                ],
+            },
+            {
+                title: "Pay service fees",
+                points: [
+                    "Clear government and service charges securely.",
+                    "Any additional questions are handled on your behalf.",
+                    "We monitor the payment and ticket the application.",
+                ],
+            },
+            {
+                title: "Submit to authorities",
+                points: [
+                    "We forward the application to the immigration authority.",
+                    "Any additional questions are handled on your behalf.",
+                    "Receive status updates until the decision is out.",
+                ],
+            },
+            {
+                title: "Receive approval",
+                points: [
+                    "Download the approval letter once issued.",
+                    "Carry it alongside your passport when you travel.",
+                    "Reach out if you need any travel clarifications.",
+                ],
+            },
+        ],
+
+        visaInfo: {
+            visaType: "Tourist & Business ",
+            stay: "14 days",
+            validity: "30 days",
+            entry: "Single",
+            method: "Paperless",
+        },
+
+        requirements: [
+            "Passport with minimum six months validity",
+            "Confirmed flight & return ticket",
+            "Hotel booking details",
+            "Arrival medium details: Bus | Cruise | Air",
+        ],
+    },
+
+     Thailand: {
+        headerTitle: "Thailand Visa Application",
+        processTitle: "Thailand Visa Process",
+        processingText: "Apply now & get it in 1 working day",
+
+        visaInfoTitle: "Thailand Travel Digital Form Information",
+        requirementsTitle: "Thailand Travel Digital Form Requirements",
+
+        stepMeta: [
+            { icon: "document-text-outline", label: "Share traveler details" },
+            { icon: "card-outline", label: "Pay service fees" },
+            { icon: "send-outline", label: "Submit to authorities" },
+            { icon: "checkmark-done-outline", label: "Receive approval" },
+        ],
+
+        processSteps: [
+            {
+                title: "Share traveler details",
+                points: [
+                    "Provide passport, photo, and itinerary details securely.",
+                    "Our team reviews the documents before submission.",
+                    "Confirm everything so we can proceed to payment.",
+                ],
+            },
+            {
+                title: "Pay service fees",
+                points: [
+                    "Clear government and service charges securely.",
+                    "Any additional questions are handled on your behalf.",
+                    "We monitor the payment and ticket the application.",
+                ],
+            },
+            {
+                title: "Submit to authorities",
+                points: [
+                    "We forward the application to the immigration authority.",
+                    "Any additional questions are handled on your behalf.",
+                    "Receive status updates until the decision is out.",
+                ],
+            },
+            {
+                title: "Receive approval",
+                points: [
+                    "Download the approval letter once issued.",
+                    "Carry it alongside your passport when you travel.",
+                    "Reach out if you need any travel clarifications.",
+                ],
+            },
+        ],
+
+        visaInfo: {
+            visaType: "Tourist & Business ",
+            stay: "30 days",
+            validity: "90 days",
+            entry: "Single / Multiple",
+            method: "Paperless",
+        },
+
+        requirements: [
+            "Thailand Digital Arrival Card (TDAC) Application must be submitted within 3 days before the planned date of arrival, as per Thailand immigration norms.",
+            "Passport Validity Passport must be valid for at least six months from the date of return and have minimum two blank pages.",
+            "Visa-Free Travel, TDAC Mandatory Indian passport holders enjoy visa-free travel to Thailand, but TDAC application is compulsory.",
+            "Additional Documents (If Required) TVM Visa Manager will contact you if any additional documents are required.",
+        ],
+    }
 };

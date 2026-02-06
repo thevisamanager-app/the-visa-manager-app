@@ -1,36 +1,52 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
+import {
+  COUNTRY_WHY_CHOOSE,
+  DEFAULT_WHY_CHOOSE,
+} from "../utils/countryWhyChoose";
 
+/* --------------------------------
+   NORMALIZE COUNTRY NAME
+-------------------------------- */
+const normalizeCountry = (name = "") => {
+  return name
+    .toString()
+    .trim()
+    .replace(/-/g, " ")      // Hong-Kong → Hong Kong
+    .replace(/\s+/g, " ")   // extra spaces
+    .toLowerCase()
+    .replace(/\b\w/g, (c) => c.toUpperCase()); // title case
+};
 
-const WhyChooseTVM = () => {
-    return (
-        <View style={styles.container}>
-            <View style={styles.item}>
-                <Icon name="flash-outline" size={18} color="#00C853" />
-                <Text style={styles.text}>15k+ TDA processed</Text>
-            </View>
+const WhyChooseTVM = ({ country }) => {
+  const normalizedCountry = normalizeCountry(country);
 
-            <View style={styles.item}>
-                <Icon name="shield-checkmark-outline" size={18} color="#00C853" />
-                <Text style={styles.text}>Reliable & Secure</Text>
-            </View>
+  const items =
+    COUNTRY_WHY_CHOOSE[normalizedCountry] || DEFAULT_WHY_CHOOSE;
 
-            <View style={styles.item}>
-                <Icon name="headset-outline" size={18} color="#00C853" />
-                <Text style={styles.text}>Real Human Support & Solution</Text>
-            </View>
+  return (
+    <View style={styles.container}>
+      {items.map((item, index) => (
+        <View key={index} style={styles.item}>
+          <Icon name={item.icon} size={18} color="#00C853" />
+          <Text style={styles.text}>{item.text}</Text>
         </View>
-    );
+      ))}
+    </View>
+  );
 };
 
 export default WhyChooseTVM;
 
+/* --------------------------------
+   STYLES
+-------------------------------- */
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "center",   // center rows
+    justifyContent: "center",
     marginTop: 12,
     rowGap: 10,
   },
@@ -38,8 +54,8 @@ const styles = StyleSheet.create({
   item: {
     flexDirection: "row",
     alignItems: "center",
-    width: "48%",               // NOT 50%
-    justifyContent: "center",   // center item content
+    width: "48%",
+    justifyContent: "center",
     gap: 6,
   },
 

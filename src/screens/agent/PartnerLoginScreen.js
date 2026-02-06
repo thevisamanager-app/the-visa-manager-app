@@ -10,6 +10,10 @@ import {
 import Icon from "react-native-vector-icons/Ionicons";
 import ScreenWrapper from "../../components/ScreenWrapper";
 import { useNavigation } from "@react-navigation/native";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { moderateScale } from "../../utils/metrics"; // ✅ REQUIRED
+
+const ORANGE = "#FF5C00";
 
 export default function PartnerLoginScreen() {
     const navigation = useNavigation();
@@ -19,20 +23,13 @@ export default function PartnerLoginScreen() {
 
                 {/* HEADER */}
                 <View style={styles.headerRow}>
-                    <TouchableOpacity
-                        onPress={() => navigation.goBack()}
-                        style={styles.headerBtn}
-                    >
-                        <Icon name="arrow-back-outline" size={22} color="#FF5C00" />
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                        <Ionicons name="chevron-back" size={moderateScale(28)} color="black" />
                     </TouchableOpacity>
-
                     <TouchableOpacity
-                        onPress={() =>
-                            navigation.navigate("Tabs", { screen: "Home" })
-                        }
-                        style={styles.headerBtn}
+                        onPress={() => navigation.navigate("Tabs", { screen: "Destination" })}
                     >
-                        <Icon name="home-outline" size={22} color="#FF5C00" />
+                        <Icon name="home" size={moderateScale(24)} color={ORANGE} />
                     </TouchableOpacity>
                 </View>
 
@@ -179,7 +176,7 @@ const styles = StyleSheet.create({
     container: {
         padding: 16,
         paddingBottom: 40,
-        
+
     },
 
     badge: {

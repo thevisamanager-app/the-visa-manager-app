@@ -72,6 +72,15 @@ const ACCOMMODATION = [
 ];
 
 const COUNTRY_FORM_RULES = {
+
+  mauritius: {
+    email: true,
+    mobile: true,
+    purpose: true,
+    hotelDetailsText: true, // 👈 single textarea
+    airTicket: true,
+  },
+
   malaysia: {
     email: true,
     mobile: true,
@@ -89,10 +98,10 @@ const COUNTRY_FORM_RULES = {
   maldives: {
     email: true,
     mobile: true,
-    hotel: true,
+    hotelDetailsText: true,   // 🔥 single text field
     purpose: true,
     airTicket: true,
-    visitedLast6Days: true, // yes/no
+    visitedLast6Days: true,
   },
 
   "hong kong": {
@@ -164,15 +173,16 @@ export default function PassportDetailsScreen({ navigation, route }) {
   const selected = useSelector((state) => state.destinations.selected);
   const countryName =
     selected?.countrName?.trim().toLowerCase() || "";
-     const rules = COUNTRY_FORM_RULES[countryName] || {};
+  const rules = COUNTRY_FORM_RULES[countryName] || {};
   // ✅ Country-specific rules (SAFE placement)
 
   const needsOccupation = !!rules.occupation;
+  const needsHotelDetailsText = !!rules.hotelDetailsText;
 
   const needsEmail = !!rules.email;
   const needsMobile = !!rules.mobile;
   const needsPurpose = !!rules.purpose;
-  const needsAccommodation = !!rules.accommodation || !!rules.hotel;
+  const needsAccommodation = !!rules.accommodation;
   const needsAirTicket = !!rules.airTicket;
 
   const needsVisited6Days = !!rules.visitedLast6Days;
@@ -219,6 +229,7 @@ export default function PassportDetailsScreen({ navigation, route }) {
   const [purposeOfTravel, setPurposeOfTravel] = useState("");
   const [occupation, setOccupation] = useState("");
   const [accommodation, setAccommodation] = useState("");
+  const [hotelDetails, setHotelDetails] = useState("");
 
   const [entryMode, setEntryMode] = useState("");
   const [visitedLast6Days, setVisitedLast6Days] = useState(null); // yes / no
@@ -488,6 +499,15 @@ export default function PassportDetailsScreen({ navigation, route }) {
       Alert.alert("Missing Info", "Please select occupation");
       return;
     }
+    if (countryName === "maldives") {
+      if (!email || !phoneNumber || !hotelDetails || !purposeOfTravel) {
+        Alert.alert(
+          "Missing Information",
+          "Please fill all required Maldives travel details"
+        );
+        return;
+      }
+    }
 
 
     const payload = {
@@ -501,8 +521,8 @@ export default function PassportDetailsScreen({ navigation, route }) {
       phoneNumber: `+91${phoneNumber}`,
       email: email || null,
 
-       createdAt: new Date().toISOString(),
-       
+      createdAt: new Date().toISOString(),
+
       // 🔥 THESE ARE THE MISSING PIECES
       photoUrl: photoUrlState || null,
       frontImageURL: passportState.frontImageURL || null,
@@ -514,6 +534,7 @@ export default function PassportDetailsScreen({ navigation, route }) {
         selectedDate: travelDate || null,
         country: selected.countrName,
         purposeOfTravel,
+        hotelDetails,
         occupation,
         accommodation,
         entry: {
@@ -525,11 +546,11 @@ export default function PassportDetailsScreen({ navigation, route }) {
         visitedCountriesText,
       },
     };
-   
-      // ✅ STORE WITH COUNTRY CODE
+
+    // ✅ STORE WITH COUNTRY CODE
 
 
-      await savePassportData(payload);
+    await savePassportData(payload);
 
     navigation.navigate("CheckoutScreen", {
       passport: payload,
@@ -878,6 +899,19 @@ export default function PassportDetailsScreen({ navigation, route }) {
               maxLength={10}
             />
           </View>
+          {needsHotelDetailsText && (
+            <>
+              <Label text="Hotel Details *" />
+              <Input
+                value={hotelDetails}
+                onChangeText={setHotelDetails}
+                placeholder="Hotel name and address"
+                multiline
+                style={[styles.input, { height: verticalScale(90) }]}
+              />
+            </>
+          )}
+
 
           {/* THAILAND + MALAYSIA (SAME FIELDS) */}
           {showTravelDetails && (

@@ -6,6 +6,7 @@ const DESTINATIONS = [
     VisaManagerFee: "0",
     AuthorityCharges: "0",
     GovernmentFee: "1",
+    liveCount: 9,
     bullets: [
       "Visa on arrival / DAC",
       "Fast approval process",

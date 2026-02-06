@@ -1374,10 +1374,13 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import CountryFlag from "react-native-country-flag";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import Icon from "react-native-vector-icons/Ionicons";
 import DESTINATIONS from "../../assets/data/destinations";
 import { TextInput } from "react-native";
 import WhyChooseTVM from "../../components/WhyChooseTVM";
+import { moderateScale } from "../../utils/metrics";
+
 import {
   View,
   Text,
@@ -1396,6 +1399,8 @@ import { fetchGoogleReviews } from "../../services/reviews/googleReviews";
 import { COUNTRY_VISA_CONFIG } from "../../assets/data/countryVisaConfig";
 import { useDispatch } from "react-redux";
 import { setSelectedDestination } from "../../Redux/destinationsSlice";
+
+const ORANGE = "#FF5C00";
 
 
 const HIGHLIGHT_COUNTRIES = [
@@ -1444,6 +1449,10 @@ export default function VisaDetailsScreen({ navigation }) {
     dispatch(setSelectedDestination(item));
     navigation.push("VisaDetailsScreen");
   };
+  const toggleFaq = (index) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
+
   const STEP_META = countryConfig?.stepMeta ?? [];
   const PROCESS_STEPS = countryConfig?.processSteps ?? [];
   useEffect(() => {
@@ -1474,6 +1483,7 @@ export default function VisaDetailsScreen({ navigation }) {
   const [reviews, setReviews] = useState([]);
   const [loadingReviews, setLoadingReviews] = useState(true);
   const [showAllReviews, setShowAllReviews] = useState(false);
+  const [openIndex, setOpenIndex] = useState(null);
 
 
 
@@ -1501,20 +1511,14 @@ export default function VisaDetailsScreen({ navigation }) {
       <ScrollView contentContainerStyle={styles.container}>
         {/* HEADER ACTIONS */}
         <View style={styles.headerRow}>
+         <TouchableOpacity onPress={() => navigation.goBack()}>
+                   <Ionicons name="chevron-back" size={moderateScale(28)} color="black" />
+                 </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={styles.headerBtn}
-          >
-            <Icon name="arrow-back-outline" size={22} color="#FF5C00" />
-
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => navigation.navigate("DestinationScreen")}
-            style={styles.headerBtn}
-          >
-            <Icon name="home-outline" size={22} color="#FF5C00" />
-          </TouchableOpacity>
+                    onPress={() => navigation.navigate("Tabs", { screen: "Destination" })}
+                  >
+                    <Icon name="home" size={moderateScale(24)} color={ORANGE} />
+                  </TouchableOpacity>
         </View>
 
         {/* COUNTRY VISA CARD */}
@@ -1530,7 +1534,7 @@ export default function VisaDetailsScreen({ navigation }) {
             </Text>
           </View>
 
-          <WhyChooseTVM />
+          <WhyChooseTVM country={countryName} />
 
         </View>
 
@@ -1788,15 +1792,38 @@ export default function VisaDetailsScreen({ navigation }) {
         </View>
 
         {/* FAQ list */}
-        <View style={styles.faqCard}>
-          {filteredFaqs.map((faq, index) => (
-            <View key={index} style={styles.faqItemCentered}>
-              <Text style={styles.faqQuestionCentered}>{faq.question}</Text>
-              <Text style={styles.faqAnswerCentered}>{faq.answer}</Text>
-            </View>
+        {faqs.map((item, index) => (
+          <View key={index} style={styles.faqItem}>
 
-          ))}
-        </View>
+            {/* QUESTION ROW */}
+            <TouchableOpacity
+              style={styles.faqHeader}
+              onPress={() => toggleFaq(index)}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.faqQuestion}>
+                {item.question}
+              </Text>
+
+              <Icon
+                name={openIndex === index ? "chevron-up" : "chevron-down"}
+                size={22}
+                color="#333"
+              />
+            </TouchableOpacity>
+
+            {/* ANSWER (HIDDEN BY DEFAULT) */}
+            {openIndex === index && (
+              <View style={styles.faqAnswerBox}>
+                <Text style={styles.faqAnswer}>
+                  {item.answer}
+                </Text>
+              </View>
+            )}
+
+          </View>
+        ))}
+
 
         {isVisaFree && (
           <View style={{ marginTop: 32 }}>
@@ -2515,6 +2542,35 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     marginTop: 32,
     textAlign: "center",
+  },
+  faqItem: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+    paddingVertical: 14,
+  },
+
+  faqHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+  faqQuestion: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#111",
+    flex: 1,
+    paddingRight: 12,
+  },
+
+  faqAnswerBox: {
+    marginTop: 10,
+  },
+
+  faqAnswer: {
+    fontSize: 14,
+    color: "#555",
+    lineHeight: 20,
   },
 
 

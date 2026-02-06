@@ -2,6 +2,9 @@ import React from "react";
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import ScreenWrapper from "../../components/ScreenWrapper";
 import Icon from "react-native-vector-icons/Ionicons";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { moderateScale } from "../../utils/metrics"; // ✅ REQUIRED
+const ORANGE = "#FF5C00";
 function StatBox({ value, label }) {
     return (
         <View style={styles.statBox}>
@@ -59,19 +62,13 @@ export default function JoinAsTravelAgentScreen({ navigation }) {
 
                 {/* HEADER ACTIONS */}
                 <View style={styles.headerRow}>
-                    <TouchableOpacity
-                        onPress={() => navigation.goBack()}
-                        style={styles.headerBtn}
-                    >
-                        <Icon name="arrow-back-outline" size={22} color="#FF5C00" />
-
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                        <Ionicons name="chevron-back" size={moderateScale(28)} color="black" />
                     </TouchableOpacity>
-
                     <TouchableOpacity
-                        onPress={() => navigation.navigate("DestinationScreen")}
-                        style={styles.headerBtn}
+                        onPress={() => navigation.navigate("Tabs", { screen: "Destination" })}
                     >
-                        <Icon name="home-outline" size={22} color="#FF5C00" />
+                        <Icon name="home" size={moderateScale(24)} color={ORANGE} />
                     </TouchableOpacity>
                 </View>
 
@@ -345,7 +342,7 @@ const styles = StyleSheet.create({
         marginBottom: 6,
         textAlign: "justify",        // 🔑
         width: "90%",                // 🔑 keeps justified text clean
-        
+
     },
 
 

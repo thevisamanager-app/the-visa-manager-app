@@ -37,7 +37,18 @@ export const COUNTRY_WHY_CHOOSE = {
     { icon: "headset-outline", text: "24×7 Support" },
   ],
 
-  
+  Vietnam: [
+    { icon: "flash-outline", text: "1200+ visas successfully Processed" },
+    { icon: "shield-checkmark-outline", text: "Reliable & Secure" },
+    { icon: "headset-outline", text: "Real Human Support & Solution" },
+  ],
+
+   Azerbaijan: [
+    { icon: "flash-outline", text: "1200+ Visa successfully Processed" },
+    { icon: "shield-checkmark-outline", text: "Reliable & Secure" },
+    { icon: "headset-outline", text: "Real Human Support & Solution" },
+  ],
+
 };
 
 export const DEFAULT_WHY_CHOOSE = [

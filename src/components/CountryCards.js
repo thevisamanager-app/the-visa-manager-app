@@ -637,21 +637,18 @@ export default function CountryCards({ item, countrName, onPress, date }) {
       <Text style={styles.title}>{countrName}</Text>
 
       {/* PROCESSING DATE */}
-      <Text style={styles.processing}>Get visa by {date}</Text>
+      {item.subtitle && (
+        <Text style={styles.processing}>{item.subtitle}</Text>
+      )}
 
       {/* BULLETS */}
-      <View style={styles.bulletRow}>
-        <View style={styles.dot} />
-        <Text style={styles.bulletText}>Quick & Easy Process</Text>
-      </View>
-      <View style={styles.bulletRow}>
-        <View style={styles.dot} />
-        <Text style={styles.bulletText}>Government Approved Visa</Text>
-      </View>
-      <View style={styles.bulletRow}>
-        <View style={styles.dot} />
-        <Text style={styles.bulletText}>24x7 Support</Text>
-      </View>
+      {Array.isArray(item.bullets) &&
+        item.bullets.map((text, index) => (
+          <View key={index} style={styles.bulletRow}>
+            <View style={styles.dot} />
+            <Text style={styles.bulletText}>{text}</Text>
+          </View>
+        ))}
 
       {/* DIVIDER */}
       <View style={styles.divider} />

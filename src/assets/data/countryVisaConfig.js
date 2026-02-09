@@ -78,7 +78,6 @@ export const COUNTRY_VISA_CONFIG = {
 
         stepMeta: [
             { icon: "document-text-outline", label: "Start Application" },
-            { icon: "card-outline", label: "Pay Online" },
             { icon: "send-outline", label: "Submit to Immigration" },
             { icon: "checkmark-done-outline", label: "Get Visa Decision" },
         ],
@@ -91,14 +90,7 @@ export const COUNTRY_VISA_CONFIG = {
                     "Review and confirm your information before submission.",
                 ],
             },
-            {
-                title: "Pay Online",
-                points: [
-                    "Pay securely online using your preferred method.",
-                    "Payment confirms the application instantly.",
-                    "You receive a receipt and confirmation by email.",
-                ],
-            },
+
             {
                 title: "Application Submission to Immigration",
                 points: [
@@ -108,7 +100,7 @@ export const COUNTRY_VISA_CONFIG = {
                 ],
             },
             {
-                title: "Get Visa Decision in 5 Days",
+                title: "Get your Visa",
                 points: [
                     "Decisions are typically issued within 5 working days.",
                     "Visa delivered via email and WhatsApp.",
@@ -119,16 +111,13 @@ export const COUNTRY_VISA_CONFIG = {
         visaInfo: {
             visaType: "E-Visa",
             stay: "30 days",
-            validity: "90 days",
+            validity: "3 Months",
             entry: "Single",
-            method: "Paperless",
+            method: "Online",
         },
         requirements: [
             "Valid passport (minimum 6 months validity)",
-            "Recent passport-size photograph",
-            "Scanned passport bio page",
-            "Confirmed travel dates and port of entry",
-            "Email address to receive the e-visa",
+            "Return Airticket",
         ],
     },
     "Singapore": {
@@ -528,7 +517,7 @@ export const COUNTRY_VISA_CONFIG = {
     },
 
 
-     "Barbados": {
+    "Barbados": {
         headerTitle: "Barbados Entry Information",
         processTitle: "Barbados Visa Process",
         processingText: "Entry Status: On Arrival",
@@ -541,7 +530,7 @@ export const COUNTRY_VISA_CONFIG = {
             { icon: "airplane-outline", label: "Arrive at destination" },
             { icon: "document-text-outline", label: "Present Documents to immigration" },
             { icon: "shield-checkmark-outline", label: "Immigration Verification" },
-        
+
             { icon: "checkmark-done-outline", label: "Entry Clearance granted" },
         ],
 
@@ -600,7 +589,7 @@ export const COUNTRY_VISA_CONFIG = {
         isVisaFree: true,
     },
 
-      "Fiji": {
+    "Fiji": {
         headerTitle: "Fiji Entry Information",
         processTitle: "Fiji Visa Process",
         processingText: "Visa-free entry details for Indian passport holders",
@@ -672,7 +661,7 @@ export const COUNTRY_VISA_CONFIG = {
     },
 
 
-     "Nepal": {
+    "Nepal": {
         headerTitle: "Nepal Entry Information",
         processTitle: "Nepal Visa Process",
         processingText: "Visa-free entry details for Indian passport holders",
@@ -1098,7 +1087,7 @@ export const COUNTRY_VISA_CONFIG = {
         isVisaFree: true,
     },
 
-    
+
     "Haiti": {
         headerTitle: "Haiti  Information",
         processTitle: "Haiti  Visa Process",
@@ -1170,7 +1159,7 @@ export const COUNTRY_VISA_CONFIG = {
         isVisaFree: true,
     },
 
-    
+
     "Jamaica  ": {
         headerTitle: "Jamaica   Information",
         processTitle: "Jamaica   Visa Process",
@@ -1242,7 +1231,7 @@ export const COUNTRY_VISA_CONFIG = {
         isVisaFree: true,
     },
 
-    
+
     "Micronesia": {
         headerTitle: "Micronesia  Information",
         processTitle: "Micronesia  Visa Process",
@@ -1314,7 +1303,7 @@ export const COUNTRY_VISA_CONFIG = {
         isVisaFree: true,
     },
 
-    
+
     "Monstserrat": {
         headerTitle: "Monstserrat  Information",
         processTitle: "Monstserrat Visa Process",
@@ -1386,7 +1375,7 @@ export const COUNTRY_VISA_CONFIG = {
         isVisaFree: true,
     },
 
-    
+
     "Niue ": {
         headerTitle: "Niue  Information",
         processTitle: "Niue  Visa Process",
@@ -1458,7 +1447,7 @@ export const COUNTRY_VISA_CONFIG = {
         isVisaFree: true,
     },
 
-    
+
     "Reunion": {
         headerTitle: "Reunion  Information",
         processTitle: "Reunion  Visa Process",
@@ -1530,7 +1519,7 @@ export const COUNTRY_VISA_CONFIG = {
         isVisaFree: true,
     },
 
-    
+
     "Senegal ": {
         headerTitle: "Senegal Information",
         processTitle: "Senegal  Visa Process",
@@ -1602,7 +1591,7 @@ export const COUNTRY_VISA_CONFIG = {
         isVisaFree: true,
     },
 
-    
+
     "St. Kitts & Nevis ": {
         headerTitle: "St. Kitts & Nevis  Information",
         processTitle: "St. Kitts & Nevis  Visa Process",
@@ -1674,7 +1663,7 @@ export const COUNTRY_VISA_CONFIG = {
         isVisaFree: true,
     },
 
-    
+
     "St. Vincent & the Grenadines ": {
         headerTitle: "St. Vincent & the Grenadines  Information",
         processTitle: "St. Vincent & the Grenadines Visa Process",
@@ -1746,7 +1735,7 @@ export const COUNTRY_VISA_CONFIG = {
         isVisaFree: true,
     },
 
-    
+
     "Trinidad & Tobago ": {
         headerTitle: "Trinidad & Tobago  Information",
         processTitle: "Trinidad & Tobago  Visa Process",
@@ -1818,7 +1807,7 @@ export const COUNTRY_VISA_CONFIG = {
         isVisaFree: true,
     },
 
-     Malaysia: {
+    Malaysia: {
         headerTitle: "Malaysia Visa Application",
         processTitle: "Malaysia Visa Process",
         processingText: "Apply now & get it in 1 working day",
@@ -1884,7 +1873,7 @@ export const COUNTRY_VISA_CONFIG = {
         ],
     },
 
-     Thailand: {
+    Thailand: {
         headerTitle: "Thailand Visa Application",
         processTitle: "Thailand Visa Process",
         processingText: "Apply now & get it in 1 working day",
@@ -1947,6 +1936,60 @@ export const COUNTRY_VISA_CONFIG = {
             "Passport Validity Passport must be valid for at least six months from the date of return and have minimum two blank pages.",
             "Visa-Free Travel, TDAC Mandatory Indian passport holders enjoy visa-free travel to Thailand, but TDAC application is compulsory.",
             "Additional Documents (If Required) TVM Visa Manager will contact you if any additional documents are required.",
+        ],
+    },
+
+    Azerbaijan: {
+        headerTitle: "Azerbaijan Visa Application",
+        processTitle: "Azerbaijan Visa Process",
+        processingText: "Apply now & get 3-5 Business Days",
+
+        visaInfoTitle: "Azerbaijan Visa Information",
+        requirementsTitle: "Azerbaijan Visa Requirements",
+
+        stepMeta: [
+            { icon: "document-text-outline", label: "Start Application" },
+            { icon: "card-outline", label: "Application Submission" },
+            { icon: "checkmark-done-outline", label: "Get your Visa" },
+        ],
+
+        processSteps: [
+            {
+                title: "Start Online Visa Application",
+                points: [
+                    "Fill in traveler details online and select visa type.",
+                    "Upload passport and photo documents securely.",
+                    "Review and confirm your information before submission.",
+                ],
+            },
+            {
+                title: "Application Submission",
+                points: [
+                    "Clear government and service charges securely.",
+                    "Any additional questions are handled on your behalf.",
+                    "We monitor the payment and ticket the application.",
+                ],
+            },
+            {
+                title: "Get Your Visa",
+                points: [
+                    "Decisions are typically issued within 5 working days.",
+                    "Visa delivered via email and WhatsApp.",
+                    "Download and print your e-visa before travel.",
+                ],
+            },
+        ],
+
+        visaInfo: {
+            visaType: "e-Visa",
+            stay: "30 days",
+            validity: "3 Months",
+            entry: "Single",
+            method: "Online",
+        },
+
+        requirements: [
+            "Passport",
         ],
     }
 };

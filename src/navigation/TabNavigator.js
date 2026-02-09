@@ -239,13 +239,67 @@
 // }
 
 
+// import React from "react";
+// import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+// import { useSafeAreaInsets } from "react-native-safe-area-context";
+// import Icon from "react-native-vector-icons/Ionicons";
+// import HomeStack from "./HomeStack";
+// import VisaStatusScreen from "../screens/visa/VisaStatusScreen";
+// import ProfileScreen from "../screens/profile/ProfileScreen";
+
+// const Tab = createBottomTabNavigator();
+
+// export default function TabNavigator() {
+//   const insets = useSafeAreaInsets();
+
+//   return (
+//     <Tab.Navigator
+//       screenOptions={({ route }) => ({
+//         headerShown: false,
+
+//         tabBarStyle: {
+//           height: 60 + insets.bottom,
+//           paddingBottom: insets.bottom,
+//           paddingTop: 6,
+//           backgroundColor: "#FF5C00",
+//         },
+
+//         tabBarLabelStyle: {
+//           fontSize: 11,
+//           marginBottom: 4,
+//         },
+
+//         tabBarIcon: ({ color, size }) => {
+//           let iconName;
+
+//           if (route.name === "Home") iconName = "globe-outline";
+//           else if (route.name === "Status") iconName = "cloud-upload-outline";
+//           else if (route.name === "Profile") iconName = "person-circle-outline";
+
+//           return <Icon name={iconName} size={22} color={color} />;
+//         },
+
+//         tabBarActiveTintColor: "#fff",
+//         tabBarInactiveTintColor: "#000",
+//       })}
+//     >
+//       <Tab.Screen name="Home" component={HomeStack} />
+//       <Tab.Screen name="Status" component={VisaStatusScreen} />
+//       <Tab.Screen name="Profile" component={ProfileScreen} />
+//     </Tab.Navigator>
+//   );
+// }
+
+
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/Ionicons";
+
 import HomeStack from "./HomeStack";
 import VisaStatusScreen from "../screens/visa/VisaStatusScreen";
 import ProfileScreen from "../screens/profile/ProfileScreen";
+import JoinTravelAgentScreen from "../screens/agent/JoinAsTravelAgentScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -269,12 +323,18 @@ export default function TabNavigator() {
           marginBottom: 4,
         },
 
-        tabBarIcon: ({ color, size }) => {
+        tabBarIcon: ({ color }) => {
           let iconName;
 
-          if (route.name === "Home") iconName = "globe-outline";
-          else if (route.name === "Status") iconName = "cloud-upload-outline";
-          else if (route.name === "Profile") iconName = "person-circle-outline";
+          if (route.name === "Home") {
+            iconName = "globe-outline";
+          } else if (route.name === "Status") {
+            iconName = "cloud-upload-outline";
+          } else if (route.name === "JoinAgent") {
+            iconName = "briefcase-outline"; // Join Travel Agent
+          } else if (route.name === "Profile") {
+            iconName = "person-circle-outline";
+          }
 
           return <Icon name={iconName} size={22} color={color} />;
         },
@@ -284,8 +344,24 @@ export default function TabNavigator() {
       })}
     >
       <Tab.Screen name="Home" component={HomeStack} />
-      <Tab.Screen name="Status" component={VisaStatusScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+
+      <Tab.Screen
+        name="Status"
+        component={VisaStatusScreen}
+        options={{ tabBarLabel: "Status" }}
+      />
+
+      <Tab.Screen
+        name="JoinAgent"
+        component={JoinTravelAgentScreen}
+        options={{ tabBarLabel: "Join Agent" }}
+      />
+
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{ tabBarLabel: "Profile" }}
+      />
     </Tab.Navigator>
   );
 }

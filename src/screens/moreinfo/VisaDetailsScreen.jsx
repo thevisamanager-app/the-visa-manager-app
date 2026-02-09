@@ -592,7 +592,7 @@
 //             style={styles.headerBtn}
 //           >
 //             <Icon name="arrow-back-outline" size={22} color="#FF5C00" />
-            
+
 //           </TouchableOpacity>
 
 //           <TouchableOpacity
@@ -1425,10 +1425,12 @@ export default function VisaDetailsScreen({ navigation }) {
     }
     return 0;
   };
+
   const destinationPrice = DESTINATIONS.find(
     (item) => item.countrName === countryName
   );
-  const travellers = 1;
+  //const travellers = 1;
+  const [travellers, setTravellers] = useState(1);
 
   const visaManagerFee = toNumber(destinationPrice?.VisaManagerFee);
   const authorityCharges = toNumber(destinationPrice?.AuthorityCharges);
@@ -1511,14 +1513,14 @@ export default function VisaDetailsScreen({ navigation }) {
       <ScrollView contentContainerStyle={styles.container}>
         {/* HEADER ACTIONS */}
         <View style={styles.headerRow}>
-         <TouchableOpacity onPress={() => navigation.goBack()}>
-                   <Ionicons name="chevron-back" size={moderateScale(28)} color="black" />
-                 </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons name="chevron-back" size={moderateScale(28)} color="black" />
+          </TouchableOpacity>
           <TouchableOpacity
-                    onPress={() => navigation.navigate("Tabs", { screen: "Destination" })}
-                  >
-                    <Icon name="home" size={moderateScale(24)} color={ORANGE} />
-                  </TouchableOpacity>
+            onPress={() => navigation.navigate("Tabs", { screen: "Destination" })}
+          >
+            <Icon name="home" size={moderateScale(24)} color={ORANGE} />
+          </TouchableOpacity>
         </View>
 
         {/* COUNTRY VISA CARD */}
@@ -1871,19 +1873,33 @@ export default function VisaDetailsScreen({ navigation }) {
 
 
         {/* PRICE SUMMARY */}
+        {/* PRICE SUMMARY */}
         {!isVisaFree && (
           <View style={styles.priceCard}>
+
+            {/* HEADER */}
             <View style={styles.priceHeader}>
               <Icon name="people-outline" size={18} color="#374151" />
               <Text style={styles.priceHeaderText}>Travellers</Text>
 
               <View style={styles.counter}>
-                <Text style={styles.counterBtn}>−</Text>
+                <TouchableOpacity
+                  onPress={() => setTravellers((prev) => Math.max(1, prev - 1))}
+                >
+                  <Text style={styles.counterBtn}>−</Text>
+                </TouchableOpacity>
+
                 <Text style={styles.counterValue}>{travellers}</Text>
-                <Text style={styles.counterBtn}>+</Text>
+
+                <TouchableOpacity
+                  onPress={() => setTravellers((prev) => prev + 1)}
+                >
+                  <Text style={styles.counterBtn}>+</Text>
+                </TouchableOpacity>
               </View>
             </View>
 
+            {/* PAY NOW */}
             <View style={styles.payNowSection}>
               <Text style={styles.amountBig}>₹{payNow}</Text>
               <Text style={styles.payNowLabel}>TO BE PAID NOW</Text>
@@ -1891,23 +1907,29 @@ export default function VisaDetailsScreen({ navigation }) {
 
             <View style={styles.divider} />
 
+            {/* PAY NOW ROW */}
             <View style={styles.priceRow}>
               <View style={styles.rowLeft}>
                 <Icon name="card-outline" size={18} color="#374151" />
                 <View>
                   <Text style={styles.rowTitle}>Pay Now</Text>
-                  <Text style={styles.rowSub}>Government Fees × {travellers}</Text>
+                  <Text style={styles.rowSub}>
+                    Government Fees × {travellers}
+                  </Text>
                 </View>
               </View>
               <Text style={styles.rowAmount}>₹{payNow}</Text>
             </View>
 
+            {/* PAY LATER ROW */}
             <View style={styles.priceRow}>
               <View style={styles.rowLeft}>
                 <Icon name="time-outline" size={18} color="#374151" />
                 <View>
                   <Text style={styles.rowTitle}>Pay Later</Text>
-                  <Text style={styles.rowSub}>TVM Fees × {travellers}</Text>
+                  <Text style={styles.rowSub}>
+                    TVM Fees × {travellers}
+                  </Text>
                 </View>
               </View>
               <Text style={styles.rowAmount}>₹{payLater}</Text>
@@ -1915,32 +1937,28 @@ export default function VisaDetailsScreen({ navigation }) {
 
             <View style={styles.divider} />
 
+            {/* TOTAL */}
             <View style={styles.totalRow}>
               <Text style={styles.totalLabel}>Total Amount</Text>
               <Text style={styles.totalAmount}>₹{totalAmount}</Text>
             </View>
+
           </View>
         )}
 
-
         {/* ACTION BUTTON */}
         <View style={styles.buttonRow}>
-
-          {/* NON–VISA-FREE → Start Application */}
           {!isVisaFree && (
             <TouchableOpacity
               style={styles.secondaryBtn}
               onPress={() =>
-                navigation.navigate("TravelDateScreen", {
-                  country: countryName,
-                })
+                navigation.navigate("TravelDateScreen", { country: countryName })
               }
             >
               <Text style={styles.secondaryText}>Start Application</Text>
             </TouchableOpacity>
           )}
 
-          {/* VISA-FREE → Explore */}
           {isVisaFree && (
             <TouchableOpacity
               style={styles.secondaryBtn}
@@ -1949,7 +1967,6 @@ export default function VisaDetailsScreen({ navigation }) {
               <Text style={styles.secondaryText}>Explore</Text>
             </TouchableOpacity>
           )}
-
         </View>
 
       </ScrollView>

@@ -563,28 +563,55 @@
 //   },
 // });
 
-
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { wp, verticalScale, moderateScale, RFValue } from "../utils/metrics";
 import { getFlagEmoji } from "../utils/countryIsoMap";
+
+/* -------- helpers -------- */
+const getGovernmentFee = (fee) => {
+  if (!fee) return 0;
+
+  if (typeof fee === "number" || typeof fee === "string") {
+    return fee;
+  }
+
+  if (typeof fee === "object") {
+    const values = Object.values(fee)
+      .map(v => Number(String(v).replace(/,/g, "")))
+      .filter(v => !isNaN(v));
+
+    return values.length ? Math.min(...values) : 0;
+  }
+
+  return 0;
+};
+
+const getServiceFee = (fee) => {
+  if (!fee) return 0;
+  if (typeof fee === "number" || typeof fee === "string") return fee;
+  if (typeof fee === "object") return fee.Single || 0;
+  return 0;
+};
 
 export default function CountryCards({ item, countrName, onPress, date }) {
   const visaType = item.countryType?.toUpperCase() || "VISA";
   const flag = getFlagEmoji(countrName);
   const [liveCount, setLiveCount] = useState(item.liveCount ?? 0);
 
+  const governmentFee = getGovernmentFee(item.GovernmentFee);
+  const serviceFee = getServiceFee(item.AuthorityCharges);
+
   useEffect(() => {
     const interval = setInterval(() => {
       setLiveCount((prev) => {
-        // small realistic fluctuation
-        const change = Math.floor(Math.random() * 3) - 1; // -1, 0, +1
+        const change = Math.floor(Math.random() * 3) - 1;
         const next = prev + change;
-        return next < 1 ? 1 : next; // never below 1
+        return next < 1 ? 1 : next;
       });
-    }, 10000); // 10 seconds
+    }, 10000);
 
-    return () => clearInterval(interval); // ✅ cleanup
+    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -596,7 +623,7 @@ export default function CountryCards({ item, countrName, onPress, date }) {
         <View style={styles.headerRight}>
           <Text style={styles.visaType}>{visaType}</Text>
           <Text style={styles.info}> ⓘ</Text>
-          {/* LIVE INLINE */}
+
           {liveCount > 0 && (
             <View style={styles.liveInline}>
               <View style={styles.liveDot} />
@@ -605,7 +632,6 @@ export default function CountryCards({ item, countrName, onPress, date }) {
           )}
         </View>
       </View>
-
 
       {/* COUNTRY NAME */}
       <Text style={styles.title}>{countrName}</Text>
@@ -620,7 +646,7 @@ export default function CountryCards({ item, countrName, onPress, date }) {
       </View>
       <View style={styles.bulletRow}>
         <View style={styles.dot} />
-        <Text style={styles.bulletText}>Visas Processed</Text>
+        <Text style={styles.bulletText}>Government Approved Visa</Text>
       </View>
       <View style={styles.bulletRow}>
         <View style={styles.dot} />
@@ -630,22 +656,23 @@ export default function CountryCards({ item, countrName, onPress, date }) {
       {/* DIVIDER */}
       <View style={styles.divider} />
 
-      {/* PRICE */}
+      {/* PRICE – ALWAYS SHOW SERVICE FEE */}
       <View style={styles.priceRow}>
         <View>
           <Text style={styles.price}>
-            ₹{item.VisaManagerFee || 0}
-            <Text style={styles.perAdult}> per adult</Text>
+            ₹{governmentFee}
+            <Text style={styles.perAdult}> visa fee</Text>
           </Text>
+
           <Text style={styles.fee}>
-            + ₹{item.AuthorityCharges || 0} service fees
+            + ₹{serviceFee} service fees
           </Text>
         </View>
 
         <Text style={styles.arrow}>›</Text>
       </View>
 
-      {/* FOOTER – ONLY APPLY NOW */}
+      {/* FOOTER */}
       <View style={styles.footer}>
         <Text style={styles.footerText}>Apply Now</Text>
       </View>
@@ -693,7 +720,6 @@ const styles = StyleSheet.create({
     color: "#1E3A8A",
   },
 
-  /* 🔥 LIVE BADGE */
   liveInline: {
     flexDirection: "row",
     alignItems: "center",
@@ -718,6 +744,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#334155",
   },
+
   title: {
     fontSize: RFValue(16),
     fontWeight: "700",

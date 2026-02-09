@@ -604,11 +604,11 @@ export default function ProfileScreen({ navigation }) {
               })
             }
           />
-          <MenuItem
+          {/* <MenuItem
             title="Join as Travel Agent"
             isDark={isDark}
             onPress={() => navigation.navigate("JoinAsTravelAgent")}
-          />
+          /> */}
 
           <MenuItem title="Contact Us" onPress={showContactUs} isDark={isDark} />
           <MenuItem title="About" onPress={showAbout} isDark={isDark} />

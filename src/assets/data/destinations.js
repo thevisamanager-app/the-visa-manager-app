@@ -583,14 +583,14 @@ const DESTINATIONS = [
     countryType: "Schengen"
   },
 
-  {
-    id: 60,
-    countrName: 'Bhutan',
-    VisaManagerFee: "800",
-    AuthorityCharges: "0",
-    GovernmentFee: "0",
-    countryType: "DAC"
-  },
+  // {
+  //   id: 60,
+  //   countrName: 'Bhutan',
+  //   VisaManagerFee: "800",
+  //   AuthorityCharges: "0",
+  //   GovernmentFee: "0",
+  //   countryType: "DAC"
+  // },
 
   {
     id: 61,

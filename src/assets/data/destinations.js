@@ -3,14 +3,14 @@ const DESTINATIONS = [
     id: 1,
     countrName: "Vietnam",
     countryType: "evisa",
-    VisaManagerFee: "0",
+    VisaManagerFee: "708",
     AuthorityCharges: "0",
-    GovernmentFee: "1",
+    GovernmentFee: "2350",
     liveCount: 9,
+    subtitle: "Get Visa in 1-3 Business Days",
     bullets: [
-      "Visa on arrival / DAC",
-      "Fast approval process",
-      "No embassy visit required"
+      "1200+ visas successfully Processed",
+      "online process",
     ],
   },
 
@@ -18,6 +18,7 @@ const DESTINATIONS = [
     id: 2,
     countrName: "Singapore",
     countryType: "evisa",
+
     VisaManagerFee: "799",
     AuthorityCharges: "999",
     GovernmentFee: "1900",
@@ -65,6 +66,7 @@ const DESTINATIONS = [
       "Online Process"
     ],
   },
+
   {
     id: 6,
     countrName: 'Cambodia',
@@ -598,7 +600,7 @@ const DESTINATIONS = [
     GovernmentFee: "0",
     countryType: "Visa-Free",
 
-   bullets: [
+    bullets: [
       "Quick and Easy Process",
       "Visas Processed",
       "24x7 Support",
@@ -612,7 +614,12 @@ const DESTINATIONS = [
     VisaManagerFee: "1770",
     AuthorityCharges: "750",
     GovernmentFee: "550",
-    countryType: "evisa"
+    countryType: "evisa",
+    subtitle: "Get Visa in 1-3 Business Days",
+    bullets: [
+      "1200+ visas successfully Processed",
+      "online process",
+    ],
   },
 
   {

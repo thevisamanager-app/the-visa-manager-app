@@ -480,6 +480,7 @@ const COUNTRY_FAQS = {
       answer:
         "No prior visa approval is required. Entry is granted at immigration upon arrival.",
     },
+    
     {
       question: "Can I extend my stay?",
       answer:

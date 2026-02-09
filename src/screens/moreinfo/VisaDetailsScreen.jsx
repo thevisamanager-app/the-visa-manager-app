@@ -567,7 +567,7 @@ export default function VisaDetailsScreen({ navigation }) {
   const [loadingReviews, setLoadingReviews] = useState(true);
   const [showAllReviews, setShowAllReviews] = useState(false);
   const [openIndex, setOpenIndex] = useState(null);
-
+  const [showStickyCTA, setShowStickyCTA] = useState(false);
 
 
   // 🔹 Fetch reviews once
@@ -591,17 +591,31 @@ export default function VisaDetailsScreen({ navigation }) {
 
   return (
     <ScreenWrapper>
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        onScroll={(e) => {
+          const y = e.nativeEvent.contentOffset.y;
+
+          // show button after user scrolls down ~300px
+          if (y > 300) {
+            setShowStickyCTA(true);
+          } else {
+            setShowStickyCTA(false);
+          }
+        }}
+        scrollEventThrottle={16}
+      >
+
         {/* HEADER ACTIONS */}
         <View style={styles.headerRow}>
-         <TouchableOpacity onPress={() => navigation.goBack()}>
-                   <Ionicons name="chevron-back" size={moderateScale(28)} color="black" />
-                 </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons name="chevron-back" size={moderateScale(28)} color="black" />
+          </TouchableOpacity>
           <TouchableOpacity
-                    onPress={() => navigation.navigate("Tabs", { screen: "Destination" })}
-                  >
-                    <Icon name="home" size={moderateScale(24)} color={ORANGE} />
-                  </TouchableOpacity>
+            onPress={() => navigation.navigate("Tabs", { screen: "Destination" })}
+          >
+            <Icon name="home" size={moderateScale(24)} color={ORANGE} />
+          </TouchableOpacity>
         </View>
 
         {/* COUNTRY VISA CARD */}
@@ -1004,38 +1018,35 @@ export default function VisaDetailsScreen({ navigation }) {
             </View>
           </View>
         )}
+      </ScrollView>
 
-
-        {/* ACTION BUTTON */}
-        <View style={styles.buttonRow}>
-
-          {/* NON–VISA-FREE → Start Application */}
-          {!isVisaFree && (
+      {/* ACTION BUTTON */}
+      {/* ✅ STICKY CTA — OUTSIDE SCROLLVIEW */}
+      {/* 🔹 STICKY CTA (FIXED OVERLAY) */}
+      {showStickyCTA && (
+        <View style={styles.stickyContainer}>
+          {!isVisaFree ? (
             <TouchableOpacity
-              style={styles.secondaryBtn}
+              style={styles.stickyBtn}
               onPress={() =>
                 navigation.navigate("TravelDateScreen", {
                   country: countryName,
                 })
               }
             >
-              <Text style={styles.secondaryText}>Start Application</Text>
+              <Text style={styles.stickyText}>Start Application</Text>
             </TouchableOpacity>
-          )}
-
-          {/* VISA-FREE → Explore */}
-          {isVisaFree && (
+          ) : (
             <TouchableOpacity
-              style={styles.secondaryBtn}
+              style={styles.stickyBtn}
               onPress={() => navigation.navigate("DestinationScreen")}
             >
-              <Text style={styles.secondaryText}>Explore</Text>
+              <Text style={styles.stickyText}>Explore</Text>
             </TouchableOpacity>
           )}
-
         </View>
+      )}
 
-      </ScrollView>
     </ScreenWrapper >
   );
 }
@@ -1061,7 +1072,10 @@ function InfoItem({ label, value, icon, iconBg }) {
    STYLES
 ======================== */
 const styles = StyleSheet.create({
-  container: { padding: 16, paddingBottom: 40 },
+  container: {
+    padding: 16,
+    paddingBottom: 120, // space for sticky CTA
+  },
 
   countryCard: {
     padding: 16,
@@ -1656,6 +1670,29 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
 
+  stickyContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 12,
+    backgroundColor: "rgba(255,255,255,0.95)",
+    borderTopWidth: 1,
+    borderTopColor: "#E5E7EB",
+  },
+
+  stickyBtn: {
+    backgroundColor: "#FF5C00",
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+
+  stickyText: {
+    color: "#FFFFFF",
+    fontSize: 15,
+    fontWeight: "700",
+  },
 
 });
 

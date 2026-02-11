@@ -3,8 +3,8 @@ const DESTINATIONS = [
     id: 1,
     countrName: "Vietnam",
     countryType: "evisa",
-    VisaManagerFee: "708",
-    AuthorityCharges: "0",
+    VisaManagerFee: "1770",
+    AuthorityCharges:"750",
     GovernmentFee: "2350",
     liveCount: 9,
     subtitle: "Get Visa in 1-3 Business Days",
@@ -19,10 +19,10 @@ const DESTINATIONS = [
     countrName: "Singapore",
     countryType: "evisa",
 
-    VisaManagerFee: "799",
-    AuthorityCharges: "999",
-    GovernmentFee: "1900",
-    bullets: [
+    VisaManagerFee: "1180",
+    AuthorityCharges: "670",
+    GovernmentFee: "2100",
+    llets: [
       "Visa on arrival / DAC",
       "Fast approval process",
       "No embassy visit required"
@@ -170,16 +170,16 @@ const DESTINATIONS = [
   {
     id: 16,
     countrName: 'Qatar',
-    VisaManagerFee: "0",
-    AuthorityCharges: "500",
-    GovernmentFee: "2000",
+    VisaManagerFee: "2949",
+    AuthorityCharges: "944",
+    GovernmentFee: "5000",
     countryType: "evisa"
   },
 
   {
     id: 17,
     countrName: 'Romania',
-    VisaManagerFee: "2948.82",
+    VisaManagerFee: "2949",
     AuthorityCharges: "944",
     GovernmentFee: "5000",
     countryType: "evisa"
@@ -188,7 +188,7 @@ const DESTINATIONS = [
   {
     id: 18,
     countrName: 'Uganda',
-    VisaManagerFee: "2948.82",
+    VisaManagerFee: "2949",
     AuthorityCharges: "944",
     GovernmentFee: "6395",
     countryType: "evisa"
@@ -215,7 +215,7 @@ const DESTINATIONS = [
   {
     id: 21,
     countrName: 'Portugal',
-    VisaManagerFee: "2948.82",
+    VisaManagerFee: "2950",
     AuthorityCharges: "944",
     GovernmentFee: "9200",
     countryType: "evisa"
@@ -533,8 +533,8 @@ const DESTINATIONS = [
     id: 54,
     countrName: 'Romania',
     VisaManagerFee: "2950",
-    AuthorityCharges: "0",
-    GovernmentFee: "9200",
+    AuthorityCharges: "944",
+    GovernmentFee: "5000",
     countryType: "Schengen"
   },
 
@@ -583,14 +583,14 @@ const DESTINATIONS = [
     countryType: "Schengen"
   },
 
-  // {
-  //   id: 60,
-  //   countrName: 'Bhutan',
-  //   VisaManagerFee: "800",
-  //   AuthorityCharges: "0",
-  //   GovernmentFee: "0",
-  //   countryType: "DAC"
-  // },
+  {
+    id: 60,
+    countrName: 'Bhutan',
+    VisaManagerFee: "800",
+    AuthorityCharges: "0",
+    GovernmentFee: "0",
+    countryType: "DAC"
+  },
 
   {
     id: 61,
@@ -611,9 +611,9 @@ const DESTINATIONS = [
   {
     id: 62,
     countrName: 'Azerbaijan',
-    VisaManagerFee: "1770",
-    AuthorityCharges: "750",
-    GovernmentFee: "550",
+    VisaManagerFee: "3540",
+    AuthorityCharges: "1200",
+    GovernmentFee: "5800",
     countryType: "evisa",
     subtitle: "Get Visa in 1-3 Business Days",
     bullets: [

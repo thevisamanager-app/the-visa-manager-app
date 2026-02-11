@@ -70,6 +70,8 @@ export const COUNTRY_VISA_CONFIG = {
         headerTitle: "Vietnam Visa Application",
         processTitle: "Vietnam Visa Process",
         processingText: "Get Vietnam E-Visa in 5 Working Days",
+        processingNote:
+            "This is a semi-online process; some original documents must be submitted to the authority. We do not claim shortcuts and follow all rules on the client's behalf during submission.",
 
 
         visaInfoTitle: "Vietnam Visa Information",
@@ -124,6 +126,8 @@ export const COUNTRY_VISA_CONFIG = {
         headerTitle: "Singapore Visa Application",
         processTitle: "Singapore Visa Process",
         processingText: "Apply Now & Get Visa By 3-5 Business Days",
+        processingNote:
+            "This is a semi-online process; some original documents must be submitted to the authority. We do not claim shortcuts and follow all rules on the client's behalf during submission.",
 
 
         visaInfoTitle: "Singapore Visa Information",

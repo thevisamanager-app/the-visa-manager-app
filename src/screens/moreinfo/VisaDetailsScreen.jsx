@@ -1969,9 +1969,15 @@ export default function VisaDetailsScreen({ navigation }) {
           {!isVisaFree ? (
             <TouchableOpacity
               style={styles.stickyBtn}
-              onPress={() =>
-                navigation.navigate("TravelDateScreen", { country: countryName })
-              }
+              onPress={() => {
+                if (countryName.toLowerCase() === "vietnam") {
+                  navigation.navigate("VietnamApplyScreen");
+                } else {
+                  navigation.navigate("TravelDateScreen", {
+                    country: countryName,
+                  });
+                }
+              }}
             >
               <Text style={styles.stickyText}>Start Application</Text>
             </TouchableOpacity>

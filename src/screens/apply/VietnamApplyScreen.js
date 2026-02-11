@@ -1,0 +1,443 @@
+import React, { useState } from "react";
+import {
+    View,
+    Text,
+    StyleSheet,
+    ScrollView,
+    TouchableOpacity,
+    TextInput,
+    Image,
+    Alert,
+    Modal,
+} from "react-native";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { Calendar } from "react-native-calendars";
+import { launchImageLibrary } from "react-native-image-picker";
+import ScreenWrapper from "../../components/ScreenWrapper";
+
+import PassportFrontSample from "../../assets/examples/passport-front.png";
+import PassportBackSample from "../../assets/examples/passport-back.png";
+import PassportPhotoSample from "../../assets/examples/passport-photo.png";
+import TicketSample from "../../assets/examples/ticket.png";
+
+const ORANGE = "#FF5C00";
+
+/* ---------- reusable traveller factory ---------- */
+const createTraveller = () => ({
+    form: {
+        travelDate: "",
+        phone: "",
+        email: "",
+        hotelDetails: "",
+    },
+    documents: {
+        passportFront: null,
+        passportBack: null,
+        photo: null,
+        ticket: null,
+    },
+});
+
+export default function VietnamApplyScreen({ navigation }) {
+    /* ================= STATE ================= */
+
+    const [travellers, setTravellers] = useState([
+        { isPrimary: true, ...createTraveller() },
+    ]);
+
+    const [showCalendarFor, setShowCalendarFor] = useState(null);
+    const [showCoTravellerModal, setShowCoTravellerModal] = useState(false);
+    const [tempTraveller, setTempTraveller] = useState(createTraveller());
+
+    /* ================= HELPERS ================= */
+
+    const formatDate = (date) => {
+        const [y, m, d] = date.split("-");
+        return `${d}/${m}/${y}`;
+    };
+
+    const getSample = (key) => {
+        if (key === "passportFront") return PassportFrontSample;
+        if (key === "passportBack") return PassportBackSample;
+        if (key === "photo") return PassportPhotoSample;
+        return TicketSample;
+    };
+
+    const pickDocument = async (target, key) => {
+        const res = await launchImageLibrary({ mediaType: "photo", quality: 0.9 });
+        if (!res.assets?.[0]) return;
+
+        if (target === "main") {
+            const updated = [...travellers];
+            updated[0].documents[key] = res.assets[0];
+            setTravellers(updated);
+        } else {
+            setTempTraveller((p) => ({
+                ...p,
+                documents: { ...p.documents, [key]: res.assets[0] },
+            }));
+        }
+    };
+
+    const validateTraveller = (t) => {
+        const { form, documents } = t;
+
+        if (!form.travelDate || !form.phone || !form.email || !form.hotelDetails) {
+            Alert.alert("Missing Info", "Please fill all details.");
+            return false;
+        }
+
+        for (const v of Object.values(documents)) {
+            if (!v) {
+                Alert.alert("Missing Document", "Please upload all documents.");
+                return false;
+            }
+        }
+
+        return true;
+    };
+
+    /* ================= SAVE ================= */
+
+    const saveCoTraveller = () => {
+        if (!validateTraveller(tempTraveller)) return;
+
+        setTravellers((p) => [...p, { isPrimary: false, ...tempTraveller }]);
+        setTempTraveller(createTraveller());
+        setShowCoTravellerModal(false);
+    };
+
+    const submit = () => {
+        for (const t of travellers) {
+            if (!validateTraveller(t)) return;
+        }
+
+        navigation.navigate("CheckoutScreen", {
+            country: "Vietnam",
+            travellers,
+        });
+    };
+
+    /* ================= FORM UI ================= */
+
+    const renderForm = (traveller, onChange, target) => (
+        <>
+            <TouchableOpacity
+                style={styles.input}
+                onPress={() => setShowCalendarFor(target)}
+            >
+                <Text>
+                    {traveller.form.travelDate
+                        ? formatDate(traveller.form.travelDate)
+                        : "Select Travel Date"}
+                </Text>
+            </TouchableOpacity>
+
+            <TextInput
+                placeholder="Mobile Number"
+                style={styles.input}
+                keyboardType="phone-pad"
+                value={traveller.form.phone}
+                onChangeText={(v) => onChange("phone", v)}
+            />
+
+            <TextInput
+                placeholder="Email ID"
+                style={styles.input}
+                value={traveller.form.email}
+                onChangeText={(v) => onChange("email", v)}
+            />
+
+            <TextInput
+                placeholder="Hotel Name & Address"
+                style={[styles.input, styles.textArea]}
+                multiline
+                value={traveller.form.hotelDetails}
+                onChangeText={(v) => onChange("hotelDetails", v)}
+            />
+
+            {[
+                { key: "passportFront", label: "Upload Passport Front Page" },
+                { key: "passportBack", label: "Upload Passport Back Page" },
+                { key: "photo", label: "Passport Size Photo" },
+                { key: "ticket", label: "Upload Return Ticket" },
+            ].map(({ key, label }) => (
+                <View key={key} style={styles.docCard}>
+
+                    <Text style={styles.docLabel}>{label} *</Text>
+
+                    {!traveller.documents[key] ? (
+                        <View style={styles.sampleWrapper}>
+                            <Image
+                                source={getSample(key)}
+                                style={styles.sampleImage}
+                                resizeMode="contain"
+                            />
+                        </View>
+                    ) : (
+                        <Image
+                            source={{ uri: traveller.documents[key].uri }}
+                            style={styles.previewImage}
+                        />
+                    )}
+
+                    <TouchableOpacity
+                        style={styles.uploadBtn}
+                        onPress={() => pickDocument(target, key)}
+                    >
+                        <Text style={styles.uploadText}>
+                            {traveller.documents[key]
+                                ? "Replace Document"
+                                : "Upload Document"}
+                        </Text>
+                    </TouchableOpacity>
+
+                </View>
+            ))}
+        </>
+    );
+
+    /* ================= UI ================= */
+
+    return (
+        <ScreenWrapper>
+            <ScrollView contentContainerStyle={styles.container}>
+                {/* HEADER */}
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                        <Ionicons name="chevron-back" size={26} />
+                    </TouchableOpacity>
+
+                    <Text style={styles.headerTitle}>Vietnam Visa Application</Text>
+
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate("Tabs", { screen: "Destination" })}
+                    >
+                        <Ionicons name="home-outline" size={24} color={ORANGE} />
+                    </TouchableOpacity>
+                </View>
+
+                <Text style={styles.sectionTitle}>Main Applicant</Text>
+
+                {renderForm(
+                    travellers[0],
+                    (k, v) => {
+                        const updated = [...travellers];
+                        updated[0].form[k] = v;
+                        setTravellers(updated);
+                    },
+                    "main"
+                )}
+
+
+
+                <TouchableOpacity
+                    style={styles.addTravellerBtn}
+                    onPress={() => setShowCoTravellerModal(true)}
+                >
+                    <Text style={styles.addTravellerText}>+ Add Co-Traveller</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.submitBtn} onPress={submit}>
+                    <Text style={styles.submitText}>Complete Process</Text>
+                </TouchableOpacity>
+            </ScrollView>
+
+            {/* CO-TRAVELLER MODAL */}
+            <Modal visible={showCoTravellerModal} transparent animationType="fade">
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalBox}>
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>Add Co-Traveller</Text>
+                            <TouchableOpacity onPress={() => setShowCoTravellerModal(false)}>
+                                <Ionicons name="close" size={26} />
+                            </TouchableOpacity>
+                        </View>
+
+                        <ScrollView showsVerticalScrollIndicator={false}>
+                            {renderForm(
+                                tempTraveller,
+                                (k, v) =>
+                                    setTempTraveller((p) => ({
+                                        ...p,
+                                        form: { ...p.form, [k]: v },
+                                    })),
+                                "co"
+                            )}
+                        </ScrollView>
+
+                        <TouchableOpacity style={styles.submitBtn} onPress={saveCoTraveller}>
+                            <Text style={styles.submitText}>Save Co-Traveller</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+
+            {/* CALENDAR */}
+            <Modal visible={!!showCalendarFor} transparent>
+                <View style={styles.calendarOverlay}>
+                    <View style={styles.calendarBox}>
+                        <Calendar
+                            minDate={new Date().toISOString().split("T")[0]}
+                            onDayPress={(day) => {
+                                if (showCalendarFor === "main") {
+                                    const updated = [...travellers];
+                                    updated[0].form.travelDate = day.dateString;
+                                    setTravellers(updated);
+                                } else {
+                                    setTempTraveller((p) => ({
+                                        ...p,
+                                        form: { ...p.form, travelDate: day.dateString },
+                                    }));
+                                }
+                                setShowCalendarFor(null);
+                            }}
+                        />
+                    </View>
+                </View>
+            </Modal>
+        </ScreenWrapper>
+    );
+}
+
+/* ================= STYLES ================= */
+
+const styles = StyleSheet.create({
+    container: { padding: 16, paddingBottom: 40 },
+
+    header: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 20,
+    },
+
+    headerTitle: { fontSize: 17, fontWeight: "700" },
+
+    sectionTitle: {
+        fontSize: 16,
+        fontWeight: "700",
+        marginBottom: 16,
+        textAlign: "center",      // 👈 center it
+    },
+
+    input: {
+        borderWidth: 1,
+        borderColor: "#ddd",
+        borderRadius: 10,
+        padding: 12,
+        marginBottom: 12,
+    },
+
+    textArea: { height: 90 },
+
+    docCard: {
+        backgroundColor: "#fff",
+        borderRadius: 14,
+        padding: 12,
+        marginBottom: 16,
+        elevation: 2,
+    },
+
+    docHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginBottom: 6,
+    },
+
+    docLabel: {
+        fontWeight: "600",
+        fontSize: 14,
+        textAlign: "center",   // 👈 center text
+        marginBottom: 8,
+    },
+
+    sampleBadge: {
+        fontSize: 11,
+        fontWeight: "600",
+        color: "#666",
+    },
+
+    sampleWrapper: {
+        backgroundColor: "#F5F6F8",
+        borderRadius: 10,
+        padding: 6,
+        marginBottom: 8,
+    },
+
+    sampleImage: {
+        height: 95,
+        width: "100%",
+    },
+
+    previewImage: {
+        height: 110,
+        borderRadius: 10,
+        marginBottom: 8,
+    },
+
+    uploadBtn: {
+        borderWidth: 1,
+        borderColor: ORANGE,
+        borderRadius: 10,
+        paddingVertical: 10,
+        alignItems: "center",
+    },
+
+    uploadText: { color: ORANGE, fontWeight: "700" },
+
+    addTravellerBtn: {
+        borderWidth: 1,
+        borderColor: ORANGE,
+        borderRadius: 999,
+        paddingVertical: 14,
+        alignItems: "center",
+        marginVertical: 16,
+    },
+
+    addTravellerText: { color: ORANGE, fontWeight: "700" },
+
+    submitBtn: {
+        backgroundColor: ORANGE,
+        borderRadius: 999,
+        paddingVertical: 16,
+        alignItems: "center",
+    },
+
+    submitText: { color: "#fff", fontWeight: "700", fontSize: 16 },
+
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: "rgba(0,0,0,0.55)",
+        justifyContent: "center",
+    },
+
+    modalBox: {
+        backgroundColor: "#fff",
+        margin: 20,
+        borderRadius: 16,
+        padding: 16,
+        maxHeight: "90%",
+    },
+
+    modalHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginBottom: 12,
+    },
+
+    modalTitle: { fontSize: 16, fontWeight: "700" },
+
+    calendarOverlay: {
+        flex: 1,
+        backgroundColor: "rgba(0,0,0,0.4)",
+        justifyContent: "center",
+    },
+
+    calendarBox: {
+        backgroundColor: "#fff",
+        margin: 20,
+        borderRadius: 16,
+        padding: 12,
+    },
+});

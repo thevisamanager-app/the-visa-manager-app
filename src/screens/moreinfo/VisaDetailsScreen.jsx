@@ -604,20 +604,27 @@ export default function VisaDetailsScreen({ navigation }) {
 
       </ScrollView>
 
-        {/* STICKY ACTION BUTTON */}
-        <View style={styles.stickyButtonRow}>
-          {!finalIsVisaFree && (
+      {/* ACTION BUTTON */}
+      {/* ✅ STICKY CTA — OUTSIDE SCROLLVIEW */}
+      {/* 🔹 STICKY CTA (FIXED OVERLAY) */}
+      {showStickyCTA && (
+        <View style={styles.stickyContainer}>
+          {!isVisaFree ? (
             <TouchableOpacity
-              style={styles.secondaryBtn}
-              onPress={() =>
-                navigation.navigate("TravelDateScreen", { country: countryName })
-              }
+              style={styles.stickyBtn}
+              onPress={() => {
+                if (countryName.toLowerCase() === "vietnam") {
+                  navigation.navigate("VietnamApplyScreen");
+                } else {
+                  navigation.navigate("TravelDateScreen", {
+                    country: countryName,
+                  });
+                }
+              }}
             >
               <Text style={styles.secondaryText}>Start Application</Text>
             </TouchableOpacity>
-          )}
-
-          {finalIsVisaFree && (
+          ) : (
             <TouchableOpacity
               style={styles.secondaryBtn}
               onPress={() =>

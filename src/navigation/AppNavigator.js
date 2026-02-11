@@ -236,6 +236,8 @@ import MyTripsScreen from "../screens/profile/MyTripsScreen";
 import VisaDetailsScreen from "../screens/moreinfo/VisaDetailsScreen";
 import JoinAsTravelAgentScreen from "../screens/agent/JoinAsTravelAgentScreen";
 import PartnerLoginScreen from "../screens/agent/PartnerLoginScreen";
+import VietnamApplyScreen from "../screens/apply/VietnamApplyScreen";
+
 
 
 
@@ -312,6 +314,11 @@ function UserStack() {
         component={PartnerLoginScreen}
       />
       
+        <Stack.Screen
+        name="VietnamApplyScreen"
+        component={VietnamApplyScreen}
+      />
+
 
 
       {/* EXISTING FLOW */}

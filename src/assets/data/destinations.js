@@ -22,7 +22,8 @@ const DESTINATIONS = [
     VisaManagerFee: "1180",
     AuthorityCharges: "670",
     GovernmentFee: "2100",
-    llets: [
+    subtitle: "Get Visa in 1-3 Business Days",
+    bullets: [
       "Visa on arrival / DAC",
       "Fast approval process",
       "No embassy visit required"
@@ -36,6 +37,11 @@ const DESTINATIONS = [
     VisaManagerFee: "3540",
     AuthorityCharges: "1200",
     GovernmentFee: "5800",
+    bullets: [
+      "Visa on arrival / DAC",
+      "Fast approval process",
+      "No embassy visit required"
+    ],
   },
 
   {

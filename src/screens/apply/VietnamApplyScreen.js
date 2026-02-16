@@ -13,6 +13,8 @@ import {
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Calendar } from "react-native-calendars";
 import { launchImageLibrary } from "react-native-image-picker";
+import auth from "@react-native-firebase/auth";
+import firestore from "@react-native-firebase/firestore";
 import ScreenWrapper from "../../components/ScreenWrapper";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
@@ -39,8 +41,6 @@ const createTraveller = () => ({
 });
 
 export default function VietnamApplyScreen({ navigation }) {
-    /* ================= STATE ================= */
-
     const [travellers, setTravellers] = useState([
         { isPrimary: true, ...createTraveller() },
     ]);
@@ -48,8 +48,6 @@ export default function VietnamApplyScreen({ navigation }) {
     const [showCalendarFor, setShowCalendarFor] = useState(null);
     const [showCoTravellerModal, setShowCoTravellerModal] = useState(false);
     const [tempTraveller, setTempTraveller] = useState(createTraveller());
-
-    /* ================= HELPERS ================= */
 
     const formatDate = (date) => {
         const [y, m, d] = date.split("-");
@@ -97,8 +95,6 @@ export default function VietnamApplyScreen({ navigation }) {
         return true;
     };
 
-    /* ================= SAVE ================= */
-
     const saveCoTraveller = () => {
         if (!validateTraveller(tempTraveller)) return;
 
@@ -107,18 +103,45 @@ export default function VietnamApplyScreen({ navigation }) {
         setShowCoTravellerModal(false);
     };
 
-    const submit = () => {
+    /* ================= FIRESTORE SAVE ================= */
+
+    const submit = async () => {
         for (const t of travellers) {
             if (!validateTraveller(t)) return;
         }
 
-        navigation.navigate("CheckoutScreen", {
-            country: "Vietnam",
-            travellers,
-        });
-    };
+        try {
+            const user = auth().currentUser;
 
-    /* ================= FORM UI ================= */
+            if (!user) {
+                Alert.alert("Login Required", "Please login first.");
+                return;
+            }
+
+            const applicationId = `vietnam_${Date.now()}`;
+
+            await firestore()
+                .collection("users")
+                .doc(user.uid)
+                .collection("passportData")
+                .doc(applicationId)
+                .set({
+                    country: "Vietnam",
+                    travellers,
+                    totalTravellers: travellers.length,
+                    status: "submitted",
+                    createdAt: firestore.FieldValue.serverTimestamp(),
+                });
+
+            navigation.navigate("CheckoutScreen", {
+                country: "Vietnam",
+                applicationId,
+            });
+        } catch (error) {
+            console.log("Vietnam submit error:", error);
+            Alert.alert("Error", "Something went wrong. Please try again.");
+        }
+    };
 
     const renderForm = (traveller, onChange, target) => (
         <>
@@ -126,7 +149,13 @@ export default function VietnamApplyScreen({ navigation }) {
                 style={styles.input}
                 onPress={() => setShowCalendarFor(target)}
             >
-                <Text>
+                <Text
+                    style={
+                        traveller.form.travelDate
+                            ? styles.inputText
+                            : styles.inputPlaceholder
+                    }
+                >
                     {traveller.form.travelDate
                         ? formatDate(traveller.form.travelDate)
                         : "Select Travel Date"}
@@ -139,6 +168,7 @@ export default function VietnamApplyScreen({ navigation }) {
                 keyboardType="phone-pad"
                 value={traveller.form.phone}
                 onChangeText={(v) => onChange("phone", v)}
+                placeholderTextColor="#9CA3AF"
             />
 
             <TextInput
@@ -146,6 +176,7 @@ export default function VietnamApplyScreen({ navigation }) {
                 style={styles.input}
                 value={traveller.form.email}
                 onChangeText={(v) => onChange("email", v)}
+                placeholderTextColor="#9CA3AF"
             />
 
             <TextInput
@@ -154,6 +185,7 @@ export default function VietnamApplyScreen({ navigation }) {
                 multiline
                 value={traveller.form.hotelDetails}
                 onChangeText={(v) => onChange("hotelDetails", v)}
+                placeholderTextColor="#9CA3AF"
             />
 
             {[
@@ -163,7 +195,6 @@ export default function VietnamApplyScreen({ navigation }) {
                 { key: "ticket", label: "Upload Return Ticket" },
             ].map(({ key, label }) => (
                 <View key={key} style={styles.docCard}>
-
                     <Text style={styles.docLabel}>{label} *</Text>
 
                     {!traveller.documents[key] ? (
@@ -191,18 +222,14 @@ export default function VietnamApplyScreen({ navigation }) {
                                 : "Upload Document"}
                         </Text>
                     </TouchableOpacity>
-
                 </View>
             ))}
         </>
     );
 
-    /* ================= UI ================= */
-
     return (
         <ScreenWrapper>
             <ScrollView contentContainerStyle={styles.container}>
-                {/* HEADER */}
                 <View style={styles.header}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <Ionicons name="chevron-back" size={26} />
@@ -211,7 +238,9 @@ export default function VietnamApplyScreen({ navigation }) {
                     <Text style={styles.headerTitle}>Vietnam Visa Application</Text>
 
                     <TouchableOpacity
-                        onPress={() => navigation.navigate("Tabs", { screen: "Destination" })}
+                        onPress={() =>
+                            navigation.navigate("Tabs", { screen: "Destination" })
+                        }
                     >
                         <Ionicons name="home-outline" size={24} color={ORANGE} />
                     </TouchableOpacity>
@@ -228,8 +257,6 @@ export default function VietnamApplyScreen({ navigation }) {
                     },
                     "main"
                 )}
-
-
 
                 <TouchableOpacity
                     style={styles.addTravellerBtn}
@@ -327,6 +354,14 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         padding: 12,
         marginBottom: 12,
+        color: "#111827",
+        backgroundColor: "#FFFFFF",
+    },
+    inputText: {
+        color: "#111827",
+    },
+    inputPlaceholder: {
+        color: "#9CA3AF",
     },
 
     textArea: { height: 90 },

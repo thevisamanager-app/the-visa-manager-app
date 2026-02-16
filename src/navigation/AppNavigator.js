@@ -251,6 +251,9 @@ import SchengenAppointmentScreen from "../screens/Schengen/SchengenAppointmentSc
 import SchengenCountriesVisitScreen from "../screens/Schengen/SchengenCountriesVisitScreen";
 import SchengenDocumentsScreen from "../screens/Schengen/SchengenDocumentsScreen";
 import SchengenStepper from "../components/SchengenStepper"
+import OtpScreen from "../screens/OtpScreen";
+import SingaporeApplyScreen from "../screens/apply/SingaporeApplyScreen";
+
 const Stack = createStackNavigator();
 
 /* ===================== ADMIN STACK ===================== */
@@ -313,10 +316,19 @@ function UserStack() {
         name="PartnerLoginScreen"
         component={PartnerLoginScreen}
       />
-      
-        <Stack.Screen
+
+      <Stack.Screen
         name="VietnamApplyScreen"
         component={VietnamApplyScreen}
+      />
+      <Stack.Screen
+        name="OtpScreen"
+        component={OtpScreen}
+      />
+
+      <Stack.Screen
+        name="SingaporeApplyScreen"
+        component={SingaporeApplyScreen}
       />
 
 

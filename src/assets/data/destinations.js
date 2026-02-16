@@ -4,7 +4,7 @@ const DESTINATIONS = [
     countrName: "Vietnam",
     countryType: "evisa",
     VisaManagerFee: "1770",
-    AuthorityCharges:"750",
+    AuthorityCharges: "750",
     GovernmentFee: "2350",
     liveCount: 9,
     subtitle: "Get Visa in 1-3 Business Days",
@@ -69,14 +69,21 @@ const DESTINATIONS = [
 
   {
     id: 6,
-    countrName: 'Cambodia',
-    VisaManagerFee: "1770",
-    AuthorityCharges: "944",
-    GovernmentFee: "3100",
-    countryType: "evisa"
+    countrName: 'Combodia',
+    VisaManagerFee: "590",
+    AuthorityCharges: "0",
+    GovernmentFee: "3500",
+    countryType: "evisa",
+    subtitle: "Get Visa in 3-5 Working days",
+    bullets: [
+      "1200 + Visa Successfully Processed",
+      "Online Process"
+    ],
   },
+
+
   {
-    title: '09 JAN 11:00 AM',
+    id: 7,
     countrName: 'Sri-lanka',
     VisaManagerFee: "1",
     AuthorityCharges: "0",
@@ -89,6 +96,7 @@ const DESTINATIONS = [
       "Online Process"
     ],
   },
+
   {
     id: 8,
     countrName: 'Philippines',
@@ -98,6 +106,7 @@ const DESTINATIONS = [
     currency: "",
     countryType: "evisa"
   },
+
   {
     id: 9,
     countrName: 'Uzbekistan',

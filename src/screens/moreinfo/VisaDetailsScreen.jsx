@@ -7,7 +7,7 @@ import DESTINATIONS from "../../assets/data/destinations";
 import { TextInput } from "react-native";
 import WhyChooseTVM from "../../components/WhyChooseTVM";
 import { moderateScale } from "../../utils/metrics";
-
+import { COUNTRY_APPLY_ROUTES } from "../../config/countryApplyRoutes";
 import {
   View,
   Text,
@@ -43,6 +43,9 @@ export default function VisaDetailsScreen({ navigation }) {
   const dispatch = useDispatch();
   const selected = useSelector((state) => state.destinations.selected);
   const countryName = selected?.countrName || "Country";
+  const applyRoute =
+    COUNTRY_APPLY_ROUTES[countryName] ||
+    COUNTRY_APPLY_ROUTES.DEFAULT;
   const [faqSearch, setFaqSearch] = useState("");
   const toNumber = (val) => {
     if (!val) return 0;
@@ -162,464 +165,455 @@ export default function VisaDetailsScreen({ navigation }) {
     <ScreenWrapper>
       <View style={styles.screen}>
         <ScrollView contentContainerStyle={styles.container}>
-        {/* HEADER ACTIONS */}
-        <View style={styles.headerRow}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="chevron-back" size={moderateScale(28)} color="black" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("Tabs", { screen: "Destination" })}
-          >
-            <Icon name="home" size={moderateScale(24)} color={ORANGE} />
-          </TouchableOpacity>
-        </View>
-
-        {/* COUNTRY VISA CARD */}
-        <View style={styles.countryCard}>
-          <View style={styles.countryHeader}>
-            <CountryFlag isoCode={isoCode} size={50} />
-            <Text style={styles.countryName}>
-              {countryConfig?.headerTitle || countryName}
-            </Text>
-
-            <Text style={styles.processingText}>
-              {countryConfig?.processingText}
-            </Text>
-            {countryConfig?.processingNote ? (
-              <Text style={styles.processingNote}>
-                {countryConfig.processingNote}
-              </Text>
-            ) : null}
+          {/* HEADER ACTIONS */}
+          <View style={styles.headerRow}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Ionicons name="chevron-back" size={moderateScale(28)} color="black" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Tabs", { screen: "Destination" })}
+            >
+              <Icon name="home" size={moderateScale(24)} color={ORANGE} />
+            </TouchableOpacity>
           </View>
 
-          <WhyChooseTVM country={countryName} />
-
-        </View>
-
-        {/* VISA PROCESS TITLE */}
-        {PROCESS_STEPS.length > 0 && (
-          <View style={styles.processWrapper}>
-            {/* stepper UI */}
-          </View>
-        )}
-
-        <Text
-          style={styles.centerSectionTitle}
-          numberOfLines={2}
-          ellipsizeMode="tail"
-        >
-          {processTitle}
-        </Text>
-
-
-        <View style={styles.processWrapper}>
-          {/* STEP INDICATOR */}
-          <View style={styles.stepperContainer}>
-            <View style={styles.stepLineBase} />
-
-            <View
-              style={[
-                styles.stepLineActive,
-                {
-                  width:
-                    PROCESS_STEPS.length > 1
-                      ? `${(activeStep / (PROCESS_STEPS.length - 1)) * 100}%`
-                      : "0%",
-                },
-              ]}
-            />
-
-            <View style={styles.stepRow}>
-              {STEP_META.map((step, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={[
-                    styles.stepCircle,
-                    index <= activeStep && styles.stepActive,
-                  ]}
-                  onPress={() => setActiveStep(index)}
-                >
-                  <Icon
-                    name={index < activeStep ? "checkmark" : step.icon}
-                    size={18}
-                    color={index <= activeStep ? "#FFFFFF" : "#FF5C00"}
-                  />
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-
-          {/* STEP LABELS */}
-          <View style={styles.stepLabelRow}>
-            {STEP_META.map((step, index) => (
-              <Text
-                key={index}
-                style={[
-                  styles.stepLabel,
-                  index === activeStep && styles.stepLabelActive,
-                ]}
-              >
-                {step.label}
-              </Text>
-            ))}
-          </View>
-
-          {/* STEP CONTENT */}
-          {PROCESS_STEPS[activeStep] && (
-            <View style={styles.processCardCentered}>
-              <Text style={styles.processTitleCentered}>
-                {PROCESS_STEPS[activeStep].title}
+          {/* COUNTRY VISA CARD */}
+          <View style={styles.countryCard}>
+            <View style={styles.countryHeader}>
+              <CountryFlag isoCode={isoCode} size={50} />
+              <Text style={styles.countryName}>
+                {countryConfig?.headerTitle || countryName}
               </Text>
 
-              {PROCESS_STEPS[activeStep].points.map((p, i) => (
-                <View key={i} style={styles.processPointCentered}>
-                  <Icon name="checkmark-circle" size={18} color="#FF5C00" />
-                  <Text style={styles.processTextCentered}>{p}</Text>
-                </View>
-              ))}
+              <Text style={styles.processingText}>
+                {countryConfig?.processingText}
+              </Text>
+              {countryConfig?.processingNote ? (
+                <Text style={styles.processingNote}>
+                  {countryConfig.processingNote}
+                </Text>
+              ) : null}
             </View>
 
+            <WhyChooseTVM country={countryName} />
+
+          </View>
+
+          {/* VISA PROCESS TITLE */}
+          {PROCESS_STEPS.length > 0 && (
+            <View style={styles.processWrapper}>
+              {/* stepper UI */}
+            </View>
           )}
-        </View>
 
-
-
-        {/* VISA INFO */}
-        <Text
-          style={styles.centerSectionTitle}
-          numberOfLines={2}
-        >
-          {countryConfig?.visaInfoTitle || "Visa Information"}
-        </Text>
-
-
-        <View style={styles.infoGrid}>
-          <InfoItem
-            label="Visa Type"
-            value={countryConfig?.visaInfo.visaType}
-            icon="document-text-outline"
-            iconBg="#EEF2FF"
-          />
-
-          <InfoItem
-            label="Length of Stay"
-            value={countryConfig?.visaInfo.stay}
-            icon="calendar-outline"
-            iconBg="#EFF6FF"
-          />
-
-          <InfoItem
-            label="Validity"
-            value={countryConfig?.visaInfo.validity}
-            icon="time-outline"
-            iconBg="#ECFDF5"
-          />
-
-          <InfoItem
-            label="Entry"
-            value={countryConfig?.visaInfo.entry}
-            icon="repeat-outline"
-            iconBg="#F5F3FF"
-          />
-
-          <InfoItem
-            label="Method"
-            value={countryConfig?.visaInfo.method}
-            icon="cloud-done-outline"
-            iconBg="#FFF7ED"
-          />
-        </View>
-
-
-        {/* VISA REQUIREMENTS */}
-        <Text
-          style={styles.centerSectionTitle}
-          numberOfLines={2}
-        >
-          {countryConfig?.requirementsTitle ||
-            `${countryName} Visa Requirements`}
-        </Text>
-
-
-
-        <View style={styles.requirementsCard}>
-          <Text style={styles.requirementsSubTitle}>
-            Keep these ready before you apply
+          <Text
+            style={styles.centerSectionTitle}
+            numberOfLines={2}
+            ellipsizeMode="tail"
+          >
+            {processTitle}
           </Text>
 
-          <View style={styles.requirementsGridCentered}>
-            {(countryConfig?.requirements || []).map((req, index) => (
-              <View key={index} style={styles.requirementItemCentered}>
-                <View style={styles.requirementIconBox}>
-                  <Icon name="checkmark-outline" size={20} color="#FF5C00" />
-                </View>
 
-                <Text style={styles.requirementTextCentered}>{req}</Text>
-              </View>
-            ))}
-          </View>
+          <View style={styles.processWrapper}>
+            {/* STEP INDICATOR */}
+            <View style={styles.stepperContainer}>
+              <View style={styles.stepLineBase} />
 
-
-        </View>
-
-        {/* GOOGLE REVIEWS (UNDER FAQ) */}
-        <Text style={styles.centerSectionTitle}>Latest Google Reviews</Text>
-
-
-
-        <View style={styles.reviewCard}>
-          {loadingReviews ? (
-            <ActivityIndicator color="#FF5C00" />
-          ) : (
-            displayReviews.map((item, index) => (
-
-              // (showAllReviews ? reviews : displayReviews).map((item, index) => (
-              <View key={index} style={styles.reviewItem}>
-                <View style={styles.reviewHeader}>
-                  {item.profile_photo_url && (
-                    <Image
-                      source={{ uri: item.profile_photo_url }}
-                      style={styles.reviewAvatar}
-                    />
-                  )}
-
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.reviewName}>{item.author_name}</Text>
-                    <Text style={styles.reviewTime}>
-                      {item.relative_time_description}
-                    </Text>
-                  </View>
-
-                  <Text style={styles.reviewRating}>⭐ {item.rating}</Text>
-                </View>
-
-                <Text
-                  numberOfLines={showAllReviews ? undefined : 3}
-                  style={styles.reviewText}
-                >
-                  {item.text}
-                </Text>
-              </View>
-            ))
-          )}
-
-          {!loadingReviews && reviews.length > 3 && (
-            <TouchableOpacity
-              // onPress={() => setShowAllReviews(true)}
-              onPress={() => setShowAllReviews((prev) => !prev)}
-              style={{ marginTop: 8 }}
-            >
-              <Text style={styles.reviewLink}>
-                {showAllReviews ? "Show less reviews" : "View all reviews"}
-              </Text>
-
-            </TouchableOpacity>
-          )}
-          <TouchableOpacity
-            onPress={() =>
-              Linking.openURL(
-                "https://search.google.com/local/writereview?placeid=ChIJ3bPWBbqVwjsRsIr6lWmT0uA"
-              )
-            }
-            style={{ marginTop: 12 }}
-          >
-            <Text style={styles.reviewLink}>Rate us on Google</Text>
-          </TouchableOpacity>
-        </View>
-
-
-        {/* FAQs */}
-        <Text
-          style={styles.centerSectionTitle}
-          numberOfLines={2}
-        >
-          Frequently Asked Questions
-        </Text>
-
-
-        {/* Search bar */}
-        <View style={styles.faqSearchBox}>
-          <Icon name="search-outline" size={18} color="#9CA3AF" />
-          <TextInput
-            value={faqSearch}
-            onChangeText={setFaqSearch}
-            placeholder="Search for answers"
-            placeholderTextColor="#9CA3AF"
-            style={styles.faqSearchInput}
-          />
-        </View>
-
-        {/* FAQ list */}
-        {faqs.map((item, index) => (
-          <View key={index} style={styles.faqItem}>
-
-            {/* QUESTION ROW */}
-            <TouchableOpacity
-              style={styles.faqHeader}
-              onPress={() => toggleFaq(index)}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.faqQuestion}>
-                {item.question}
-              </Text>
-
-              <Icon
-                name={openIndex === index ? "chevron-up" : "chevron-down"}
-                size={22}
-                color="#333"
+              <View
+                style={[
+                  styles.stepLineActive,
+                  {
+                    width:
+                      PROCESS_STEPS.length > 1
+                        ? `${(activeStep / (PROCESS_STEPS.length - 1)) * 100}%`
+                        : "0%",
+                  },
+                ]}
               />
-            </TouchableOpacity>
 
-            {/* ANSWER (HIDDEN BY DEFAULT) */}
-            {openIndex === index && (
-              <View style={styles.faqAnswerBox}>
-                <Text style={styles.faqAnswer}>
-                  {item.answer}
-                </Text>
+              <View style={styles.stepRow}>
+                {STEP_META.map((step, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={[
+                      styles.stepCircle,
+                      index <= activeStep && styles.stepActive,
+                    ]}
+                    onPress={() => setActiveStep(index)}
+                  >
+                    <Icon
+                      name={index < activeStep ? "checkmark" : step.icon}
+                      size={18}
+                      color={index <= activeStep ? "#FFFFFF" : "#FF5C00"}
+                    />
+                  </TouchableOpacity>
+                ))}
               </View>
-            )}
+            </View>
 
-          </View>
-        ))}
-
-
-        {!finalIsVisaFree && (
-          <View style={{ marginTop: 32 }}>
-            <Text style={styles.centerSectionTitle}>
-              Popular Destinations for Indians
-            </Text>
-
-            <View style={{ gap: 12 }}>
-              {highlightCountries.map((item, index) => (
-                <TouchableOpacity
+            {/* STEP LABELS */}
+            <View style={styles.stepLabelRow}>
+              {STEP_META.map((step, index) => (
+                <Text
                   key={index}
-                  activeOpacity={0.8}
-                  onPress={() => handleCountryPress(item)}
-                  style={{
-                    backgroundColor: "#FFFFFF",
-                    borderRadius: 14,
-                    padding: 14,
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: 12,
-                    elevation: 3,
-                  }}
+                  style={[
+                    styles.stepLabel,
+                    index === activeStep && styles.stepLabelActive,
+                  ]}
                 >
-                  <CountryFlag
-                    isoCode={(COUNTRY_ISO_MAP[item.countrName] || "UN").toLowerCase()}
-                    size={28}
-                  />
-                  <Text style={{ fontSize: 14, fontWeight: "600" }}>
-                    {item.countrName}
-                  </Text>
-
-                  <Icon
-                    name="chevron-forward"
-                    size={18}
-                    color="#9CA3AF"
-                    style={{ marginLeft: "auto" }}
-                  />
-                </TouchableOpacity>
+                  {step.label}
+                </Text>
               ))}
             </View>
+
+            {/* STEP CONTENT */}
+            {PROCESS_STEPS[activeStep] && (
+              <View style={styles.processCardCentered}>
+                <Text style={styles.processTitleCentered}>
+                  {PROCESS_STEPS[activeStep].title}
+                </Text>
+
+                {PROCESS_STEPS[activeStep].points.map((p, i) => (
+                  <View key={i} style={styles.processPointCentered}>
+                    <Icon name="checkmark-circle" size={18} color="#FF5C00" />
+                    <Text style={styles.processTextCentered}>{p}</Text>
+                  </View>
+                ))}
+              </View>
+
+            )}
           </View>
 
 
-        )}
+
+          {/* VISA INFO */}
+          <Text
+            style={styles.centerSectionTitle}
+            numberOfLines={2}
+          >
+            {countryConfig?.visaInfoTitle || "Visa Information"}
+          </Text>
 
 
-        {/* PRICE SUMMARY */}
-        {/* PRICE SUMMARY */}
-        {!finalIsVisaFree && (
-          <View style={styles.priceCard}>
+          <View style={styles.infoGrid}>
+            <InfoItem
+              label="Visa Type"
+              value={countryConfig?.visaInfo.visaType}
+              icon="document-text-outline"
+              iconBg="#EEF2FF"
+            />
 
-            {/* HEADER */}
-            <View style={styles.priceHeader}>
-              <Icon name="people-outline" size={18} color="#374151" />
-              <Text style={styles.priceHeaderText}>Travellers</Text>
+            <InfoItem
+              label="Length of Stay"
+              value={countryConfig?.visaInfo.stay}
+              icon="calendar-outline"
+              iconBg="#EFF6FF"
+            />
 
-              <View style={styles.counter}>
-                <TouchableOpacity
-                  onPress={() => setTravellers((prev) => Math.max(1, prev - 1))}
-                >
-                  <Text style={styles.counterBtn}>−</Text>
-                </TouchableOpacity>
+            <InfoItem
+              label="Validity"
+              value={countryConfig?.visaInfo.validity}
+              icon="time-outline"
+              iconBg="#ECFDF5"
+            />
 
-                <Text style={styles.counterValue}>{travellers}</Text>
+            <InfoItem
+              label="Entry"
+              value={countryConfig?.visaInfo.entry}
+              icon="repeat-outline"
+              iconBg="#F5F3FF"
+            />
 
-                <TouchableOpacity
-                  onPress={() => setTravellers((prev) => prev + 1)}
-                >
-                  <Text style={styles.counterBtn}>+</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
+            <InfoItem
+              label="Method"
+              value={countryConfig?.visaInfo.method}
+              icon="cloud-done-outline"
+              iconBg="#FFF7ED"
+            />
+          </View>
 
-            {/* PAY NOW */}
-            <View style={styles.payNowSection}>
-              <Text style={styles.amountBig}>₹{payNow}</Text>
-              <Text style={styles.payNowLabel}>TO BE PAID NOW</Text>
-            </View>
 
-            <View style={styles.divider} />
+          {/* VISA REQUIREMENTS */}
+          <Text
+            style={styles.centerSectionTitle}
+            numberOfLines={2}
+          >
+            {countryConfig?.requirementsTitle ||
+              `${countryName} Visa Requirements`}
+          </Text>
 
-            {/* PAY NOW ROW */}
-            <View style={styles.priceRow}>
-              <View style={styles.rowLeft}>
-                <Icon name="card-outline" size={18} color="#374151" />
-                <View>
-                  <Text style={styles.rowTitle}>Pay Now</Text>
-                  <Text style={styles.rowSub}>
-                    Government Fees × {travellers}
-                  </Text>
+
+
+          <View style={styles.requirementsCard}>
+            <Text style={styles.requirementsSubTitle}>
+              Keep these ready before you apply
+            </Text>
+
+            <View style={styles.requirementsGridCentered}>
+              {(countryConfig?.requirements || []).map((req, index) => (
+                <View key={index} style={styles.requirementItemCentered}>
+                  <View style={styles.requirementIconBox}>
+                    <Icon name="checkmark-outline" size={20} color="#FF5C00" />
+                  </View>
+
+                  <Text style={styles.requirementTextCentered}>{req}</Text>
                 </View>
-              </View>
-              <Text style={styles.rowAmount}>₹{payNow}</Text>
+              ))}
             </View>
 
-            {/* PAY LATER ROW */}
-            <View style={styles.priceRow}>
-              <View style={styles.rowLeft}>
-                <Icon name="time-outline" size={18} color="#374151" />
-                <View>
-                  <Text style={styles.rowTitle}>Pay Later</Text>
-                  <Text style={styles.rowSub}>
-                    TVM Fees × {travellers}
-                  </Text>
-                </View>
-              </View>
-              <Text style={styles.rowAmount}>₹{payLater}</Text>
-            </View>
-
-            <View style={styles.divider} />
-
-            {/* TOTAL */}
-            <View style={styles.totalRow}>
-              <Text style={styles.totalLabel}>Total Amount</Text>
-              <Text style={styles.totalAmount}>₹{totalAmount}</Text>
-            </View>
 
           </View>
-        )}
 
-      </ScrollView>
+          {/* GOOGLE REVIEWS (UNDER FAQ) */}
+          <Text style={styles.centerSectionTitle}>Latest Google Reviews</Text>
 
-      {/* ACTION BUTTON */}
-      {/* ✅ STICKY CTA — OUTSIDE SCROLLVIEW */}
-      {/* 🔹 STICKY CTA (FIXED OVERLAY) */}
-      {showStickyCTA && (
-        <View style={styles.stickyContainer}>
-          {!isVisaFree ? (
+
+
+          <View style={styles.reviewCard}>
+            {loadingReviews ? (
+              <ActivityIndicator color="#FF5C00" />
+            ) : (
+              displayReviews.map((item, index) => (
+
+                // (showAllReviews ? reviews : displayReviews).map((item, index) => (
+                <View key={index} style={styles.reviewItem}>
+                  <View style={styles.reviewHeader}>
+                    {item.profile_photo_url && (
+                      <Image
+                        source={{ uri: item.profile_photo_url }}
+                        style={styles.reviewAvatar}
+                      />
+                    )}
+
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.reviewName}>{item.author_name}</Text>
+                      <Text style={styles.reviewTime}>
+                        {item.relative_time_description}
+                      </Text>
+                    </View>
+
+                    <Text style={styles.reviewRating}>⭐ {item.rating}</Text>
+                  </View>
+
+                  <Text
+                    numberOfLines={showAllReviews ? undefined : 3}
+                    style={styles.reviewText}
+                  >
+                    {item.text}
+                  </Text>
+                </View>
+              ))
+            )}
+
+            {!loadingReviews && reviews.length > 3 && (
+              <TouchableOpacity
+                // onPress={() => setShowAllReviews(true)}
+                onPress={() => setShowAllReviews((prev) => !prev)}
+                style={{ marginTop: 8 }}
+              >
+                <Text style={styles.reviewLink}>
+                  {showAllReviews ? "Show less reviews" : "View all reviews"}
+                </Text>
+
+              </TouchableOpacity>
+            )}
             <TouchableOpacity
-              style={styles.stickyBtn}
+              onPress={() =>
+                Linking.openURL(
+                  "https://search.google.com/local/writereview?placeid=ChIJ3bPWBbqVwjsRsIr6lWmT0uA"
+                )
+              }
+              style={{ marginTop: 12 }}
+            >
+              <Text style={styles.reviewLink}>Rate us on Google</Text>
+            </TouchableOpacity>
+          </View>
+
+
+          {/* FAQs */}
+          <Text
+            style={styles.centerSectionTitle}
+            numberOfLines={2}
+          >
+            Frequently Asked Questions
+          </Text>
+
+
+          {/* Search bar */}
+          <View style={styles.faqSearchBox}>
+            <Icon name="search-outline" size={18} color="#9CA3AF" />
+            <TextInput
+              value={faqSearch}
+              onChangeText={setFaqSearch}
+              placeholder="Search for answers"
+              placeholderTextColor="#9CA3AF"
+              style={styles.faqSearchInput}
+            />
+          </View>
+
+          {/* FAQ list */}
+          {faqs.map((item, index) => (
+            <View key={index} style={styles.faqItem}>
+
+              {/* QUESTION ROW */}
+              <TouchableOpacity
+                style={styles.faqHeader}
+                onPress={() => toggleFaq(index)}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.faqQuestion}>
+                  {item.question}
+                </Text>
+
+                <Icon
+                  name={openIndex === index ? "chevron-up" : "chevron-down"}
+                  size={22}
+                  color="#333"
+                />
+              </TouchableOpacity>
+
+              {/* ANSWER (HIDDEN BY DEFAULT) */}
+              {openIndex === index && (
+                <View style={styles.faqAnswerBox}>
+                  <Text style={styles.faqAnswer}>
+                    {item.answer}
+                  </Text>
+                </View>
+              )}
+
+            </View>
+          ))}
+
+
+          {!finalIsVisaFree && (
+            <View style={{ marginTop: 32 }}>
+              <Text style={styles.centerSectionTitle}>
+                Popular Destinations for Indians
+              </Text>
+
+              <View style={{ gap: 12 }}>
+                {highlightCountries.map((item, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    activeOpacity={0.8}
+                    onPress={() => handleCountryPress(item)}
+                    style={{
+                      backgroundColor: "#FFFFFF",
+                      borderRadius: 14,
+                      padding: 14,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 12,
+                      elevation: 3,
+                    }}
+                  >
+                    <CountryFlag
+                      isoCode={(COUNTRY_ISO_MAP[item.countrName] || "UN").toLowerCase()}
+                      size={28}
+                    />
+                    <Text style={{ fontSize: 14, fontWeight: "600" }}>
+                      {item.countrName}
+                    </Text>
+
+                    <Icon
+                      name="chevron-forward"
+                      size={18}
+                      color="#9CA3AF"
+                      style={{ marginLeft: "auto" }}
+                    />
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
+
+          )}
+
+
+          {/* PRICE SUMMARY */}
+          {/* PRICE SUMMARY */}
+          {!finalIsVisaFree && (
+            <View style={styles.priceCard}>
+
+              {/* HEADER */}
+              <View style={styles.priceHeader}>
+                <Icon name="people-outline" size={18} color="#374151" />
+                <Text style={styles.priceHeaderText}>Travellers</Text>
+
+                <View style={styles.counter}>
+                  <TouchableOpacity
+                    onPress={() => setTravellers((prev) => Math.max(1, prev - 1))}
+                  >
+                    <Text style={styles.counterBtn}>−</Text>
+                  </TouchableOpacity>
+
+                  <Text style={styles.counterValue}>{travellers}</Text>
+
+                  <TouchableOpacity
+                    onPress={() => setTravellers((prev) => prev + 1)}
+                  >
+                    <Text style={styles.counterBtn}>+</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              {/* PAY NOW */}
+              <View style={styles.payNowSection}>
+                <Text style={styles.amountBig}>₹{payNow}</Text>
+                <Text style={styles.payNowLabel}>TO BE PAID NOW</Text>
+              </View>
+
+              <View style={styles.divider} />
+
+              {/* PAY NOW ROW */}
+              <View style={styles.priceRow}>
+                <View style={styles.rowLeft}>
+                  <Icon name="card-outline" size={18} color="#374151" />
+                  <View>
+                    <Text style={styles.rowTitle}>Pay Now</Text>
+                    <Text style={styles.rowSub}>
+                      Government Fees × {travellers}
+                    </Text>
+                  </View>
+                </View>
+                <Text style={styles.rowAmount}>₹{payNow}</Text>
+              </View>
+
+              {/* PAY LATER ROW */}
+              <View style={styles.priceRow}>
+                <View style={styles.rowLeft}>
+                  <Icon name="time-outline" size={18} color="#374151" />
+                  <View>
+                    <Text style={styles.rowTitle}>Pay Later</Text>
+                    <Text style={styles.rowSub}>
+                      TVM Fees × {travellers}
+                    </Text>
+                  </View>
+                </View>
+                <Text style={styles.rowAmount}>₹{payLater}</Text>
+              </View>
+
+              <View style={styles.divider} />
+
+              {/* TOTAL */}
+              <View style={styles.totalRow}>
+                <Text style={styles.totalLabel}>Total Amount</Text>
+                <Text style={styles.totalAmount}>₹{totalAmount}</Text>
+              </View>
+
+            </View>
+          )}
+
+        </ScrollView>
+
+        {/* STICKY ACTION BUTTON */}
+        <View style={styles.stickyButtonRow}>
+          {!finalIsVisaFree && (
+            <TouchableOpacity
+              style={styles.secondaryBtn}
               onPress={() => {
-                if (countryName.toLowerCase() === "vietnam") {
-                  navigation.navigate("VietnamApplyScreen");
-                } else {
-                  navigation.navigate("TravelDateScreen", {
-                    country: countryName,
-                  });
-                }
+                navigation.navigate(applyRoute, { country: countryName });
               }}
             >
               <Text style={styles.secondaryText}>Start Application</Text>
@@ -630,7 +624,7 @@ export default function VisaDetailsScreen({ navigation }) {
             <TouchableOpacity
               style={styles.secondaryBtn}
               onPress={() =>
-                navigation.navigate("TravelDateScreen", { country: countryName })
+                navigation.navigate("DestinationScreen", { country: countryName })
               }
             >
               <Text style={styles.secondaryText}>Explore Now </Text>

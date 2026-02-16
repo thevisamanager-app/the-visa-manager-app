@@ -237,9 +237,9 @@ import VisaDetailsScreen from "../screens/moreinfo/VisaDetailsScreen";
 import JoinAsTravelAgentScreen from "../screens/agent/JoinAsTravelAgentScreen";
 import PartnerLoginScreen from "../screens/agent/PartnerLoginScreen";
 import VietnamApplyScreen from "../screens/apply/VietnamApplyScreen";
-
-
-
+import AzerbaijanApplyScreen from "../screens/apply/AzerbaijanApplyScreen";
+import OtpScreen from "../screens/OtpScreen";
+import CombodiaApplyScreen from "../screens/apply/CombodiaApplyScreen";
 
 
 
@@ -313,13 +313,26 @@ function UserStack() {
         name="PartnerLoginScreen"
         component={PartnerLoginScreen}
       />
-      
-        <Stack.Screen
+
+      <Stack.Screen
         name="VietnamApplyScreen"
         component={VietnamApplyScreen}
       />
 
+      <Stack.Screen
+        name="AzerbaijanApplyScreen"
+        component={AzerbaijanApplyScreen}
+      />
 
+      <Stack.Screen
+        name="OtpScreen"
+        component={OtpScreen}
+      />
+
+      <Stack.Screen
+        name="CombodiaApplyScreen"
+        component={CombodiaApplyScreen}
+      />
 
       {/* EXISTING FLOW */}
       <Stack.Screen name="PhotoUploadScreen" component={PhotoUploadScreen} />

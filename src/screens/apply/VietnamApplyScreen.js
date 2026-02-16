@@ -13,6 +13,8 @@ import {
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Calendar } from "react-native-calendars";
 import { launchImageLibrary } from "react-native-image-picker";
+import auth from "@react-native-firebase/auth";
+import firestore from "@react-native-firebase/firestore";
 import ScreenWrapper from "../../components/ScreenWrapper";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
@@ -39,7 +41,6 @@ const createTraveller = () => ({
 });
 
 export default function VietnamApplyScreen({ navigation }) {
-    /* ================= STATE ================= */
 
     const [travellers, setTravellers] = useState([
         { isPrimary: true, ...createTraveller() },
@@ -48,8 +49,6 @@ export default function VietnamApplyScreen({ navigation }) {
     const [showCalendarFor, setShowCalendarFor] = useState(null);
     const [showCoTravellerModal, setShowCoTravellerModal] = useState(false);
     const [tempTraveller, setTempTraveller] = useState(createTraveller());
-
-    /* ================= HELPERS ================= */
 
     const formatDate = (date) => {
         const [y, m, d] = date.split("-");
@@ -97,8 +96,6 @@ export default function VietnamApplyScreen({ navigation }) {
         return true;
     };
 
-    /* ================= SAVE ================= */
-
     const saveCoTraveller = () => {
         if (!validateTraveller(tempTraveller)) return;
 
@@ -107,18 +104,60 @@ export default function VietnamApplyScreen({ navigation }) {
         setShowCoTravellerModal(false);
     };
 
-    const submit = () => {
+    /* ================= FIRESTORE SAVE ================= */
+
+    const submit = async () => {
+
         for (const t of travellers) {
             if (!validateTraveller(t)) return;
         }
 
-        navigation.navigate("CheckoutScreen", {
-            country: "Vietnam",
-            travellers,
-        });
-    };
+        try {
 
-    /* ================= FORM UI ================= */
+            const user = auth().currentUser;
+
+            if (!user) {
+                Alert.alert("Login Required", "Please login first.");
+                return;
+            }
+
+            const applicationRef = firestore()
+                .collection("visaApplications")
+                .doc();
+
+            const formattedTravellers = travellers.map(t => ({
+                isPrimary: t.isPrimary,
+                travelDate: t.form.travelDate,
+                phone: t.form.phone,
+                email: t.form.email,
+                hotelDetails: t.form.hotelDetails,
+                documents: {
+                    passportFrontUrl: t.documents.passportFront?.uri || null,
+                    passportBackUrl: t.documents.passportBack?.uri || null,
+                    photoUrl: t.documents.photo?.uri || null,
+                    ticketUrl: t.documents.ticket?.uri || null,
+                }
+            }));
+
+            await applicationRef.set({
+                userId: user.uid,
+                country: "Vietnam",
+                travellers: formattedTravellers,
+                totalTravellers: formattedTravellers.length,
+                status: "submitted",
+                createdAt: firestore.FieldValue.serverTimestamp(),
+            });
+
+            navigation.navigate("CheckoutScreen", {
+                country: "Vietnam",
+                applicationId: applicationRef.id,
+            });
+
+        } catch (error) {
+            console.log("Vietnam submit error:", error);
+            Alert.alert("Error", "Something went wrong. Please try again.");
+        }
+    };
 
     const renderForm = (traveller, onChange, target) => (
         <>
@@ -163,7 +202,6 @@ export default function VietnamApplyScreen({ navigation }) {
                 { key: "ticket", label: "Upload Return Ticket" },
             ].map(({ key, label }) => (
                 <View key={key} style={styles.docCard}>
-
                     <Text style={styles.docLabel}>{label} *</Text>
 
                     {!traveller.documents[key] ? (
@@ -191,18 +229,15 @@ export default function VietnamApplyScreen({ navigation }) {
                                 : "Upload Document"}
                         </Text>
                     </TouchableOpacity>
-
                 </View>
             ))}
         </>
     );
 
-    /* ================= UI ================= */
-
     return (
         <ScreenWrapper>
             <ScrollView contentContainerStyle={styles.container}>
-                {/* HEADER */}
+
                 <View style={styles.header}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <Ionicons name="chevron-back" size={26} />
@@ -211,7 +246,9 @@ export default function VietnamApplyScreen({ navigation }) {
                     <Text style={styles.headerTitle}>Vietnam Visa Application</Text>
 
                     <TouchableOpacity
-                        onPress={() => navigation.navigate("Tabs", { screen: "Destination" })}
+                        onPress={() =>
+                            navigation.navigate("Tabs", { screen: "Destination" })
+                        }
                     >
                         <Ionicons name="home-outline" size={24} color={ORANGE} />
                     </TouchableOpacity>
@@ -229,8 +266,6 @@ export default function VietnamApplyScreen({ navigation }) {
                     "main"
                 )}
 
-
-
                 <TouchableOpacity
                     style={styles.addTravellerBtn}
                     onPress={() => setShowCoTravellerModal(true)}
@@ -241,20 +276,16 @@ export default function VietnamApplyScreen({ navigation }) {
                 <TouchableOpacity style={styles.submitBtn} onPress={submit}>
                     <Text style={styles.submitText}>Complete Process</Text>
                 </TouchableOpacity>
+
             </ScrollView>
 
-            {/* CO-TRAVELLER MODAL */}
+            {/* Co Traveller Modal */}
             <Modal visible={showCoTravellerModal} transparent animationType="fade">
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalBox}>
-                        <View style={styles.modalHeader}>
-                            <Text style={styles.modalTitle}>Add Co-Traveller</Text>
-                            <TouchableOpacity onPress={() => setShowCoTravellerModal(false)}>
-                                <Ionicons name="close" size={26} />
-                            </TouchableOpacity>
-                        </View>
+                        <Text style={styles.sectionTitle}>Add Co-Traveller</Text>
 
-                        <ScrollView showsVerticalScrollIndicator={false}>
+                        <ScrollView>
                             {renderForm(
                                 tempTraveller,
                                 (k, v) =>

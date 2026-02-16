@@ -1953,7 +1953,7 @@ export const COUNTRY_VISA_CONFIG = {
 
         stepMeta: [
             { icon: "document-text-outline", label: "Start Application" },
-            { icon: "card-outline", label: "Application Submission" },
+            { icon: "card-outline", label: "Submit to immigration" },
             { icon: "checkmark-done-outline", label: "Get your Visa" },
         ],
 
@@ -1994,6 +1994,64 @@ export const COUNTRY_VISA_CONFIG = {
 
         requirements: [
             "Passport",
+        ],
+    },
+
+    Combodia: {
+        headerTitle: "Combodia Visa Application",
+        processTitle: "Combodia Visa Process",
+        processingText: "Apply now & get visa 1-3 Days",
+
+        visaInfoTitle: "Combodia Visa Information",
+        requirementsTitle: "Combodia Visa Requirements",
+
+        stepMeta: [
+            { icon: "document-text-outline", label: "Start Application" },
+            { icon: "card-outline", label: "Application Submission" },
+            { icon: "checkmark-done-outline", label: "Get your Visa" },
+        ],
+
+        processSteps: [
+            {
+                title: "Start Online Visa Application",
+                points: [
+                    "Fill in traveler details online and select visa type.",
+                    "Upload passport and photo documents securely.",
+                    "Review and confirm your information before submission.",
+                ],
+            },
+            {
+                title: "Application Submit to immigration",
+                points: [
+                    "Clear government and service charges securely.",
+                    "Any additional questions are handled on your behalf.",
+                    "We monitor the payment and ticket the application.",
+                ],
+            },
+            {
+                title: "Get Your Visa",
+                points: [
+                    "Decisions are typically issued within 5 working days.",
+                    "Visa delivered via email and WhatsApp.",
+                    "Download and print your e-visa before travel.",
+                ],
+            },
+        ],
+
+        visaInfo: {
+            visaType: "e-Visa",
+            stay: "30 days",
+            validity: "3 Months",
+            entry: "Single",
+            method: "Online",
+        },
+
+        requirements: [
+            "Valid Passport",
+            "2 Passport-size(3.5*4.5 cm) photo with white background & matt finish",
+            "Bank Statement (6 Month Statement along with 50k INR Balance",
+            "Hotel Confirmation",
+            "Return Air Ticket",
         ],
     }
 };

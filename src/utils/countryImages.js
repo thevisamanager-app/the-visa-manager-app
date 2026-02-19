@@ -1,17 +1,149 @@
 export const COUNTRY_IMAGES = {
-  Vietnam: [
-    "https://firebasestorage.googleapis.com/v0/b/thevisamanager-bea80.firebasestorage.app/o/places%2Fvietnam%2FHa%20Long%20Bay.jpeg?alt=media&token=40b50c1d-7176-4404-bc89-c9ce254afab1",
-    "https://firebasestorage.googleapis.com/v0/b/thevisamanager-bea80.firebasestorage.app/o/places%2Fvietnam%2FHanoi.jpeg?alt=media&token=ac90ec3d-2f41-42d2-8874-8ed20f823a8b",
-    "https://firebasestorage.googleapis.com/v0/b/thevisamanager-bea80.firebasestorage.app/o/places%2Fvietnam%2FHo%20Chi%20Minh%20City.jpeg?alt=media&token=42d3e935-7f7a-45c8-99d3-0691451b950a",
-  ],
+  Vietnam: require("../assets/images/vietnam.webp"), // adjust case if needed
+  Singapore: require("../assets/images/singapore.webp"),
+  Indonesia: require("../assets/images/indonesia.webp"),
+  Azerbaijan: require("../assets/images/Azerbaijan.webp"),
+  Armenia: require("../assets/images/Armenia.webp"),
+  Australia: require("../assets/images/Australia.webp"),
+  Austria: require("../assets/images/Austria.webp"),
+  Belgium: require("../assets/images/Belgium.webp"),
+  Bhutan: require("../assets/images/Bhutan.webp"),
+  Bulgaria: require("../assets/images/Bulgaria.webp"),
+  Canada: require("../assets/images/Canada.webp"),
+  China: require("../assets/images/China.webp"),
+  Colombia: require("../assets/images/Colombia.webp"),
+  Combodia: require("../assets/images/Combodia.webp"),
+  Croatia: require("../assets/images/Croatia.webp"),
+  Cyprus: require("../assets/images/Cyprus.webp"),
+  Czechia: require("../assets/images/Czechia.webp"),
+  Denmark: require("../assets/images/Denmark.webp"),
+  Dominica:require("../assets/images/Dominica.webp"),
+  Egypt: require("../assets/images/Egypt.webp"),
+  Estonia: require("../assets/images/Estonia.webp"),
+  Finland: require("../assets/images/Finland.webp"),
+  France: require("../assets/images/France.webp"),
+  Georgia: require("../assets/images/Georgia.webp"),
+  Germany: require("../assets/images/Germany.webp"),
+  Greece: require("../assets/images/Greece.webp"),
+   Hong_Kong: require("../assets/images/Hong_Kong.webp"),
+   Hungary:require("../assets/images/Hungary.webp"),
+  Italy: require("../assets/images/Italy.webp"),
+  Iceland:require("../assets/images/Iceland.webp"),
+  Ireland:require("../assets/images/Ireland.webp"),
+  Japan: require("../assets/images/Japan.webp"),
+  Jamaica:require("../assets/images/Jamaica.webp"),
+  Kenya: require("../assets/images/Kenya.webp"),
+  Latvia: require("../assets/images/Latvia.webp"),
+  Lebanon: require("../assets/images/Lebanon.webp"),
+  Liechtenstein: require("../assets/images/Liechtenstein.webp"),
+  Lithuania: require("../assets/images/Lithuania.webp"),
+  Luxembourg: require("../assets/images/Luxembourg.webp"),
+  malawi: require("../assets/images/malawi.webp"),
+  Malaysia: require("../assets/images/Malaysia.webp"),
+  Maldives: require("../assets/images/Maldives.webp"),
+  Malta: require("../assets/images/Malta.webp"), // adjust case if needed
+  Mauritius: require("../assets/images/Mauritius.webp"),
+  Mongolia: require("../assets/images/Mongolia.webp"),
+  Morocco: require("../assets/images/Morocco.webp"),
+  Micronesia:require("../assets/images/Micronesia.webp"),
+  Nepal: require("../assets/images/Nepal.webp"),
+  Netherland: require("../assets/images/Netherland.webp"),
+  New_Zealand: require("../assets/images/New_Zealand.webp"),
+  Nigeria: require("../assets/images/Nigeria.webp"),
+  Norway: require("../assets/images/Norway.webp"),
+  Oman: require("../assets/images/Oman.webp"),
+  philippines:require("../assets/images/philippines.webp"),
+  Poland:require("../assets/images/Poland.webp"),
+  Portugal:require("../assets/images/Portugal.webp"),
+  Qatar:require("../assets/images/Qatar.webp"),
+  Romania: require("../assets/images/Romania.webp"),
+  Russia: require("../assets/images/Russia.webp"),
+  Colombia: require("../assets/images/Colombia.webp"),
+  singapore: require("../assets/images/singapore.webp"),
+  Slovakia: require("../assets/images/Slovakia.webp"),
+  Slovenia: require("../assets/images/Slovenia.webp"),
+  "South Korea": require("../assets/images/South Korea.webp"),
+  Spain: require("../assets/images/Spain.webp"),
+  "Sri-lanka": require("../assets/images/Sri-lanka.webp"),
+  Sweden: require("../assets/images/Sweden.webp"),
+  Switzerland: require("../assets/images/Switzerland.webp"),
+  Thailand: require("../assets/images/Thailand.webp"),
+  Turkey: require("../assets/images/Turkey.webp"),
+  Uganda: require("../assets/images/Uganda.webp"),
+  Greece: require("../assets/images/Greece.webp"),
+  Uk: require("../assets/images/Uk.webp"),
+  Ukraine: require("../assets/images/Ukraine.webp"),
+  Usa: require("../assets/images/Usa.webp"),
+  Uzbekistan: require("../assets/images/Uzbekistan.webp"),
+  "Trinidad & Tobago": require("../assets/images/Trinidad & Tobago.webp"),
+  "St. Kitts & Nevis": require("../assets/images/St. Kitts & Nevis.webp"),
+  Senegal: require("../assets/images/Senegal.webp"),
+  "North Korea": require("../assets/images/North Korea.webp"),
+  Niue: require("../assets/images/Niue.webp"),
+  Montserrat: require("../assets/images/Montserrat.webp"),
+  Haiti: require("../assets/images/Haiti.webp"),
+  Gambia: require("../assets/images/Gambia.webp"),
+  Fiji: require("../assets/images/Fiji.webp"),
+  "El Salvador": require("../assets/images/El Salvador.webp"),
+  "British Virgin Islands": require("../assets/images/British Virgin Islands.webp"),
+  Barbados: require("../assets/images/Barbados.webp"),
+  "Cook Islands": require("../assets/images/Cook Islands.webp"),
+  Réunion:require("../assets/images/Réunion.webp"),
+"St. Vincent & Grenadines": require("../assets/images/St.Vincent&Grenadines.webp"),
 
-  Singapore: [
-    "https://firebasestorage.googleapis.com/v0/b/thevisamanager-bea80.firebasestorage.app/o/places%2Fsingapore%2FGardens%20by%20the%20Bay.jpeg?alt=media&token=cd88b60b-6fcc-4d83-b015-ff3b7261f3f5",
-    "https://firebasestorage.googleapis.com/v0/b/thevisamanager-bea80.firebasestorage.app/o/places%2Fsingapore%2FMarina%20Bay%20Sands.jpeg?alt=media&token=7b467f08-3e5d-4a1e-926e-e968a7316610",
-    "https://firebasestorage.googleapis.com/v0/b/thevisamanager-bea80.firebasestorage.app/o/places%2Fsingapore%2FMerlion%20Park.jpeg?alt=media&token=24a032b5-cb25-4eaf-877a-51acb55c0fd3",
-  ],
+};
 
-  default: [
-    "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
-  ],
+const normalizeCountryKey = (value = "") =>
+  String(value)
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]/g, "");
+
+const COUNTRY_IMAGE_ALIASES = {
+  hongkong: "Hong Kong",
+  southkorea: "South Korea",
+  srilanka: "Sri-lanka",
+  usa: "Usa",
+  uk: "Uk",
+  unitedkingdom: "Uk",
+  unitedstates: "Usa",
+  unitedstatesofamerica: "Usa",
+  newzealand: "New Zealand",
+  trinidadandtobago: "Trinidad & Tobago",
+  stkittsandnevis: "St. Kitts & Nevis",
+  britishvirginislands: "British Virgin Islands",
+  elsalvador: "El Salvador",
+  cookislands: "Cook Islands",
+  northkorea: "North Korea",
+  monoglia: "Mongolia",
+  cambodia: "Combodia",
+  malawi: "malawi",
+  // reunion: "Réunion",
+};
+
+const NORMALIZED_COUNTRY_IMAGES = Object.entries(COUNTRY_IMAGES).reduce(
+  (acc, [key, image]) => {
+    acc[normalizeCountryKey(key)] = image;
+    return acc;
+  },
+  {}
+);
+
+export const getCountryImage = (countryName) => {
+  if (!countryName) return null;
+
+  if (COUNTRY_IMAGES[countryName]) {
+    return COUNTRY_IMAGES[countryName];
+  }
+
+  const normalized = normalizeCountryKey(countryName);
+  const aliasKey = COUNTRY_IMAGE_ALIASES[normalized];
+  const lookupKey = aliasKey || countryName;
+
+  return (
+    COUNTRY_IMAGES[lookupKey] ||
+    NORMALIZED_COUNTRY_IMAGES[normalizeCountryKey(lookupKey)] ||
+    NORMALIZED_COUNTRY_IMAGES[normalized] ||
+    null
+  );
 };

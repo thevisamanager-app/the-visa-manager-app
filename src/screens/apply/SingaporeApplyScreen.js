@@ -20,17 +20,29 @@ import {
   types,
   isErrorWithCode,
   errorCodes,
+  keepLocalCopy,
 } from "@react-native-documents/picker";
 import RNFS from "react-native-fs";
 import FileViewer from "react-native-file-viewer";
 import { WebView } from "react-native-webview";
 
-import auth from "@react-native-firebase/auth";
-import firestore from "@react-native-firebase/firestore";
-import storage from "@react-native-firebase/storage";
+import { getAuth } from "@react-native-firebase/auth/lib/modular";
+import {
+  getFirestore,
+  collection,
+  doc,
+  setDoc,
+} from "@react-native-firebase/firestore/lib/modular";
+import { serverTimestamp } from "@react-native-firebase/firestore/lib/modular/FieldValue";
+import {
+  getStorage,
+  ref as storageRef,
+  putFile as storagePutFile,
+  getDownloadURL as storageGetDownloadURL,
+} from "@react-native-firebase/storage/lib/modular";
 
 import ScreenWrapper from "../../components/ScreenWrapper";
-import { COUNTRY_APPLY_CONFIG } from "../../config/countryApplyRoutes";
+import { COUNTRY_APPLY_CONFIG } from "../../config/countryApplyConfig";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
 import PassportBackSample from "../../assets/examples/passport-back.png";
@@ -63,6 +75,7 @@ export default function SingaporeApplyScreen({ navigation }) {
   const [showCalendarFor, setShowCalendarFor] = useState(null);
   const [isCoTravellerModalOpen, setIsCoTravellerModalOpen] = useState(false);
   const [coTravellerDraft, setCoTravellerDraft] = useState(createTraveller());
+  const [coTravellerEditIndex, setCoTravellerEditIndex] = useState(null);
   const [activeSignSample, setActiveSignSample] = useState(null);
   const [samplePreviewFailed, setSamplePreviewFailed] = useState(false);
   const [formPreviewError, setFormPreviewError] = useState({});
@@ -129,24 +142,34 @@ export default function SingaporeApplyScreen({ navigation }) {
     try {
       const res = await launchImageLibrary({
         mediaType: "photo",
-        quality: 0.8,
+        quality: 0.6,
+        maxWidth: 1600,
+        maxHeight: 1600,
       });
 
       if (!res.assets?.[0]) return;
+      const selectedImage = await resolveUploadUri(res.assets[0], {
+        prefix: key,
+        fallbackExt: "jpg",
+      });
+      const selectedImageAsset = {
+        ...res.assets[0],
+        uri: selectedImage ? `file://${selectedImage}` : res.assets[0].uri,
+      };
 
       if (target === "co") {
         setCoTravellerDraft((prev) => ({
           ...prev,
           documents: {
             ...prev.documents,
-            [key]: res.assets[0],
+            [key]: selectedImageAsset,
           },
         }));
         return;
       }
 
       const updated = [...travellers];
-      updated[0].documents[key] = res.assets[0];
+      updated[0].documents[key] = selectedImageAsset;
       setTravellers(updated);
     } catch (err) {
       Alert.alert("Error", err?.message || "Unable to pick image");
@@ -160,6 +183,85 @@ export default function SingaporeApplyScreen({ navigation }) {
     return result;
   };
 
+
+  const getFileExtension = (file, fallbackExt = "jpg") => {
+    const fromName = file?.fileName || file?.name || "";
+    const nameExt = fromName.includes(".") ? fromName.split(".").pop() : "";
+    if (nameExt) return nameExt.toLowerCase();
+
+    const mime = file?.type || "";
+    const mimeExt = mime.includes("/") ? mime.split("/").pop() : "";
+    if (mimeExt) return mimeExt.toLowerCase();
+
+    return fallbackExt;
+  };
+
+  const normalizeFileUriForUpload = (uri) => {
+    if (!uri) return null;
+    if (uri.startsWith("file://")) return uri.replace("file://", "");
+    return uri;
+  };
+
+  const resolveUploadUri = async (file, {
+    prefix = "upload",
+    fallbackExt = "jpg",
+  } = {}) => {
+    const uri = file?.uri || file?.fileCopyUri || file?.localUri || null;
+    if (!uri) return null;
+
+    if (Platform.OS === "android" && uri.startsWith("content://")) {
+      try {
+        // RNFS can often resolve MediaStore content:// URIs to a direct file path.
+        const stat = await RNFS.stat(uri);
+        const originalPath = stat?.originalFilepath || stat?.path;
+        if (
+          originalPath &&
+          typeof originalPath === "string" &&
+          !originalPath.startsWith("content://")
+        ) {
+          return normalizeFileUriForUpload(originalPath);
+        }
+      } catch (statError) {
+        console.log("resolveUploadUri stat fallback:", statError);
+      }
+
+      const ext = getFileExtension(file, fallbackExt);
+      const targetPath = `${RNFS.CachesDirectoryPath}/${prefix}-${Date.now()}-${Math.floor(
+        Math.random() * 100000
+      )}.${ext}`;
+      await RNFS.copyFile(uri, targetPath);
+      return targetPath;
+    }
+
+    return normalizeFileUriForUpload(uri);
+  };  const ensureLocalPdfFile = async (file) => {
+    if (!file?.uri) return file;
+    if (Platform.OS !== "android") return file;
+    if (!file.uri.startsWith("content://")) return file;
+
+    const sourceName = file.name || file.fileName || `bank-${Date.now()}.pdf`;
+
+    const copied = await keepLocalCopy({
+      destination: "cachesDirectory",
+      files: [{ uri: file.uri, fileName: sourceName }],
+    });
+
+    const copiedFile = copied?.[0];
+    if (!copiedFile || copiedFile.status !== "success" || !copiedFile.localUri) {
+      throw new Error(
+        copiedFile?.copyError ||
+          "Unable to access selected PDF. Please reselect the file."
+      );
+    }
+
+    return {
+      ...file,
+      uri: copiedFile.localUri,
+      fileCopyUri: copiedFile.localUri,
+      localUri: copiedFile.localUri,
+    };
+  };
+
   /* ================= PDF Picker ================= */
 
   const pickPdf = async (target = "main") => {
@@ -168,7 +270,9 @@ export default function SingaporeApplyScreen({ navigation }) {
         type: [types.pdf],
         allowMultiSelection: false,
       });
-      const file = extractPickedFile(result);
+      const pickedFile = extractPickedFile(result);
+      if (!pickedFile) return;
+      const file = await ensureLocalPdfFile(pickedFile);
       if (!file) return;
 
       if (target === "co") {
@@ -198,11 +302,11 @@ export default function SingaporeApplyScreen({ navigation }) {
 
   /* ================= Validation ================= */
 
-  const validate = (t) => {
+  const validate = (t, travellerLabel = "Traveller") => {
     const { form, documents } = t;
 
     if (!form.travelDate || !form.phone || !form.email || !form.hotelDetails) {
-      Alert.alert("Missing Info", "Please fill all required fields.");
+      Alert.alert("Missing Info", `${travellerLabel}: Please fill all required fields.`);
       return false;
     }
 
@@ -212,7 +316,10 @@ export default function SingaporeApplyScreen({ navigation }) {
       !documents.passportBack ||
       !documents.photo
     ) {
-      Alert.alert("Missing Documents", "Please upload all required documents.");
+      Alert.alert(
+        "Missing Documents",
+        `${travellerLabel}: Please upload all required documents.`
+      );
       return false;
     }
 
@@ -223,16 +330,18 @@ export default function SingaporeApplyScreen({ navigation }) {
 
   const getUploadUri = (file) => {
     if (!file) return null;
-    return file.uri || file.fileCopyUri || file.localUri || null;
+    const uri = file.uri || file.fileCopyUri || file.localUri || null;
+    return normalizeFileUriForUpload(uri);
   };
 
   const uploadFile = async (uri, path) => {
     if (!uri) {
       throw new Error("Selected file URI is missing.");
     }
-    const ref = storage().ref(path);
-    await ref.putFile(uri);
-    return await ref.getDownloadURL();
+    const storageInstance = getStorage();
+    const fileRef = storageRef(storageInstance, path);
+    await storagePutFile(fileRef, uri);
+    return await storageGetDownloadURL(fileRef);
   };
 
   const downloadDocument = async ({ url, assetPath, label, fileName }) => {
@@ -334,83 +443,187 @@ export default function SingaporeApplyScreen({ navigation }) {
   /* ================= Submit ================= */
 
   const submit = async () => {
-    const traveller = travellers[0];
-
-    if (!validate(traveller)) return;
-
-    const user = auth().currentUser;
+    const user = getAuth().currentUser;
 
     if (!user) {
       Alert.alert("Login Required", "Please login first.");
       return;
     }
 
+    let applicationId = `singapore_${Date.now()}`;
+    let applicationRef = null;
+
     try {
-      setLoading(true);
-
-      const applicationId = `singapore_${Date.now()}`;
-
-      const basePath = `applications/${user.uid}/${applicationId}`;
-
-      const bankUri = getUploadUri(traveller.documents.bankPdf);
-      const passportFrontUri = getUploadUri(traveller.documents.passportFront);
-      const passportBackUri = getUploadUri(traveller.documents.passportBack);
-      const photoUri = getUploadUri(traveller.documents.photo);
-
-      if (!bankUri || !passportFrontUri || !passportBackUri || !photoUri) {
-        Alert.alert(
-          "Missing File Path",
-          "One or more selected files could not be read. Please re-upload the documents."
-        );
-        return;
+      for (let i = 0; i < travellers.length; i += 1) {
+        const traveller = travellers[i];
+        const travellerLabel = traveller.isPrimary
+          ? "Main Traveller"
+          : `Co-Passenger ${i}`;
+        if (!validate(traveller, travellerLabel)) return;
       }
 
-      const bankUrl = await uploadFile(
-        bankUri,
-        `${basePath}/bank.pdf`
-      );
+      setLoading(true);
 
-      const passportFrontUrl = await uploadFile(
-        passportFrontUri,
-        `${basePath}/passport_front.jpg`
-      );
+      const db = getFirestore();
+      const usersRef = collection(db, "users");
+      const userRef = doc(usersRef, user.uid);
+      const passportDataRef = collection(userRef, "passportData");
+      const basePath = `applications/${user.uid}/${applicationId}`;
+      applicationRef = doc(passportDataRef, applicationId);
 
-      const passportBackUrl = await uploadFile(
-        passportBackUri,
-        `${basePath}/passport_back.jpg`
-      );
-
-      const photoUrl = await uploadFile(
-        photoUri,
-        `${basePath}/photo.jpg`
-      );
-
-      await firestore()
-        .collection("users")
-        .doc(user.uid)
-        .collection("passportData")
-        .doc(applicationId)
-        .set({
-          country: "Singapore",
-          status: "submitted",
-          createdAt: firestore.FieldValue.serverTimestamp(),
-          form: traveller.form,
-          documents: {
-            bankPdf: bankUrl,
-            passportFront: passportFrontUrl,
-            passportBack: passportBackUrl,
-            photo: photoUrl,
-          },
-        });
+      // Step 1: Save application instantly so user doesn't wait on file uploads.
+      await setDoc(applicationRef, {
+        country: "Singapore",
+        status: "processing",
+        createdAt: serverTimestamp(),
+        totalTravellers: travellers.length,
+        travellers: travellers.map((t) => ({
+          isPrimary: t.isPrimary,
+          form: { ...t.form },
+        })),
+      });
 
       setLoading(false);
 
       navigation.navigate("CheckoutScreen", {
         country: "Singapore",
         applicationId,
+        totalTravellers: travellers.length,
+        travellers: travellers.map((t) => ({ isPrimary: t.isPrimary, form: t.form })),
+        coTravellers: travellers.slice(1).map((t) => ({ isPrimary: t.isPrimary, form: t.form })),
       });
+
+      // Step 2: Continue uploads in background and finalize Firestore.
+      (async () => {
+        try {
+          const payloadTravellers = await Promise.all(
+            travellers.map(async (traveller, i) => {
+              const travellerLabel = traveller.isPrimary
+                ? "Main Traveller"
+                : `Co-Passenger ${i}`;
+
+              const [bankUri, passportFrontUri, passportBackUri, photoUri] =
+                await Promise.all([
+                  resolveUploadUri(traveller.documents.bankPdf, {
+                    prefix: `bank-${i + 1}`,
+                    fallbackExt: "pdf",
+                  }),
+                  resolveUploadUri(traveller.documents.passportFront, {
+                    prefix: `passport-front-${i + 1}`,
+                    fallbackExt: "jpg",
+                  }),
+                  resolveUploadUri(traveller.documents.passportBack, {
+                    prefix: `passport-back-${i + 1}`,
+                    fallbackExt: "jpg",
+                  }),
+                  resolveUploadUri(traveller.documents.photo, {
+                    prefix: `photo-${i + 1}`,
+                    fallbackExt: "jpg",
+                  }),
+                ]);
+
+              if (!bankUri || !passportFrontUri || !passportBackUri || !photoUri) {
+                throw new Error(
+                  `${travellerLabel}: One or more selected files could not be read. Please re-upload the documents.`
+                );
+              }
+
+              const travellerPath = `${basePath}/traveller_${i + 1}`;
+              const bankStoragePath = `${travellerPath}/bank.pdf`;
+              const passportFrontStoragePath = `${travellerPath}/passport_front.jpg`;
+              const passportBackStoragePath = `${travellerPath}/passport_back.jpg`;
+              const photoStoragePath = `${travellerPath}/photo.jpg`;
+
+              const [bankUrl, passportFrontUrl, passportBackUrl, photoUrl] =
+                await Promise.all([
+                  uploadFile(bankUri, bankStoragePath),
+                  uploadFile(passportFrontUri, passportFrontStoragePath),
+                  uploadFile(passportBackUri, passportBackStoragePath),
+                  uploadFile(photoUri, photoStoragePath),
+                ]);
+
+              return {
+                isPrimary: traveller.isPrimary,
+                form: { ...traveller.form },
+                documents: {
+                  bankPdf: bankUrl,
+                  passportFront: passportFrontUrl,
+                  passportBack: passportBackUrl,
+                  photo: photoUrl,
+                },
+                storagePaths: {
+                  bankPdf: bankStoragePath,
+                  passportFront: passportFrontStoragePath,
+                  passportBack: passportBackStoragePath,
+                  photo: photoStoragePath,
+                },
+              };
+            })
+          );
+
+          await setDoc(
+            applicationRef,
+            {
+              country: "Singapore",
+              status: "submitted",
+              submittedAt: serverTimestamp(),
+              totalTravellers: payloadTravellers.length,
+              form: payloadTravellers[0]?.form || {},
+              documents: payloadTravellers[0]?.documents || {},
+              travellers: payloadTravellers,
+            },
+            { merge: true }
+          );
+
+          await setDoc(
+            userRef,
+            {
+              lastApplicationId: applicationId,
+              lastApplicationCountry: "Singapore",
+              lastApplicationStatus: "submitted",
+              lastApplicationUpdatedAt: serverTimestamp(),
+            },
+            { merge: true }
+          );
+        } catch (error) {
+          console.log("Background submit error:", error);
+          try {
+            await setDoc(
+              applicationRef,
+              {
+                country: "Singapore",
+                status: "failed",
+                errorMessage: error?.message || "Unknown submit error",
+                failedAt: serverTimestamp(),
+                totalTravellers: travellers.length,
+              },
+              { merge: true }
+            );
+          } catch (innerError) {
+            console.log("Failed to update failed status:", innerError);
+          }
+        }
+      })();
+      return;
     } catch (error) {
       console.log("Submit Error:", error);
+      try {
+        if (applicationRef) {
+          await setDoc(
+            applicationRef,
+            {
+              country: "Singapore",
+              status: "failed",
+              errorMessage: error?.message || "Unknown submit error",
+              failedAt: serverTimestamp(),
+              totalTravellers: travellers.length,
+            },
+            { merge: true }
+          );
+        }
+      } catch (innerError) {
+        console.log("Failed to update failed status:", innerError);
+      }
       Alert.alert("Error", error?.message || "Something went wrong.");
     } finally {
       setLoading(false);
@@ -420,23 +633,34 @@ export default function SingaporeApplyScreen({ navigation }) {
   /* ================= UI ================= */
 
   const traveller = travellers[0];
-  const hasCoTraveller = travellers.length > 1;
+  const coTravellers = travellers.slice(1);
 
-  const openCoTravellerModal = () => {
-    const existing = travellers[1] || createTraveller();
+  const openCoTravellerModal = (travellerIndex = null) => {
+    const existing =
+      travellerIndex !== null ? travellers[travellerIndex] : createTraveller();
     setCoTravellerDraft({
       ...existing,
       form: { ...existing.form },
       documents: { ...existing.documents },
     });
+    setCoTravellerEditIndex(travellerIndex);
     setIsCoTravellerModalOpen(true);
   };
 
   const saveCoTraveller = () => {
     setTravellers((prev) => {
-      const primary = prev[0];
+      if (coTravellerEditIndex !== null) {
+        const updated = [...prev];
+        updated[coTravellerEditIndex] = {
+          isPrimary: false,
+          form: { ...coTravellerDraft.form },
+          documents: { ...coTravellerDraft.documents },
+        };
+        return updated;
+      }
+
       return [
-        primary,
+        ...prev,
         {
           isPrimary: false,
           form: { ...coTravellerDraft.form },
@@ -444,7 +668,12 @@ export default function SingaporeApplyScreen({ navigation }) {
         },
       ];
     });
+    setCoTravellerEditIndex(null);
     setIsCoTravellerModalOpen(false);
+  };
+
+  const removeCoTraveller = (travellerIndex) => {
+    setTravellers((prev) => prev.filter((_, idx) => idx !== travellerIndex));
   };
 
   return (
@@ -455,20 +684,20 @@ export default function SingaporeApplyScreen({ navigation }) {
             <Ionicons name="chevron-back" size={26} />
           </TouchableOpacity>
 
-          <Text style={styles.headerTitle}>
-            Singapore Visa Application
-          </Text>
+          <View style={styles.headerCenterContainer}>
+            <Text style={styles.headerCenterTitle} numberOfLines={1}>
+              Singapore Visa Application
+            </Text>
+          </View>
 
-          <TouchableOpacity onPress={() => navigation.navigate("Tabs")}>
+          <TouchableOpacity onPress={() => navigation.navigate("Tabs", { screen: "Destination" })}>
             <Ionicons name="home-outline" size={24} color={ORANGE} />
           </TouchableOpacity>
         </View>
+        <Text style={styles.countryNameUnderHeader}>Singapore</Text>
 
         {/* Travel Date */}
-        <TouchableOpacity
-          style={styles.input}
-          onPress={() => setShowCalendarFor("main")}
-        >
+        <TouchableOpacity style={styles.inputLarge} onPress={() => setShowCalendarFor("main")}>
           <Text
             style={
               traveller.form.travelDate
@@ -483,20 +712,8 @@ export default function SingaporeApplyScreen({ navigation }) {
         </TouchableOpacity>
 
         <TextInput
-          placeholder="Email ID"
-          style={styles.input}
-          placeholderTextColor="#9CA3AF"
-          value={traveller.form.email}
-          onChangeText={(v) => {
-            const updated = [...travellers];
-            updated[0].form.email = v;
-            setTravellers(updated);
-          }}
-        />
-
-        <TextInput
           placeholder="Mobile Number"
-          style={styles.input}
+          style={styles.inputLarge}
           keyboardType="phone-pad"
           placeholderTextColor="#9CA3AF"
           value={traveller.form.phone}
@@ -508,8 +725,20 @@ export default function SingaporeApplyScreen({ navigation }) {
         />
 
         <TextInput
+          placeholder="Email ID"
+          style={styles.inputLarge}
+          placeholderTextColor="#9CA3AF"
+          value={traveller.form.email}
+          onChangeText={(v) => {
+            const updated = [...travellers];
+            updated[0].form.email = v;
+            setTravellers(updated);
+          }}
+        />
+
+        <TextInput
           placeholder="Hotel Details"
-          style={[styles.input, styles.textArea]}
+          style={styles.inputLarge}
           multiline
           placeholderTextColor="#9CA3AF"
           value={traveller.form.hotelDetails}
@@ -521,10 +750,10 @@ export default function SingaporeApplyScreen({ navigation }) {
         />
 
         {/* Bank PDF */}
-        <View style={styles.card}>
-          <Text style={styles.label}>Upload Bank Details (PDF) *</Text>
-          <TouchableOpacity style={styles.uploadBtn} onPress={pickPdf}>
-            <Text style={styles.uploadText}>
+        <View style={styles.uploadCard}>
+          <Text style={styles.uploadCardTitle}>Upload Bank Details (PDF) *</Text>
+          <TouchableOpacity style={styles.uploadCardBtn} onPress={pickPdf}>
+            <Text style={styles.uploadCardBtnText}>
               {traveller.documents.bankPdf ? "Replace PDF" : "Upload"}
             </Text>
           </TouchableOpacity>
@@ -541,31 +770,32 @@ export default function SingaporeApplyScreen({ navigation }) {
           { key: "passportBack", label: "Passport Back", sample: PassportBackSample },
           { key: "photo", label: "Applicant Photo", sample: PassportPhotoSample },
         ].map(({ key, label, sample }) => (
-          <View key={key} style={styles.card}>
-            <Text style={styles.label}>{label} *</Text>
+          <View key={key} style={styles.uploadCard}>
+            <Text style={styles.uploadCardTitle}>{label} *</Text>
 
-            <View style={styles.sampleBox}>
+            <View style={styles.uploadSampleWrap}>
               {!traveller.documents[key] ? (
-                <Image source={sample} style={styles.sample} resizeMode="contain" />
+                <Image source={sample} style={styles.uploadSample} resizeMode="contain" />
               ) : (
                 <Image
                   source={{ uri: traveller.documents[key].uri }}
-                  style={styles.sample}
+                  style={styles.uploadSample}
                   resizeMode="cover"
                 />
               )}
             </View>
 
             <TouchableOpacity
-              style={styles.uploadBtn}
+              style={styles.uploadCardBtn}
               onPress={() => pickImage(key)}
             >
-              <Text style={styles.uploadText}>
+              <Text style={styles.uploadCardBtnText}>
                 {traveller.documents[key] ? "Replace" : "Upload"}
               </Text>
             </TouchableOpacity>
           </View>
         ))}
+
 
         {/* Forms */}
         <View style={styles.formsSection}>
@@ -684,15 +914,48 @@ export default function SingaporeApplyScreen({ navigation }) {
             </Text>
           </View>
 
-          <TouchableOpacity
-            style={styles.addCoTravellerBtn}
-            onPress={openCoTravellerModal}
-          >
-            <Ionicons name="person-add-outline" size={18} color="#FFFFFF" />
-            <Text style={styles.addCoTravellerBtnText}>
-              {hasCoTraveller ? "Edit co - traveller" : "Add co - traveller"}
+        </View>
+
+        <View style={styles.coPassengersPanel}>
+          <View style={styles.coPassengersHeader}>
+            <Text style={styles.coPassengersTitle}>Co-Passengers</Text>
+            <TouchableOpacity onPress={() => openCoTravellerModal(null)}>
+              <Text style={styles.coPassengersAddText}>+ Add Co-Passenger</Text>
+            </TouchableOpacity>
+          </View>
+
+          {coTravellers.length === 0 ? (
+            <Text style={styles.coPassengersEmptyText}>
+              No co-passengers added yet.
             </Text>
-          </TouchableOpacity>
+          ) : (
+            coTravellers.map((coTraveller, idx) => {
+              const travellerIndex = idx + 1;
+              return (
+                <View key={`co-${travellerIndex}`} style={styles.coPassengerItem}>
+                  <View style={styles.coPassengerHeadRow}>
+                    <Text style={styles.coPassengerName}>
+                      Co-Passenger {travellerIndex}
+                    </Text>
+                    <View style={styles.coPassengerActions}>
+                      <TouchableOpacity onPress={() => openCoTravellerModal(travellerIndex)}>
+                        <Text style={styles.coPassengerOpenText}>Open Flow</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => removeCoTraveller(travellerIndex)}>
+                        <Text style={styles.coPassengerRemoveText}>Remove</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                  <Text style={styles.coPassengerMeta}>
+                    Email: {coTraveller.form.email || "Not provided"}
+                  </Text>
+                  <Text style={styles.coPassengerMeta}>
+                    Location: {coTraveller.form.hotelDetails || "Not provided"}
+                  </Text>
+                </View>
+              );
+            })
+          )}
         </View>
 
         <TouchableOpacity style={styles.submitBtn} onPress={submit}>
@@ -738,91 +1001,93 @@ export default function SingaporeApplyScreen({ navigation }) {
           <View style={styles.coModalCard}>
             <ScrollView contentContainerStyle={styles.coModalContent}>
               <View style={styles.coTravellerHeader}>
-                <Text style={styles.coTravellerTitle}>Co-Passenger Details</Text>
+                <Text style={styles.coTravellerTitle}>
+                  {coTravellerEditIndex !== null
+                    ? `Co-Passenger ${coTravellerEditIndex} Details`
+                    : "Add Co-Passenger"}
+                </Text>
                 <View style={styles.travellerBadge}>
-                  <Text style={styles.travellerBadgeText}>Traveller 2</Text>
+                  <Text style={styles.travellerBadgeText}>
+                    {coTravellerEditIndex !== null
+                      ? `Traveller ${coTravellerEditIndex + 1}`
+                      : `Traveller ${travellers.length + 1}`}
+                  </Text>
                 </View>
               </View>
 
-              <Text style={styles.coTravellerSubTitle}>Passport Information</Text>
-
-              <View style={styles.coTravellerRow}>
-                <TouchableOpacity
-                  style={[styles.input, styles.coTravellerHalfInput]}
-                  onPress={() => setShowCalendarFor("coTraveller")}
+              <TouchableOpacity
+                style={styles.inputLarge}
+                onPress={() => setShowCalendarFor("coTraveller")}
+              >
+                <Text
+                  style={
+                    coTravellerDraft.form.travelDate
+                      ? styles.inputText
+                      : styles.inputPlaceholder
+                  }
                 >
-                  <Text
-                    style={
-                      coTravellerDraft.form.travelDate
-                        ? styles.inputText
-                        : styles.inputPlaceholder
-                    }
-                  >
-                    {coTravellerDraft.form.travelDate
-                      ? formatDate(coTravellerDraft.form.travelDate)
-                      : "dd-mm-yyyy"}
-                  </Text>
-                </TouchableOpacity>
+                  {coTravellerDraft.form.travelDate
+                    ? formatDate(coTravellerDraft.form.travelDate)
+                    : "Select Travel Date"}
+                </Text>
+              </TouchableOpacity>
 
-                <TextInput
-                  placeholder="Email ID"
-                  style={[styles.input, styles.coTravellerHalfInput]}
-                  placeholderTextColor="#9CA3AF"
-                  value={coTravellerDraft.form.email}
-                  onChangeText={(v) =>
-                    setCoTravellerDraft((prev) => ({
-                      ...prev,
-                      form: {
-                        ...prev.form,
-                        email: v,
-                      },
-                    }))
-                  }
-                />
-              </View>
+              <TextInput
+                placeholder="Mobile Number"
+                style={styles.inputLarge}
+                keyboardType="phone-pad"
+                placeholderTextColor="#9CA3AF"
+                value={coTravellerDraft.form.phone}
+                onChangeText={(v) =>
+                  setCoTravellerDraft((prev) => ({
+                    ...prev,
+                    form: {
+                      ...prev.form,
+                      phone: v,
+                    },
+                  }))
+                }
+              />
 
-              <View style={styles.coTravellerRow}>
-                <TextInput
-                  placeholder="Mobile Number"
-                  style={[styles.input, styles.coTravellerHalfInput]}
-                  keyboardType="phone-pad"
-                  placeholderTextColor="#9CA3AF"
-                  value={coTravellerDraft.form.phone}
-                  onChangeText={(v) =>
-                    setCoTravellerDraft((prev) => ({
-                      ...prev,
-                      form: {
-                        ...prev.form,
-                        phone: v,
-                      },
-                    }))
-                  }
-                />
+              <TextInput
+                placeholder="Email ID"
+                style={styles.inputLarge}
+                placeholderTextColor="#9CA3AF"
+                value={coTravellerDraft.form.email}
+                onChangeText={(v) =>
+                  setCoTravellerDraft((prev) => ({
+                    ...prev,
+                    form: {
+                      ...prev.form,
+                      email: v,
+                    },
+                  }))
+                }
+              />
 
-                <TextInput
-                  placeholder="Hotel Details"
-                  style={[styles.input, styles.coTravellerHalfInput]}
-                  placeholderTextColor="#9CA3AF"
-                  value={coTravellerDraft.form.hotelDetails}
-                  onChangeText={(v) =>
-                    setCoTravellerDraft((prev) => ({
-                      ...prev,
-                      form: {
-                        ...prev.form,
-                        hotelDetails: v,
-                      },
-                    }))
-                  }
-                />
-              </View>
+              <TextInput
+                placeholder="Hotel Details"
+                style={styles.inputLarge}
+                placeholderTextColor="#9CA3AF"
+                value={coTravellerDraft.form.hotelDetails}
+                onChangeText={(v) =>
+                  setCoTravellerDraft((prev) => ({
+                    ...prev,
+                    form: {
+                      ...prev.form,
+                      hotelDetails: v,
+                    },
+                  }))
+                }
+              />
 
-              <View style={styles.card}>
-                <Text style={styles.label}>Upload Bank Details (PDF) *</Text>
+              <View style={styles.uploadCard}>
+                <Text style={styles.uploadCardTitle}>Upload Bank Details (PDF) *</Text>
                 <TouchableOpacity
-                  style={styles.uploadBtn}
+                  style={styles.uploadCardBtn}
                   onPress={() => pickPdf("co")}
                 >
-                  <Text style={styles.uploadText}>
+                  <Text style={styles.uploadCardBtnText}>
                     {coTravellerDraft.documents.bankPdf ? "Replace PDF" : "Upload"}
                   </Text>
                 </TouchableOpacity>
@@ -833,50 +1098,46 @@ export default function SingaporeApplyScreen({ navigation }) {
                 ) : null}
               </View>
 
-              <View style={styles.coDocRow}>
-                {[
-                  {
-                    key: "passportFront",
-                    label: "Upload Passport Front Page",
-                    sample: PassportFrontSample,
-                  },
-                  {
-                    key: "passportBack",
-                    label: "Upload Passport Last Page",
-                    sample: PassportBackSample,
-                  },
-                  {
-                    key: "photo",
-                    label: "Applicant's photo",
-                    sample: PassportPhotoSample,
-                  },
-                ].map(({ key, label, sample }) => (
-                  <View key={key} style={styles.coDocCard}>
-                    <Text style={styles.coDocLabel}>{label} *</Text>
-                    <View style={styles.coDocSampleBox}>
-                      {!coTravellerDraft.documents[key] ? (
-                        <Image
-                          source={sample}
-                          style={styles.sample}
-                          resizeMode="contain"
-                        />
-                      ) : (
-                        <Image
-                          source={{ uri: coTravellerDraft.documents[key].uri }}
-                          style={styles.sample}
-                          resizeMode="cover"
-                        />
-                      )}
-                    </View>
-                    <TouchableOpacity
-                      style={styles.coDocUploadBtn}
-                      onPress={() => pickImage(key, "co")}
-                    >
-                      <Text style={styles.coDocUploadBtnText}>Upload</Text>
-                    </TouchableOpacity>
+              {[
+                {
+                  key: "passportFront",
+                  label: "Passport Front",
+                  sample: PassportFrontSample,
+                },
+                {
+                  key: "passportBack",
+                  label: "Passport Back",
+                  sample: PassportBackSample,
+                },
+                {
+                  key: "photo",
+                  label: "Applicant Photo",
+                  sample: PassportPhotoSample,
+                },
+              ].map(({ key, label, sample }) => (
+                <View key={key} style={styles.uploadCard}>
+                  <Text style={styles.uploadCardTitle}>{label} *</Text>
+                  <View style={styles.uploadSampleWrap}>
+                    {!coTravellerDraft.documents[key] ? (
+                      <Image source={sample} style={styles.uploadSample} resizeMode="contain" />
+                    ) : (
+                      <Image
+                        source={{ uri: coTravellerDraft.documents[key].uri }}
+                        style={styles.uploadSample}
+                        resizeMode="cover"
+                      />
+                    )}
                   </View>
-                ))}
-              </View>
+                  <TouchableOpacity
+                    style={styles.uploadCardBtn}
+                    onPress={() => pickImage(key, "co")}
+                  >
+                    <Text style={styles.uploadCardBtnText}>
+                      {coTravellerDraft.documents[key] ? "Replace" : "Upload"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              ))}
 
               <View style={styles.formsRow}>
                 {[
@@ -986,13 +1247,18 @@ export default function SingaporeApplyScreen({ navigation }) {
               <View style={styles.coFooterActions}>
                 <TouchableOpacity
                   style={styles.coCloseBtn}
-                  onPress={() => setIsCoTravellerModalOpen(false)}
+                  onPress={() => {
+                    setIsCoTravellerModalOpen(false);
+                    setCoTravellerEditIndex(null);
+                  }}
                 >
                   <Text style={styles.coCloseBtnText}>Close</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.coSaveBtn} onPress={saveCoTraveller}>
-                  <Text style={styles.coSaveBtnText}>Save</Text>
+                  <Text style={styles.coSaveBtnText}>
+                    {coTravellerEditIndex !== null ? "Update" : "Save"}
+                  </Text>
                 </TouchableOpacity>
               </View>
             </ScrollView>
@@ -1064,6 +1330,7 @@ export default function SingaporeApplyScreen({ navigation }) {
           </View>
         </View>
       </Modal>
+
     </ScreenWrapper>
   );
 }
@@ -1081,6 +1348,37 @@ const styles = StyleSheet.create({
   },
 
   headerTitle: { fontSize: 17, fontWeight: "700" },
+  headerTitlePlaceholder: { width: 1, height: 1 },
+  headerCenterContainer: {
+    flex: 1,
+    marginHorizontal: 10,
+    borderWidth: 1,
+    borderColor: "#F2DCC6",
+    borderRadius: 18,
+    backgroundColor: "#F5EFE8",
+    height: 44,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  headerCenterTitle: { fontSize: 16, fontWeight: "700", color: "#111827" },
+  countryNameUnderHeader: {
+    textAlign: "center",
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#111827",
+    marginBottom: 10,
+  },
+  topCard: {
+    borderWidth: 1,
+    borderColor: "#F2DCC6",
+    borderRadius: 18,
+    backgroundColor: "#F5EFE8",
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginBottom: 12,
+  },
+  countryTitle: { fontSize: 20, fontWeight: "700", color: "#111827", textAlign: "center" },
+  countrySub: { fontSize: 12, color: "#F97316", marginTop: 2, textAlign: "center" },
 
   input: {
     borderWidth: 1,
@@ -1094,6 +1392,18 @@ const styles = StyleSheet.create({
   inputText: { color: "#111827" },
   inputPlaceholder: { color: "#9CA3AF" },
   textArea: { height: 90 },
+  inputLarge: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    marginBottom: 12,
+    backgroundColor: "#fff",
+    height: 48,
+    color: "#111827",
+    justifyContent: "center",
+    textAlignVertical: "center",
+  },
 
   card: {
     backgroundColor: "#fff",
@@ -1135,6 +1445,45 @@ const styles = StyleSheet.create({
   },
 
   uploadText: { color: ORANGE, fontWeight: "700" },
+  uploadCard: {
+    backgroundColor: "#fff",
+    borderRadius: 14,
+    padding: 12,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    elevation: 2,
+  },
+  uploadCardTitle: {
+    fontWeight: "600",
+    marginBottom: 8,
+    textAlign: "center",
+    color: "#111827",
+    fontSize: 16,
+  },
+  uploadSampleWrap: {
+    width: "100%",
+    height: 120,
+    borderRadius: 10,
+    backgroundColor: "#F5F6F8",
+    overflow: "hidden",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 10,
+  },
+  uploadSample: {
+    width: "100%",
+    height: "100%",
+  },
+  uploadCardBtn: {
+    borderWidth: 1,
+    borderColor: ORANGE,
+    borderRadius: 10,
+    paddingVertical: 10,
+    alignItems: "center",
+    backgroundColor: "#fff",
+  },
+  uploadCardBtnText: { color: ORANGE, fontWeight: "700", fontSize: 16 },
 
   pdfUploadedText: {
     marginTop: 8,
@@ -1311,6 +1660,88 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "700",
+  },
+
+  coPassengersPanel: {
+    marginTop: 4,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    borderRadius: 18,
+    backgroundColor: "#FFFFFF",
+    padding: 12,
+  },
+
+  coPassengersHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+
+  coPassengersTitle: {
+    fontSize: 17,
+    fontWeight: "700",
+    color: "#111827",
+  },
+
+  coPassengersAddText: {
+    color: ORANGE,
+    fontSize: 15,
+    fontWeight: "700",
+  },
+
+  coPassengersEmptyText: {
+    color: "#6B7280",
+    fontSize: 13,
+    textAlign: "center",
+    paddingVertical: 8,
+  },
+
+  coPassengerItem: {
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 10,
+    backgroundColor: "#FFFFFF",
+  },
+
+  coPassengerHeadRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 6,
+  },
+
+  coPassengerActions: {
+    flexDirection: "row",
+    gap: 14,
+    alignItems: "center",
+  },
+
+  coPassengerName: {
+    fontSize: 17,
+    fontWeight: "700",
+    color: "#111827",
+  },
+
+  coPassengerOpenText: {
+    color: ORANGE,
+    fontSize: 13,
+    fontWeight: "600",
+  },
+
+  coPassengerRemoveText: {
+    color: "#EF4444",
+    fontSize: 13,
+    fontWeight: "600",
+  },
+
+  coPassengerMeta: {
+    fontSize: 13,
+    color: "#374151",
+    marginBottom: 2,
   },
 
   coModalOverlay: {
@@ -1531,3 +1962,8 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
 });
+
+
+
+
+

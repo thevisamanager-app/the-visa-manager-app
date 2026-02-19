@@ -10,6 +10,8 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "lint": "eslint .",
+    "validate:destinations": "node scripts/validate-destinations.js",
+    "fix:destinations": "node scripts/validate-destinations.js --fix",
     "test": "jest",
     "start": "react-native start",
     "deploy": "firebase deploy --only functions"

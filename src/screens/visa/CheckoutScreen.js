@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -21,7 +21,15 @@ import {
   RFValue,
 } from "../../utils/metrics";
 import { startPayment } from "../../services/payment/PaymentService";
-import auth from "@react-native-firebase/auth";
+import { getAuth } from "@react-native-firebase/auth/lib/modular";
+import {
+  getFirestore,
+  collection,
+  doc,
+  setDoc,
+} from "@react-native-firebase/firestore/lib/modular";
+import { getDoc } from "@react-native-firebase/firestore/lib/modular/query";
+import { serverTimestamp } from "@react-native-firebase/firestore/lib/modular/FieldValue";
 import LottieView from "lottie-react-native";
 
 const ORANGE = "#FF5C00";
@@ -42,14 +50,75 @@ const parseFee = (fee) => {
 
 export default function CheckoutScreen({ navigation, route }) {
   const selected = useSelector((state) => state.destinations.selected);
+  const routeTravellers = route?.params?.travellers;
   const coTravellers = route?.params?.coTravellers ?? [];
+  const applicationId = route?.params?.applicationId;
 
+  const routeTravellersCount = Array.isArray(routeTravellers)
+    ? routeTravellers.length
+    : 0;
   const coTravellersCount = Array.isArray(coTravellers)
     ? coTravellers.length
     : 0;
+  const routeTotalTravellers = Number(route?.params?.totalTravellers || 0);
+  const initialTravellerCount =
+    routeTravellersCount > 0
+      ? routeTravellersCount
+      : routeTotalTravellers > 0
+      ? routeTotalTravellers
+      : coTravellersCount + 1;
+  const [travellerCount, setTravellerCount] = useState(initialTravellerCount);
 
-  const totalTravelers = coTravellersCount + 1; // main + co
+  useEffect(() => {
+    const resolvedRouteCount =
+      routeTravellersCount > 0
+        ? routeTravellersCount
+        : routeTotalTravellers > 0
+        ? routeTotalTravellers
+        : coTravellersCount + 1;
+    setTravellerCount(Math.max(1, resolvedRouteCount));
+  }, [routeTravellersCount, routeTotalTravellers, coTravellersCount]);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadTravellerCount = async () => {
+      if (!applicationId) return;
+      const userId = getAuth().currentUser?.uid;
+      if (!userId) return;
+
+      try {
+        const db = getFirestore();
+        const usersRef = collection(db, "users");
+        const userRef = doc(usersRef, userId);
+        const passportDataRef = collection(userRef, "passportData");
+        const passportDocRef = doc(passportDataRef, applicationId);
+        const snap = await getDoc(passportDocRef);
+
+        if (!isMounted || !snap.exists) return;
+        const data = snap.data() || {};
+        const countFromArray = Array.isArray(data.travellers)
+          ? data.travellers.length
+          : 0;
+        const countFromTotal = Number(data.totalTravellers || 0);
+        const resolvedCount = countFromArray || countFromTotal;
+
+        if (resolvedCount > 0) {
+          setTravellerCount(resolvedCount);
+        }
+      } catch (error) {
+        console.log("Checkout traveller count load error:", error);
+      }
+    };
+
+    loadTravellerCount();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [applicationId]);
+
+  const totalTravelers = Math.max(1, travellerCount); // main + co
 
   const passport =
     route?.params?.passport || route?.params?.updatedPassport || {};
@@ -65,23 +134,68 @@ export default function CheckoutScreen({ navigation, route }) {
   const authorityFee = parseFee(selected?.AuthorityCharges);
 
   const adultFeePerPerson = visaFee + tvmFee + authorityFee;
-  const adultTotal = adultFeePerPerson * totalTravelers;
-
 
   /* ---------------- MINOR CALCULATION ---------------- */
-  const minors = hasMinor ? Number(minorCount) || 0 : 0;
+  const maxMinorCount = Math.max(0, totalTravelers - 1); // only co-travellers can be minors
+  const enteredMinorCount = Number(minorCount) || 0;
+  const minors = hasMinor
+    ? Math.min(Math.max(enteredMinorCount, 0), maxMinorCount)
+    : 0;
+  const adults = totalTravelers - minors;
+
+  // Each minor pays half for all fee components.
+  const visaTotal = visaFee * adults + visaFee * 0.5 * minors;
+  const tvmTotal = tvmFee * adults + tvmFee * 0.5 * minors;
+  const authorityTotal =
+    authorityFee * adults + authorityFee * 0.5 * minors;
+
   const minorFeePerPerson = adultFeePerPerson * 0.5;
   const minorTotal = minorFeePerPerson * minors;
-  const totalAmount = Number(
-    (adultTotal + minorTotal).toFixed(2)
-  );
+  const totalAmount = Number((visaTotal + tvmTotal + authorityTotal).toFixed(2));
 
 
   const handlePay = async () => {
 
     try {
       setLoading(true);
-      const userId = auth().currentUser?.uid;
+      const userId = getAuth().currentUser?.uid;
+      if (!userId) {
+        Alert.alert("Login Required", "Please login first.");
+        return;
+      }
+
+      const db = getFirestore();
+      const usersRef = collection(db, "users");
+      const userRef = doc(usersRef, userId);
+      const passportDataRef = collection(userRef, "passportData");
+      const checkoutDocId = applicationId || `checkout_${Date.now()}`;
+      const checkoutDocRef = doc(passportDataRef, checkoutDocId);
+
+      await setDoc(
+        checkoutDocRef,
+        {
+          country: route?.params?.country || selected?.countrName || "",
+          applicationId: applicationId || null,
+          checkout: {
+            travellerCount: totalTravelers,
+            adults,
+            minors,
+            fees: {
+              visaFeePerAdult: visaFee,
+              visaManagerFeePerAdult: tvmFee,
+              authorityFeePerAdult: authorityFee,
+              visaTotal,
+              visaManagerTotal: tvmTotal,
+              authorityTotal,
+              minorFeePerPerson,
+              minorTotal,
+              grandTotal: totalAmount,
+            },
+            updatedAt: serverTimestamp(),
+          },
+        },
+        { merge: true }
+      );
 
       const result = await startPayment(totalAmount, userId, passport);
 
@@ -112,7 +226,7 @@ export default function CheckoutScreen({ navigation, route }) {
     }
     // navigation.navigate("RatingScreen",{passport,totalAmount,selected})
   };
-  console.log("totalTravelers==>", totalTravelers)
+  console.log("totalTravelers==>", totalTravelers);
   return (
     <ScreenWrapper style={styles.container}>
       {/* 🔥 FULL SCREEN LOADER */}
@@ -152,17 +266,17 @@ export default function CheckoutScreen({ navigation, route }) {
               Visa Fee x {totalTravelers}
             </Text>
 
-            <Text style={styles.price}>  ₹{(visaFee * totalTravelers).toLocaleString("en-IN")}</Text>
+            <Text style={styles.price}>  ₹{visaTotal.toLocaleString("en-IN")}</Text>
           </View>
 
           <View style={styles.rowSpace}>
-            <Text style={styles.itemTitle}>TVM Fee x {totalTravelers}</Text>
-            <Text style={styles.price}>  ₹{(tvmFee * totalTravelers).toLocaleString("en-IN")}</Text>
+            <Text style={styles.itemTitle}>TVM Fee <Text style={styles.gstText}>(including Gst)</Text> x {totalTravelers}</Text>
+            <Text style={styles.price}>  ₹{tvmTotal.toLocaleString("en-IN")}</Text>
           </View>
 
           <View style={styles.rowSpace}>
-            <Text style={styles.itemTitle}> Authority Fee x {totalTravelers}</Text>
-            <Text style={styles.price}> ₹{(authorityFee * totalTravelers).toLocaleString("en-IN")}</Text>
+            <Text style={styles.itemTitle}> Authority Fee <Text style={styles.gstText}>(including Gst)</Text> x {totalTravelers}</Text>
+            <Text style={styles.price}> ₹{authorityTotal.toLocaleString("en-IN")}</Text>
           </View>
 
           <View style={styles.divider} />
@@ -195,12 +309,15 @@ export default function CheckoutScreen({ navigation, route }) {
                 keyboardType="numeric"
                 style={styles.input}
               />
+              <Text style={styles.minorHint}>
+                Max minors allowed: {maxMinorCount}
+              </Text>
 
               <View style={styles.rowSpace}>
                 <Text style={styles.itemTitle}>
                   Minor Fee x {minors}
                 </Text>
-                <Text style={styles.price}>₹{minorTotal}</Text>
+                <Text style={styles.price}>₹{minorTotal.toLocaleString("en-IN")}</Text>
               </View>
             </View>
           )}
@@ -286,6 +403,11 @@ const styles = StyleSheet.create({
     fontSize: RFValue(14),
     fontWeight: "500",
   },
+  gstText: {
+    fontSize: RFValue(10),
+    color: "#6B7280",
+    fontWeight: "400",
+  },
   price: {
     fontSize: RFValue(16),
     fontWeight: "600",
@@ -311,6 +433,11 @@ const styles = StyleSheet.create({
   minorLabel: {
     fontSize: RFValue(10),
     marginBottom: verticalScale(6),
+  },
+  minorHint: {
+    fontSize: RFValue(10),
+    color: "#6B7280",
+    marginBottom: verticalScale(8),
   },
   input: {
     borderWidth: 1,
@@ -386,3 +513,5 @@ const styles = StyleSheet.create({
     color: "#444",
   },
 });
+
+

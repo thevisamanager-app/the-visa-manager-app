@@ -1,9 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+} from "react-native";
+
 import { wp, verticalScale, moderateScale, RFValue } from "../utils/metrics";
 import { getFlagEmoji } from "../utils/countryIsoMap";
+import { getCountryImage } from "../utils/countryImages";
 
 /* -------- helpers -------- */
+
 const getGovernmentFee = (fee) => {
   if (!fee) return 0;
 
@@ -13,8 +22,8 @@ const getGovernmentFee = (fee) => {
 
   if (typeof fee === "object") {
     const values = Object.values(fee)
-      .map(v => Number(String(v).replace(/,/g, "")))
-      .filter(v => !isNaN(v));
+      .map((v) => Number(String(v).replace(/,/g, "")))
+      .filter((v) => !isNaN(v));
 
     return values.length ? Math.min(...values) : 0;
   }
@@ -29,22 +38,21 @@ const getServiceFee = (fee) => {
   return 0;
 };
 
-export default function CountryCards({ item, countrName, onPress, date }) {
+export default function CountryCards({ item, countrName, onPress }) {
   const visaType = item.countryType?.toUpperCase() || "VISA";
   const flag = getFlagEmoji(countrName);
-  const [liveCount, setLiveCount] = useState(item.liveCount ?? 0);
+  const imageSource = getCountryImage(countrName);
+
+  const [liveCount, setLiveCount] = useState(item.liveCount ?? 5);
 
   const governmentFee = getGovernmentFee(item.GovernmentFee);
   const serviceFee = getServiceFee(item.AuthorityCharges);
 
+  /* -------- AUTO LIVE COUNT -------- */
   useEffect(() => {
     const interval = setInterval(() => {
       setLiveCount((prev) => {
-        const hour = new Date().getHours();
-        const afterSixPm = hour >= 18;
-        const change = afterSixPm
-          ? -1 * (5 + Math.floor(Math.random() * 2)) // drop by 5-6
-          : Math.floor(Math.random() * 3) - 1; // -1, 0, 1
+        const change = Math.floor(Math.random() * 3) - 1; // -1,0,1
         const next = prev + change;
         return next < 1 ? 1 : next;
       });
@@ -54,64 +62,62 @@ export default function CountryCards({ item, countrName, onPress, date }) {
   }, []);
 
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.9}>
-      {/* HEADER */}
-      <View style={styles.header}>
-        <Text style={styles.flag}>{flag}</Text>
+    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.95}>
+      
+      {/* -------- HEADER -------- */}
+      <View style={styles.topRow}>
+        <View style={styles.flagBox}>
+          <Text style={styles.flag}>{flag}</Text>
+        </View>
 
-        <View style={styles.headerRight}>
+        <View style={styles.rightHeader}>
           <Text style={styles.visaType}>{visaType}</Text>
-          <Text style={styles.info}> ⓘ</Text>
 
-          {liveCount > 0 && (
-            <View style={styles.liveInline}>
-              <View style={styles.liveDot} />
-              <Text style={styles.liveText}>{liveCount} live</Text>
-            </View>
-          )}
+          <View style={styles.liveBadge}>
+            <View style={styles.liveDot} />
+            <Text style={styles.liveText}>LIVE visitors {liveCount}</Text>
+          </View>
         </View>
       </View>
 
-      {/* COUNTRY NAME */}
+      {/* -------- COUNTRY NAME -------- */}
       <Text style={styles.title}>{countrName}</Text>
 
-      {/* PROCESSING DATE */}
-      {item.subtitle && (
-        <Text style={styles.processing}>{item.subtitle}</Text>
+      {/* -------- IMAGE -------- */}
+      {imageSource && (
+        <Image source={imageSource} style={styles.image} resizeMode="cover" />
       )}
 
-      {/* BULLETS */}
+      {/* -------- SUBTITLE -------- */}
+      {item.subtitle && (
+        <Text style={styles.subtitle}>{item.subtitle}</Text>
+      )}
+
+      {/* -------- BULLETS -------- */}
       {Array.isArray(item.bullets) &&
-        item.bullets.map((text, index) => (
+        item.bullets
+          .filter((text) => text !== null && text !== undefined && text !== "")
+          .map((text, index) => (
           <View key={index} style={styles.bulletRow}>
             <View style={styles.dot} />
-            <Text style={styles.bulletText}>{text}</Text>
+            <Text style={styles.bulletText}>{String(text)}</Text>
           </View>
         ))}
 
-      {/* DIVIDER */}
-      <View style={styles.divider} />
+      {/* -------- PRICE -------- */}
+      <View style={styles.priceSection}>
+        <Text style={styles.price}>
+          ₹{governmentFee}
+          <Text style={styles.perAdult}> per adult</Text>
+        </Text>
 
-      {/* PRICE – ALWAYS SHOW SERVICE FEE */}
-      <View style={styles.priceRow}>
-        <View>
-          <Text style={styles.price}>
-            ₹{governmentFee}
-            <Text style={styles.perAdult}> visa fee</Text>
-          </Text>
-
-          <Text style={styles.fee}>
-            + ₹{serviceFee} service fees
-          </Text>
-        </View>
-
-        <Text style={styles.arrow}>›</Text>
+        <Text style={styles.fee}>All inclusive</Text>
       </View>
 
-      {/* FOOTER */}
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>Apply Now</Text>
-      </View>
+      {/* -------- APPLY BUTTON -------- */}
+      <TouchableOpacity style={styles.applyButton} onPress={onPress}>
+        <Text style={styles.applyText}>Apply Now</Text>
+      </TouchableOpacity>
     </TouchableOpacity>
   );
 }
@@ -122,144 +128,135 @@ const styles = StyleSheet.create({
   card: {
     width: wp("92%"),
     alignSelf: "center",
-    backgroundColor: "#FFF7ED",
-    borderRadius: moderateScale(16),
-    padding: moderateScale(14),
-    marginVertical: verticalScale(10),
-    elevation: 3,
+    backgroundColor: "#F8EFE6",
+    borderRadius: moderateScale(20),
+    padding: moderateScale(16),
+    marginVertical: verticalScale(12),
+    elevation: 5,
   },
 
-  header: {
+  topRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
 
-  headerRight: {
-    flexDirection: "row",
-    alignItems: "center",
+  flagBox: {
+    backgroundColor: "#FFF",
+    padding: 6,
+    borderRadius: 8,
   },
 
   flag: {
-    fontSize: RFValue(30),
-    lineHeight: RFValue(30),
+    fontSize: RFValue(22),
+  },
+
+  rightHeader: {
+    alignItems: "flex-end",
   },
 
   visaType: {
     fontSize: RFValue(12),
     fontWeight: "700",
     color: "#1E3A8A",
+    marginBottom: 6,
   },
 
-  info: {
-    fontSize: RFValue(12),
-    color: "#1E3A8A",
-  },
-
-  liveInline: {
+  liveBadge: {
     flexDirection: "row",
     alignItems: "center",
-    marginLeft: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#FFF",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
     borderRadius: 999,
-    elevation: 2,
   },
 
   liveDot: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: "#22C55E",
+    backgroundColor: "#FF4D4F",
     marginRight: 6,
   },
 
   liveText: {
     fontSize: RFValue(11),
     fontWeight: "600",
-    color: "#334155",
+    color: "#555",
   },
 
   title: {
-    fontSize: RFValue(16),
-    fontWeight: "700",
+    fontSize: RFValue(18),
+    fontWeight: "800",
     marginTop: verticalScale(8),
+    color: "#111",
   },
 
-  processing: {
-    color: "#F97316",
-    marginVertical: verticalScale(6),
-    fontWeight: "600",
-    fontSize: RFValue(13),
+  image: {
+    width: "100%",
+    height: verticalScale(150),
+    borderRadius: 14,
+    marginTop: verticalScale(10),
+  },
+
+  subtitle: {
+    marginTop: verticalScale(10),
+    fontSize: RFValue(14),
+    fontWeight: "700",
+    color: "#E65100",
   },
 
   bulletRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: verticalScale(4),
+    marginTop: 6,
   },
 
   dot: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: "#F97316",
+    backgroundColor: "#FF6F00",
     marginRight: 8,
   },
 
   bulletText: {
-    fontSize: RFValue(12),
-    color: "#475569",
+    fontSize: RFValue(13),
+    color: "#555",
   },
 
-  divider: {
-    borderTopWidth: 1,
-    borderStyle: "dashed",
-    borderColor: "#E2E8F0",
-    marginVertical: verticalScale(10),
-  },
-
-  priceRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+  priceSection: {
+    marginTop: verticalScale(14),
   },
 
   price: {
-    fontSize: RFValue(15),
-    fontWeight: "700",
+    fontSize: RFValue(22),
+    fontWeight: "800",
+    color: "#111",
   },
 
   perAdult: {
-    fontSize: RFValue(11),
-    color: "#64748B",
+    fontSize: RFValue(13),
+    color: "#666",
   },
 
   fee: {
-    fontSize: RFValue(11),
-    color: "#64748B",
+    fontSize: RFValue(12),
+    color: "#888",
     marginTop: 2,
   },
 
-  arrow: {
-    fontSize: RFValue(22),
-    color: "#2563EB",
-  },
-
-  footer: {
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#0F2A52",
+  applyButton: {
+    backgroundColor: "#F4511E",
     paddingVertical: verticalScale(12),
+    borderRadius: 999,
+    alignItems: "center",
     marginTop: verticalScale(14),
-    borderBottomLeftRadius: moderateScale(16),
-    borderBottomRightRadius: moderateScale(16),
   },
 
-  footerText: {
-    fontSize: RFValue(13),
-    fontWeight: "800",
-    color: "#FFFFFF",
+  applyText: {
+    color: "#FFF",
+    fontSize: RFValue(15),
+    fontWeight: "700",
   },
 });

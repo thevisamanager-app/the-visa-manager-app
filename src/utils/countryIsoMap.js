@@ -4,7 +4,7 @@ export const COUNTRY_ISO_MAP = {
   "South Korea": "KR",
   Indonesia: "ID",
   "Hong Kong": "HK",
-  Cambodia: "KH",
+  Combodia: "KH",
   "Sri-lanka": "LK",
   Philippines: "PH",
   Uzbekistan: "UZ",

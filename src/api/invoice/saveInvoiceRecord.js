@@ -1,4 +1,4 @@
-import firestore from "@react-native-firebase/firestore";
+import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 
 export const saveInvoiceRecord = async (userId, invoiceId, downloadURL, amount) => {
   await firestore()
@@ -10,6 +10,6 @@ export const saveInvoiceRecord = async (userId, invoiceId, downloadURL, amount) 
       id: invoiceId,
       url: downloadURL,
       amount,
-      createdAt: firestore.FieldValue.serverTimestamp(),
+      createdAt: serverTimestamp(),
     });
 };

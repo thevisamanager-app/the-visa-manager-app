@@ -47,10 +47,10 @@ export default function OtpScreen({ route, navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", paddingHorizontal: 20 },
-  title: { fontSize: 24, textAlign: "center", marginBottom: 20 },
-  input: { borderWidth: 1, borderRadius: 8, padding: 12, marginBottom: 20 },
-  button: { backgroundColor: "#28a745", padding: 15, borderRadius: 8 },
-  buttonText: { color: "#fff", textAlign: "center" }
-});
+// const styles = StyleSheet.create({
+//   container: { flex: 1, justifyContent: "center", paddingHorizontal: 20 },
+//   title: { fontSize: 24, textAlign: "center", marginBottom: 20 },
+//   input: { borderWidth: 1, borderRadius: 8, padding: 12, marginBottom: 20 },
+//   button: { backgroundColor: "#28a745", padding: 15, borderRadius: 8 },
+//   buttonText: { color: "#fff", textAlign: "center" }
+// });

@@ -1,4 +1,4 @@
-import firestore from "@react-native-firebase/firestore";
+import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import auth from "@react-native-firebase/auth";
 import storage from "@react-native-firebase/storage";
 import uuid from "react-native-uuid";
@@ -21,7 +21,7 @@ export async function uploadUserPhoto(photo) {
     .collection("photo")
     .add({
       ...url,
-      createdAt: firestore.FieldValue.serverTimestamp(),
+      createdAt: serverTimestamp(),
     });
 
   return url;

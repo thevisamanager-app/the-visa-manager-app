@@ -22,7 +22,8 @@ const DESTINATIONS = [
     VisaManagerFee: "1180",
     AuthorityCharges: "670",
     GovernmentFee: "2100",
-    llets: [
+    subtitle: "Get Visa in 1-3 Business Days",
+    bullets: [
       "Visa on arrival / DAC",
       "Fast approval process",
       "No embassy visit required"
@@ -36,6 +37,11 @@ const DESTINATIONS = [
     VisaManagerFee: "3540",
     AuthorityCharges: "1200",
     GovernmentFee: "5800",
+    bullets: [
+      "Visa on arrival / DAC",
+      "Fast approval process",
+      "No embassy visit required"
+    ],
   },
 
   {
@@ -127,7 +133,12 @@ const DESTINATIONS = [
     VisaManagerFee: "1770 per traveler",
     AuthorityCharges: "0",
     GovernmentFee: "3600",
-    countryType: "evisa"
+    countryType: "evisa",
+    subtitle: "Get visa in 6-7 days",
+    bullets: [
+     "1200+ visas successfully Processed",
+      "online process",
+    ],
   },
 
   {
@@ -136,7 +147,12 @@ const DESTINATIONS = [
     VisaManagerFee: "3540",
     AuthorityCharges: "944",
     GovernmentFee: "8200",
-    countryType: "evisa"
+    countryType: "evisa",
+     subtitle: "Get visa in 6 to 7 days",
+    bullets: [
+      "1200 + Visa Successfully Processed",
+      "Online Process"
+    ],
   },
 
   {
@@ -159,7 +175,7 @@ const DESTINATIONS = [
 
   {
     id: 14,
-    countrName: 'USA',
+    countrName: 'Usa',
     VisaManagerFee: "2948.82",
     AuthorityCharges: "0",
     GovernmentFee: "17020",
@@ -182,7 +198,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2949",
     AuthorityCharges: "944",
     GovernmentFee: "5000",
-    countryType: "evisa"
+    countryType: "evisa",
+    subtitle: "Get Visa in 4-5 Working days",
+    bullets: [
+      "1200+ visas successfully Processed",
+      "online process",
+    ]
   },
 
   {
@@ -259,7 +280,7 @@ const DESTINATIONS = [
 
   {
     id: 25,
-    countrName: 'Monoglia',
+    countrName: 'Mongolia',
     VisaManagerFee: "3540",
     AuthorityCharges: "944",
     GovernmentFee: "5720",
@@ -638,7 +659,12 @@ const DESTINATIONS = [
     AuthorityCharges: "750",
     GovernmentFee: "550",
     currency: "",
-    countryType: "evisa"
+    countryType: "evisa",
+    subtitle: "Get Visa in 6-7 Business Days",
+    bullets: [
+      "1200+ visas successfully Processed",
+      "online process",
+    ],
   },
 
   {
@@ -647,7 +673,12 @@ const DESTINATIONS = [
     VisaManagerFee: "1770",
     AuthorityCharges: "750",
     GovernmentFee: "550",
-    countryType: "evisa"
+    countryType: "evisa",
+    subtitle: "Get Visa in 2-3 Working Days",
+    bullets: [
+      "1200+ visas successfully Processed",
+      "online process",
+    ],
   },
 
   {
@@ -672,7 +703,12 @@ const DESTINATIONS = [
     VisaManagerFee: "1770",
     AuthorityCharges: "750",
     GovernmentFee: "550",
-    countryType: "evisa"
+    countryType: "evisa",
+    subtitle: "Get visa in 4 -5 days",
+    bullets: [
+     "1200+ visas successfully Processed",
+      "online process",
+    ],
   },
 
   {

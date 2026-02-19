@@ -510,6 +510,7 @@ import {
     StyleSheet,
     TouchableOpacity,
     Dimensions,
+    TextInput,
 } from "react-native";
 import ScreenWrapper from "../../components/ScreenWrapper";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -530,7 +531,9 @@ const HighlightCard = ({ tag, icon, title, points }) => (
     <View style={styles.infoCard}>
         <Text style={styles.tag}>{tag}</Text>
 
-        <Ionicons name={icon} size={26} color={ORANGE} style={{ marginBottom: 6 }} />
+        <View style={styles.iconCircle}>
+            <Ionicons name={icon} size={22} color="#FFFFFF" />
+        </View>
 
         <Text style={styles.cardTitle}>{title}</Text>
 
@@ -590,12 +593,40 @@ const FaqItem = ({ question, answer }) => {
 export default function JoinAsTravelAgentScreen({ navigation }) {
     const scrollRef = useRef(null);
     const indexRef = useRef(0);
+    const [faqSearch, setFaqSearch] = useState("");
 
     const reviews = [
         { name: "Rohit Travels", text: "Fast processing and excellent support." },
         { name: "Skyline Tours", text: "Great margins and smooth workflow." },
         { name: "Global Holidays", text: "Very reliable visa partner." },
     ];
+    const faqItems = [
+        {
+            question: "How do I become a partner agent?",
+            answer: "Register with us and our team will onboard you.",
+        },
+        {
+            question: "Do you charge onboarding fees?",
+            answer: "No, there are zero upfront or onboarding charges.",
+        },
+        {
+            question: "How fast can visas be processed?",
+            answer: "Most visas are processed faster than industry standards.",
+        },
+        {
+            question: "Do agents get dedicated support?",
+            answer: "Yes, each partner gets priority support.",
+        },
+        {
+            question: "What compliance documents are required?",
+            answer: "Basic business and identity documents are required.",
+        },
+    ];
+    const filteredFaqItems = faqItems.filter(
+        (item) =>
+            item.question.toLowerCase().includes(faqSearch.toLowerCase()) ||
+            item.answer.toLowerCase().includes(faqSearch.toLowerCase())
+    );
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -626,7 +657,7 @@ export default function JoinAsTravelAgentScreen({ navigation }) {
                 {/* HERO */}
                 <View style={styles.heroCard}>
                     <Text style={styles.heroTitle}>
-                        Get Visa Processing at Agent Rates. Increase Your Revenue.
+                        Process Visa with B2B and Increase Your Success.
                     </Text>
                     <Text style={styles.heroSubtitle}>
                         Join India’s fastest-growing visa processing network with priority
@@ -660,7 +691,7 @@ export default function JoinAsTravelAgentScreen({ navigation }) {
 
                 <HighlightCard
                     tag="EARN MORE"
-                    icon="trending-up"
+                    icon="cash-outline"
                     title="Revenue Enhancement"
                     points={[
                         "Competitive agent commissions",
@@ -671,7 +702,7 @@ export default function JoinAsTravelAgentScreen({ navigation }) {
 
                 <HighlightCard
                     tag="SAVE TIME"
-                    icon="time-outline"
+                    icon="flash-outline"
                     title="Time & Resource Savings"
                     points={[
                         "No visa specialists required",
@@ -682,7 +713,7 @@ export default function JoinAsTravelAgentScreen({ navigation }) {
 
                 <HighlightCard
                     tag="REDUCE RISK"
-                    icon="shield-checkmark-outline"
+                    icon="shield-checkmark"
                     title="Higher Success Rate"
                     points={[
                         "Professional document checks",
@@ -693,7 +724,7 @@ export default function JoinAsTravelAgentScreen({ navigation }) {
 
                 <HighlightCard
                     tag="DELIGHT CLIENTS"
-                    icon="happy-outline"
+                    icon="sparkles-outline"
                     title="Client Satisfaction"
                     points={[
                         "Faster turnaround",
@@ -776,31 +807,24 @@ export default function JoinAsTravelAgentScreen({ navigation }) {
 
                 {/* FAQ */}
                 <Text style={styles.sectionTitle}>FAQs for Travel Agents</Text>
+                <View style={styles.faqSearchBox}>
+                    <Ionicons name="search-outline" size={18} color="#9CA3AF" />
+                    <TextInput
+                        value={faqSearch}
+                        onChangeText={setFaqSearch}
+                        placeholder="Search for answers"
+                        placeholderTextColor="#9CA3AF"
+                        style={styles.faqSearchInput}
+                    />
+                </View>
 
-                <FaqItem
-                    question="How do I become a partner agent?"
-                    answer="Register with us and our team will onboard you."
-                />
-
-                <FaqItem
-                    question="Do you charge onboarding fees?"
-                    answer="No, there are zero upfront or onboarding charges."
-                />
-
-                <FaqItem
-                    question="How fast can visas be processed?"
-                    answer="Most visas are processed faster than industry standards."
-                />
-
-                <FaqItem
-                    question="Do agents get dedicated support?"
-                    answer="Yes, each partner gets priority support."
-                />
-
-                <FaqItem
-                    question="What compliance documents are required?"
-                    answer="Basic business and identity documents are required."
-                />
+                {filteredFaqItems.length === 0 ? (
+                    <Text style={styles.noFaqText}>No matching FAQ found.</Text>
+                ) : (
+                    filteredFaqItems.map((item, index) => (
+                        <FaqItem key={index} question={item.question} answer={item.answer} />
+                    ))
+                )}
 
             </ScrollView>
         </ScreenWrapper>
@@ -845,7 +869,7 @@ const styles = StyleSheet.create({
 
     statBox: {
         width: "48%",
-        backgroundColor: "#F8FAFC",   // soft light background
+        backgroundColor: "#002151",   // soft light background
         borderRadius: 18,
         paddingVertical: 18,
         paddingHorizontal: 10,
@@ -862,7 +886,7 @@ const styles = StyleSheet.create({
     statValue: {
         fontSize: 20,
         fontWeight: "800",
-        color:"#df7727",
+        color: "#df7727",
         marginBottom: 6,
     },
 
@@ -950,6 +974,28 @@ const styles = StyleSheet.create({
         marginTop: 10,
         lineHeight: 18,
     },
+    faqSearchBox: {
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "#FFFFFF",
+        borderRadius: 999,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        marginBottom: 16,
+        borderWidth: 1,
+        borderColor: "#FFE5D0",
+    },
+    faqSearchInput: {
+        flex: 1,
+        marginLeft: 8,
+        fontSize: 14,
+        color: "#111827",
+    },
+    noFaqText: {
+        textAlign: "center",
+        color: "#6B7280",
+        marginBottom: 16,
+    },
     statsContainer: {
         backgroundColor: "#FFFFFF",
         borderRadius: 20,
@@ -980,17 +1026,29 @@ const styles = StyleSheet.create({
     },
 
     statValue: {
-        fontSize: 20,
+        fontSize: 22,
         fontWeight: "800",
-        color: "#111827",            // dark value
+        color: "#FFFFFF",     // ✅ pure white
         marginBottom: 6,
     },
 
     statLabel: {
         fontSize: 13,
         fontWeight: "600",
-        color: "#9CA3AF",            // light grey label
+        color: "#FFFFFF",     // ✅ white label
         textAlign: "center",
+        opacity: 0.85,        // subtle contrast
+    },
+
+    iconCircle: {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        backgroundColor: ORANGE,
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: 10,
+        elevation: 3,
     },
 
 });

@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 import { wp, verticalScale, moderateScale, RFValue } from "../utils/metrics";
 import { getFlagEmoji } from "../utils/countryIsoMap";
@@ -97,7 +98,9 @@ export default function CountryCards({ item, countrName, onPress }) {
       {Array.isArray(item.bullets) &&
         item.bullets.map((text, index) => (
           <View key={index} style={styles.bulletRow}>
-            <View style={styles.dot} />
+            <View style={styles.bulletIcon}>
+              <Ionicons name="checkmark" size={10} color="#FFFFFF" />
+            </View>
             <Text style={styles.bulletText}>{text}</Text>
           </View>
         ))}
@@ -109,7 +112,11 @@ export default function CountryCards({ item, countrName, onPress }) {
           <Text style={styles.perAdult}> per adult</Text>
         </Text>
 
-        <Text style={styles.fee}>All inclusive</Text>
+        <Text style={styles.fee}>
+          {serviceFee && Number(String(serviceFee).replace(/,/g, "")) > 0
+            ? `+ ${"\u20B9"}${serviceFee} service fees`
+            : "All inclusive final price"}
+        </Text>
       </View>
 
       {/* -------- APPLY BUTTON -------- */}
@@ -207,24 +214,30 @@ const styles = StyleSheet.create({
   bulletRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 6,
+    marginTop: 7,
   },
 
-  dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: "#FF6F00",
+  bulletIcon: {
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    backgroundColor: "#F97316",
+    alignItems: "center",
+    justifyContent: "center",
     marginRight: 8,
   },
 
   bulletText: {
     fontSize: RFValue(13),
-    color: "#555",
+    color: "#4B5563",
   },
 
   priceSection: {
     marginTop: verticalScale(14),
+    borderTopWidth: 1,
+    borderStyle: "dashed",
+    borderTopColor: "#E2CDB8",
+    paddingTop: verticalScale(10),
   },
 
   price: {
@@ -240,16 +253,17 @@ const styles = StyleSheet.create({
 
   fee: {
     fontSize: RFValue(12),
-    color: "#888",
-    marginTop: 2,
+    color: "#6B7280",
+    marginTop: 3,
   },
 
   applyButton: {
-    backgroundColor: "#F4511E",
+    backgroundColor: "#1E63B6",
     paddingVertical: verticalScale(12),
     borderRadius: 999,
     alignItems: "center",
     marginTop: verticalScale(14),
+    elevation: 2,
   },
 
   applyText: {

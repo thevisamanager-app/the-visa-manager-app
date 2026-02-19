@@ -1,5 +1,5 @@
 // src/api/user/travelDateService.js
-import firestore from "@react-native-firebase/firestore";
+import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import auth from "@react-native-firebase/auth";
 
 
@@ -25,7 +25,7 @@ export async function saveTravelDates(travelPayload) {
     .collection("travelDate") // matches rules you added
     .add({
       ...travelPayload,
-      createdAt: firestore.FieldValue.serverTimestamp(),
+      createdAt: serverTimestamp(),
     });
 }
 

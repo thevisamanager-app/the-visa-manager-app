@@ -238,7 +238,7 @@ import {
 } from "react-native";
 
 import auth from "@react-native-firebase/auth";
-import firestore from "@react-native-firebase/firestore";
+import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 
 import {
   wp,
@@ -313,7 +313,7 @@ export default function EditProfileScreen({ navigation }) {
             phone,
             gender,
             email, // store editable email safely here
-            updatedAt: firestore.FieldValue.serverTimestamp(),
+            updatedAt: serverTimestamp(),
           },
           { merge: true }
         );

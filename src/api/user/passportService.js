@@ -1,4 +1,4 @@
-// import firestore from "@react-native-firebase/firestore";
+// import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 // import auth from "@react-native-firebase/auth";
 // import storage from "@react-native-firebase/storage";
 // import uuid from "react-native-uuid";
@@ -41,7 +41,7 @@
 //     .add({
 //       ...passportPayload,
 //       userId: uid,
-//       createdAt: firestore.FieldValue.serverTimestamp(),
+//       createdAt: serverTimestamp(),
 //     });
 // }
 
@@ -195,7 +195,7 @@
 
 
 
-import firestore from "@react-native-firebase/firestore";
+import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import auth from "@react-native-firebase/auth";
 import storage from "@react-native-firebase/storage";
 import uuid from "react-native-uuid";
@@ -241,7 +241,7 @@ export async function savePassportData(passportPayload) {
     .add({
       ...passportPayload,
       userId: uid, // keep for convenience
-      createdAt: firestore.FieldValue.serverTimestamp(),
+      createdAt: serverTimestamp(),
     });
 }
 

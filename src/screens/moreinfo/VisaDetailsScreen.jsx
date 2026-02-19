@@ -38,6 +38,29 @@ const HIGHLIGHT_COUNTRIES = [
   "Italy",
 ];
 
+const splitProcessingText = (value = "") => {
+  const text = String(value || "").trim();
+  if (!text) return { start: "", highlight: "" };
+
+  const patterns = [
+    /(\d+\s*-\s*\d+\s*(?:business|working)?\s*days?)$/i,
+    /(\d+\s*(?:business|working)?\s*days?)$/i,
+    /(on\s+arrival(?:\s+\d+\s*(?:business|working)?\s*days?)?)$/i,
+    /(before\s+travel)$/i,
+  ];
+
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (match?.[1]) {
+      const highlight = match[1];
+      const start = text.slice(0, text.length - highlight.length).trimEnd();
+      return { start, highlight };
+    }
+  }
+
+  return { start: text, highlight: "" };
+};
+
 
 export default function VisaDetailsScreen({ navigation }) {
   const dispatch = useDispatch();
@@ -139,6 +162,8 @@ export default function VisaDetailsScreen({ navigation }) {
 
   const processTitle =
     countryConfig?.processTitle || `${countryName} Visa Process`;
+  const { start: processingStart, highlight: processingHighlight } =
+    splitProcessingText(countryConfig?.processingText);
 
 
   const faqs = getCountryFaqs(countryName);
@@ -198,7 +223,15 @@ export default function VisaDetailsScreen({ navigation }) {
               </Text>
 
               <Text style={styles.processingText}>
-                {countryConfig?.processingText}
+                {processingStart}
+                {processingHighlight ? (
+                  <>
+                    {processingStart ? " " : ""}
+                    <Text style={styles.processingTextHighlight}>
+                      {processingHighlight}
+                    </Text>
+                  </>
+                ) : null}
               </Text>
               {countryConfig?.processingNote ? (
                 <Text style={styles.processingNote}>
@@ -457,7 +490,10 @@ export default function VisaDetailsScreen({ navigation }) {
             <Icon name="search-outline" size={18} color="#9CA3AF" />
             <TextInput
               value={faqSearch}
-              onChangeText={setFaqSearch}
+              onChangeText={(text) => {
+                setFaqSearch(text);
+                setOpenIndex(null);
+              }}
               placeholder="Search for answers"
               placeholderTextColor="#9CA3AF"
               style={styles.faqSearchInput}
@@ -465,7 +501,10 @@ export default function VisaDetailsScreen({ navigation }) {
           </View>
 
           {/* FAQ list */}
-          {faqs.map((item, index) => (
+          {filteredFaqs.length === 0 ? (
+            <Text style={styles.noFaqText}>No matching FAQ found.</Text>
+          ) : (
+            filteredFaqs.map((item, index) => (
             <View key={index} style={styles.faqItem}>
 
               {/* QUESTION ROW */}
@@ -495,7 +534,8 @@ export default function VisaDetailsScreen({ navigation }) {
               )}
 
             </View>
-          ))}
+            ))
+          )}
 
 
           {finalIsVisaFree && (
@@ -719,6 +759,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 
+  processingTextHighlight: {
+    color: "#FF5C00",
+    fontWeight: "700",
+  },
   subText: { fontSize: 13, color: "#6B7280", marginTop: 4 },
   bold: { fontWeight: "700" },
 

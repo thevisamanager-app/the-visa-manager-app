@@ -14,7 +14,7 @@ import {
 } from "react-native";
 
 import auth from "@react-native-firebase/auth";
-import firestore from "@react-native-firebase/firestore";
+import firestore, { arrayUnion, serverTimestamp } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import { launchImageLibrary } from "react-native-image-picker";
 import { downloadAndZipImages } from "../utils/zipUtils";
@@ -285,7 +285,7 @@ const handleFilterPress = (filterKey) => {
       {
         currentStatus: statusText,
         updatedAt: Date.now(),
-        steps: firestore.FieldValue.arrayUnion({
+        steps: arrayUnion({
           text: statusText,
           time: new Date().toLocaleString(),
         }),
@@ -369,7 +369,7 @@ const handleFilterPress = (filterKey) => {
           url,
           type: file.type || "unknown",
           uploadedBy: auth().currentUser.uid,
-          createdAt: firestore.FieldValue.serverTimestamp(),
+          createdAt: serverTimestamp(),
         });
 
       Alert.alert("Success", "Document uploaded");

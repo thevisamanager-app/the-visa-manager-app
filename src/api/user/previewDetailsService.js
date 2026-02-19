@@ -1,5 +1,5 @@
 // // src/api/user/previewDetailsService.js
-// import firestore from "@react-native-firebase/firestore";
+// import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 // import auth from "@react-native-firebase/auth";
 // import storage from "@react-native-firebase/storage";
 // import uuid from "react-native-uuid";
@@ -33,12 +33,12 @@
 //     .collection("previewdetails")
 //     .add({
 //       ...previewPayload,
-//       createdAt: firestore.FieldValue.serverTimestamp(),
+//       createdAt: serverTimestamp(),
 //     });
 // }
 
 // src/api/user/previewDetailsService.js
-// import firestore from "@react-native-firebase/firestore";
+// import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 // import auth from "@react-native-firebase/auth";
 // import storage from "@react-native-firebase/storage";
 // import uuid from "react-native-uuid";
@@ -81,11 +81,11 @@
 //     .collection("items")
 //     .add({
 //       ...previewPayload,
-//       createdAt: firestore.FieldValue.serverTimestamp(),
+//       createdAt: serverTimestamp(),
 //     });
 // }
 
-// import firestore from "@react-native-firebase/firestore";
+// import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 // import auth from "@react-native-firebase/auth";
 // import storage from "@react-native-firebase/storage";
 // import uuid from "react-native-uuid";
@@ -124,13 +124,13 @@
 //     .collection("previewdetails")
 //     .add({
 //       ...previewPayload,
-//       createdAt: firestore.FieldValue.serverTimestamp(),
+//       createdAt: serverTimestamp(),
 //     });
 // }
 
 
 
-import firestore from "@react-native-firebase/firestore";
+import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import auth from "@react-native-firebase/auth";
 import storage from "@react-native-firebase/storage";
 import uuid from "react-native-uuid";
@@ -171,7 +171,7 @@ export async function uploadTicketFile(file) {
 //     .collection("previewdetails")
 //     .add({
 //       ...previewPayload,
-//       createdAt: firestore.FieldValue.serverTimestamp(),
+//       createdAt: serverTimestamp(),
 //     });
 //     console.log("🔥 STORED DOC ID ==>", res.id);
 // }
@@ -190,7 +190,7 @@ export async function savePreviewDetails(previewPayload) {
     .collection("previewdetails")
     .add({
       ...previewPayload,
-      createdAt: firestore.FieldValue.serverTimestamp(),
+      createdAt: serverTimestamp(),
     });
 }
 

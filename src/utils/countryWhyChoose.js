@@ -53,6 +53,48 @@ export const COUNTRY_WHY_CHOOSE = {
     { icon: "headset-outline", text: "Real Human Support & Solution" },
   ],
 
+    Kenya: [
+    { icon: "flash-outline", text: "1200+ Visa successfully Processed" },
+    { icon: "shield-checkmark-outline", text: "Reliable & Secure" },
+    { icon: "headset-outline", text: "Real Human Support & Solution" },
+  ],
+
+    Qatar: [
+    { icon: "flash-outline", text: "1200+ Visa successfully Processed" },
+    { icon: "shield-checkmark-outline", text: "Reliable & Secure" },
+    { icon: "headset-outline", text: "Real Human Support & Solution" },
+  ],
+
+    Russia: [
+    { icon: "flash-outline", text: "1200+ Visa successfully Processed" },
+    { icon: "shield-checkmark-outline", text: "Reliable & Secure" },
+    { icon: "headset-outline", text: "Real Human Support & Solution" },
+  ],
+
+
+   Combodia: [
+    { icon: "flash-outline", text: "1200+ Visa successfully Processed" },
+    { icon: "shield-checkmark-outline", text: "Reliable & Secure" },
+    { icon: "headset-outline", text: "Real Human Support & Solution" },
+  ],
+
+   Morocco: [
+    { icon: "flash-outline", text: "1200+ Visa successfully Processed" },
+    { icon: "shield-checkmark-outline", text: "Reliable & Secure" },
+    { icon: "headset-outline", text: "Real Human Support & Solution" },
+  ],
+
+    Egypt: [
+    { icon: "flash-outline", text: "1200+ Visa successfully Processed" },
+    { icon: "shield-checkmark-outline", text: "Reliable & Secure" },
+    { icon: "headset-outline", text: "Real Human Support & Solution" },
+  ],
+
+    Armenia: [
+    { icon: "flash-outline", text: "1200+ Visa successfully Processed" },
+    { icon: "shield-checkmark-outline", text: "Reliable & Secure" },
+    { icon: "headset-outline", text: "Real Human Support & Solution" },
+  ],
 };
 
 export const DEFAULT_WHY_CHOOSE = [

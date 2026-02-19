@@ -1,4 +1,4 @@
-import firestore from "@react-native-firebase/firestore";
+import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import auth from "@react-native-firebase/auth";
 
 export async function saveAnswers(answers) {
@@ -13,7 +13,7 @@ export async function saveAnswers(answers) {
     .collection("answers")
     .add({
       ...answers,  // flatten answers
-      createdAt: firestore.FieldValue.serverTimestamp(),
+      createdAt: serverTimestamp(),
     });
 }
 

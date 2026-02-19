@@ -1057,11 +1057,11 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ScreenWrapper from "../../components/ScreenWrapper";
 import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../../utils/metrics";
-
-import functions from "@react-native-firebase/functions";
-import auth from "@react-native-firebase/auth";
-import RNFS from "react-native-fs";
+import { getAuth } from "@react-native-firebase/auth/lib/modular";
 import FileViewer from "react-native-file-viewer";
+import { generateInvoicePdf } from "../../api/invoice/generateInvoicePdf";
+import { uploadInvoiceToFirebase } from "../../api/invoice/uploadInvoice";
+import { saveInvoiceRecord } from "../../api/invoice/saveInvoiceRecord";
 
 import { useSelector } from "react-redux";
 import LottieView from "lottie-react-native";
@@ -1099,7 +1099,7 @@ export default function CongratsScreen({ navigation, route }) {
         try {
             setLoading(true);
 
-            const user = auth().currentUser;
+            const user = getAuth().currentUser;
             if (!user) {
                 setLoading(false);
                 Alert.alert("Error", "Login required");
@@ -1107,31 +1107,30 @@ export default function CongratsScreen({ navigation, route }) {
             }
 
             const invoiceId = `INV-${Date.now()}`;
-            const callGenerateInvoice = functions().httpsCallable("generateInvoice");
-            console.log("PHONENO==>",user.email)
-            const response = await callGenerateInvoice({
+            const invoiceAmount = Number(amount || 0);
+            const userName = user.displayName ?? user.email ?? user.phoneNumber ?? "Guest User";
+
+            const localPath = await generateInvoicePdf({
+                userName,
                 invoiceId,
-                userName: user.displayName ?? user.email ?? user.phoneNumber ?? "Guest User",
-                userId: passport.firstName + " " + passport.lastName,
-                amount: Number(amount),
-                country: selected.countrName,
-                date: new Date().toLocaleString(),
-                email:user.email ?? " ",
-                phoneNumber:user.phoneNumber?? " ",
+                amount: invoiceAmount,
+                country: selected?.countrName || "N/A",
             });
 
-            if (!response?.data?.url) {
-                throw new Error("Invoice URL missing from server");
+            const invoiceUrl = await uploadInvoiceToFirebase(localPath, invoiceId, user.uid);
+            let saveResult = { ok: true };
+            try {
+                saveResult = await saveInvoiceRecord(user.uid, invoiceId, invoiceUrl, invoiceAmount);
+            } catch (saveErr) {
+                console.log("Invoice save skipped:", saveErr?.code || saveErr?.message || saveErr);
+                saveResult = { ok: false, reason: "save-error" };
             }
 
-            const pdfUrl = response.data.url;
-            const localPath = `${RNFS.DocumentDirectoryPath}/${invoiceId}.pdf`;
-
-            await RNFS.downloadFile({ fromUrl: pdfUrl, toFile: localPath }).promise;
-
             setLoading(false);
-            Alert.alert("Success", "Invoice downloaded!");
-            FileViewer.open(localPath);
+            if (saveResult?.ok === false) {
+                console.log("Invoice history save restricted by rules.");
+            }
+            await FileViewer.open(localPath);
 
         } catch (err) {
             setLoading(false);
@@ -1347,3 +1346,4 @@ const styles = StyleSheet.create({
         paddingBottom: verticalScale(12),
     },
 });
+

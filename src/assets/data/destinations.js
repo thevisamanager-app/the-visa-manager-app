@@ -19,8 +19,8 @@ const DESTINATIONS = [
     countrName: "Singapore",
     countryType: "evisa",
 
-    VisaManagerFee: "1180",
-    AuthorityCharges: "670",
+    VisaManagerFee: "670",
+    AuthorityCharges: "1180",
     GovernmentFee: "2100",
     subtitle: "Get Visa in 1-3 Business Days",
     bullets: [
@@ -38,9 +38,9 @@ const DESTINATIONS = [
     AuthorityCharges: "1200",
     GovernmentFee: "5800",
     bullets: [
-      "Visa on arrival / DAC",
-      "Fast approval process",
-      "No embassy visit required"
+      "Quick & Easy Process",
+      "Trusted by 10k+ Customers",
+      "120+ countries"
     ],
   },
 
@@ -52,9 +52,9 @@ const DESTINATIONS = [
     AuthorityCharges: "0",
     GovernmentFee: "2900",
     bullets: [
-      "Visa on arrival / DAC",
-      "Fast approval process",
-      "No embassy visit required"
+       "Quick & Easy Process",
+      "Trusted by 10k+ Customers",
+      "120+ countries"
     ],
 
   },
@@ -110,7 +110,12 @@ const DESTINATIONS = [
     AuthorityCharges: "0",
     GovernmentFee: "5800",
     currency: "",
-    countryType: "evisa"
+    countryType: "evisa",
+    bullets: [
+      "Quick & Easy Process",
+      "Trusted by 10k+ Customers",
+      "120+ countries"
+    ],
   },
 
   {
@@ -123,8 +128,12 @@ const DESTINATIONS = [
       Double: "3012",
       multiple: "4303 "
     },
-    countryType: "evisa"
-
+    countryType: "evisa",
+     bullets: [
+      "Quick & Easy Process",
+      "Trusted by 10k+ Customers",
+      "120+ countries"
+    ],
   },
 
   {
@@ -133,12 +142,7 @@ const DESTINATIONS = [
     VisaManagerFee: "1770 per traveler",
     AuthorityCharges: "0",
     GovernmentFee: "3600",
-    countryType: "evisa",
-    subtitle: "Get visa in 6-7 days",
-    bullets: [
-     "1200+ visas successfully Processed",
-      "online process",
-    ],
+    countryType: "evisa"
   },
 
   {
@@ -147,12 +151,7 @@ const DESTINATIONS = [
     VisaManagerFee: "3540",
     AuthorityCharges: "944",
     GovernmentFee: "8200",
-    countryType: "evisa",
-     subtitle: "Get visa in 6 to 7 days",
-    bullets: [
-      "1200 + Visa Successfully Processed",
-      "Online Process"
-    ],
+    countryType: "evisa"
   },
 
   {
@@ -161,7 +160,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2948.82",
     AuthorityCharges: "2311.62",
     GovernmentFee: "9100",
-    countryType: "Schengen"
+    countryType: "Schengen",
+     bullets: [
+      "Quick & Easy Process",
+      "Trusted by 10k+ Customers",
+      "120+ countries"
+    ],
   },
 
   {
@@ -170,7 +174,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2948.82",
     AuthorityCharges: "537",
     GovernmentFee: "9200 ",
-    countryType: "Schengen"
+    countryType: "Schengen",
+     bullets: [
+      "Quick & Easy Process",
+      "Trusted by 10k+ Customers",
+      "120+ countries"
+    ],
   },
 
   {
@@ -179,7 +188,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2948.82",
     AuthorityCharges: "0",
     GovernmentFee: "17020",
-    countryType: "Stamp Visa"
+    countryType: "Stamp Visa",
+      bullets: [
+      "Quick & Easy Process",
+      "Trusted by 10k+ Customers",
+      "120+ countries"
+    ],
   },
 
   {
@@ -188,8 +202,12 @@ const DESTINATIONS = [
     VisaManagerFee: "3540",
     AuthorityCharges: "944",
     GovernmentFee: "8200",
-    countryType: "Schengen"
-
+    countryType: "Schengen",
+     bullets: [
+      "Quick & Easy Process",
+      "Trusted by 10k+ Customers",
+      "120+ countries"
+    ],
   },
 
   {
@@ -198,12 +216,7 @@ const DESTINATIONS = [
     VisaManagerFee: "2949",
     AuthorityCharges: "944",
     GovernmentFee: "5000",
-    countryType: "evisa",
-    subtitle: "Get Visa in 4-5 Working days",
-    bullets: [
-      "1200+ visas successfully Processed",
-      "online process",
-    ]
+    countryType: "evisa"
   },
 
   {
@@ -212,7 +225,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2949",
     AuthorityCharges: "944",
     GovernmentFee: "5000",
-    countryType: "evisa"
+    countryType: "evisa",
+      bullets: [
+      "Quick & Easy Process",
+      "Trusted by 10k+ Customers",
+      "120+ countries"
+    ],
   },
 
   {
@@ -221,7 +239,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2949",
     AuthorityCharges: "944",
     GovernmentFee: "6395",
-    countryType: "evisa"
+    countryType: "evisa",
+     bullets: [
+      "Quick & Easy Process",
+      "Trusted by 10k+ Customers",
+      "120+ countries"
+    ],
   },
 
   {
@@ -230,7 +253,12 @@ const DESTINATIONS = [
     VisaManagerFee: "4130",
     AuthorityCharges: "0",
     GovernmentFee: "15400 ",
-    countryType: "Stamp Visa"
+    countryType: "Stamp Visa",
+     bullets: [
+      "Quick & Easy Process",
+      "Trusted by 10k+ Customers",
+      "120+ countries"
+    ],
   },
 
   {
@@ -239,7 +267,12 @@ const DESTINATIONS = [
     VisaManagerFee: "3540",
     AuthorityCharges: "944",
     GovernmentFee: "9743",
-    countryType: "Schengen"
+    countryType: "Schengen",
+     bullets: [
+      "Quick & Easy Process",
+      "Trusted by 10k+ Customers",
+      "120+ countries"
+    ],
   },
 
   {
@@ -248,7 +281,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2950",
     AuthorityCharges: "944",
     GovernmentFee: "9200",
-    countryType: "evisa"
+    countryType: "Schengen",
+     bullets: [
+      "Quick & Easy Process",
+      "Trusted by 10k+ Customers",
+      "120+ countries"
+    ],
   },
 
   {
@@ -257,7 +295,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2948.82",
     AuthorityCharges: "944",
     GovernmentFee: "1740(",
-    countryType: "evisa"
+    countryType: "Schengen",
+     bullets: [
+      "Quick & Easy Process",
+      "Trusted by 10k+ Customers",
+      "120+ countries"
+    ],
   },
 
   {
@@ -266,7 +309,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2948.82",
     AuthorityCharges: "944",
     GovernmentFee: "3000",
-    countryType: "evisa"
+    countryType: "evisa",
+      bullets: [
+      "Quick & Easy Process",
+      "Trusted by 10k+ Customers",
+      "120+ countries"
+    ],
   },
 
   {
@@ -275,7 +323,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2948.82",
     AuthorityCharges: "1931.66",
     GovernmentFee: "9200 ",
-    countryType: "evisa"
+    countryType: "Schengen",
+      bullets: [
+      "Quick & Easy Process",
+      "Trusted by 10k+ Customers",
+      "120+ countries"
+    ],
   },
 
   {
@@ -284,7 +337,12 @@ const DESTINATIONS = [
     VisaManagerFee: "3540",
     AuthorityCharges: "944",
     GovernmentFee: "5720",
-    countryType: "evisa"
+    countryType: "evisa",
+     bullets: [
+      "Quick & Easy Process",
+      "Trusted by 10k+ Customers",
+      "120+ countries"
+    ],
   },
 
   {
@@ -308,7 +366,12 @@ const DESTINATIONS = [
     VisaManagerFee: "1770",
     AuthorityCharges: "944",
     GovernmentFee: "4306",
-    countryType: "evisa"
+    countryType: "evisa",
+    bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
   },
 
   {
@@ -317,7 +380,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2948.82",
     AuthorityCharges: "944",
     GovernmentFee: "2500",
-    countryType: "evisa"
+    countryType: "evisa",
+     bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
   },
 
   {
@@ -326,7 +394,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2948.82",
     AuthorityCharges: "944",
     GovernmentFee: "10870",
-    countryType: "evisa"
+    countryType: "evisa",
+     bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
   },
 
   {
@@ -335,7 +408,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2948.82",
     AuthorityCharges: "944",
     GovernmentFee: "9100",
-    countryType: "Schengen"
+    countryType: "Schengen",
+     bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
   },
 
   {
@@ -344,7 +422,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2948.82",
     AuthorityCharges: "944",
     GovernmentFee: "6500",
-    countryType: "evisa"
+    countryType: "evisa",
+     bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
   },
 
   {
@@ -353,7 +436,12 @@ const DESTINATIONS = [
     VisaManagerFee: "4130",
     AuthorityCharges: "0",
     GovernmentFee: "12400",
-    countryType: "Stamp Visa"
+    countryType: "Stamp Visa",
+    bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
   },
 
   {
@@ -362,7 +450,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2948.82",
     AuthorityCharges: "1931.66",
     GovernmentFee: "9100",
-    countryType: "Schengen"
+    countryType: "Schengen",
+     bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
 
   },
 
@@ -372,7 +465,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2950",
     AuthorityCharges: "2070",
     GovernmentFee: "8600",
-    countryType: "Schengen"
+    countryType: "Schengen",
+     bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
   },
 
   {
@@ -397,7 +495,12 @@ const DESTINATIONS = [
     VisaManagerFee: "1770",
     AuthorityCharges: "750",
     GovernmentFee: "550",
-    countryType: "Stamp Visa"
+    countryType: "Stamp Visa",
+      bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
   },
 
   {
@@ -422,7 +525,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2950",
     AuthorityCharges: "0",
     GovernmentFee: "9200",
-    countryType: "Schengen"
+    countryType: "Schengen",
+     bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
   },
 
   {
@@ -431,7 +539,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2950",
     AuthorityCharges: "0",
     GovernmentFee: "9200",
-    countryType: "Schengen"
+    countryType: "Schengen",
+     bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
   },
 
   {
@@ -440,7 +553,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2950",
     AuthorityCharges: "0",
     GovernmentFee: "9200",
-    countryType: "Schengen"
+    countryType: "Schengen",
+     bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
   },
 
   {
@@ -449,7 +567,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2950",
     AuthorityCharges: "0",
     GovernmentFee: "9200",
-    countryType: "Schengen"
+    countryType: "Schengen",
+     bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
   },
 
   {
@@ -458,7 +581,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2950",
     AuthorityCharges: "0",
     GovernmentFee: "9200",
-    countryType: "Schengen"
+    countryType: "Schengen",
+     bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
   },
 
   {
@@ -467,7 +595,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2950",
     AuthorityCharges: "0",
     GovernmentFee: "9200",
-    countryType: "Schengen"
+    countryType: "Schengen",
+     bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
   },
 
   {
@@ -476,7 +609,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2950",
     AuthorityCharges: "0",
     GovernmentFee: "9200",
-    countryType: "Schengen"
+    countryType: "Schengen",
+     bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
   },
 
   {
@@ -485,7 +623,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2950",
     AuthorityCharges: "0",
     GovernmentFee: "9200",
-    countryType: "Schengen"
+    countryType: "Schengen",
+     bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
   },
 
   {
@@ -494,7 +637,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2950",
     AuthorityCharges: "0",
     GovernmentFee: "9200",
-    countryType: "Schengen"
+    countryType: "Schengen",
+     bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
   },
   {
     id: 47,
@@ -502,7 +650,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2950",
     AuthorityCharges: "0",
     GovernmentFee: "9200",
-    countryType: "Schengen"
+    countryType: "Schengen",
+     bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
   },
 
   {
@@ -511,7 +664,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2950",
     AuthorityCharges: "0",
     GovernmentFee: "9200",
-    countryType: "Schengen"
+    countryType: "Schengen",
+     bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
   },
 
   {
@@ -520,7 +678,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2950",
     AuthorityCharges: "0",
     GovernmentFee: "9200",
-    countryType: "Schengen"
+    countryType: "Schengen",
+     bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
   },
 
   {
@@ -529,7 +692,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2950",
     AuthorityCharges: "0",
     GovernmentFee: "9200",
-    countryType: "Schengen"
+    countryType: "Schengen",
+     bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
   },
 
   {
@@ -538,7 +706,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2950",
     AuthorityCharges: "0",
     GovernmentFee: "9200",
-    countryType: "Schengen"
+    countryType: "Schengen",
+     bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
   },
 
   {
@@ -547,7 +720,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2950",
     AuthorityCharges: "0",
     GovernmentFee: "9200",
-    countryType: "Schengen"
+    countryType: "Schengen",
+     bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
   },
 
   {
@@ -556,7 +734,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2950",
     AuthorityCharges: "0",
     GovernmentFee: "9200",
-    countryType: "Schengen"
+    countryType: "Schengen",
+     bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
   },
 
   {
@@ -565,7 +748,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2950",
     AuthorityCharges: "944",
     GovernmentFee: "5000",
-    countryType: "Schengen"
+    countryType: "Schengen",
+     bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
   },
 
   {
@@ -574,7 +762,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2950",
     AuthorityCharges: "0",
     GovernmentFee: "9200",
-    countryType: "Schengen"
+    countryType: "Schengen",
+     bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
   },
 
   {
@@ -583,7 +776,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2950",
     AuthorityCharges: "0",
     GovernmentFee: "9200",
-    countryType: "Schengen"
+    countryType: "Schengen",
+     bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
   },
 
   {
@@ -592,7 +790,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2950",
     AuthorityCharges: "0",
     GovernmentFee: "9200",
-    countryType: "Schengen"
+    countryType: "Schengen",
+     bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
   },
 
   {
@@ -601,7 +804,12 @@ const DESTINATIONS = [
     VisaManagerFee: "2950",
     AuthorityCharges: "0",
     GovernmentFee: "9200",
-    countryType: "Schengen"
+    countryType: "Schengen",
+     bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
   },
 
   {
@@ -610,18 +818,13 @@ const DESTINATIONS = [
     VisaManagerFee: "3540",
     AuthorityCharges: "944",
     GovernmentFee: "9743",
-    countryType: "Schengen"
+    countryType: "Schengen",
+   bullets: [
+      "Mandatory for Indain Travellers",
+      "15k+ ETAs Processed",
+      "Online Process"
+    ],
   },
-
-  {
-    id: 60,
-    countrName: 'Bhutan',
-    VisaManagerFee: "800",
-    AuthorityCharges: "0",
-    GovernmentFee: "0",
-    countryType: "DAC"
-  },
-
   {
     id: 61,
     countrName: "Nepal",
@@ -629,7 +832,6 @@ const DESTINATIONS = [
     AuthorityCharges: "0",
     GovernmentFee: "0",
     countryType: "Visa-Free",
-
     bullets: [
       "Quick and Easy Process",
       "Visas Processed",
@@ -659,12 +861,7 @@ const DESTINATIONS = [
     AuthorityCharges: "750",
     GovernmentFee: "550",
     currency: "",
-    countryType: "evisa",
-    subtitle: "Get Visa in 6-7 Business Days",
-    bullets: [
-      "1200+ visas successfully Processed",
-      "online process",
-    ],
+    countryType: "evisa"
   },
 
   {
@@ -673,12 +870,7 @@ const DESTINATIONS = [
     VisaManagerFee: "1770",
     AuthorityCharges: "750",
     GovernmentFee: "550",
-    countryType: "evisa",
-    subtitle: "Get Visa in 2-3 Working Days",
-    bullets: [
-      "1200+ visas successfully Processed",
-      "online process",
-    ],
+    countryType: "evisa"
   },
 
   {
@@ -703,12 +895,7 @@ const DESTINATIONS = [
     VisaManagerFee: "1770",
     AuthorityCharges: "750",
     GovernmentFee: "550",
-    countryType: "evisa",
-    subtitle: "Get visa in 4 -5 days",
-    bullets: [
-     "1200+ visas successfully Processed",
-      "online process",
-    ],
+    countryType: "evisa"
   },
 
   {
@@ -717,7 +904,12 @@ const DESTINATIONS = [
     VisaManagerFee: "1770",
     AuthorityCharges: "750",
     GovernmentFee: "550",
-    countryType: "evisa"
+    countryType: "evisa",
+     bullets: [
+      "Quick and Easy Process",
+      "Visas Processed",
+      "24x7 Support",
+    ],
   },
 
   {
@@ -726,7 +918,12 @@ const DESTINATIONS = [
     VisaManagerFee: "1770",
     AuthorityCharges: "750",
     GovernmentFee: "550",
-    countryType: "evisa"
+    countryType: "evisa",
+     bullets: [
+      "Quick and Easy Process",
+      "Visas Processed",
+      "24x7 Support",
+    ],
   },
 
   {
@@ -735,7 +932,12 @@ const DESTINATIONS = [
     VisaManagerFee: "1770",
     AuthorityCharges: "750",
     GovernmentFee: "550",
-    countryType: "evisa"
+    countryType: "evisa",
+     bullets: [
+      "Quick and Easy Process",
+      "Visas Processed",
+      "24x7 Support",
+    ],
   },
 
   {
@@ -744,7 +946,12 @@ const DESTINATIONS = [
     VisaManagerFee: "1770",
     AuthorityCharges: "750",
     GovernmentFee: "550",
-    countryType: "evisa"
+    countryType: "evisa",
+     bullets: [
+      "Quick and Easy Process",
+      "Visas Processed",
+      "24x7 Support",
+    ],
   },
 
   {
@@ -753,7 +960,12 @@ const DESTINATIONS = [
     VisaManagerFee: "1770",
     AuthorityCharges: "750",
     GovernmentFee: "550",
-    countryType: "evisa"
+    countryType: "evisa",
+     bullets: [
+      "Quick and Easy Process",
+      "Visas Processed",
+      "24x7 Support",
+    ],
   },
 
   {
@@ -762,7 +974,12 @@ const DESTINATIONS = [
     VisaManagerFee: "3540",
     AuthorityCharges: "1951",
     GovernmentFee: "2900",
-    countryType: "Stamp Visa"
+    countryType: "Stamp Visa",
+     bullets: [
+      "Quick and Easy Process",
+      "Visas Processed",
+      "24x7 Support",
+    ],
   },
 
   {
@@ -771,7 +988,12 @@ const DESTINATIONS = [
     VisaManagerFee: "3540",
     AuthorityCharges: "900",
     GovernmentFee: "11700",
-    countryType: "Stamp Visa"
+    countryType: "Stamp Visa",
+     bullets: [
+      "Quick and Easy Process",
+      "Visas Processed",
+      "24x7 Support",
+    ],
   },
 
   {
@@ -780,7 +1002,12 @@ const DESTINATIONS = [
     VisaManagerFee: "3540",
     AuthorityCharges: "3700",
     GovernmentFee: "9318",
-    countryType: "Stamp Visa"
+    countryType: "Stamp Visa",
+     bullets: [
+      "Quick and Easy Process",
+      "Visas Processed",
+      "24x7 Support",
+    ],
   },
 
   {
@@ -794,7 +1021,7 @@ const DESTINATIONS = [
     bullets: [
       "Quick & Easy Processed",
       "Visas Processed",
-      "24x7 Support"
+      "120+ countries"
     ],
   },
 
@@ -809,7 +1036,7 @@ const DESTINATIONS = [
     bullets: [
       "Quick and Easy Process",
       "Visas Processed",
-      "24x7 Support",
+      "120+ countries",
     ],
   },
 
@@ -824,7 +1051,7 @@ const DESTINATIONS = [
     bullets: [
       "Quick and Easy Process",
       "Visas Processed",
-      "24x7 Support",
+      "120+ countries",
     ],
   },
 
@@ -840,7 +1067,7 @@ const DESTINATIONS = [
     bullets: [
       "Quick and Easy Process",
       "Visas Processed",
-      "24x7 Support",
+      "120+ countries",
     ],
   },
 
@@ -856,7 +1083,7 @@ const DESTINATIONS = [
     bullets: [
       "Quick and Easy Process",
       "Visas Processed",
-      "24x7 Support",
+      "120+ countries",
     ],
   },
 
@@ -872,7 +1099,7 @@ const DESTINATIONS = [
     bullets: [
       "Quick and Easy Process",
       "Visas Processed",
-      "24x7 Support",
+      "120+ countries",
     ],
   },
 
@@ -887,7 +1114,7 @@ const DESTINATIONS = [
     bullets: [
       "Quick and Easy Process",
       "Visas Processed",
-      "24x7 Support",
+      "120+ countries",
     ],
   },
 
@@ -902,7 +1129,7 @@ const DESTINATIONS = [
     bullets: [
       "Quick and Easy Process",
       "Visas Processed",
-      "24x7 Support",
+      "120+ countries",
     ],
   },
 
@@ -917,7 +1144,7 @@ const DESTINATIONS = [
     bullets: [
       "Quick and Easy Process",
       "Visas Processed",
-      "24x7 Support",
+      "120+ countries",
     ],
   },
 
@@ -932,7 +1159,7 @@ const DESTINATIONS = [
     bullets: [
       "Quick and Easy Process",
       "Visas Processed",
-      "24x7 Support",
+      "120+ countries",
     ],
   },
 
@@ -947,7 +1174,7 @@ const DESTINATIONS = [
     bullets: [
       "Quick and Easy Process",
       "Visas Processed",
-      "24x7 Support",
+      "120+ countries",
     ],
   },
 
@@ -962,7 +1189,7 @@ const DESTINATIONS = [
     bullets: [
       "Quick and Easy Process",
       "Visas Processed",
-      "24x7 Support",
+      "120+ countries",
     ],
   },
 
@@ -977,7 +1204,7 @@ const DESTINATIONS = [
     bullets: [
       "Quick and Easy Process",
       "Visas Processed",
-      "24x7 Support",
+      "120+ countries",
     ],
   },
 
@@ -993,7 +1220,7 @@ const DESTINATIONS = [
     bullets: [
       "Quick and Easy Process",
       "Visas Processed",
-      "24x7 Support",
+      "120+ countries",
     ],
   },
 
@@ -1008,7 +1235,7 @@ const DESTINATIONS = [
     bullets: [
       "Quick and Easy Process",
       "Visas Processed",
-      "24x7 Support",
+      "120+ countries",
     ],
   },
 
@@ -1023,7 +1250,7 @@ const DESTINATIONS = [
     bullets: [
       "Quick and Easy Process",
       "Visas Processed",
-      "24x7 Support",
+      "120+ countries",
     ],
   },
 
@@ -1039,7 +1266,7 @@ const DESTINATIONS = [
     bullets: [
       "Quick and Easy Process",
       "Visas Processed",
-      "24x7 Support",
+      "120+ countries",
     ],
   },
 
@@ -1055,7 +1282,7 @@ const DESTINATIONS = [
     bullets: [
       "Quick and Easy Process",
       "Visas Processed",
-      "24x7 Support",
+      "120+ countries",
     ],
   },
 ];

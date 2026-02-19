@@ -17,6 +17,7 @@ export const COUNTRY_IMAGES = {
   Cyprus: require("../assets/images/Cyprus.webp"),
   Czechia: require("../assets/images/Czechia.webp"),
   Denmark: require("../assets/images/Denmark.webp"),
+  Dominica:require("../assets/images/Dominica.webp"),
   Egypt: require("../assets/images/Egypt.webp"),
   Estonia: require("../assets/images/Estonia.webp"),
   Finland: require("../assets/images/Finland.webp"),
@@ -24,9 +25,12 @@ export const COUNTRY_IMAGES = {
   Georgia: require("../assets/images/Georgia.webp"),
   Germany: require("../assets/images/Germany.webp"),
   Greece: require("../assets/images/Greece.webp"),
-  "Hong Kong": require("../assets/images/Hong Kong.webp"),
+  "Hong-Kong": require("../assets/images/Hong-Kong.webp"),
   Italy: require("../assets/images/Italy.webp"),
+  Iceland:require("../assets/images/Iceland.webp"),
+  Ireland:require("../assets/images/Ireland.webp"),
   Japan: require("../assets/images/Japan.webp"),
+  Jamaica:require("../assets/images/Jamaica.webp"),
   Kenya: require("../assets/images/Kenya.webp"),
   Latvia: require("../assets/images/Latvia.webp"),
   Lebanon: require("../assets/images/Lebanon.webp"),
@@ -40,12 +44,17 @@ export const COUNTRY_IMAGES = {
   Mauritius: require("../assets/images/Mauritius.webp"),
   Mongolia: require("../assets/images/Mongolia.webp"),
   Morocco: require("../assets/images/Morocco.webp"),
+  Micronesia:require("../assets/images/Micronesia.webp"),
   Nepal: require("../assets/images/Nepal.webp"),
   Netherland: require("../assets/images/Netherland.webp"),
-  "New Zealand": require("../assets/images/New Zealand.webp"),
+  New_Zealand: require("../assets/images/New_Zealand.webp"),
   Nigeria: require("../assets/images/Nigeria.webp"),
   Norway: require("../assets/images/Norway.webp"),
   Oman: require("../assets/images/Oman.webp"),
+  philippines:require("../assets/images/philippines.webp"),
+  Poland:require("../assets/images/Poland.webp"),
+  Portugal:require("../assets/images/Portugal.webp"),
+  Qatar:require("../assets/images/Qatar.webp"),
   Romania: require("../assets/images/Romania.webp"),
   Russia: require("../assets/images/Russia.webp"),
   Colombia: require("../assets/images/Colombia.webp"),
@@ -78,19 +87,16 @@ export const COUNTRY_IMAGES = {
   "British Virgin Islands": require("../assets/images/British Virgin Islands.webp"),
   Barbados: require("../assets/images/Barbados.webp"),
   "Cook Islands": require("../assets/images/Cook Islands.webp"),
-  Barbados: require("../assets/images/Barbados.webp"),
-  Qatar: require("../assets/images/Qatar.webp"),
-  Portugal: require("../assets/images/Portugal.webp"),
-  Philippines: require("../assets/images/Philippines.webp"),
-  Poland: require("../assets/images/Poland.webp"),
-  Hungary: require("../assets/images/Hungary.webp"),
-  Iceland: require("../assets/images/Iceland.webp"),
-  Ireland: require("../assets/images/Ireland.webp"),
-  Jamaica: require("../assets/images/Jamaica.webp"),
-  Micronesia: require("../assets/images/Micronesia.webp"),
-  Dominica: require("../assets/images/Dominica.webp"),
-  Réunion: require("../assets/images/Réunion.webp"),
-"St. Vincent & Grenadines": require("../assets/images/St. Vincent & Grenadines.webp"),
+
+
+
+
+
+
+
+
+
+
 
 
 

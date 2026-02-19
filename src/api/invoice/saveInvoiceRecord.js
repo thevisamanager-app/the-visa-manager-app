@@ -1,15 +1,17 @@
-import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
+import firestore from "@react-native-firebase/firestore";
 
 export const saveInvoiceRecord = async (userId, invoiceId, downloadURL, amount) => {
-  await firestore()
-    .collection("users")
-    .doc(userId)
-    .collection("invoices")
-    .doc(invoiceId)
-    .set({
+  const db = getFirestore();
+  const usersRef = collection(db, "users");
+  const userRef = doc(usersRef, userId);
+  const invoicesRef = collection(userRef, "invoices");
+  const invoiceRef = doc(invoicesRef, invoiceId);
+
+  try {
+    await setDoc(invoiceRef, {
       id: invoiceId,
       url: downloadURL,
       amount,
-      createdAt: serverTimestamp(),
+      createdAt: firestore.FieldValue.serverTimestamp(),
     });
 };

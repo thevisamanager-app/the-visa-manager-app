@@ -7,7 +7,7 @@ export const COUNTRY_VISA_CONFIG = {
         processingText: "Apply Now & Get it by 1 Working Days",
 
 
-        visaInfoTitle: "Sri Lanka Visa Information",
+        visaInfoTitle: "Sri Lanka Visa Information",    
         requirementsTitle: "Sri Lanka Visa Requirements",
 
 
@@ -243,8 +243,8 @@ export const COUNTRY_VISA_CONFIG = {
 
         visaInfo: {
             visaType: "Tourist",
-            stay: "15 days",
-            validity: "90 days",
+            stay: "14 days",
+            validity: "14 days",
             entry: "Single",
             method: "Digital",
         },
@@ -432,7 +432,7 @@ export const COUNTRY_VISA_CONFIG = {
         ],
 
         visaInfo: {
-            visaType: "Tourist (Visa on Arrival)",
+            visaType: "Tourist",
             stay: "30 days",
             validity: "60 days",
             entry: "Single",
@@ -441,7 +441,7 @@ export const COUNTRY_VISA_CONFIG = {
 
         requirements: [
             "Valid passport with at least six months validity",
-            "Confirmed return air ticket",
+            "Confirmed air ticket",
             "Confirmed hotel or accommodation details",
         ],
     },
@@ -1885,8 +1885,8 @@ export const COUNTRY_VISA_CONFIG = {
 
         stepMeta: [
             { icon: "document-text-outline", label: "Share traveler details" },
-            { icon: "card-outline", label: "Pay service fees" },
-            { icon: "send-outline", label: "Submit to authorities" },
+            { icon: "card-outline", label: "Pay Visa fees" },
+            { icon: "send-outline", label: "Submit to Immigration " },
             { icon: "checkmark-done-outline", label: "Receive approval" },
         ],
 
@@ -1934,11 +1934,10 @@ export const COUNTRY_VISA_CONFIG = {
         },
 
         requirements: [
-            "Valid passport with at least six months validity",
-            "Confirmed flights and return itinerary",
-            "Recent passport-size photograph with a white background.",
-            "Hotel bookings or host contact details.",
-            "Bank statement or proof of funds"
+            "Thailand Digital Arrival Card (TDAC) Application must be submitted within 3 days before the planned date of arrival, as per Thailand immigration norms.",
+            "Passport Validity Passport must be valid for at least six months from the date of return and have minimum two blank pages.",
+            "Visa-Free Travel, TDAC Mandatory Indian passport holders enjoy visa-free travel to Thailand, but TDAC application is compulsory.",
+            "Additional Documents (If Required) TVM Visa Manager will contact you if any additional documents are required.",
         ],
     },
 

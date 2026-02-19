@@ -66,11 +66,14 @@ export default function VisaDetailsScreen({ navigation }) {
   const dispatch = useDispatch();
   const selected = useSelector((state) => state.destinations.selected);
   const countryName = selected?.countrName || "Country";
+  const normalizedCountryName = countryName?.trim();
   const applyRoute =
     COUNTRY_APPLY_ROUTES?.[countryName] ||
     COUNTRY_APPLY_ROUTES?.DEFAULT ||
     "TravelDateScreen";
   const [faqSearch, setFaqSearch] = useState("");
+  const normalizeCountryKey = (name = "") =>
+    String(name).toLowerCase().replace(/[^a-z]/g, "");
   const toNumber = (val) => {
     if (!val) return 0;
     if (typeof val === "number") return val;
@@ -80,9 +83,12 @@ export default function VisaDetailsScreen({ navigation }) {
     return 0;
   };
 
-  const destinationPrice = DESTINATIONS.find(
-    (item) => item.countrName === countryName
-  );
+  const destinationPrice =
+    DESTINATIONS.find(
+      (item) =>
+        normalizeCountryKey(item.countrName) ===
+        normalizeCountryKey(normalizedCountryName)
+    ) || DESTINATIONS.find((item) => item.countrName === countryName);
   //const travellers = 1;
   const [travellers, setTravellers] = useState(1);
 
@@ -90,12 +96,14 @@ export default function VisaDetailsScreen({ navigation }) {
   const authorityCharges = toNumber(destinationPrice?.AuthorityCharges);
   const governmentFee = toNumber(destinationPrice?.GovernmentFee);
 
-  const payNow = governmentFee * travellers;
-  const payLater = (visaManagerFee + authorityCharges) * travellers;
-  const totalAmount = payNow + payLater;
+  const governmentTotal = governmentFee * travellers;
+  const tvmTotal = visaManagerFee * travellers;
+  const authorityTotal = authorityCharges * travellers;
+  const payNow = governmentTotal;
+  const payLater = tvmTotal + authorityTotal;
+  const totalAmount = governmentTotal + tvmTotal + authorityTotal;
   const isoCode = (COUNTRY_ISO_MAP[countryName] || "un").toLowerCase();
   const [activeStep, setActiveStep] = useState(0);
-  const normalizedCountryName = countryName?.trim();
   const countryConfig = COUNTRY_VISA_CONFIG[normalizedCountryName];
   const highlightCountries = DESTINATIONS.filter((item) =>
     HIGHLIGHT_COUNTRIES.some(
@@ -615,27 +623,41 @@ export default function VisaDetailsScreen({ navigation }) {
                 <View style={styles.rowLeft}>
                   <Icon name="card-outline" size={18} color="#374151" />
                   <View>
-                    <Text style={styles.rowTitle}>Pay Now</Text>
+                    <Text style={styles.rowTitle}>Government Fee</Text>
                     <Text style={styles.rowSub}>
-                      Government Fees × {travellers}
+                      Government Fee x {travellers}
                     </Text>
                   </View>
                 </View>
-                <Text style={styles.rowAmount}>₹{payNow}</Text>
+                <Text style={styles.rowAmount}>₹{governmentTotal}</Text>
               </View>
 
-              {/* PAY LATER ROW */}
+              {/* TVM FEE ROW */}
               <View style={styles.priceRow}>
                 <View style={styles.rowLeft}>
                   <Icon name="time-outline" size={18} color="#374151" />
                   <View>
-                    <Text style={styles.rowTitle}>Pay Later</Text>
+                    <Text style={styles.rowTitle}>TVM Fee</Text>
                     <Text style={styles.rowSub}>
-                      TVM Fees × {travellers}
+                      TVM Fee x {travellers}
                     </Text>
                   </View>
                 </View>
-                <Text style={styles.rowAmount}>₹{payLater}</Text>
+                <Text style={styles.rowAmount}>₹{tvmTotal}</Text>
+              </View>
+
+              {/* AUTHORITY FEE ROW */}
+              <View style={styles.priceRow}>
+                <View style={styles.rowLeft}>
+                  <Icon name="shield-checkmark-outline" size={18} color="#374151" />
+                  <View>
+                    <Text style={styles.rowTitle}>Authority Charges</Text>
+                    <Text style={styles.rowSub}>
+                      Authority Charges x {travellers}
+                    </Text>
+                  </View>
+                </View>
+                <Text style={styles.rowAmount}>₹{authorityTotal}</Text>
               </View>
 
               <View style={styles.divider} />
@@ -884,14 +906,17 @@ const styles = StyleSheet.create({
   },
   secondaryBtn: {
     backgroundColor: "#FF5C00",
-    paddingVertical: 14,
-    borderRadius: 10,
+    height: 66,
+    borderRadius: 999,
     alignItems: "center",
+    justifyContent: "center",
+    elevation: 3,
   },
 
   secondaryText: {
-    fontWeight: "600",
+    fontWeight: "700",
     color: "#fff",
+    fontSize: 18,
   },
 
   primaryText: {

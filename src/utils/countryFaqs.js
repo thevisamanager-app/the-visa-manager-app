@@ -98,9 +98,9 @@ const COUNTRY_FAQS = {
   ],
 
   Malaysia: [
-    { question: "Do I need a visa for Malaysia?", answer: "Indian citizens can enter Malaysia visa-free for a limited period depending on current rules." },
-    { question: "How long does Malaysia visa processing take?", answer: "If required, visa processing usually takes 3–7 working days." },
-    { question: "What documents are required for Malaysia?", answer: "Passport, travel itinerary, accommodation details, and proof of funds are required." },
+    { question: "Is Malaysia DAC mandatory for Indians?", answer: "Yes, Indian travellers must complete Malaysia DAC before travel, and the process is handled online." },
+    { question: "What documents are required for Malaysia?", answer: "A valid passport, passport-size photo, itinerary, accommodation proof, and bank statement are among the standard documents." },
+    { question: "How long does Malaysia visa processing take?", answer: "Processing typically takes 1 working day once documents are complete." },
     { question: "Can I extend my visa after arrival?", answer: "Visa extensions are subject to approval by Malaysian immigration authorities." },
   ],
 
@@ -741,27 +741,57 @@ const COUNTRY_FAQS = {
 
   "Hong Kong": [
     {
-      question: "Is Hong Kong pre-arrival registration mandatory for Indians?",
+      question: "Do Indians need a visa for Hong Kong?",
       answer:
-        "Yes. Indian passport holders must complete Hong Kong Pre-Arrival Registration (PAR) before traveling.",
+        "Yes, Indian nationals must obtain a pre-approved visa or entry permit to visit Hong Kong. The application is digital and does not require a physical embassy visit.",
     },
     {
-      question: "Is this a visa?",
+      question: "What is the processing time for Hong Kong visas?",
       answer:
-        "No. Pre-Arrival Registration is not a visa. It is an entry pre-clearance required for eligible Indian travellers.",
+        "Processing typically takes 1 working day when the paperwork is complete. We keep you updated at every step.",
     },
     {
-      question: "How long does the registration take?",
+      question: "Can I submit the Hong Kong visa application online?",
       answer:
-        "Hong Kong Pre-Arrival Registration is usually processed instantly or within a few minutes after successful submission.",
+        "Yes, we submit your application electronically to the Hong Kong Immigration Department after verifying your documents.",
+    },
+    {
+      question: "What documents are mandatory?",
+      answer:
+        "You need a passport, photo, itinerary, hotel reservation, bank proof, and optionally an invitation letter if visiting family or business contacts.",
+    },
+    {
+      question: "Can I extend my stay in Hong Kong?",
+      answer:
+        "Extensions are evaluated by Hong Kong immigration. Apply for the required duration upfront and contact us if you need further assistance.",
+    },
+    {
+      question: "What should I do after approval?",
+      answer:
+        "Download and print the approval letter, carry it when you travel, and present it along with your passport at the Hong Kong immigration counter.",
     },
   ],
 
   "Mauritius": [
     {
-      question: "What is the Mauritius Travel Digital Form (TDA)?",
+      question: "Is the Mauritius travel digital form mandatory for Indians?",
       answer:
-        "The Mauritius Travel Digital Form is an online travel declaration required to be completed before arrival.",
+        "Yes, Indian travellers must complete the required travel digital form before travel.",
+    },
+     {
+      question: "How long does processing take?",
+      answer:
+        "Processing typically takes 1 working day when all details are complete.",
+    },
+     {
+      question: "Can I complete the process online?",
+      answer:
+        "Yes, the process is fully online and handled digitally.",
+    },
+     {
+      question: "What should I carry while travelling?",
+      answer:
+        "Carry your passport and the processed confirmation along with your itinerary.",
     },
   ],
 

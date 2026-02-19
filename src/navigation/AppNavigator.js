@@ -240,6 +240,12 @@ import VietnamApplyScreen from "../screens/apply/VietnamApplyScreen";
 import AzerbaijanApplyScreen from "../screens/apply/AzerbaijanApplyScreen";
 import OtpScreen from "../screens/OtpScreen";
 import CombodiaApplyScreen from "../screens/apply/CombodiaApplyScreen";
+import HongKongApplyScreen from "../screens/apply/HongKongApplyScreen";
+import SriLankaApplyScreen from "../screens/apply/SriLankaApplyScreen";
+import MaldivesApplyScreen from "../screens/apply/MaldivesApplyScreen";
+import MalaysiaApplyScreen from "../screens/apply/MalaysiaApplyScreen";
+import ThailandApplyScreen from "../screens/apply/ThailandApplyScreen";
+import MauritiusApplyScreen from "../screens/apply/MauritiusApplyScreen";
 
 
 
@@ -344,33 +350,6 @@ function UserStack() {
       <Stack.Screen
         name="CombodiaApplyScreen"
         component={CombodiaApplyScreen}
-      />
-
-       <Stack.Screen
-        name="KenyaApplyScreen"
-        component={KenyaApplyScreen}
-      />
-
-      <Stack.Screen
-        name="RussiaApplyScreen"
-        component={RussiaApplyScreen}
-      />
-
-      <Stack.Screen
-        name="QatarApplyScreen"
-        component={QatarApplyScreen}
-      />
-      <Stack.Screen
-        name="MoroccoApplyScreen"
-        component={MoroccoApplyScreen}
-      />
-      <Stack.Screen
-        name="ArmeniaApplyScreen"
-        component={ArmeniaApplyScreen}
-      />
-      <Stack.Screen
-        name="EgyptApplyScreen"
-        component={EgyptApplyScreen}
       />
 
       {/* EXISTING FLOW */}

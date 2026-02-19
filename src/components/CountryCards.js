@@ -10,7 +10,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 import { wp, verticalScale, moderateScale, RFValue } from "../utils/metrics";
 import { getFlagEmoji } from "../utils/countryIsoMap";
-import { COUNTRY_IMAGES } from "../utils/countryImages";
+import { getCountryImage } from "../utils/countryImages";
 
 /* -------- helpers -------- */
 
@@ -42,7 +42,7 @@ const getServiceFee = (fee) => {
 export default function CountryCards({ item, countrName, onPress }) {
   const visaType = item.countryType?.toUpperCase() || "VISA";
   const flag = getFlagEmoji(countrName);
-  const imageSource = COUNTRY_IMAGES[countrName];
+  const imageSource = getCountryImage(countrName);
 
   const [liveCount, setLiveCount] = useState(item.liveCount ?? 5);
 
@@ -96,11 +96,11 @@ export default function CountryCards({ item, countrName, onPress }) {
 
       {/* -------- BULLETS -------- */}
       {Array.isArray(item.bullets) &&
-        item.bullets.map((text, index) => (
+        item.bullets
+          .filter((text) => text !== null && text !== undefined && text !== "")
+          .map((text, index) => (
           <View key={index} style={styles.bulletRow}>
-            <View style={styles.bulletIcon}>
-              <Ionicons name="checkmark" size={10} color="#FFFFFF" />
-            </View>
+            <View style={styles.dot} />
             <Text style={styles.bulletText}>{text}</Text>
           </View>
         ))}

@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import { getFlagEmoji } from "../utils/countryIsoMap";
 import { COUNTRY_VISA_CONFIG } from "../assets/data/countryVisaConfig";
 
@@ -48,6 +49,59 @@ export const CountryApplyBanner = ({ countryName, fallbackText }) => {
   );
 };
 
+export const ApplyScreenHeader = ({ navigation, title }) => (
+  <View style={styles.applyHeaderRow}>
+    <TouchableOpacity onPress={() => navigation.goBack()}>
+      <Ionicons name="chevron-back" size={26} color="#111827" />
+    </TouchableOpacity>
+
+    <View style={styles.applyHeaderCenterContainer}>
+      <Text style={styles.applyHeaderCenterTitle} numberOfLines={1}>
+        {title}
+      </Text>
+    </View>
+
+    <TouchableOpacity
+      onPress={() => navigation.navigate("Tabs", { screen: "Destination" })}
+    >
+      <Ionicons name="home-outline" size={24} color={ORANGE} />
+    </TouchableOpacity>
+  </View>
+);
+
+export const ApplyCountryHeader = ({ navigation, countryName, subtitle }) => {
+  const countryConfig = COUNTRY_VISA_CONFIG[countryName] || {};
+  const displayCountryName = countryName === "Sri-lanka" ? "Sri Lanka" : countryName;
+  const finalSubtitle =
+    subtitle || countryConfig?.processingText || `${displayCountryName} Visa Application`;
+  const flag = getFlagEmoji(countryName);
+
+  return (
+    <View style={styles.applyCountryHeaderRow}>
+      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.applyCountryHeaderIconBtn}>
+        <Ionicons name="chevron-back" size={26} color="#111827" />
+      </TouchableOpacity>
+
+      <View style={styles.applyCountryHeaderCenterCard}>
+        <View style={styles.applyCountryHeaderFlagBubble}>
+          <Text style={styles.applyCountryHeaderFlagText}>{flag}</Text>
+        </View>
+        <View style={styles.applyCountryHeaderTextWrap}>
+          <Text style={styles.applyCountryHeaderCountryName}>{displayCountryName}</Text>
+          <Text style={styles.applyCountryHeaderSubText}>{finalSubtitle}</Text>
+        </View>
+      </View>
+
+      <TouchableOpacity
+        onPress={() => navigation.navigate("Tabs", { screen: "Destination" })}
+        style={styles.applyCountryHeaderIconBtn}
+      >
+        <Ionicons name="home-outline" size={24} color={ORANGE} />
+      </TouchableOpacity>
+    </View>
+  );
+};
+
 export const CoPassengerCard = ({
   coTravellerCount = 0,
   onAddPress,
@@ -74,6 +128,82 @@ export const CoPassengerCard = ({
 };
 
 const styles = StyleSheet.create({
+  applyHeaderRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 14,
+  },
+  applyHeaderCenterContainer: {
+    flex: 1,
+    marginHorizontal: 10,
+    borderWidth: 1,
+    borderColor: "#F2DCC6",
+    borderRadius: 18,
+    backgroundColor: "#F5EFE8",
+    height: 44,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  applyHeaderCenterTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#111827",
+  },
+  applyCountryHeaderRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  applyCountryHeaderIconBtn: {
+    width: 30,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  applyCountryHeaderCenterCard: {
+    flex: 1,
+    marginHorizontal: 10,
+    borderWidth: 1,
+    borderColor: "#F2DCC6",
+    borderRadius: 18,
+    backgroundColor: "#F5EFE8",
+    minHeight: 62,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+  },
+  applyCountryHeaderFlagBubble: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: ORANGE,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 8,
+  },
+  applyCountryHeaderFlagText: {
+    fontSize: 18,
+  },
+  applyCountryHeaderTextWrap: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  applyCountryHeaderCountryName: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#111827",
+    textAlign: "center",
+  },
+  applyCountryHeaderSubText: {
+    marginTop: 2,
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#374151",
+    textAlign: "center",
+  },
   bannerCard: {
     flexDirection: "row",
     alignItems: "center",

@@ -14,8 +14,12 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { Calendar } from "react-native-calendars";
 import { launchImageLibrary } from "react-native-image-picker";
 import auth from "@react-native-firebase/auth";
-import firestore from "@react-native-firebase/firestore";
+import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
+import storage from "@react-native-firebase/storage";
 import ScreenWrapper from "../../components/ScreenWrapper";
+import { CoPassengerCard } from "../../components/ApplyFlowCards";
+import { extractTextFromImage } from "../../api/ocr/visionApi";
+import { parseMRZ } from "../../api/ocr/mrzParser";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
 import PassportBackSample from "../../assets/examples/passport-back.png";
@@ -38,6 +42,7 @@ const createTraveller = () => ({
         photo: null,
         ticket: null,
     },
+    frontPageData: null,
 });
 
 export default function VietnamApplyScreen({ navigation }) {
@@ -55,6 +60,31 @@ export default function VietnamApplyScreen({ navigation }) {
         const [y, m, d] = date.split("-");
         return `${d}/${m}/${y}`;
     };
+    const toDDMMYY = (value) => {
+        const digits = String(value || "").replace(/\D/g, "");
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+        if (digits.length === 6) {
+            const yy = digits.slice(0, 2);
+            const mm = digits.slice(2, 4);
+            const dd = digits.slice(4, 6);
+            const monthIndex = Number(mm) - 1;
+            if (monthIndex < 0 || monthIndex > 11) return "";
+            const fullYear = Number(yy) >= 40 ? `19${yy}` : `20${yy}`;
+            return `${dd} ${months[monthIndex]} ${fullYear}`;
+        }
+
+        if (digits.length === 8 && (digits.startsWith("19") || digits.startsWith("20"))) {
+            const yyyy = digits.slice(0, 4);
+            const mm = digits.slice(4, 6);
+            const dd = digits.slice(6, 8);
+            const monthIndex = Number(mm) - 1;
+            if (monthIndex < 0 || monthIndex > 11) return "";
+            return `${dd} ${months[monthIndex]} ${yyyy}`;
+        }
+
+        return "";
+    };
 
     const getSample = (key) => {
         if (key === "passportFront") return PassportFrontSample;
@@ -62,19 +92,67 @@ export default function VietnamApplyScreen({ navigation }) {
         if (key === "photo") return PassportPhotoSample;
         return TicketSample;
     };
+    const getUploadUri = (file) => {
+        if (!file) return null;
+        return file.uri || file.fileCopyUri || file.localUri || null;
+    };
+    const getFileExtension = (file, fallback = "jpg") => {
+        const fileName = file?.fileName || file?.name || "";
+        if (fileName.includes(".")) {
+            return fileName.split(".").pop().toLowerCase();
+        }
+        if (file?.type?.includes("/")) {
+            return file.type.split("/")[1].toLowerCase();
+        }
+        return fallback;
+    };
+    const uploadFile = async (file, path) => {
+        const uri = getUploadUri(file);
+        if (!uri) throw new Error("Selected file URI is missing.");
+        const ref = storage().ref(path);
+        await ref.putFile(uri);
+        return await ref.getDownloadURL();
+    };
 
     const pickDocument = async (target, key) => {
-        const res = await launchImageLibrary({ mediaType: "photo", quality: 0.9 });
+        const isFrontPage = key === "passportFront";
+        const res = await launchImageLibrary({
+            mediaType: "photo",
+            quality: 0.9,
+            includeBase64: isFrontPage,
+        });
         if (!res.assets?.[0]) return;
+        const selectedAsset = res.assets[0];
+        let frontPageData = null;
+
+        if (isFrontPage && selectedAsset.base64) {
+            try {
+                const rawText = await extractTextFromImage(selectedAsset.base64);
+                const parsed = parseMRZ(rawText);
+                frontPageData = {
+                    parsed: {
+                        ...parsed,
+                        birthDate: toDDMMYY(parsed.birthDate),
+                        expiryDate: toDDMMYY(parsed.expiryDate),
+                    },
+                };
+            } catch (error) {
+                console.log("Vietnam front page OCR failed:", error);
+            }
+        }
 
         if (target === "main") {
             const updated = [...travellers];
-            updated[0].documents[key] = res.assets[0];
+            updated[0].documents[key] = selectedAsset;
+            if (isFrontPage) {
+                updated[0].frontPageData = frontPageData;
+            }
             setTravellers(updated);
         } else {
             setTempTraveller((p) => ({
                 ...p,
-                documents: { ...p.documents, [key]: res.assets[0] },
+                documents: { ...p.documents, [key]: selectedAsset },
+                ...(isFrontPage ? { frontPageData } : {}),
             }));
         }
     };
@@ -119,32 +197,59 @@ export default function VietnamApplyScreen({ navigation }) {
                 return;
             }
 
-            const applicationRef = firestore()
-                .collection("visaApplications")
-                .doc();
+            const applicationId = `vietnam_${Date.now()}`;
 
-            const formattedTravellers = travellers.map(t => ({
-                isPrimary: t.isPrimary,
-                travelDate: t.form.travelDate,
-                phone: t.form.phone,
-                email: t.form.email,
-                hotelDetails: t.form.hotelDetails,
-                documents: {
-                    passportFrontUrl: t.documents.passportFront?.uri || null,
-                    passportBackUrl: t.documents.passportBack?.uri || null,
-                    photoUrl: t.documents.photo?.uri || null,
-                    ticketUrl: t.documents.ticket?.uri || null,
-                }
-            }));
+            const formattedTravellers = await Promise.all(
+                travellers.map(async (t, index) => {
+                    const basePath = `applications/${user.uid}/${applicationId}/traveller_${index + 1}`;
 
-            await applicationRef.set({
-                userId: user.uid,
-                country: "Vietnam",
-                travellers: formattedTravellers,
-                totalTravellers: formattedTravellers.length,
-                status: "submitted",
-                createdAt: firestore.FieldValue.serverTimestamp(),
-            });
+                    const passportFrontUrl = await uploadFile(
+                        t.documents.passportFront,
+                        `${basePath}/passport_front.${getFileExtension(t.documents.passportFront, "jpg")}`
+                    );
+                    const passportBackUrl = await uploadFile(
+                        t.documents.passportBack,
+                        `${basePath}/passport_back.${getFileExtension(t.documents.passportBack, "jpg")}`
+                    );
+                    const photoUrl = await uploadFile(
+                        t.documents.photo,
+                        `${basePath}/passport_photo.${getFileExtension(t.documents.photo, "jpg")}`
+                    );
+                    const ticketUrl = await uploadFile(
+                        t.documents.ticket,
+                        `${basePath}/air_ticket.${getFileExtension(t.documents.ticket, "pdf")}`
+                    );
+
+                    return {
+                        isPrimary: t.isPrimary,
+                        travelDate: t.form.travelDate,
+                        phone: t.form.phone,
+                        email: t.form.email,
+                        hotelDetails: t.form.hotelDetails,
+                        documents: {
+                            passportFrontUrl,
+                            passportBackUrl,
+                            photoUrl,
+                            ticketUrl,
+                        },
+                        frontPageData: t.frontPageData || null,
+                    };
+                })
+            );
+
+            await firestore()
+                .collection("users")
+                .doc(user.uid)
+                .collection("passportData")
+                .doc(applicationId)
+                .set({
+                    userId: user.uid,
+                    country: "Vietnam",
+                    travellers: formattedTravellers,
+                    totalTravellers: formattedTravellers.length,
+                    status: "submitted",
+                    createdAt: serverTimestamp(),
+                });
 
             navigation.navigate("CheckoutScreen", {
                 country: "Vietnam",
@@ -245,22 +350,27 @@ export default function VietnamApplyScreen({ navigation }) {
             <ScrollView contentContainerStyle={styles.container}>
                 {/* HEADER */}
                 <View style={styles.header}>
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <Ionicons name="chevron-back" size={26} />
+                    <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerIconBtn}>
+                        <Ionicons name="chevron-back" size={26} color="#111827" />
                     </TouchableOpacity>
 
-                    <Text style={styles.headerTitle}>Vietnam Visa Application</Text>
+                    <View style={styles.headerCenterCard}>
+                        <View style={styles.headerFlagBubble}>
+                            <Text style={styles.headerFlagText}>🇻🇳</Text>
+                        </View>
+                        <View style={styles.headerTextWrap}>
+                            <Text style={styles.headerCountryName}>Vietnam</Text>
+                            <Text style={styles.headerSubText}>Get Vietnam E-Visa in 5 Working Days</Text>
+                        </View>
+                    </View>
 
                     <TouchableOpacity
-                        onPress={() =>
-                            navigation.navigate("Tabs", { screen: "Destination" })
-                        }
+                        onPress={() => navigation.navigate("Tabs", { screen: "Destination" })}
+                        style={styles.headerIconBtn}
                     >
                         <Ionicons name="home-outline" size={24} color={ORANGE} />
                     </TouchableOpacity>
                 </View>
-
-                <Text style={styles.sectionTitle}>Main Applicant</Text>
 
                 {renderForm(
                     travellers[0],
@@ -272,12 +382,10 @@ export default function VietnamApplyScreen({ navigation }) {
                     "main"
                 )}
 
-                <TouchableOpacity
-                    style={styles.addTravellerBtn}
-                    onPress={() => setShowCoTravellerModal(true)}
-                >
-                    <Text style={styles.addTravellerText}>+ Add Co-Traveller</Text>
-                </TouchableOpacity>
+                <CoPassengerCard
+                    coTravellerCount={Math.max(0, travellers.length - 1)}
+                    onAddPress={() => setShowCoTravellerModal(true)}
+                />
 
                 <TouchableOpacity style={styles.submitBtn} onPress={submit}>
                     <Text style={styles.submitText}>Complete Process</Text>
@@ -289,7 +397,22 @@ export default function VietnamApplyScreen({ navigation }) {
             <Modal visible={showCoTravellerModal} transparent animationType="fade">
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalBox}>
-                        <Text style={styles.sectionTitle}>Add Co-Traveller</Text>
+                        <View style={styles.header}>
+                            <TouchableOpacity onPress={() => setShowCoTravellerModal(false)}>
+                                <Ionicons name="chevron-back" size={26} />
+                            </TouchableOpacity>
+
+                            <Text style={styles.headerTitle}>Add Co-Traveller</Text>
+
+                            <TouchableOpacity
+                                onPress={() => {
+                                    setShowCoTravellerModal(false);
+                                    navigation.navigate("Tabs", { screen: "Destination" });
+                                }}
+                            >
+                                <Ionicons name="home-outline" size={24} color={ORANGE} />
+                            </TouchableOpacity>
+                        </View>
 
                         <ScrollView>
                             {renderForm(
@@ -347,6 +470,54 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         marginBottom: 20,
+    },
+    headerIconBtn: {
+        width: 30,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    headerCenterCard: {
+        flex: 1,
+        marginHorizontal: 10,
+        borderWidth: 1,
+        borderColor: "#F2DCC6",
+        borderRadius: 18,
+        backgroundColor: "#F5EFE8",
+        minHeight: 62,
+        flexDirection: "row",
+        alignItems: "center",
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+    },
+    headerFlagBubble: {
+        width: 34,
+        height: 34,
+        borderRadius: 17,
+        backgroundColor: ORANGE,
+        alignItems: "center",
+        justifyContent: "center",
+        marginRight: 8,
+    },
+    headerFlagText: {
+        fontSize: 18,
+    },
+    headerTextWrap: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    headerCountryName: {
+        fontSize: 16,
+        fontWeight: "700",
+        color: "#111827",
+        textAlign: "center",
+    },
+    headerSubText: {
+        marginTop: 2,
+        fontSize: 13,
+        fontWeight: "600",
+        color: "#374151",
+        textAlign: "center",
     },
 
     headerTitle: { fontSize: 17, fontWeight: "700" },

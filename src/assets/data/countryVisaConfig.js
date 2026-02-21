@@ -7,7 +7,7 @@ export const COUNTRY_VISA_CONFIG = {
         processingText: "Apply Now & Get it by 1 Working Days",
 
 
-        visaInfoTitle: "Sri Lanka Visa Information",    
+        visaInfoTitle: "Sri Lanka Visa Information",
         requirementsTitle: "Sri Lanka Visa Requirements",
 
 
@@ -70,8 +70,7 @@ export const COUNTRY_VISA_CONFIG = {
         headerTitle: "Vietnam Visa Application",
         processTitle: "Vietnam Visa Process",
         processingText: "Get Vietnam E-Visa in 5 Working Days",
-        processingNote:
-            "This is a semi-online process; some original documents must be submitted to the authority. We do not claim shortcuts and follow all rules on the client's behalf during submission.",
+
 
 
         visaInfoTitle: "Vietnam Visa Information",
@@ -185,11 +184,10 @@ export const COUNTRY_VISA_CONFIG = {
         },
 
         requirements: [
-            "Passport scan with at least six months validity",
-            "Passport-size photograph with white background",
-            "Confirmed travel itinerary with return ticket",
-            "Proof of accommodation in Singapore",
-            "Bank statement showing sufficient funds",
+            "Hard Copy of Valid Passport(Original)",
+            "2 Passport-size(3.5*4.5 cm) photo with white background & matt finish",
+            "Signed Visa Application Form(We Provide The Form)",
+            "6 Month Bank Statement(Online)",
         ],
     },
     "Hong Kong": {
@@ -245,8 +243,8 @@ export const COUNTRY_VISA_CONFIG = {
 
         visaInfo: {
             visaType: "Tourist",
-            stay: "14 days",
-            validity: "14 days",
+            stay: "15 days",
+            validity: "90 days",
             entry: "Single",
             method: "Digital",
         },
@@ -434,7 +432,7 @@ export const COUNTRY_VISA_CONFIG = {
         ],
 
         visaInfo: {
-            visaType: "Tourist",
+            visaType: "Tourist (Visa on Arrival)",
             stay: "30 days",
             validity: "60 days",
             entry: "Single",
@@ -443,7 +441,7 @@ export const COUNTRY_VISA_CONFIG = {
 
         requirements: [
             "Valid passport with at least six months validity",
-            "Confirmed air ticket",
+            "Confirmed return air ticket",
             "Confirmed hotel or accommodation details",
         ],
     },
@@ -1887,8 +1885,8 @@ export const COUNTRY_VISA_CONFIG = {
 
         stepMeta: [
             { icon: "document-text-outline", label: "Share traveler details" },
-            { icon: "card-outline", label: "Pay Visa fees" },
-            { icon: "send-outline", label: "Submit to Immigration " },
+            { icon: "card-outline", label: "Pay service fees" },
+            { icon: "send-outline", label: "Submit to authorities" },
             { icon: "checkmark-done-outline", label: "Receive approval" },
         ],
 
@@ -1938,9 +1936,9 @@ export const COUNTRY_VISA_CONFIG = {
         requirements: [
             "Valid passport with at least six months validity",
             "Confirmed flights and return itinerary",
-            "Bank statement or proof of funds",
-            "Recent passport-size photograph with a white background",
-            "Hotel bookings or host contact details",
+            "Recent passport-size photograph with a white background.",
+            "Hotel bookings or host contact details.",
+            "Bank statement or proof of funds"
         ],
     },
 
@@ -2048,11 +2046,362 @@ export const COUNTRY_VISA_CONFIG = {
         },
 
         requirements: [
+            "Valid Passport with minimum 6 months validity",
+            "Bank statement",
+            "Confirmed return Air Ticket",
+            "Passport-size photo with white background",
+            "Hotel Booking confirmation",
+        ],
+    },
+
+    Kenya: {
+        headerTitle: "Kenya Visa Application",
+        processTitle: "Kenya Visa Process",
+        processingText: "Apply now & get visa 1-3 Days",
+        processingNote:
+            "Indians citizen travelling to kenys must obtain as Electronic Travel authorization (ETA) prior to departure; visa on arriral is not available Applications are submitted online visa the online.",
+
+        visaInfoTitle: "Kenya Visa Information",
+        requirementsTitle: "Kenya Visa Requirements",
+
+        stepMeta: [
+            { icon: "document-text-outline", label: "Start Application" },
+            { icon: "card-outline", label: "Application Submission" },
+            { icon: "checkmark-done-outline", label: "Get your Visa" },
+        ],
+
+        processSteps: [
+            {
+                title: "Start Online Visa Application",
+                points: [
+                    "Fill in traveler details online and select visa type.",
+                    "Upload passport and photo documents securely.",
+                    "Review and confirm your information before submission.",
+                ],
+            },
+            {
+                title: "Application Submit to immigration",
+                points: [
+                    "Clear government and service charges securely.",
+                    "Any additional questions are handled on your behalf.",
+                    "We monitor the payment and ticket the application.",
+                ],
+            },
+            {
+                title: "Get Your Visa",
+                points: [
+                    "Decisions are typically issued within 5 working days.",
+                    "Visa delivered via email and WhatsApp.",
+                    "Download and print your e-visa before travel.",
+                ],
+            },
+        ],
+
+        visaInfo: {
+            visaType: "e-Visa",
+            stay: "30 days",
+            validity: "90 days",
+            entry: "Single",
+            method: "Online",
+        },
+
+        requirements: [
             "Valid Passport",
-            "2 Passport-size(3.5*4.5 cm) photo with white background & matt finish",
-            "Bank Statement (6 Month Statement along with 50k INR Balance",
-            "Hotel Confirmation",
-            "Return Air Ticket",
+            "Photo ( White background 80% face & colour clothes",
+            "Confirm Hotel Voucher",
+            "Confirm Air Ticket",
+            "Invitation letter - if Business Purposetravel",
+        ],
+    },
+
+    Qatar: {
+        headerTitle: " Qatar Visa Application",
+        processTitle: " Qatar Visa Process",
+        processingText: "Apply now & get visa in 6-7 Days",
+
+
+        visaInfoTitle: " Qatar Visa Information",
+        requirementsTitle: " Qatar Visa Requirements",
+
+        stepMeta: [
+            { icon: "document-text-outline", label: "Start Application" },
+            { icon: "card-outline", label: "Application Submission" },
+            { icon: "checkmark-done-outline", label: "Get your Visa" },
+        ],
+
+        processSteps: [
+            {
+                title: "Start Online Visa Application",
+                points: [
+                    "Fill in traveler details online and select visa type.",
+                    "Upload passport and photo documents securely.",
+                    "Review and confirm your information before submission.",
+                ],
+            },
+            {
+                title: "Application Submit to immigration",
+                points: [
+                    "Clear government and service charges securely.",
+                    "Any additional questions are handled on your behalf.",
+                    "We monitor the payment and ticket the application.",
+                ],
+            },
+            {
+                title: "Get Your Visa",
+                points: [
+                    "Decisions are typically issued within 5 working days.",
+                    "Visa delivered via email and WhatsApp.",
+                    "Download and print your e-visa before travel.",
+                ],
+            },
+        ],
+
+        visaInfo: {
+            visaType: "e-Visa",
+            stay: "30 days",
+            validity: "90 days",
+            entry: "Single",
+            method: "Online",
+        },
+
+        requirements: [
+            "Valid passport with at least six months validity",
+            "Recent passport-size photograph with a white background",
+            "Confirmed flights and return itinerary",
+            "Hotel bookings or host contact details",
+            "Bank statement or proof of funds"
+        ],
+    },
+
+    Russia: {
+        headerTitle: "Russia Visa Application",
+        processTitle: "Russia Visa Process",
+        processingText: "Apply now & get visa in 6-7 Days",
+     
+        visaInfoTitle: "Russia Visa Information",
+        requirementsTitle: "Russia Visa Requirements",
+
+        stepMeta: [
+            { icon: "document-text-outline", label: "Start Application" },
+            { icon: "card-outline", label: "Application Submission" },
+            { icon: "checkmark-done-outline", label: "Get your Visa" },
+        ],
+
+        processSteps: [
+            {
+                title: "Start Online Visa Application",
+                points: [
+                    "Fill in traveler details online and select visa type.",
+                    "Upload passport and photo documents securely.",
+                    "Review and confirm your information before submission.",
+                ],
+            },
+            {
+                title: "Application Submit to immigration",
+                points: [
+                    "Clear government and service charges securely.",
+                    "Any additional questions are handled on your behalf.",
+                    "We monitor the payment and ticket the application.",
+                ],
+            },
+            {
+                title: "Get Your Visa",
+                points: [
+                    "Decisions are typically issued within 5 working days.",
+                    "Visa delivered via email and WhatsApp.",
+                    "Download and print your e-visa before travel.",
+                ],
+            },
+        ],
+
+        visaInfo: {
+            visaType: "e-Visa",
+            stay: "30 days",
+            validity: "90 days",
+            entry: "Single",
+            method: "Online",
+        },
+
+        requirements: [
+            "Valid Passport",
+            "Photo with 80% face coverage",
+            "Travel Insurance",
+            "Confirmed flights and return itinerary",
+        ],
+    },
+
+    Morocco: {
+        headerTitle: "Morocco Visa Application",
+        processTitle: "Morocco Visa Process",
+        processingText: "Apply now & get visa in 4-5 Days",
+
+
+        visaInfoTitle: "Morocco Visa Information",
+        requirementsTitle: "Morocco Visa Requirements",
+
+        stepMeta: [
+            { icon: "document-text-outline", label: "Start Application" },
+            { icon: "card-outline", label: "Application Submission" },
+            { icon: "checkmark-done-outline", label: "Get your Visa" },
+        ],
+
+        processSteps: [
+            {
+                title: "Start Online Visa Application",
+                points: [
+                    "Fill in traveler details online and select visa type.",
+                    "Upload passport and photo documents securely.",
+                    "Review and confirm your information before submission.",
+                ],
+            },
+            {
+                title: "Application Submit to immigration",
+                points: [
+                    "Clear government and service charges securely.",
+                    "Any additional questions are handled on your behalf.",
+                    "We monitor the payment and ticket the application.",
+                ],
+            },
+            {
+                title: "Get Your Visa",
+                points: [
+                    "Decisions are typically issued within 5 working days.",
+                    "Visa delivered via email and WhatsApp.",
+                    "Download and print your e-visa before travel.",
+                ],
+            },
+        ],
+
+        visaInfo: {
+            visaType: "e-Visa",
+            stay: "30 days",
+            validity: "180 days",
+            entry: "Single",
+            method: "Online",
+        },
+
+        requirements: [
+            "Valid Passport",
+            "Digital Photo",
+        ],
+    },
+
+    Armenia: {
+        headerTitle: "Armenia Visa Application",
+        processTitle: "Armenia Visa Process",
+        processingText: "Apply now & get visa in 4-5 Days",
+
+
+        visaInfoTitle: "Armenia Visa Information",
+        requirementsTitle: "Armenia Visa Requirements",
+
+        stepMeta: [
+            { icon: "document-text-outline", label: "Start Application" },
+            { icon: "card-outline", label: "Application Submission" },
+            { icon: "checkmark-done-outline", label: "Get your Visa" },
+        ],
+
+        processSteps: [
+            {
+                title: "Start Online Visa Application",
+                points: [
+                    "Fill in traveler details online and select visa type.",
+                    "Upload passport and photo documents securely.",
+                    "Review and confirm your information before submission.",
+                ],
+            },
+            {
+                title: "Application Submit to immigration",
+                points: [
+                    "Clear government and service charges securely.",
+                    "Any additional questions are handled on your behalf.",
+                    "We monitor the payment and ticket the application.",
+                ],
+            },
+            {
+                title: "Get Your Visa",
+                points: [
+                    "Decisions are typically issued within 5 working days.",
+                    "Visa delivered via email and WhatsApp.",
+                    "Download and print your e-visa before travel.",
+                ],
+            },
+        ],
+
+        visaInfo: {
+            visaType: "e-Visa",
+            stay: "30 days",
+            validity: "90 days",
+            entry: "Single",
+            method: "Online",
+        },
+
+        requirements: [
+            "Valid passport with at least six months validity",
+            "Confirmed flights and return itinerary",
+            "Recent passport-size photograph with a white background",
+            "Bank statement or proof of funds",
+            "Hotel bookings or host contact details",
+            
+        ],
+    },
+
+    Egypt: {
+        headerTitle: "Egypt Visa Application",
+        processTitle: "Egypt Visa Process",
+        processingText: "Apply now & get visa in 4-5 Days",
+
+
+        visaInfoTitle: "Egypt Visa Information",
+        requirementsTitle: "Egypt Visa Requirements",
+
+        stepMeta: [
+            { icon: "document-text-outline", label: "Start Application" },
+            { icon: "card-outline", label: "Application Submission" },
+            { icon: "checkmark-done-outline", label: "Get your Visa" },
+        ],
+
+        processSteps: [
+            {
+                title: "Start Online Visa Application",
+                points: [
+                    "Fill in traveler details online and select visa type.",
+                    "Upload passport and photo documents securely.",
+                    "Review and confirm your information before submission.",
+                ],
+            },
+            {
+                title: "Application Submit to immigration",
+                points: [
+                    "Clear government and service charges securely.",
+                    "Any additional questions are handled on your behalf.",
+                    "We monitor the payment and ticket the application.",
+                ],
+            },
+            {
+                title: "Get Your Visa",
+                points: [
+                    "Decisions are typically issued within 5 working days.",
+                    "Visa delivered via email and WhatsApp.",
+                    "Download and print your e-visa before travel.",
+                ],
+            },
+        ],
+
+        visaInfo: {
+            visaType: "e-Visa",
+            stay: "30 days",
+            validity: "90 days",
+            entry: "Single",
+            method: "Online",
+        },
+
+        requirements: [
+            "Valid passport",
+            "Photo",
+            "Confirmed air ticket",
+            "Confirmed hotel voucher",
+            "Airport pickup and drop confirmation"
         ],
     }
 };

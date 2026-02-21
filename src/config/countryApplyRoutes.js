@@ -1,4 +1,12 @@
 export const COUNTRY_APPLY_ROUTES = {
+  Armenia: "ArmeniaApplyScreen",
+  Azerbaijan: "AzerbaijanApplyScreen",
+  Combodia: "CombodiaApplyScreen",
+  Egypt: "EgyptApplyScreen",
+  Kenya: "KenyaApplyScreen",
+  Morocco: "MoroccoApplyScreen",
+  Qatar: "QatarApplyScreen",
+  Russia: "RussiaApplyScreen",
   Vietnam: "VietnamApplyScreen",
   Singapore: "SingaporeApplyScreen",
   "Hong Kong": "HongKongApplyScreen",

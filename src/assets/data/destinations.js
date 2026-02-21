@@ -143,10 +143,10 @@ const DESTINATIONS = [
     AuthorityCharges: "0",
     GovernmentFee: "3600",
     countryType: "evisa",
-      bullets: [
-      "Quick & Easy Process",
-      "Trusted by 10k+ Customers",
-      "120+ countries"
+    subtitle: "Get visa in 6-7 days",
+    bullets: [
+     "1200+ visas successfully Processed",
+      "online process",
     ],
   },
 
@@ -157,10 +157,10 @@ const DESTINATIONS = [
     AuthorityCharges: "944",
     GovernmentFee: "8200",
     countryType: "evisa",
-     bullets: [
-      "1200+ Visa Processed Successfully",
-      "Reliable & Secure",
-      "Real Human Support & Solution"
+     subtitle: "Get visa in 6 to 7 days",
+    bullets: [
+      "1200 + Visa Successfully Processed",
+      "Online Process"
     ],
   },
 
@@ -194,7 +194,7 @@ const DESTINATIONS = [
 
   {
     id: 14,
-    countrName: 'USA',
+    countrName: 'Usa',
     VisaManagerFee: "2948.82",
     AuthorityCharges: "0",
     GovernmentFee: "17020",
@@ -227,11 +227,11 @@ const DESTINATIONS = [
     AuthorityCharges: "944",
     GovernmentFee: "5000",
     countryType: "evisa",
-     bullets: [
-      "Quick & Easy Process",
-      "Trusted by 10k+ Customers",
-      "120+ countries"
-    ],
+    subtitle: "Get Visa in 4-5 Working days",
+    bullets: [
+      "1200+ visas successfully Processed",
+      "online process",
+    ]
   },
 
   {
@@ -348,7 +348,7 @@ const DESTINATIONS = [
 
   {
     id: 25,
-    countrName: 'Monoglia',
+    countrName: 'Mongolia',
     VisaManagerFee: "3540",
     AuthorityCharges: "944",
     GovernmentFee: "5720",
@@ -877,10 +877,10 @@ const DESTINATIONS = [
     GovernmentFee: "550",
     currency: "",
     countryType: "evisa",
-     bullets: [
-      "Quick and Easy Process",
-      "Visas Processed",
-      "24x7 Support",
+    subtitle: "Get Visa in 6-7 Business Days",
+    bullets: [
+      "1200+ visas successfully Processed",
+      "online process",
     ],
   },
 
@@ -891,10 +891,10 @@ const DESTINATIONS = [
     AuthorityCharges: "750",
     GovernmentFee: "550",
     countryType: "evisa",
-     bullets: [
-      "Quick and Easy Process",
-      "Visas Processed",
-      "24x7 Support",
+    subtitle: "Get Visa in 2-3 Working Days",
+    bullets: [
+      "1200+ visas successfully Processed",
+      "online process",
     ],
   },
 
@@ -921,10 +921,10 @@ const DESTINATIONS = [
     AuthorityCharges: "750",
     GovernmentFee: "550",
     countryType: "evisa",
-     bullets: [
-      "Quick and Easy Process",
-      "Visas Processed",
-      "24x7 Support",
+    subtitle: "Get visa in 4 -5 days",
+    bullets: [
+     "1200+ visas successfully Processed",
+      "online process",
     ],
   },
 

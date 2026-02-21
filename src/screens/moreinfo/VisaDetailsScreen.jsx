@@ -730,10 +730,10 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 24,
     borderWidth: 1,
-    borderColor: "#FF5C00",
+    borderColor: "#FFD9BF",
     borderRadius: 14,
     backgroundColor: "#FFFFFF",
-    elevation: 10,
+    elevation: 4,
   },
 
   countryHeader: {
@@ -783,8 +783,10 @@ const styles = StyleSheet.create({
     marginBottom: 32,
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "center",   // ✅ key
-    gap: 12,                   // ✅ spacing between items
+    justifyContent: "center",
+    gap: 12,
+    borderWidth: 1,
+    borderColor: "#F3F4F6",
     elevation: 4,
   },
 
@@ -798,7 +800,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     alignItems: "center",      // ✅ center everything
   },
-  rightColumn: { paddingLeft: 40 },
   infoLabelCentered: {
     fontSize: 12,
     color: "#6B7280",
@@ -860,8 +861,7 @@ const styles = StyleSheet.create({
     marginBottom: 32,
     borderWidth: 1,
     borderColor: "#F3F4F6",
-    alignSelf: "center",
-    width: "95%",
+    width: "100%",
   },
 
 
@@ -884,12 +884,6 @@ const styles = StyleSheet.create({
   reviewName: { fontSize: 14, fontWeight: "700" },
   reviewTime: { fontSize: 12, color: "#6B7280" },
   reviewRating: { fontSize: 13, fontWeight: "700" },
-  reviewText: {
-    fontSize: 13,
-    color: "#6B7280",
-    lineHeight: 18,
-    textAlign: "justify",
-  },
   reviewText: {
     fontSize: 13,
     color: "#6B7280",
@@ -929,12 +923,6 @@ const styles = StyleSheet.create({
 
   processWrapper: {
     marginBottom: 24,
-  },
-
-  stepRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 8,
   },
 
   stepCircle: {
@@ -1093,6 +1081,7 @@ const styles = StyleSheet.create({
   stepRow: {
     flexDirection: "row",
     justifyContent: "space-between",
+    marginBottom: 8,
   },
 
   stepLabelActive: {
@@ -1258,14 +1247,6 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
 
-  reviewCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 14,
-    padding: 16,
-    marginBottom: 32,   // ✅ ADD
-    elevation: 4,
-  },
-
   faqSearchBox: {
     flexDirection: "row",
     alignItems: "center",
@@ -1276,8 +1257,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     borderWidth: 1,
     borderColor: "#FFE5D0",
-    alignSelf: "center",
-    width: "95%",
+    width: "100%",
   },
 
 
@@ -1335,3 +1315,5 @@ const styles = StyleSheet.create({
 
 
 });
+
+

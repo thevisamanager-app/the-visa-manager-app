@@ -17,7 +17,7 @@ import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import ScreenWrapper from "../../components/ScreenWrapper";
-import { CountryApplyBanner, CoPassengerCard } from "../../components/ApplyFlowCards";
+import { ApplyCountryHeader, CoPassengerCard } from "../../components/ApplyFlowCards";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
 import PassportBackSample from "../../assets/examples/passport-back.png";
@@ -268,17 +268,7 @@ export default function EgyptApplyScreen({ navigation }) {
   return (
     <ScreenWrapper>
       <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="chevron-back" size={26} />
-          </TouchableOpacity>
-          <View />
-          <TouchableOpacity onPress={() => navigation.navigate("Tabs", { screen: "Destination" })}>
-            <Ionicons name="home-outline" size={24} color={ORANGE} />
-          </TouchableOpacity>
-        </View>
-
-        <CountryApplyBanner countryName="Egypt" />
+        <ApplyCountryHeader navigation={navigation} countryName="Egypt" />
 
         {renderForm(
           travellers[0],

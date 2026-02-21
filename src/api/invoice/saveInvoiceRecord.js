@@ -1,10 +1,4 @@
-import {
-  getFirestore,
-  collection,
-  doc,
-  setDoc,
-} from "@react-native-firebase/firestore/lib/modular";
-import { serverTimestamp } from "@react-native-firebase/firestore/lib/modular/FieldValue";
+import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 
 export const saveInvoiceRecord = async (userId, invoiceId, downloadURL, amount) => {
   const db = getFirestore();

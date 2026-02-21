@@ -42,6 +42,7 @@ import {
 } from "@react-native-firebase/storage/lib/modular";
 
 import ScreenWrapper from "../../components/ScreenWrapper";
+import { ApplyCountryHeader } from "../../components/ApplyFlowCards";
 import { COUNTRY_APPLY_CONFIG } from "../../config/countryApplyConfig";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
@@ -679,22 +680,7 @@ export default function SingaporeApplyScreen({ navigation }) {
   return (
     <ScreenWrapper>
       <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="chevron-back" size={26} />
-          </TouchableOpacity>
-
-          <View style={styles.headerCenterContainer}>
-            <Text style={styles.headerCenterTitle} numberOfLines={1}>
-              Singapore Visa Application
-            </Text>
-          </View>
-
-          <TouchableOpacity onPress={() => navigation.navigate("Tabs", { screen: "Destination" })}>
-            <Ionicons name="home-outline" size={24} color={ORANGE} />
-          </TouchableOpacity>
-        </View>
-        <Text style={styles.countryNameUnderHeader}>Singapore</Text>
+        <ApplyCountryHeader navigation={navigation} countryName="Singapore" />
 
         {/* Travel Date */}
         <TouchableOpacity style={styles.inputLarge} onPress={() => setShowCalendarFor("main")}>

@@ -170,19 +170,6 @@
 // }
 
 
-<<<<<<< HEAD
-=======
-// Razorpay init
-function getRazorpay() {
-  return new Razorpay({
-    key_id: RAZORPAY_KEY_ID.value(),
-    key_secret: RAZORPAY_KEY_SECRET.value(),
-  });
-}
-app.post("/createRazorpayOrder", async (req, res) => {
-  res.json({ ok: true });
-});
->>>>>>> c844a8385ea793848ab2f82bb9f8f85e8bfdd1fb
 
 // ===================== TEST ROUTE ======================
 // app.get("/", (_, res) => {

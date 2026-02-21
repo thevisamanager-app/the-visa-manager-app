@@ -117,6 +117,11 @@ const COUNTRY_IMAGE_ALIASES = {
   northkorea: "North Korea",
   monoglia: "Mongolia",
   cambodia: "Combodia",
+  armeniya: "Armenia",
+  azerbaijain: "Azerbaijan",
+  russiya: "Russia",
+  qater: "Qatar",
+  marocoo: "Morocco",
   malawi: "malawi",
   // reunion: "Réunion",
 };
@@ -132,13 +137,15 @@ const NORMALIZED_COUNTRY_IMAGES = Object.entries(COUNTRY_IMAGES).reduce(
 export const getCountryImage = (countryName) => {
   if (!countryName) return null;
 
-  if (COUNTRY_IMAGES[countryName]) {
-    return COUNTRY_IMAGES[countryName];
+  const rawName = String(countryName).trim();
+
+  if (COUNTRY_IMAGES[rawName]) {
+    return COUNTRY_IMAGES[rawName];
   }
 
-  const normalized = normalizeCountryKey(countryName);
+  const normalized = normalizeCountryKey(rawName);
   const aliasKey = COUNTRY_IMAGE_ALIASES[normalized];
-  const lookupKey = aliasKey || countryName;
+  const lookupKey = aliasKey || rawName;
 
   return (
     COUNTRY_IMAGES[lookupKey] ||

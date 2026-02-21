@@ -150,13 +150,6 @@ const CREATE_ORDER = `${BASE_URL}/createRazorpayOrder`;
 const VERIFY_PAYMENT = `${BASE_URL}/verifyRazorpayPayment`;
 
 export async function startPayment(amount, userId, userDetails) {
-<<<<<<< HEAD
-  console.log("USER DETAILS =>", userDetails);
-
-  console.log("FINAL CREATE_ORDER URL =>", CREATE_ORDER);
-
-=======
->>>>>>> c844a8385ea793848ab2f82bb9f8f85e8bfdd1fb
   try {
     const response = await fetch(CREATE_ORDER, {
       method: "POST",

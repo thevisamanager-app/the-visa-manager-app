@@ -34,6 +34,7 @@ import {
 } from "@react-native-firebase/storage/lib/modular";
 
 import ScreenWrapper from "../../../components/ScreenWrapper";
+import { ApplyCountryHeader } from "../../../components/ApplyFlowCards";
 import PassportFrontSample from "../../../assets/examples/passport-front.png";
 import PassportBackSample from "../../../assets/examples/passport-back.png";
 import PassportPhotoSample from "../../../assets/examples/passport-photo.png";
@@ -457,22 +458,7 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
   return (
     <ScreenWrapper>
       <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.headerRow}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="chevron-back" size={26} color="#111827" />
-          </TouchableOpacity>
-          <View style={styles.headerCenterContainer}>
-            <Text style={styles.headerCenterTitle} numberOfLines={1}>
-              {(countryName === "Sri-lanka" ? "Sri Lanka" : countryName)} Visa Application
-            </Text>
-          </View>
-          <TouchableOpacity onPress={() => navigation.navigate("Tabs", { screen: "Destination" })}>
-            <Ionicons name="home-outline" size={24} color={ORANGE} />
-          </TouchableOpacity>
-        </View>
-        <Text style={styles.countryNameUnderHeader}>
-          {countryName === "Sri-lanka" ? "Sri Lanka" : countryName}
-        </Text>
+        <ApplyCountryHeader navigation={navigation} countryName={countryName} />
 
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>Passport Information</Text>

@@ -1,4 +1,5 @@
 import firestore from "@react-native-firebase/firestore";
+import { collection, doc, getFirestore, setDoc } from "firebase/firestore";
 
 export const saveInvoiceRecord = async (userId, invoiceId, downloadURL, amount) => {
   const db = getFirestore();
@@ -14,4 +15,8 @@ export const saveInvoiceRecord = async (userId, invoiceId, downloadURL, amount) 
       amount,
       createdAt: firestore.FieldValue.serverTimestamp(),
     });
+  } catch (error) {
+    console.error("Failed to save invoice record:", error);
+    throw error;
+  }
 };

@@ -31,7 +31,7 @@ import firestore from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 
 import ScreenWrapper from "../../components/ScreenWrapper";
-import { COUNTRY_APPLY_CONFIG } from "../../config/countryApplyRoutes";
+import { COUNTRY_APPLY_CONFIG } from "../../config/countryApplyConfig";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
 import PassportBackSample from "../../assets/examples/passport-back.png";
@@ -345,10 +345,9 @@ export default function SingaporeApplyScreen({ navigation }) {
     if (!uri) {
       throw new Error("Selected file URI is missing.");
     }
-    const storageInstance = getStorage();
-    const fileRef = storageRef(storageInstance, path);
-    await storagePutFile(fileRef, uri);
-    return await storageGetDownloadURL(fileRef);
+    const fileRef = storage().ref(path);
+    await fileRef.putFile(uri);
+    return await fileRef.getDownloadURL();
   };
 
   const downloadDocument = async ({ url, assetPath, label, fileName }) => {
@@ -450,15 +449,20 @@ export default function SingaporeApplyScreen({ navigation }) {
   /* ================= Submit ================= */
 
   const submit = async () => {
-    const user = getAuth().currentUser;
+    const user = auth().currentUser;
 
     if (!user) {
       Alert.alert("Login Required", "Please login first.");
       return;
     }
 
-    let applicationId = `singapore_${Date.now()}`;
-    let applicationRef = null;
+    const applicationId = `singapore_${Date.now()}`;
+    const basePath = `applications/${user.uid}/${applicationId}`;
+    const applicationRef = firestore()
+      .collection("users")
+      .doc(user.uid)
+      .collection("passportData")
+      .doc(applicationId);
 
     try {
       for (let i = 0; i < travellers.length; i += 1) {
@@ -471,18 +475,10 @@ export default function SingaporeApplyScreen({ navigation }) {
 
       setLoading(true);
 
-      const db = getFirestore();
-      const usersRef = collection(db, "users");
-      const userRef = doc(usersRef, user.uid);
-      const passportDataRef = collection(userRef, "passportData");
-      const basePath = `applications/${user.uid}/${applicationId}`;
-      applicationRef = doc(passportDataRef, applicationId);
-
-      // Step 1: Save application instantly so user doesn't wait on file uploads.
-      await setDoc(applicationRef, {
+      await applicationRef.set({
         country: "Singapore",
         status: "processing",
-        createdAt: serverTimestamp(),
+        createdAt: firestore.FieldValue.serverTimestamp(),
         totalTravellers: travellers.length,
         travellers: travellers.map((t) => ({
           isPrimary: t.isPrimary,
@@ -497,10 +493,11 @@ export default function SingaporeApplyScreen({ navigation }) {
         applicationId,
         totalTravellers: travellers.length,
         travellers: travellers.map((t) => ({ isPrimary: t.isPrimary, form: t.form })),
-        coTravellers: travellers.slice(1).map((t) => ({ isPrimary: t.isPrimary, form: t.form })),
+        coTravellers: travellers
+          .slice(1)
+          .map((t) => ({ isPrimary: t.isPrimary, form: t.form })),
       });
 
-      // Step 2: Continue uploads in background and finalize Firestore.
       (async () => {
         try {
           const payloadTravellers = await Promise.all(
@@ -535,71 +532,58 @@ export default function SingaporeApplyScreen({ navigation }) {
                 );
               }
 
-      const bankUrl = await uploadFile(
-        bankUri,
-        `${basePath}/bank.pdf`
-      );
+              const [bankUrl, passportFrontUrl, passportBackUrl, photoUrl] =
+                await Promise.all([
+                  uploadFile(bankUri, `${basePath}/traveller_${i + 1}/bank.pdf`),
+                  uploadFile(
+                    passportFrontUri,
+                    `${basePath}/traveller_${i + 1}/passport_front.jpg`
+                  ),
+                  uploadFile(
+                    passportBackUri,
+                    `${basePath}/traveller_${i + 1}/passport_back.jpg`
+                  ),
+                  uploadFile(photoUri, `${basePath}/traveller_${i + 1}/photo.jpg`),
+                ]);
 
-      const passportFrontUrl = await uploadFile(
-        passportFrontUri,
-        `${basePath}/passport_front.jpg`
-      );
+              return {
+                isPrimary: traveller.isPrimary,
+                form: { ...traveller.form },
+                documents: {
+                  bankPdf: bankUrl,
+                  passportFront: passportFrontUrl,
+                  passportBack: passportBackUrl,
+                  photo: photoUrl,
+                },
+                frontPageData: traveller.frontPageData || null,
+              };
+            })
+          );
 
-      const passportBackUrl = await uploadFile(
-        passportBackUri,
-        `${basePath}/passport_back.jpg`
-      );
-
-      const photoUrl = await uploadFile(
-        photoUri,
-        `${basePath}/photo.jpg`
-      );
-
-      await firestore()
-        .collection("users")
-        .doc(user.uid)
-        .collection("passportData")
-        .doc(applicationId)
-        .set({
-          country: "Singapore",
-          status: "submitted",
-          createdAt: firestore.FieldValue.serverTimestamp(),
-          form: traveller.form,
-          documents: {
-            bankPdf: bankUrl,
-            passportFront: passportFrontUrl,
-            passportBack: passportBackUrl,
-            photo: photoUrl,
-          },
-        });
-
-      setLoading(false);
-
-      navigation.navigate("CheckoutScreen", {
-        country: "Singapore",
-        applicationId,
-      });
-    } catch (error) {
-      console.log("Submit Error:", error);
-      try {
-        if (applicationRef) {
-          await setDoc(
-            applicationRef,
+          await applicationRef.set(
             {
-              country: "Singapore",
+              status: "submitted",
+              submittedAt: firestore.FieldValue.serverTimestamp(),
+              travellers: payloadTravellers,
+              totalTravellers: payloadTravellers.length,
+            },
+            { merge: true }
+          );
+        } catch (error) {
+          console.log("Background upload failed:", error);
+          await applicationRef.set(
+            {
               status: "failed",
               errorMessage: error?.message || "Unknown submit error",
-              failedAt: serverTimestamp(),
-              totalTravellers: travellers.length,
+              failedAt: firestore.FieldValue.serverTimestamp(),
             },
             { merge: true }
           );
         }
-      } catch (innerError) {
-        console.log("Failed to update failed status:", innerError);
-      }
+      })();
+    } catch (error) {
+      console.log("Submit Error:", error);
       Alert.alert("Error", error?.message || "Something went wrong.");
-    } finally {
       setLoading(false);
     }
   };

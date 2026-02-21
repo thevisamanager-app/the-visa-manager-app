@@ -7,7 +7,7 @@ export const COUNTRY_VISA_CONFIG = {
         processingText: "Apply Now & Get it by 1 Working Days",
 
 
-        visaInfoTitle: "Sri Lanka Visa Information",    
+        visaInfoTitle: "Sri Lanka Visa Information",
         requirementsTitle: "Sri Lanka Visa Requirements",
 
 
@@ -2176,7 +2176,7 @@ export const COUNTRY_VISA_CONFIG = {
         headerTitle: "Russia Visa Application",
         processTitle: "Russia Visa Process",
         processingText: "Apply now & get visa in 6-7 Days",
-     
+
         visaInfoTitle: "Russia Visa Information",
         requirementsTitle: "Russia Visa Requirements",
 
@@ -2341,7 +2341,7 @@ export const COUNTRY_VISA_CONFIG = {
             "Recent passport-size photograph with a white background",
             "Bank statement or proof of funds",
             "Hotel bookings or host contact details",
-            
+
         ],
     },
 
@@ -2401,6 +2401,184 @@ export const COUNTRY_VISA_CONFIG = {
             "Confirmed air ticket",
             "Confirmed hotel voucher",
             "Airport pickup and drop confirmation"
+        ],
+    },
+
+
+    Cuba: {
+        headerTitle: "Cuba Visa Application",
+        processTitle: "Cuba Visa Process",
+        processingText: "Apply now & get visa in 4-5 Days",
+
+
+        visaInfoTitle: "Cuba Visa Information",
+        requirementsTitle: "Cuba Visa Requirements",
+
+        stepMeta: [
+            { icon: "document-text-outline", label: "Start Application" },
+            { icon: "card-outline", label: "Application Submission" },
+            { icon: "checkmark-done-outline", label: "Get your Visa" },
+        ],
+
+        processSteps: [
+            {
+                title: "Start Online Visa Application",
+                points: [
+                    "Fill in traveler details online and select visa type.",
+                    "Upload passport and photo documents securely.",
+                    "Review and confirm your information before submission.",
+                ],
+            },
+            {
+                title: "Application Submit to immigration",
+                points: [
+                    "Clear government and service charges securely.",
+                    "Any additional questions are handled on your behalf.",
+                    "We monitor the payment and ticket the application.",
+                ],
+            },
+            {
+                title: "Get Your Visa",
+                points: [
+                    "Decisions are typically issued within 5 working days.",
+                    "Visa delivered via email and WhatsApp.",
+                    "Download and print your e-visa before travel.",
+                ],
+            },
+        ],
+
+        visaInfo: {
+            visaType: "e-Visa",
+            stay: "1 Month",
+            validity: "3 Months",
+            entry: "Single",
+            method: "Online",
+        },
+
+        requirements: [
+            "Valid passport",
+            "Photo",
+            "Confirmed air ticket",
+            "Confirmed hotel voucher",
+            "Airport pickup and drop confirmation"
+        ],
+    },
+
+    Bhutan: {
+        headerTitle: "Bhutan Visa Application",
+        processTitle: "Bhutan  Visa Process",
+        processingText: "Apply now & get visa in 3-5 Days",
+        processingNote:
+            "Indian citizens do not need a visa but entry permit which we can issue online, fees & entry permit will vary as per number of stay.",
+
+
+
+        visaInfoTitle: "Bhutan Visa Information",
+        requirementsTitle: "Bhutan  Visa Requirements",
+
+        stepMeta: [
+            { icon: "document-text-outline", label: "Start Application" },
+            { icon: "card-outline", label: "Application Submission" },
+            { icon: "checkmark-done-outline", label: "Get your Visa" },
+        ],
+
+        processSteps: [
+            {
+                title: "Start Online Visa Application",
+                points: [
+                    "Fill in traveler details online and select visa type.",
+                    "Upload passport and photo documents securely.",
+                    "Review and confirm your information before submission.",
+                ],
+            },
+            {
+                title: "Application Submit to immigration",
+                points: [
+                    "Clear government and service charges securely.",
+                    "Any additional questions are handled on your behalf.",
+                    "We monitor the payment and ticket the application.",
+                ],
+            },
+            {
+                title: "Get Your Visa",
+                points: [
+                    "Decisions are typically issued within 5 working days.",
+                    "Visa delivered via email and WhatsApp.",
+                    "Download and print your e-visa before travel.",
+                ],
+            },
+        ],
+
+        visaInfo: {
+            visaType: "Entry Permit",
+            stay: "90 days",
+            validity: "90 days",
+            entry: "Multiple",
+            method: "Online",
+        },
+
+        requirements: [
+            "Valid passport",
+            "Digital Photo",
+        ],
+    },
+
+    Georgia: {
+        headerTitle: "Georgia Visa Application",
+        processTitle: "Georgia  Visa Process",
+        processingText: "Apply now & get visa in 4-5 Days",
+        
+        visaInfoTitle: "Georgia Visa Information",
+        requirementsTitle: "Georgia  Visa Requirements",
+
+        stepMeta: [
+            { icon: "document-text-outline", label: "Start Application" },
+            { icon: "card-outline", label: "Application Submission" },
+            { icon: "checkmark-done-outline", label: "Get your Visa" },
+        ],
+
+        processSteps: [
+            {
+                title: "Start Online Visa Application",
+                points: [
+                    "Fill in traveler details online and select visa type.",
+                    "Upload passport and photo documents securely.",
+                    "Review and confirm your information before submission.",
+                ],
+            },
+            {
+                title: "Application Submit to immigration",
+                points: [
+                    "Clear government and service charges securely.",
+                    "Any additional questions are handled on your behalf.",
+                    "We monitor the payment and ticket the application.",
+                ],
+            },
+            {
+                title: "Get Your Visa",
+                points: [
+                    "Decisions are typically issued within 5 working days.",
+                    "Visa delivered via email and WhatsApp.",
+                    "Download and print your e-visa before travel.",
+                ],
+            },
+        ],
+
+        visaInfo: {
+            visaType: "e-Visa",
+            stay: "30 days",
+            validity: "90 days",
+            entry: "Multiple",
+            method: "Online",
+        },
+
+        requirements: [
+            "Valid passport",
+            "Flight Booking",
+            "Photo",
+            "Current Address",
+            "Bank Statment ( 6 Months )",
+            "Occuputional Details",
         ],
     }
 };

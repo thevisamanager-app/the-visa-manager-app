@@ -93,6 +93,48 @@ export const COUNTRY_APPLY_CONFIG = {
     },
   },
 
+  Singapore: {
+    fields: {
+      travelDate: { required: true },
+      phone: { required: true },
+      email: { required: true },
+      hotelDetails: { required: true },
+    },
+    documents: {
+      bankDetails: {
+        label: "Upload Bank Details (PDF)",
+        required: true,
+        type: "pdf",
+      },
+      passportFront: {
+        label: "Upload Passport Front Page",
+        required: true,
+        example: require("../assets/examples/passport-front.png"),
+      },
+      passportBack: {
+        label: "Upload Passport Last Page",
+        required: true,
+        example: require("../assets/examples/passport-back.png"),
+      },
+      photo: {
+        label: "Applicant's Photo",
+        required: true,
+        example: require("../assets/examples/passport-photo.png"),
+      },
+    },
+    forms: {
+      applicationFormAssetPath: "forms/Form14a.pdf",
+      applicationFormSignatureRefAssetPath:
+        "forms/Form14a-signature-reference.pdf",
+      applicationFormPreviewImageAssetPath:
+        "forms/Form14a-signature-reference.jpg",
+      authorityLetterAssetPath: "forms/Authority-letter.pdf",
+      authorityLetterPreviewImageAssetPath: "forms/Authority-letter-sample.jpg",
+      applicationFormUrl: "",
+      authorityLetterUrl: "",
+    },
+  },
+
   DEFAULT: {
     fields: {
       travelDate: { required: true },

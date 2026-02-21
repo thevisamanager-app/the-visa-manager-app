@@ -197,41 +197,45 @@ export default function VietnamApplyScreen({ navigation }) {
                 return;
             }
 
-<<<<<<<<< Temporary merge branch 1
-            const applicationRef = firestore()
-                .collection("visaApplications")
-                .doc();
-
-            const formattedTravellers = travellers.map(t => ({
-                isPrimary: t.isPrimary,
-                travelDate: t.form.travelDate,
-                phone: t.form.phone,
-                email: t.form.email,
-                hotelDetails: t.form.hotelDetails,
-                documents: {
-                    passportFrontUrl: t.documents.passportFront?.uri || null,
-                    passportBackUrl: t.documents.passportBack?.uri || null,
-                    photoUrl: t.documents.photo?.uri || null,
-                    ticketUrl: t.documents.ticket?.uri || null,
-                }
-            }));
-
-            await applicationRef.set({
-                userId: user.uid,
-                country: "Vietnam",
-                travellers: formattedTravellers,
-                totalTravellers: formattedTravellers.length,
-                status: "submitted",
-                createdAt: firestore.FieldValue.serverTimestamp(),
-            });
-
-            navigation.navigate("CheckoutScreen", {
-                country: "Vietnam",
-                applicationId: applicationRef.id,
-            });
-
-=========
             const applicationId = `vietnam_${Date.now()}`;
+
+            const formattedTravellers = await Promise.all(
+                travellers.map(async (t, index) => {
+                    const basePath = `applications/${user.uid}/${applicationId}/traveller_${index + 1}`;
+
+                    const passportFrontUrl = await uploadFile(
+                        t.documents.passportFront,
+                        `${basePath}/passport_front.${getFileExtension(t.documents.passportFront, "jpg")}`
+                    );
+                    const passportBackUrl = await uploadFile(
+                        t.documents.passportBack,
+                        `${basePath}/passport_back.${getFileExtension(t.documents.passportBack, "jpg")}`
+                    );
+                    const photoUrl = await uploadFile(
+                        t.documents.photo,
+                        `${basePath}/passport_photo.${getFileExtension(t.documents.photo, "jpg")}`
+                    );
+                    const ticketUrl = await uploadFile(
+                        t.documents.ticket,
+                        `${basePath}/air_ticket.${getFileExtension(t.documents.ticket, "pdf")}`
+                    );
+
+                    return {
+                        isPrimary: t.isPrimary,
+                        travelDate: t.form.travelDate,
+                        phone: t.form.phone,
+                        email: t.form.email,
+                        hotelDetails: t.form.hotelDetails,
+                        documents: {
+                            passportFrontUrl,
+                            passportBackUrl,
+                            photoUrl,
+                            ticketUrl,
+                        },
+                        frontPageData: t.frontPageData || null,
+                    };
+                })
+            );
 
             await firestore()
                 .collection("users")
@@ -239,16 +243,17 @@ export default function VietnamApplyScreen({ navigation }) {
                 .collection("passportData")
                 .doc(applicationId)
                 .set({
+                    userId: user.uid,
                     country: "Vietnam",
-                    travellers,
-                    totalTravellers: travellers.length,
+                    travellers: formattedTravellers,
+                    totalTravellers: formattedTravellers.length,
                     status: "submitted",
-                    createdAt: firestore.FieldValue.serverTimestamp(),
+                    createdAt: serverTimestamp(),
                 });
 
             navigation.navigate("CheckoutScreen", {
                 country: "Vietnam",
-                applicationId,
+                travellers,
             });
         } catch (error) {
             console.log("Submit Error:", error);

@@ -25,7 +25,8 @@ export const COUNTRY_IMAGES = {
   Georgia: require("../assets/images/Georgia.webp"),
   Germany: require("../assets/images/Germany.webp"),
   Greece: require("../assets/images/Greece.webp"),
-  "Hong-Kong": require("../assets/images/Hong-Kong.webp"),
+   Hong_Kong: require("../assets/images/Hong_Kong.webp"),
+   Hungary:require("../assets/images/Hungary.webp"),
   Italy: require("../assets/images/Italy.webp"),
   Iceland:require("../assets/images/Iceland.webp"),
   Ireland:require("../assets/images/Ireland.webp"),
@@ -51,7 +52,7 @@ export const COUNTRY_IMAGES = {
   Nigeria: require("../assets/images/Nigeria.webp"),
   Norway: require("../assets/images/Norway.webp"),
   Oman: require("../assets/images/Oman.webp"),
-  philippines:require("../assets/images/philippines.webp"),
+  philippines:require("../assets/images/Philippines.webp"),
   Poland:require("../assets/images/Poland.webp"),
   Portugal:require("../assets/images/Portugal.webp"),
   Qatar:require("../assets/images/Qatar.webp"),
@@ -87,20 +88,63 @@ export const COUNTRY_IMAGES = {
   "British Virgin Islands": require("../assets/images/British Virgin Islands.webp"),
   Barbados: require("../assets/images/Barbados.webp"),
   "Cook Islands": require("../assets/images/Cook Islands.webp"),
+  Réunion:require("../assets/images/Réunion.webp"),
+"St. Vincent & Grenadines": require("../assets/images/St.Vincent&Grenadines.webp"),
+ Cuba:require("../assets/images/Cuba.webp"),
 
+};
 
+const normalizeCountryKey = (value = "") =>
+  String(value)
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]/g, "");
 
+const COUNTRY_IMAGE_ALIASES = {
+  hongkong: "Hong Kong",
+  southkorea: "South Korea",
+  srilanka: "Sri-lanka",
+  usa: "Usa",
+  uk: "Uk",
+  unitedkingdom: "Uk",
+  unitedstates: "Usa",
+  unitedstatesofamerica: "Usa",
+  newzealand: "New Zealand",
+  trinidadandtobago: "Trinidad & Tobago",
+  stkittsandnevis: "St. Kitts & Nevis",
+  britishvirginislands: "British Virgin Islands",
+  elsalvador: "El Salvador",
+  cookislands: "Cook Islands",
+  northkorea: "North Korea",
+  monoglia: "Mongolia",
+  cambodia: "Combodia",
+  Malawi: "Malawi",
+  // reunion: "Réunion",
+};
 
+const NORMALIZED_COUNTRY_IMAGES = Object.entries(COUNTRY_IMAGES).reduce(
+  (acc, [key, image]) => {
+    acc[normalizeCountryKey(key)] = image;
+    return acc;
+  },
+  {}
+);
 
+export const getCountryImage = (countryName) => {
+  if (!countryName) return null;
 
+  if (COUNTRY_IMAGES[countryName]) {
+    return COUNTRY_IMAGES[countryName];
+  }
 
+  const normalized = normalizeCountryKey(countryName);
+  const aliasKey = COUNTRY_IMAGE_ALIASES[normalized];
+  const lookupKey = aliasKey || countryName;
 
-
-
-
-
-
-
-
-
+  return (
+    COUNTRY_IMAGES[lookupKey] ||
+    NORMALIZED_COUNTRY_IMAGES[normalizeCountryKey(lookupKey)] ||
+    NORMALIZED_COUNTRY_IMAGES[normalized] ||
+    null
+  );
 };

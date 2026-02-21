@@ -246,6 +246,9 @@ import MaldivesApplyScreen from "../screens/apply/MaldivesApplyScreen";
 import MalaysiaApplyScreen from "../screens/apply/MalaysiaApplyScreen";
 import ThailandApplyScreen from "../screens/apply/ThailandApplyScreen";
 import MauritiusApplyScreen from "../screens/apply/MauritiusApplyScreen";
+import CubaApplyScreen from "../screens/apply/CubaApplyScreen";
+import BhutanApplyScreen from "../screens/apply/BhutanApplyScreen";
+import GeorgiaApplyScreen from "../screens/apply/GeorgiaApplyScreen";
 
 
 
@@ -350,6 +353,66 @@ function UserStack() {
       <Stack.Screen
         name="CombodiaApplyScreen"
         component={CombodiaApplyScreen}
+      />
+      <Stack.Screen
+        name="HongKongApplyScreen"
+        component={HongKongApplyScreen}
+      />
+      <Stack.Screen
+        name="SriLankaApplyScreen"
+        component={SriLankaApplyScreen}
+      />
+      <Stack.Screen
+        name="MaldivesApplyScreen"
+        component={MaldivesApplyScreen}
+      />
+      <Stack.Screen
+        name="MalaysiaApplyScreen"
+        component={MalaysiaApplyScreen}
+      />
+      <Stack.Screen
+        name="ThailandApplyScreen"
+        component={ThailandApplyScreen}
+      />
+      <Stack.Screen
+        name="MauritiusApplyScreen"
+        component={MauritiusApplyScreen}
+      />
+      <Stack.Screen
+        name="CubaApplyScreen"
+        component={CubaApplyScreen}
+      />
+      <Stack.Screen
+        name="BhutanApplyScreen"
+        component={BhutanApplyScreen}
+      />
+      <Stack.Screen
+        name="KenyaApplyScreen"
+        component={KenyaApplyScreen}
+      />
+      <Stack.Screen
+        name="RussiaApplyScreen"
+        component={RussiaApplyScreen}
+      />
+      <Stack.Screen
+        name="QatarApplyScreen"
+        component={QatarApplyScreen}
+      />
+      <Stack.Screen
+        name="GeorgiaApplyScreen"
+        component={GeorgiaApplyScreen}
+      />
+      <Stack.Screen
+        name="MoroccoApplyScreen"
+        component={MoroccoApplyScreen}
+      />
+      <Stack.Screen
+        name="ArmeniaApplyScreen"
+        component={ArmeniaApplyScreen}
+      />
+      <Stack.Screen
+        name="EgyptApplyScreen"
+        component={EgyptApplyScreen}
       />
 
       {/* EXISTING FLOW */}

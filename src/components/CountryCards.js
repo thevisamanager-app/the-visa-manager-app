@@ -100,7 +100,9 @@ export default function CountryCards({ item, countrName, onPress }) {
           .filter((text) => text !== null && text !== undefined && text !== "")
           .map((text, index) => (
           <View key={index} style={styles.bulletRow}>
-            <View style={styles.dot} />
+            <View style={styles.bulletIcon}>
+              <Ionicons name="checkmark" size={10} color="#FFFFFF" />
+            </View>
             <Text style={styles.bulletText}>{text}</Text>
           </View>
         ))}
@@ -258,7 +260,7 @@ const styles = StyleSheet.create({
   },
 
   applyButton: {
-    backgroundColor: "#1E63B6",
+    backgroundColor: "#090F85",
     paddingVertical: verticalScale(12),
     borderRadius: 999,
     alignItems: "center",

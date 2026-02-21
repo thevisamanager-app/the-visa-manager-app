@@ -47,54 +47,68 @@ export const COUNTRY_WHY_CHOOSE = {
     { icon: "headset-outline", text: "Real Human Support & Solution" },
   ],
 
-   Azerbaijan: [
+  Azerbaijan: [
     { icon: "flash-outline", text: "1200+ Visa successfully Processed" },
     { icon: "shield-checkmark-outline", text: "Reliable & Secure" },
     { icon: "headset-outline", text: "Real Human Support & Solution" },
   ],
 
-    Kenya: [
+  Kenya: [
     { icon: "flash-outline", text: "1200+ Visa successfully Processed" },
     { icon: "shield-checkmark-outline", text: "Reliable & Secure" },
     { icon: "headset-outline", text: "Real Human Support & Solution" },
   ],
 
-    Qatar: [
+  Qatar: [
     { icon: "flash-outline", text: "1200+ Visa successfully Processed" },
     { icon: "shield-checkmark-outline", text: "Reliable & Secure" },
     { icon: "headset-outline", text: "Real Human Support & Solution" },
   ],
 
-    Russia: [
+  Russia: [
     { icon: "flash-outline", text: "1200+ Visa successfully Processed" },
     { icon: "shield-checkmark-outline", text: "Reliable & Secure" },
     { icon: "headset-outline", text: "Real Human Support & Solution" },
   ],
 
 
-   Combodia: [
+  Combodia: [
     { icon: "flash-outline", text: "1200+ Visa successfully Processed" },
     { icon: "shield-checkmark-outline", text: "Reliable & Secure" },
     { icon: "headset-outline", text: "Real Human Support & Solution" },
   ],
 
-   Morocco: [
+  Morocco: [
     { icon: "flash-outline", text: "1200+ Visa successfully Processed" },
     { icon: "shield-checkmark-outline", text: "Reliable & Secure" },
     { icon: "headset-outline", text: "Real Human Support & Solution" },
   ],
 
-    Egypt: [
+  Egypt: [
     { icon: "flash-outline", text: "1200+ Visa successfully Processed" },
     { icon: "shield-checkmark-outline", text: "Reliable & Secure" },
     { icon: "headset-outline", text: "Real Human Support & Solution" },
   ],
 
-    Armenia: [
+  Armenia: [
     { icon: "flash-outline", text: "1200+ Visa successfully Processed" },
     { icon: "shield-checkmark-outline", text: "Reliable & Secure" },
     { icon: "headset-outline", text: "Real Human Support & Solution" },
   ],
+
+  Bhutan: [
+    { icon: "flash-outline", text: "1200+ Visa successfully Processed" },
+    { icon: "shield-checkmark-outline", text: "Reliable & Secure" },
+    { icon: "headset-outline", text: "Real Human Support & Solution" },
+  ],
+
+  Georgia: [
+    { icon: "flash-outline", text: "1200+ Visa successfully Processed" },
+    { icon: "shield-checkmark-outline", text: "Reliable & Secure" },
+    { icon: "headset-outline", text: "Real Human Support & Solution" },
+  ],
+
+
 };
 
 export const DEFAULT_WHY_CHOOSE = [

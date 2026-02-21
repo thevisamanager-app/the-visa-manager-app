@@ -38,6 +38,7 @@ import PassportFrontSample from "../../../assets/examples/passport-front.png";
 import PassportBackSample from "../../../assets/examples/passport-back.png";
 import PassportPhotoSample from "../../../assets/examples/passport-photo.png";
 import TicketSample from "../../../assets/examples/ticket.png";
+import { extractPassportFrontPageFromAsset } from "../../../utils/passportFrontPage";
 
 const ORANGE = "#FF5C00";
 
@@ -182,7 +183,13 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
 
   const pickImage = async (key, target = "main") => {
     try {
-      const res = await launchImageLibrary({ mediaType: "photo", quality: 0.6, maxWidth: 1600, maxHeight: 1600 });
+      const res = await launchImageLibrary({
+        mediaType: "photo",
+        quality: 0.6,
+        maxWidth: 1600,
+        maxHeight: 1600,
+        includeBase64: key === "passportFront",
+      });
       if (!res.assets?.[0]) return;
       if (target === "co") {
         setCoDocs((p) => ({ ...p, [key]: res.assets[0] }));
@@ -266,6 +273,10 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
         allTravellers.map(async (traveller, idx) => {
           const i = idx + 1;
           const travellerPath = `${basePath}/traveller_${i}`;
+          const passportFrontPage = await extractPassportFrontPageFromAsset(
+            traveller.docs.passportFront,
+            traveller.form?.phone
+          );
 
           const frontUri = await resolveUploadUri(traveller.docs.passportFront, { prefix: `front-${i}` });
           const backUri = await resolveUploadUri(traveller.docs.passportBack, { prefix: `back-${i}` });
@@ -288,6 +299,7 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
           return {
             isPrimary: traveller.isPrimary,
             form: { ...traveller.form },
+            passportFrontPage,
             documents: {
               passportFront: uploaded[0],
               passportBack: uploaded[1],

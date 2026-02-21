@@ -18,8 +18,7 @@ import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import ScreenWrapper from "../../components/ScreenWrapper";
 import { CountryApplyBanner, CoPassengerCard } from "../../components/ApplyFlowCards";
-import { extractTextFromImage } from "../../api/ocr/visionApi";
-import { parseMRZ } from "../../api/ocr/mrzParser";
+import { extractPassportFrontPageFromAsset } from "../../utils/passportFrontPage";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
 import PassportBackSample from "../../assets/examples/passport-back.png";
@@ -47,7 +46,6 @@ const createTraveller = () => ({
     hotelConfirmation: null,
     invitationLetter: null,
   },
-  frontPageData: null,
 });
 
 export default function KenyaApplyScreen({ navigation }) {
@@ -64,31 +62,6 @@ export default function KenyaApplyScreen({ navigation }) {
   const formatDate = (date) => {
     const [y, m, d] = date.split("-");
     return `${d}/${m}/${y}`;
-  };
-  const toDDMMYY = (value) => {
-    const digits = String(value || "").replace(/\D/g, "");
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-    if (digits.length === 6) {
-      const yy = digits.slice(0, 2);
-      const mm = digits.slice(2, 4);
-      const dd = digits.slice(4, 6);
-      const monthIndex = Number(mm) - 1;
-      if (monthIndex < 0 || monthIndex > 11) return "";
-      const fullYear = Number(yy) >= 40 ? `19${yy}` : `20${yy}`;
-      return `${dd} ${months[monthIndex]} ${fullYear}`;
-    }
-
-    if (digits.length === 8 && (digits.startsWith("19") || digits.startsWith("20"))) {
-      const yyyy = digits.slice(0, 4);
-      const mm = digits.slice(4, 6);
-      const dd = digits.slice(6, 8);
-      const monthIndex = Number(mm) - 1;
-      if (monthIndex < 0 || monthIndex > 11) return "";
-      return `${dd} ${months[monthIndex]} ${yyyy}`;
-    }
-
-    return "";
   };
   const getUploadUri = (file) => {
     if (!file) return null;
@@ -128,36 +101,15 @@ export default function KenyaApplyScreen({ navigation }) {
     });
     if (!res.assets?.[0]) return;
     const selectedAsset = res.assets[0];
-    let frontPageData = null;
-
-    if (isFrontPage && selectedAsset.base64) {
-      try {
-        const rawText = await extractTextFromImage(selectedAsset.base64);
-        const parsed = parseMRZ(rawText);
-        frontPageData = {
-          parsed: {
-            ...parsed,
-            birthDate: toDDMMYY(parsed.birthDate),
-            expiryDate: toDDMMYY(parsed.expiryDate),
-          },
-        };
-      } catch (error) {
-        console.log("Kenya front page OCR failed:", error);
-      }
-    }
 
     if (target === "main") {
       const updated = [...travellers];
       updated[0].documents[key] = selectedAsset;
-      if (isFrontPage) {
-        updated[0].frontPageData = frontPageData;
-      }
       setTravellers(updated);
     } else {
       setTempTraveller((p) => ({
         ...p,
         documents: { ...p.documents, [key]: selectedAsset },
-        ...(isFrontPage ? { frontPageData } : {}),
       }));
     }
   };
@@ -213,6 +165,10 @@ export default function KenyaApplyScreen({ navigation }) {
       const formattedTravellers = await Promise.all(
         travellers.map(async (t, index) => {
           const basePath = `applications/${user.uid}/${applicationId}/traveller_${index + 1}`;
+          const passportFrontPage = await extractPassportFrontPageFromAsset(
+            t.documents.passportFront,
+            t.form.phone
+          );
 
           const passportFrontUrl = await uploadFile(
             t.documents.passportFront,
@@ -242,7 +198,7 @@ export default function KenyaApplyScreen({ navigation }) {
           return {
             isPrimary: t.isPrimary,
             ...t.form,
-            frontPageData: t.frontPageData || null,
+            passportFrontPage,
             documents: {
               passportFrontUrl,
               passportBackUrl,

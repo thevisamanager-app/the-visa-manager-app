@@ -17,6 +17,7 @@ import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import ScreenWrapper from "../../components/ScreenWrapper";
 import { CountryApplyBanner, CoPassengerCard } from "../../components/ApplyFlowCards";
+import { extractPassportFrontPageFromAsset } from "../../utils/passportFrontPage";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
 import PassportBackSample from "../../assets/examples/passport-back.png";
@@ -53,7 +54,11 @@ export default function AzerbaijanApplyScreen({ navigation }) {
   };
 
   const pickDocument = async (target, key) => {
-    const res = await launchImageLibrary({ mediaType: "photo", quality: 0.9 });
+    const res = await launchImageLibrary({
+      mediaType: "photo",
+      quality: 0.9,
+      includeBase64: key === "passportFront",
+    });
     if (!res.assets?.[0]) return;
 
     if (target === "main") {
@@ -110,17 +115,26 @@ export default function AzerbaijanApplyScreen({ navigation }) {
 
       const applicationId = `azerbaijan_${Date.now()}`;
 
-      const formattedTravellers = travellers.map(t => ({
-        isPrimary: t.isPrimary,
-        travelDate: t.form.travelDate,
-        phone: t.form.phone,
-        email: t.form.email,
-        hotelName: t.form.hotelName,
-        documents: {
-          passportFrontUrl: t.documents.passportFront?.uri || null,
-          passportBackUrl: t.documents.passportBack?.uri || null,
-        }
-      }));
+      const formattedTravellers = await Promise.all(
+        travellers.map(async (t) => {
+          const passportFrontPage = await extractPassportFrontPageFromAsset(
+            t.documents.passportFront,
+            t.form.phone
+          );
+          return {
+            isPrimary: t.isPrimary,
+            travelDate: t.form.travelDate,
+            phone: t.form.phone,
+            email: t.form.email,
+            hotelName: t.form.hotelName,
+            passportFrontPage,
+            documents: {
+              passportFrontUrl: t.documents.passportFront?.uri || null,
+              passportBackUrl: t.documents.passportBack?.uri || null,
+            },
+          };
+        })
+      );
 
       await firestore()
         .collection("users")

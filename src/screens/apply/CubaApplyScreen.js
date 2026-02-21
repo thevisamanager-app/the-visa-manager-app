@@ -18,6 +18,7 @@ import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import ScreenWrapper from "../../components/ScreenWrapper";
 import { CountryApplyBanner, CoPassengerCard } from "../../components/ApplyFlowCards";
+import { extractPassportFrontPageFromAsset } from "../../utils/passportFrontPage";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
 import PassportBackSample from "../../assets/examples/passport-back.png";
@@ -90,6 +91,7 @@ export default function CubaApplyScreen({ navigation }) {
     const res = await launchImageLibrary({
       mediaType: "mixed",
       quality: 0.9,
+      includeBase64: key === "passportFront",
     });
     if (!res.assets?.[0]) return;
     const selectedAsset = res.assets[0];
@@ -158,6 +160,10 @@ export default function CubaApplyScreen({ navigation }) {
       const formattedTravellers = await Promise.all(
         travellers.map(async (t, index) => {
           const basePath = `applications/${user.uid}/${applicationId}/traveller_${index + 1}`;
+          const passportFrontPage = await extractPassportFrontPageFromAsset(
+            t.documents.passportFront,
+            t.form.contactNumber
+          );
 
           const passportFrontUrl = await uploadFile(
             t.documents.passportFront,
@@ -187,6 +193,7 @@ export default function CubaApplyScreen({ navigation }) {
             addressInCuba: t.form.addressInCuba,
             maritalStatus: t.form.maritalStatus,
             covidVaccinationStatus: t.form.covidVaccinationStatus,
+            passportFrontPage,
             documents: {
               passportFrontUrl,
               passportBackUrl,

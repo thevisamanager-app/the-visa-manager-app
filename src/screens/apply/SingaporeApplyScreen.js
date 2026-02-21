@@ -32,6 +32,7 @@ import storage from "@react-native-firebase/storage";
 
 import ScreenWrapper from "../../components/ScreenWrapper";
 import { COUNTRY_APPLY_CONFIG } from "../../config/countryApplyConfig";
+import { extractPassportFrontPageFromAsset } from "../../utils/passportFrontPage";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
 import PassportBackSample from "../../assets/examples/passport-back.png";
@@ -54,7 +55,6 @@ const createTraveller = () => ({
     passportBack: null,
     photo: null,
   },
-  frontPageData: null,
 });
 
 export default function SingaporeApplyScreen({ navigation }) {
@@ -159,6 +159,7 @@ export default function SingaporeApplyScreen({ navigation }) {
       const res = await launchImageLibrary({
         mediaType: "photo",
         quality: 0.8,
+        includeBase64: isFrontPage,
       });
 
       if (!res.assets?.[0]) return;
@@ -170,7 +171,6 @@ export default function SingaporeApplyScreen({ navigation }) {
             ...prev.documents,
             [key]: res.assets[0],
           },
-          ...(isFrontPage ? { frontPageData } : {}),
         }));
         return;
       }
@@ -505,6 +505,10 @@ export default function SingaporeApplyScreen({ navigation }) {
               const travellerLabel = traveller.isPrimary
                 ? "Main Traveller"
                 : `Co-Passenger ${i}`;
+              const passportFrontPage = await extractPassportFrontPageFromAsset(
+                traveller.documents.passportFront,
+                traveller.form?.phone
+              );
 
               const [bankUri, passportFrontUri, passportBackUri, photoUri] =
                 await Promise.all([
@@ -549,13 +553,13 @@ export default function SingaporeApplyScreen({ navigation }) {
               return {
                 isPrimary: traveller.isPrimary,
                 form: { ...traveller.form },
+                passportFrontPage,
                 documents: {
                   bankPdf: bankUrl,
                   passportFront: passportFrontUrl,
                   passportBack: passportBackUrl,
                   photo: photoUrl,
                 },
-                frontPageData: traveller.frontPageData || null,
               };
             })
           );

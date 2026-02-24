@@ -2527,7 +2527,7 @@ export const COUNTRY_VISA_CONFIG = {
         headerTitle: "Georgia Visa Application",
         processTitle: "Georgia  Visa Process",
         processingText: "Apply now & get visa in 4-5 Days",
-        
+
         visaInfoTitle: "Georgia Visa Information",
         requirementsTitle: "Georgia  Visa Requirements",
 
@@ -2580,5 +2580,182 @@ export const COUNTRY_VISA_CONFIG = {
             "Bank Statment ( 6 Months )",
             "Occuputional Details",
         ],
-    }
+    },
+
+    Kazakhstan: {
+        headerTitle: "Kazakhstan Visa Application",
+        processTitle: "Kazakhstan  Visa Process",
+        processingText: "Apply now & get visa in 4-5 Days",
+
+        visaInfoTitle: "Kazakhstan Visa Information",
+        requirementsTitle: "Kazakhstan  Visa Requirements",
+
+        stepMeta: [
+            { icon: "document-text-outline", label: "Start Application" },
+            { icon: "card-outline", label: "Application Submission" },
+            { icon: "checkmark-done-outline", label: "Get your Visa" },
+        ],
+
+        processSteps: [
+            {
+                title: "Start Online Visa Application",
+                points: [
+                    "Fill in traveler details online and select visa type.",
+                    "Upload passport and photo documents securely.",
+                    "Review and confirm your information before submission.",
+                ],
+            },
+            {
+                title: "Application Submit to immigration",
+                points: [
+                    "Clear government and service charges securely.",
+                    "Any additional questions are handled on your behalf.",
+                    "We monitor the payment and ticket the application.",
+                ],
+            },
+            {
+                title: "Get Your Visa",
+                points: [
+                    "Decisions are typically issued within 5 working days.",
+                    "Visa delivered via email and WhatsApp.",
+                    "Download and print your e-visa before travel.",
+                ],
+            },
+        ],
+
+        visaInfo: {
+            visaType: "e-Visa",
+            stay: "30 days",
+            validity: "30 days",
+            entry: "Single",
+            method: "Online",
+        },
+
+        requirements: [
+            "Valid passport",
+            "Photo",
+        ],
+    },
+
+    Philippines: {
+        headerTitle: "Philippines Visa Application",
+        processTitle: "Philippines  Visa Process",
+        processingText: "Apply now & get visa in 4-5 Days",
+
+        visaInfoTitle: "Philippines Visa Information",
+        requirementsTitle: "Philippines  Visa Requirements",
+
+        stepMeta: [
+            { icon: "document-text-outline", label: "Start Application" },
+            { icon: "card-outline", label: "Application Submission" },
+            { icon: "checkmark-done-outline", label: "Get your Visa" },
+        ],
+
+        processSteps: [
+            {
+                title: "Start Online Visa Application",
+                points: [
+                    "Fill in traveler details online and select visa type.",
+                    "Upload passport and photo documents securely.",
+                    "Review and confirm your information before submission.",
+                ],
+            },
+            {
+                title: "Application Submit to immigration",
+                points: [
+                    "Clear government and service charges securely.",
+                    "Any additional questions are handled on your behalf.",
+                    "We monitor the payment and ticket the application.",
+                ],
+            },
+            {
+                title: "Get Your Visa",
+                points: [
+                    "Decisions are typically issued within 5 working days.",
+                    "Visa delivered via email and WhatsApp.",
+                    "Download and print your e-visa before travel.",
+                ],
+            },
+        ],
+
+        visaInfo: {
+            visaType: "e-Visa",
+            stay: "7 days",
+            validity: "30 days",
+            entry: "Single",
+            method: "Online",
+        },
+
+        requirements: [
+            "Valid passport",
+            "Photo ( Digital Copy )",
+            "Airticket",
+            "Hotel Booking",
+            "3 Months Salary Slip or ITR 3 Years",
+            "Bank Statement 6 months",
+            "Itinerary"
+
+        ],
+    },
+
+    Israel: {
+        headerTitle: "Israel Visa Application",
+        processTitle: "Israel Visa Process",
+        processingText: "Apply now & get visa in 8-10 Working Days",
+         processingNote:
+            "After Approval Application, applicant personally need to go Submission with application at Mumbai consulate for visa stamping.",
+
+        visaInfoTitle: "Israel Visa Information",
+        requirementsTitle: "Israel Visa Requirements",
+
+        stepMeta: [
+            { icon: "document-text-outline", label: "Start Application" },
+            { icon: "card-outline", label: "Application Submission" },
+            { icon: "checkmark-done-outline", label: "Get your Visa" },
+        ],
+
+        processSteps: [
+            {
+                title: "Start Online Visa Application",
+                points: [
+                    "Fill in traveler details online and select visa type.",
+                    "Upload passport and photo documents securely.",
+                    "Review and confirm your information before submission.",
+                ],
+            },
+            {
+                title: "Application Submit to immigration",
+                points: [
+                    "Clear government and service charges securely.",
+                    "Any additional questions are handled on your behalf.",
+                    "We monitor the payment and ticket the application.",
+                ],
+            },
+            {
+                title: "Get Your Visa",
+                points: [
+                    "Decisions are typically issued within 5 working days.",
+                    "Visa delivered via email and WhatsApp.",
+                    "Download and print your e-visa before travel.",
+                ],
+            },
+        ],
+
+        visaInfo: {
+            visaType: "e-Visa",
+            stay: "90 days",
+            validity: "90 days",
+            entry: "Single",
+            method: "Semi-online",
+        },
+
+        requirements: [
+            "Valid passport",
+            "Photograph ( Digital Copy )",
+            "Flight Booking",
+            "Hotel Booking",
+            "Travel Insurance",
+            "Covering Letter",
+        ],
+    },
 };

@@ -17,45 +17,57 @@ import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import ScreenWrapper from "../../components/ScreenWrapper";
-import { CountryApplyBanner, CoPassengerCard } from "../../components/ApplyFlowCards";
+import {
+  CountryApplyBanner,
+  CoPassengerCard,
+} from "../../components/ApplyFlowCards";
 import { extractPassportFrontPageFromAsset } from "../../utils/passportFrontPage";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
 import PassportBackSample from "../../assets/examples/passport-back.png";
 import PassportPhotoSample from "../../assets/examples/passport-photo.png";
-import TicketSample from "../../assets/examples/ticket.png";
 
 const ORANGE = "#FF5C00";
 const MARITAL_STATUS_OPTIONS = ["Single", "Married", "Divorced", "Widowed"];
-const YES_NO_OPTIONS = ["Yes", "No"];
+const OCCUPATION_OPTIONS = [
+  "Private Employee",
+  "Government Employee",
+  "Business",
+  "Self Employed",
+  "Student",
+  "Retired",
+  "Other",
+];
 
 const createTraveller = () => ({
   form: {
     travelDate: "",
-    contactNumber: "",
+    phone: "",
     email: "",
-    addressInCuba: "",
+    hotelName: "",
+    occupation: "",
     maritalStatus: "",
-    covidVaccinationStatus: "",
   },
   documents: {
     passportFront: null,
     passportBack: null,
     photo: null,
-    flightTicket: null,
-    hotelBooking: null,
   },
 });
 
-export default function CubaApplyScreen({ navigation }) {
-  const [travellers, setTravellers] = useState([{ isPrimary: true, ...createTraveller() }]);
+export default function KazakhstanApplyScreen({ navigation }) {
+  const [travellers, setTravellers] = useState([
+    { isPrimary: true, ...createTraveller() },
+  ]);
   const [tempTraveller, setTempTraveller] = useState(createTraveller());
   const [showCoTravellerModal, setShowCoTravellerModal] = useState(false);
   const [showCalendarFor, setShowCalendarFor] = useState(null);
   const [showMaritalFor, setShowMaritalFor] = useState(null);
+  const [showOccupationFor, setShowOccupationFor] = useState(null);
 
   const formatDate = (date) => {
-    const [y, m, d] = date.split("-");
+    const [y, m, d] = String(date || "").split("-");
+    if (!y || !m || !d) return "";
     return `${d}/${m}/${y}`;
   };
 
@@ -63,7 +75,6 @@ export default function CubaApplyScreen({ navigation }) {
     if (key === "passportFront") return PassportFrontSample;
     if (key === "passportBack") return PassportBackSample;
     if (key === "photo") return PassportPhotoSample;
-    if (key === "flightTicket") return TicketSample;
     return null;
   };
 
@@ -89,7 +100,7 @@ export default function CubaApplyScreen({ navigation }) {
 
   const pickDocument = async (target, key) => {
     const res = await launchImageLibrary({
-      mediaType: "mixed",
+      mediaType: "photo",
       quality: 0.9,
       includeBase64: key === "passportFront",
     });
@@ -112,11 +123,11 @@ export default function CubaApplyScreen({ navigation }) {
   const validateTraveller = (traveller) => {
     const requiredFields = [
       "travelDate",
-      "contactNumber",
+      "phone",
       "email",
-      "addressInCuba",
+      "hotelName",
+      "occupation",
       "maritalStatus",
-      "covidVaccinationStatus",
     ];
 
     for (const field of requiredFields) {
@@ -155,51 +166,51 @@ export default function CubaApplyScreen({ navigation }) {
         return;
       }
 
-      const applicationId = `cuba_${Date.now()}`;
+      const applicationId = `kazakhstan_${Date.now()}`;
 
       const formattedTravellers = await Promise.all(
         travellers.map(async (t, index) => {
           const basePath = `applications/${user.uid}/${applicationId}/traveller_${index + 1}`;
           const passportFrontPage = await extractPassportFrontPageFromAsset(
             t.documents.passportFront,
-            t.form.contactNumber
+            t.form.phone
           );
 
           const passportFrontUrl = await uploadFile(
             t.documents.passportFront,
-            `${basePath}/passport_front.${getFileExtension(t.documents.passportFront, "jpg")}`
+            `${basePath}/passport_front.${getFileExtension(
+              t.documents.passportFront,
+              "jpg"
+            )}`
           );
           const passportBackUrl = await uploadFile(
             t.documents.passportBack,
-            `${basePath}/passport_back.${getFileExtension(t.documents.passportBack, "jpg")}`
+            `${basePath}/passport_back.${getFileExtension(
+              t.documents.passportBack,
+              "jpg"
+            )}`
           );
           const photoUrl = await uploadFile(
             t.documents.photo,
-            `${basePath}/passport_photo.${getFileExtension(t.documents.photo, "jpg")}`
+            `${basePath}/passport_photo.${getFileExtension(
+              t.documents.photo,
+              "jpg"
+            )}`
           );
-          const flightTicketUrl = await uploadFile(
-            t.documents.flightTicket,
-            `${basePath}/flight_ticket.${getFileExtension(t.documents.flightTicket, "pdf")}`
-          );
-          const hotelBookingUrl = await uploadFile(
-            t.documents.hotelBooking,
-            `${basePath}/hotel_booking.${getFileExtension(t.documents.hotelBooking, "pdf")}`
-          );
+
           return {
             isPrimary: t.isPrimary,
             travelDate: t.form.travelDate,
-            contactNumber: t.form.contactNumber,
+            phone: t.form.phone,
             email: t.form.email,
-            addressInCuba: t.form.addressInCuba,
+            hotelName: t.form.hotelName,
+            occupation: t.form.occupation,
             maritalStatus: t.form.maritalStatus,
-            covidVaccinationStatus: t.form.covidVaccinationStatus,
             passportFrontPage,
             documents: {
               passportFrontUrl,
               passportBackUrl,
               photoUrl,
-              flightTicketUrl,
-              hotelBookingUrl,
             },
           };
         })
@@ -212,7 +223,7 @@ export default function CubaApplyScreen({ navigation }) {
         .doc(applicationId)
         .set({
           userId: user.uid,
-          country: "Cuba",
+          country: "Kazakhstan",
           travellers: formattedTravellers,
           totalTravellers: formattedTravellers.length,
           status: "submitted",
@@ -220,11 +231,13 @@ export default function CubaApplyScreen({ navigation }) {
         });
 
       navigation.navigate("CheckoutScreen", {
-        country: "Cuba",
+        country: "Kazakhstan",
+        totalTravellers: travellers.length,
         travellers,
+        coTravellers: travellers.slice(1),
       });
     } catch (error) {
-      console.log("Cuba submit error:", error);
+      console.log("Kazakhstan submit error:", error);
       Alert.alert("Error", "Unable to submit application. Please try again.");
     }
   };
@@ -233,16 +246,18 @@ export default function CubaApplyScreen({ navigation }) {
     <>
       <TouchableOpacity style={styles.input} onPress={() => setShowCalendarFor(target)}>
         <Text style={traveller.form.travelDate ? styles.inputText : styles.inputPlaceholder}>
-          {traveller.form.travelDate ? formatDate(traveller.form.travelDate) : "Select Travel Date"}
+          {traveller.form.travelDate
+            ? formatDate(traveller.form.travelDate)
+            : "Select Travel Date"}
         </Text>
       </TouchableOpacity>
 
       <TextInput
-        placeholder="Contact Number"
+        placeholder="Mobile Number"
         style={styles.input}
         keyboardType="phone-pad"
-        value={traveller.form.contactNumber}
-        onChangeText={(v) => onChange("contactNumber", v)}
+        value={traveller.form.phone}
+        onChangeText={(v) => onChange("phone", v)}
         placeholderTextColor="#111827"
       />
 
@@ -256,13 +271,18 @@ export default function CubaApplyScreen({ navigation }) {
       />
 
       <TextInput
-        placeholder="Address In Cuba"
-        style={[styles.input, styles.textArea]}
-        multiline
-        value={traveller.form.addressInCuba}
-        onChangeText={(v) => onChange("addressInCuba", v)}
+        placeholder="Hotel Name"
+        style={styles.input}
+        value={traveller.form.hotelName}
+        onChangeText={(v) => onChange("hotelName", v)}
         placeholderTextColor="#111827"
       />
+
+      <TouchableOpacity style={styles.input} onPress={() => setShowOccupationFor(target)}>
+        <Text style={traveller.form.occupation ? styles.inputText : styles.inputPlaceholder}>
+          {traveller.form.occupation || "Select Occupation"}
+        </Text>
+      </TouchableOpacity>
 
       <TouchableOpacity style={styles.input} onPress={() => setShowMaritalFor(target)}>
         <Text style={traveller.form.maritalStatus ? styles.inputText : styles.inputPlaceholder}>
@@ -270,35 +290,10 @@ export default function CubaApplyScreen({ navigation }) {
         </Text>
       </TouchableOpacity>
 
-      <View style={styles.radioCard}>
-        <Text style={styles.radioTitle}>COVID Vaccination Status *</Text>
-        <View style={styles.radioRow}>
-          {YES_NO_OPTIONS.map((option) => {
-            const active = traveller.form.covidVaccinationStatus === option;
-            return (
-              <TouchableOpacity
-                key={option}
-                style={[styles.radioOption, active && styles.radioOptionActive]}
-                onPress={() => onChange("covidVaccinationStatus", option)}
-              >
-                <Ionicons
-                  name={active ? "radio-button-on" : "radio-button-off"}
-                  size={16}
-                  color={active ? ORANGE : "#111827"}
-                />
-                <Text style={[styles.radioLabel, active && styles.radioLabelActive]}>{option}</Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-      </View>
-
       {[
         { key: "passportFront", label: "Upload Passport Front Page" },
         { key: "passportBack", label: "Upload Passport Back Page" },
         { key: "photo", label: "Upload Passport Size Photo" },
-        { key: "flightTicket", label: "Upload Confirm Flight Ticket" },
-        { key: "hotelBooking", label: "Upload Confirm Hotel Booking" },
       ].map(({ key, label }) => (
         <View key={key} style={styles.docCard}>
           <Text style={styles.docLabel}>{label} *</Text>
@@ -332,19 +327,20 @@ export default function CubaApplyScreen({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        <CountryApplyBanner countryName="Cuba" fallbackText="Apply now & get visa in 5-7 working days" />
+        <CountryApplyBanner countryName="Kazakhstan" />
 
         <View style={styles.formCard}>
-        {renderForm(
-          travellers[0],
-          (k, v) => {
-            const updated = [...travellers];
-            updated[0].form[k] = v;
-            setTravellers(updated);
-          },
-          "main"
-        )}
+          {renderForm(
+            travellers[0],
+            (k, v) => {
+              const updated = [...travellers];
+              updated[0].form[k] = v;
+              setTravellers(updated);
+            },
+            "main"
+          )}
         </View>
+
         <CoPassengerCard
           coTravellerCount={Math.max(0, travellers.length - 1)}
           onAddPress={() => setShowCoTravellerModal(true)}
@@ -448,6 +444,40 @@ export default function CubaApplyScreen({ navigation }) {
           </View>
         </View>
       </Modal>
+
+      <Modal visible={!!showOccupationFor} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.selectModalBox}>
+            <Text style={styles.selectModalTitle}>Select Occupation</Text>
+            <ScrollView>
+              {OCCUPATION_OPTIONS.map((occupation) => (
+                <TouchableOpacity
+                  key={occupation}
+                  style={styles.optionBtn}
+                  onPress={() => {
+                    if (showOccupationFor === "main") {
+                      const updated = [...travellers];
+                      updated[0].form.occupation = occupation;
+                      setTravellers(updated);
+                    } else {
+                      setTempTraveller((prev) => ({
+                        ...prev,
+                        form: { ...prev.form, occupation },
+                      }));
+                    }
+                    setShowOccupationFor(null);
+                  }}
+                >
+                  <Text style={styles.optionText}>{occupation}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+            <TouchableOpacity style={styles.cancelBtn} onPress={() => setShowOccupationFor(null)}>
+              <Text style={styles.cancelText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScreenWrapper>
   );
 }
@@ -481,47 +511,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   inputText: { color: "#111827" },
-  inputPlaceholder: { color: "#111827F" },
-  textArea: { minHeight: 90, textAlignVertical: "top" },
-  radioCard: {
-    backgroundColor: "#FFFFFF",
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 12,
-  },
-  radioTitle: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#111827",
-    marginBottom: 10,
-  },
-  radioRow: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  radioOption: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    borderRadius: 999,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-  },
-  radioOptionActive: {
-    borderColor: "#FFB37D",
-    backgroundColor: "#FFF7ED",
-  },
-  radioLabel: {
-    marginLeft: 6,
-    color: "#6B7280",
-    fontWeight: "600",
-  },
-  radioLabelActive: {
-    color: ORANGE,
-  },
+  inputPlaceholder: { color: "#111827" },
   docCard: {
     backgroundColor: "#fff",
     borderRadius: 14,
@@ -625,5 +615,3 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
 });
-
-

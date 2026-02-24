@@ -108,6 +108,27 @@ export const COUNTRY_WHY_CHOOSE = {
     { icon: "headset-outline", text: "Real Human Support & Solution" },
   ],
 
+  Kazakhstan: [
+    { icon: "flash-outline", text: "1200+ Visa successfully Processed" },
+    { icon: "shield-checkmark-outline", text: "Reliable & Secure" },
+    { icon: "headset-outline", text: "Real Human Support & Solution" },
+  ],
+
+  Philippines: [
+    { icon: "flash-outline", text: "1200+ Visa successfully Processed" },
+    { icon: "shield-checkmark-outline", text: "Reliable & Secure" },
+    { icon: "headset-outline", text: "Real Human Support & Solution" },
+  ],
+
+  Israel: [
+    { icon: "flash-outline", text: "1200+ Visa successfully Processed" },
+    { icon: "shield-checkmark-outline", text: "Reliable & Secure" },
+    { icon: "headset-outline", text: "Real Human Support & Solution" },
+  ],
+
+
+
+
 
 };
 

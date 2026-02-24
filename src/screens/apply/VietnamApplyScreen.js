@@ -242,7 +242,7 @@ export default function VietnamApplyScreen({ navigation }) {
                 keyboardType="phone-pad"
                 value={traveller.form.phone}
                 onChangeText={(v) => onChange("phone", v)}
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor="#000000"
             />
 
             <TextInput
@@ -250,7 +250,7 @@ export default function VietnamApplyScreen({ navigation }) {
                 style={styles.input}
                 value={traveller.form.email}
                 onChangeText={(v) => onChange("email", v)}
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor="#000000"
             />
 
             <TextInput
@@ -259,7 +259,7 @@ export default function VietnamApplyScreen({ navigation }) {
                 multiline
                 value={traveller.form.hotelDetails}
                 onChangeText={(v) => onChange("hotelDetails", v)}
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor="#000000"
             />
 
             {[
@@ -323,6 +323,7 @@ export default function VietnamApplyScreen({ navigation }) {
 
                 <CountryApplyBanner countryName="Vietnam" />
 
+        <View style={styles.formCard}>
                 {renderForm(
                     travellers[0],
                     (k, v) => {
@@ -332,7 +333,7 @@ export default function VietnamApplyScreen({ navigation }) {
                     },
                     "main"
                 )}
-
+        </View>
                 <CoPassengerCard
                     coTravellerCount={Math.max(0, travellers.length - 1)}
                     onAddPress={() => setShowCoTravellerModal(true)}
@@ -415,8 +416,17 @@ export default function VietnamApplyScreen({ navigation }) {
 
 const styles = StyleSheet.create({
     container: { padding: 16, paddingBottom: 40 },
-
-    header: {
+  formCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 14,
+    padding: 12,
+    marginTop: 10,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    elevation: 2,
+  },
+  header: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
@@ -445,7 +455,7 @@ const styles = StyleSheet.create({
         color: "#111827",
     },
     inputPlaceholder: {
-        color: "#9CA3AF",
+        color: "#000000",
     },
 
     textArea: { height: 90 },
@@ -560,3 +570,5 @@ const styles = StyleSheet.create({
         padding: 12,
     },
 });
+
+

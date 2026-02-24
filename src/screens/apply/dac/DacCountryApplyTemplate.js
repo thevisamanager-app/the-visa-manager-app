@@ -342,8 +342,8 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
     const placeholderValue = `__${fieldKey}_placeholder__`;
     const selectedValue = formData[fieldKey] || placeholderValue;
     const isPlaceholder = selectedValue === placeholderValue;
-    const dropdownTextColor = Platform.OS === "android" ? "#FFFFFF" : "#111827";
-    const dropdownPlaceholderColor = Platform.OS === "android" ? "#D1D5DB" : "#9CA3AF";
+    const dropdownTextColor = "#111827";
+    const dropdownPlaceholderColor = "#111827";
     return (
       <View style={styles.fieldFull}>
         <Text style={styles.labelText}>{placeholder} *</Text>
@@ -356,7 +356,7 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
             mode={Platform.OS === "android" ? "dropdown" : undefined}
             itemStyle={styles.pickerItem}
             prompt={placeholder}
-            themeVariant={Platform.OS === "android" ? "dark" : undefined}
+            themeVariant={Platform.OS === "android" ? "light" : undefined}
           >
             <Picker.Item label={placeholder} value={placeholderValue} color={dropdownPlaceholderColor} />
             {options.map((o) => (
@@ -397,7 +397,7 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
       <View style={styles.fieldFull}>
         <TextInput
           placeholder="Mobile Number"
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor="#000000"
           style={styles.inputLarge}
           value={formData.phone}
           onChangeText={(v) => setFieldFn("phone", v)}
@@ -408,7 +408,7 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
       <View style={styles.fieldFull}>
         <TextInput
           placeholder="Email ID"
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor="#000000"
           style={styles.inputLarge}
           value={formData.email}
           onChangeText={(v) => setFieldFn("email", v)}
@@ -425,7 +425,7 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
         <View style={styles.fieldFull}>
           <TextInput
             placeholder="Hotel Details"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor="#000000"
             style={styles.inputLarge}
             value={formData.hotelDetails}
             onChangeText={(v) => setFieldFn("hotelDetails", v)}
@@ -619,7 +619,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   inputText: { color: "#111827" },
-  inputPlaceholder: { color: "#9CA3AF" },
+  inputPlaceholder: { color: "#000000" },
   pickerWrap: {
     borderWidth: 1,
     borderColor: "#ddd",
@@ -630,9 +630,9 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   picker: { marginTop: Platform.OS === "android" ? -2 : 0, width: "100%" },
-  pickerItem: { color: "#111827" },
-  pickerPlaceholderText: { color: "#9CA3AF" },
-  pickerSelectedText: { color: "#111827" },
+  pickerItem: { color: "#000000" },
+  pickerPlaceholderText: { color: "#000000" },
+  pickerSelectedText: { color: "#000000" },
   docsStack: { width: "100%", marginTop: 4 },
   uploadCard: {
     width: "100%",

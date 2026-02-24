@@ -249,6 +249,9 @@ import MauritiusApplyScreen from "../screens/apply/MauritiusApplyScreen";
 import CubaApplyScreen from "../screens/apply/CubaApplyScreen";
 import BhutanApplyScreen from "../screens/apply/BhutanApplyScreen";
 import GeorgiaApplyScreen from "../screens/apply/GeorgiaApplyScreen";
+import KazakhstanApplyScreen from "../screens/apply/KazakhstanApplyScreen";
+import PhilippinesApplyScreen from "../screens/apply/PhilippinesApplyScreen";
+import IsraelApplyScreen from "../screens/apply/IsraelApplyScreen";
 
 
 
@@ -413,6 +416,18 @@ function UserStack() {
       <Stack.Screen
         name="EgyptApplyScreen"
         component={EgyptApplyScreen}
+      />
+      <Stack.Screen
+        name="KazakhstanApplyScreen"
+        component={KazakhstanApplyScreen}
+      />
+      <Stack.Screen
+        name="PhilippinesApplyScreen"
+        component={PhilippinesApplyScreen}
+      />
+      <Stack.Screen
+        name="IsraelApplyScreen"
+        component={IsraelApplyScreen}
       />
 
       {/* EXISTING FLOW */}

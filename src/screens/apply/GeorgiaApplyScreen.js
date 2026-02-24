@@ -319,6 +319,7 @@ export default function GeorgiaApplyScreen({ navigation }) {
 
         <CountryApplyBanner countryName="Georgia" fallbackText="Apply now & get visa in 4-6 working days" />
 
+        <View style={styles.formCard}>
         {renderForm(
           travellers[0],
           (k, v) => {
@@ -328,7 +329,7 @@ export default function GeorgiaApplyScreen({ navigation }) {
           },
           "main"
         )}
-
+        </View>
         <CoPassengerCard
           coTravellerCount={Math.max(0, travellers.length - 1)}
           onAddPress={() => setShowCoTravellerModal(true)}
@@ -404,6 +405,16 @@ export default function GeorgiaApplyScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { padding: 16, paddingBottom: 40 },
+  formCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 14,
+    padding: 12,
+    marginTop: 10,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    elevation: 2,
+  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -529,3 +540,5 @@ const styles = StyleSheet.create({
     padding: 12,
   },
 });
+
+

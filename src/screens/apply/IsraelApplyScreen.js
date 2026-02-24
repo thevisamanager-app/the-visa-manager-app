@@ -26,36 +26,32 @@ import PassportPhotoSample from "../../assets/examples/passport-photo.png";
 import TicketSample from "../../assets/examples/ticket.png";
 
 const ORANGE = "#FF5C00";
-const MARITAL_STATUS_OPTIONS = ["Single", "Married", "Divorced", "Widowed"];
-const YES_NO_OPTIONS = ["Yes", "No"];
 
 const createTraveller = () => ({
   form: {
     travelDate: "",
-    contactNumber: "",
+    phone: "",
     email: "",
-    addressInCuba: "",
-    maritalStatus: "",
-    covidVaccinationStatus: "",
   },
   documents: {
     passportFront: null,
     passportBack: null,
     photo: null,
     flightTicket: null,
-    hotelBooking: null,
+    hotelVoucher: null,
+    travelInsurance: null,
   },
 });
 
-export default function CubaApplyScreen({ navigation }) {
+export default function IsraelApplyScreen({ navigation }) {
   const [travellers, setTravellers] = useState([{ isPrimary: true, ...createTraveller() }]);
   const [tempTraveller, setTempTraveller] = useState(createTraveller());
   const [showCoTravellerModal, setShowCoTravellerModal] = useState(false);
   const [showCalendarFor, setShowCalendarFor] = useState(null);
-  const [showMaritalFor, setShowMaritalFor] = useState(null);
 
   const formatDate = (date) => {
-    const [y, m, d] = date.split("-");
+    const [y, m, d] = String(date || "").split("-");
+    if (!y || !m || !d) return "";
     return `${d}/${m}/${y}`;
   };
 
@@ -110,15 +106,7 @@ export default function CubaApplyScreen({ navigation }) {
   };
 
   const validateTraveller = (traveller) => {
-    const requiredFields = [
-      "travelDate",
-      "contactNumber",
-      "email",
-      "addressInCuba",
-      "maritalStatus",
-      "covidVaccinationStatus",
-    ];
-
+    const requiredFields = ["travelDate", "phone", "email"];
     for (const field of requiredFields) {
       if (!String(traveller.form[field] || "").trim()) {
         Alert.alert("Missing Info", "Please fill all required fields.");
@@ -155,14 +143,14 @@ export default function CubaApplyScreen({ navigation }) {
         return;
       }
 
-      const applicationId = `cuba_${Date.now()}`;
+      const applicationId = `israel_${Date.now()}`;
 
       const formattedTravellers = await Promise.all(
         travellers.map(async (t, index) => {
           const basePath = `applications/${user.uid}/${applicationId}/traveller_${index + 1}`;
           const passportFrontPage = await extractPassportFrontPageFromAsset(
             t.documents.passportFront,
-            t.form.contactNumber
+            t.form.phone
           );
 
           const passportFrontUrl = await uploadFile(
@@ -181,25 +169,27 @@ export default function CubaApplyScreen({ navigation }) {
             t.documents.flightTicket,
             `${basePath}/flight_ticket.${getFileExtension(t.documents.flightTicket, "pdf")}`
           );
-          const hotelBookingUrl = await uploadFile(
-            t.documents.hotelBooking,
-            `${basePath}/hotel_booking.${getFileExtension(t.documents.hotelBooking, "pdf")}`
+          const hotelVoucherUrl = await uploadFile(
+            t.documents.hotelVoucher,
+            `${basePath}/hotel_voucher.${getFileExtension(t.documents.hotelVoucher, "pdf")}`
+          );
+          const travelInsuranceUrl = await uploadFile(
+            t.documents.travelInsurance,
+            `${basePath}/travel_insurance.${getFileExtension(t.documents.travelInsurance, "pdf")}`
           );
           return {
             isPrimary: t.isPrimary,
             travelDate: t.form.travelDate,
-            contactNumber: t.form.contactNumber,
+            phone: t.form.phone,
             email: t.form.email,
-            addressInCuba: t.form.addressInCuba,
-            maritalStatus: t.form.maritalStatus,
-            covidVaccinationStatus: t.form.covidVaccinationStatus,
             passportFrontPage,
             documents: {
               passportFrontUrl,
               passportBackUrl,
               photoUrl,
               flightTicketUrl,
-              hotelBookingUrl,
+              hotelVoucherUrl,
+              travelInsuranceUrl,
             },
           };
         })
@@ -212,7 +202,7 @@ export default function CubaApplyScreen({ navigation }) {
         .doc(applicationId)
         .set({
           userId: user.uid,
-          country: "Cuba",
+          country: "Israel",
           travellers: formattedTravellers,
           totalTravellers: formattedTravellers.length,
           status: "submitted",
@@ -220,13 +210,49 @@ export default function CubaApplyScreen({ navigation }) {
         });
 
       navigation.navigate("CheckoutScreen", {
-        country: "Cuba",
+        country: "Israel",
+        totalTravellers: travellers.length,
         travellers,
+        coTravellers: travellers.slice(1),
       });
     } catch (error) {
-      console.log("Cuba submit error:", error);
+      console.log("Israel submit error:", error);
       Alert.alert("Error", "Unable to submit application. Please try again.");
     }
+  };
+
+  const getFileLabel = (file) => file?.fileName || file?.name || "File selected";
+
+  const renderDocumentCard = (traveller, target, key, label) => {
+    const file = traveller.documents[key];
+    const sample = getSample(key);
+    const isImage = file?.type?.startsWith("image/");
+    const hideImagePreview = key === "hotelVoucher" || key === "travelInsurance";
+
+    return (
+      <View key={key} style={styles.docCard}>
+        <Text style={styles.docLabel}>{label} *</Text>
+
+        {file ? (
+          isImage && !hideImagePreview ? (
+            <Image source={{ uri: file.uri }} style={styles.previewImage} />
+          ) : (
+            <View style={styles.filePreviewBox}>
+              <Ionicons name="document-outline" size={30} color="#6B7280" />
+              <Text style={styles.filePreviewText}>{getFileLabel(file)}</Text>
+            </View>
+          )
+        ) : sample ? (
+          <View style={styles.sampleWrapper}>
+            <Image source={sample} style={styles.sampleImage} resizeMode="contain" />
+          </View>
+        ) : null}
+
+        <TouchableOpacity style={styles.uploadBtn} onPress={() => pickDocument(target, key)}>
+          <Text style={styles.uploadText}>{file ? "Replace Document" : "Upload Document"}</Text>
+        </TouchableOpacity>
+      </View>
+    );
   };
 
   const renderForm = (traveller, onChange, target) => (
@@ -238,11 +264,11 @@ export default function CubaApplyScreen({ navigation }) {
       </TouchableOpacity>
 
       <TextInput
-        placeholder="Contact Number"
+        placeholder="Mobile Number"
         style={styles.input}
         keyboardType="phone-pad"
-        value={traveller.form.contactNumber}
-        onChangeText={(v) => onChange("contactNumber", v)}
+        value={traveller.form.phone}
+        onChangeText={(v) => onChange("phone", v)}
         placeholderTextColor="#111827"
       />
 
@@ -255,67 +281,14 @@ export default function CubaApplyScreen({ navigation }) {
         autoCapitalize="none"
       />
 
-      <TextInput
-        placeholder="Address In Cuba"
-        style={[styles.input, styles.textArea]}
-        multiline
-        value={traveller.form.addressInCuba}
-        onChangeText={(v) => onChange("addressInCuba", v)}
-        placeholderTextColor="#111827"
-      />
-
-      <TouchableOpacity style={styles.input} onPress={() => setShowMaritalFor(target)}>
-        <Text style={traveller.form.maritalStatus ? styles.inputText : styles.inputPlaceholder}>
-          {traveller.form.maritalStatus || "Select Marital Status"}
-        </Text>
-      </TouchableOpacity>
-
-      <View style={styles.radioCard}>
-        <Text style={styles.radioTitle}>COVID Vaccination Status *</Text>
-        <View style={styles.radioRow}>
-          {YES_NO_OPTIONS.map((option) => {
-            const active = traveller.form.covidVaccinationStatus === option;
-            return (
-              <TouchableOpacity
-                key={option}
-                style={[styles.radioOption, active && styles.radioOptionActive]}
-                onPress={() => onChange("covidVaccinationStatus", option)}
-              >
-                <Ionicons
-                  name={active ? "radio-button-on" : "radio-button-off"}
-                  size={16}
-                  color={active ? ORANGE : "#111827"}
-                />
-                <Text style={[styles.radioLabel, active && styles.radioLabelActive]}>{option}</Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-      </View>
-
       {[
-        { key: "passportFront", label: "Upload Passport Front Page" },
-        { key: "passportBack", label: "Upload Passport Back Page" },
-        { key: "photo", label: "Upload Passport Size Photo" },
-        { key: "flightTicket", label: "Upload Confirm Flight Ticket" },
-        { key: "hotelBooking", label: "Upload Confirm Hotel Booking" },
-      ].map(({ key, label }) => (
-        <View key={key} style={styles.docCard}>
-          <Text style={styles.docLabel}>{label} *</Text>
-          {traveller.documents[key] ? (
-            <Image source={{ uri: traveller.documents[key].uri }} style={styles.previewImage} />
-          ) : getSample(key) ? (
-            <View style={styles.sampleWrapper}>
-              <Image source={getSample(key)} style={styles.sampleImage} resizeMode="contain" />
-            </View>
-          ) : null}
-          <TouchableOpacity style={styles.uploadBtn} onPress={() => pickDocument(target, key)}>
-            <Text style={styles.uploadText}>
-              {traveller.documents[key] ? "Replace Document" : "Upload Document"}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      ))}
+        ["passportFront", "Upload Passport Front Page"],
+        ["passportBack", "Upload Passport Back Page"],
+        ["photo", "Upload Passport Size Photo"],
+        ["flightTicket", "Upload Flight Tickets"],
+        ["hotelVoucher", "Upload Hotel Voucher"],
+        ["travelInsurance", "Upload Travel Insurance"],
+      ].map(([key, label]) => renderDocumentCard(traveller, target, key, label))}
     </>
   );
 
@@ -332,19 +305,20 @@ export default function CubaApplyScreen({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        <CountryApplyBanner countryName="Cuba" fallbackText="Apply now & get visa in 5-7 working days" />
+        <CountryApplyBanner countryName="Israel" />
 
         <View style={styles.formCard}>
-        {renderForm(
-          travellers[0],
-          (k, v) => {
-            const updated = [...travellers];
-            updated[0].form[k] = v;
-            setTravellers(updated);
-          },
-          "main"
-        )}
+          {renderForm(
+            travellers[0],
+            (k, v) => {
+              const updated = [...travellers];
+              updated[0].form[k] = v;
+              setTravellers(updated);
+            },
+            "main"
+          )}
         </View>
+
         <CoPassengerCard
           coTravellerCount={Math.max(0, travellers.length - 1)}
           onAddPress={() => setShowCoTravellerModal(true)}
@@ -414,40 +388,6 @@ export default function CubaApplyScreen({ navigation }) {
           </View>
         </View>
       </Modal>
-
-      <Modal visible={!!showMaritalFor} transparent animationType="fade">
-        <View style={styles.modalOverlay}>
-          <View style={styles.selectModalBox}>
-            <Text style={styles.selectModalTitle}>Select Marital Status</Text>
-            <ScrollView>
-              {MARITAL_STATUS_OPTIONS.map((status) => (
-                <TouchableOpacity
-                  key={status}
-                  style={styles.optionBtn}
-                  onPress={() => {
-                    if (showMaritalFor === "main") {
-                      const updated = [...travellers];
-                      updated[0].form.maritalStatus = status;
-                      setTravellers(updated);
-                    } else {
-                      setTempTraveller((prev) => ({
-                        ...prev,
-                        form: { ...prev.form, maritalStatus: status },
-                      }));
-                    }
-                    setShowMaritalFor(null);
-                  }}
-                >
-                  <Text style={styles.optionText}>{status}</Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-            <TouchableOpacity style={styles.cancelBtn} onPress={() => setShowMaritalFor(null)}>
-              <Text style={styles.cancelText}>Close</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
     </ScreenWrapper>
   );
 }
@@ -481,47 +421,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   inputText: { color: "#111827" },
-  inputPlaceholder: { color: "#111827F" },
-  textArea: { minHeight: 90, textAlignVertical: "top" },
-  radioCard: {
-    backgroundColor: "#FFFFFF",
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 12,
-  },
-  radioTitle: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#111827",
-    marginBottom: 10,
-  },
-  radioRow: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  radioOption: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    borderRadius: 999,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-  },
-  radioOptionActive: {
-    borderColor: "#FFB37D",
-    backgroundColor: "#FFF7ED",
-  },
-  radioLabel: {
-    marginLeft: 6,
-    color: "#6B7280",
-    fontWeight: "600",
-  },
-  radioLabelActive: {
-    color: ORANGE,
-  },
+  inputPlaceholder: { color: "#111827" },
   docCard: {
     backgroundColor: "#fff",
     borderRadius: 14,
@@ -549,6 +449,24 @@ const styles = StyleSheet.create({
     height: 110,
     borderRadius: 10,
     marginBottom: 8,
+  },
+  filePreviewBox: {
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    borderStyle: "dashed",
+    borderRadius: 10,
+    paddingVertical: 20,
+    paddingHorizontal: 10,
+    marginBottom: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#F9FAFB",
+  },
+  filePreviewText: {
+    marginTop: 8,
+    color: "#374151",
+    fontSize: 12,
+    textAlign: "center",
   },
   uploadBtn: {
     borderWidth: 1,
@@ -589,41 +507,4 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 12,
   },
-  selectModalBox: {
-    backgroundColor: "#fff",
-    margin: 20,
-    borderRadius: 16,
-    padding: 14,
-    maxHeight: "65%",
-  },
-  selectModalTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    marginBottom: 12,
-    textAlign: "center",
-  },
-  optionBtn: {
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderColor: "#F3F4F6",
-  },
-  optionText: {
-    fontSize: 15,
-    color: "#111827",
-    textAlign: "center",
-  },
-  cancelBtn: {
-    marginTop: 12,
-    borderWidth: 1,
-    borderColor: ORANGE,
-    borderRadius: 10,
-    paddingVertical: 10,
-    alignItems: "center",
-  },
-  cancelText: {
-    color: ORANGE,
-    fontWeight: "700",
-  },
 });
-
-

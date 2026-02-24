@@ -227,6 +227,7 @@ export default function CombodiaApplyScreen({ navigation }) {
       <TextInput
         placeholder="Mobile Number"
         style={styles.input}
+         placeholderTextColor="#000000"
         keyboardType="phone-pad"
         value={traveller.form.phone}
         onChangeText={(v) => onChange("phone", v)}
@@ -235,6 +236,7 @@ export default function CombodiaApplyScreen({ navigation }) {
       <TextInput
         placeholder="Email ID"
         style={styles.input}
+         placeholderTextColor="#000000"
         value={traveller.form.email}
         onChangeText={(v) => onChange("email", v)}
       />
@@ -302,6 +304,7 @@ export default function CombodiaApplyScreen({ navigation }) {
         </View>
         <CountryApplyBanner countryName="Combodia" />
 
+        <View style={styles.formCard}>
         {renderForm(
           travellers[0],
           (k, v) => {
@@ -311,7 +314,7 @@ export default function CombodiaApplyScreen({ navigation }) {
           },
           "main"
         )}
-
+        </View>
         <CoPassengerCard
           coTravellerCount={Math.max(0, travellers.length - 1)}
           onAddPress={() => setShowCoTravellerModal(true)}
@@ -395,7 +398,16 @@ export default function CombodiaApplyScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { padding: 16, paddingBottom: 40 },
-
+  formCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 14,
+    padding: 12,
+    marginTop: 10,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    elevation: 2,
+  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -511,3 +523,5 @@ const styles = StyleSheet.create({
     padding: 12,
   },
 });
+
+

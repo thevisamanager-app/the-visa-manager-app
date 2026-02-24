@@ -38,7 +38,7 @@ export const COUNTRY_IMAGES = {
   Liechtenstein: require("../assets/images/Liechtenstein.webp"),
   Lithuania: require("../assets/images/Lithuania.webp"),
   Luxembourg: require("../assets/images/Luxembourg.webp"),
-  Malawi: require("../assets/images/Malawi.webp"),
+  malawi: require("../assets/images/malawi.webp"),
   Malaysia: require("../assets/images/Malaysia.webp"),
   Maldives: require("../assets/images/Maldives.webp"),
   Malta: require("../assets/images/Malta.webp"), // adjust case if needed
@@ -52,7 +52,7 @@ export const COUNTRY_IMAGES = {
   Nigeria: require("../assets/images/Nigeria.webp"),
   Norway: require("../assets/images/Norway.webp"),
   Oman: require("../assets/images/Oman.webp"),
-  philippines:require("../assets/images/Philippines.webp"),
+  philippines:require("../assets/images/philippines.webp"),
   Poland:require("../assets/images/Poland.webp"),
   Portugal:require("../assets/images/Portugal.webp"),
   Qatar:require("../assets/images/Qatar.webp"),
@@ -89,8 +89,10 @@ export const COUNTRY_IMAGES = {
   Barbados: require("../assets/images/Barbados.webp"),
   "Cook Islands": require("../assets/images/Cook Islands.webp"),
   Réunion:require("../assets/images/Réunion.webp"),
-"St. Vincent & Grenadines": require("../assets/images/St.Vincent&Grenadines.webp"),
+"St. Vincent & Grenadines": require("../assets/images/St. Vincent & Grenadines.webp"),
  Cuba:require("../assets/images/Cuba.webp"),
+ Kazakhstan:require("../assets/images/Kazakhstan.webp"),
+ Israel:require("../assets/images/Israel.webp")
 
 };
 
@@ -118,7 +120,7 @@ const COUNTRY_IMAGE_ALIASES = {
   northkorea: "North Korea",
   monoglia: "Mongolia",
   cambodia: "Combodia",
-  Malawi: "Malawi",
+  malawi: "malawi",
   // reunion: "Réunion",
 };
 
@@ -133,13 +135,15 @@ const NORMALIZED_COUNTRY_IMAGES = Object.entries(COUNTRY_IMAGES).reduce(
 export const getCountryImage = (countryName) => {
   if (!countryName) return null;
 
-  if (COUNTRY_IMAGES[countryName]) {
-    return COUNTRY_IMAGES[countryName];
+  const rawName = String(countryName).trim();
+
+  if (COUNTRY_IMAGES[rawName]) {
+    return COUNTRY_IMAGES[rawName];
   }
 
-  const normalized = normalizeCountryKey(countryName);
+  const normalized = normalizeCountryKey(rawName);
   const aliasKey = COUNTRY_IMAGE_ALIASES[normalized];
-  const lookupKey = aliasKey || countryName;
+  const lookupKey = aliasKey || rawName;
 
   return (
     COUNTRY_IMAGES[lookupKey] ||

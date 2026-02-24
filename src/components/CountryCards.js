@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
   },
 
   applyButton: {
-    backgroundColor: "#1E63B6",
+    backgroundColor: "#090F85",
     paddingVertical: verticalScale(12),
     borderRadius: 999,
     alignItems: "center",

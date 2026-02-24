@@ -13,6 +13,7 @@ import {
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Calendar } from "react-native-calendars";
 import { launchImageLibrary } from "react-native-image-picker";
+import { validatePickedDocument } from "../../utils/documentValidation";
 import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
@@ -112,6 +113,12 @@ export default function QatarApplyScreen({ navigation }) {
     });
     if (!res.assets?.[0]) return;
     const selectedAsset = res.assets[0];
+
+    const validation = await validatePickedDocument(key, selectedAsset);
+    if (!validation.ok) {
+      Alert.alert("Invalid Document", validation.message);
+      return;
+    }
 
     if (target === "main") {
       const updated = [...travellers];
@@ -696,3 +703,4 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
 });
+

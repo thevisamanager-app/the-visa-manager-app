@@ -21,7 +21,7 @@ export const COUNTRY_APPLY_CONFIG = {
       photo: {
         label: "Passport Size Photo",
         required: true,
-        example: require("../assets/examples/passport-photo.png"),
+        example: require("../assets/examples/passportimage.png"),
       },
       ticket: {
         label: "Upload Return Ticket",
@@ -73,7 +73,7 @@ export const COUNTRY_APPLY_CONFIG = {
       photo: {
         label: "Passport Size Photo",
         required: true,
-        example: require("../assets/examples/passport-photo.png"),
+        example: require("../assets/examples/passportimage.png"),
       },
       ticket: {
         label: "Upload Return Air Ticket",
@@ -104,49 +104,33 @@ export const COUNTRY_APPLY_CONFIG = {
     },
   },
 
- Kenya: {
+  Singapore: {
     fields: {
       travelDate: { required: true },
       phone: { required: true },
       email: { required: true },
-      maritalStatus: {
-        required: true,
-        type: "dropdown",
-        options: ["Single", "Married", "Divorced"],
-      },
-      emergencyName: { required: true },
-      emergencyPhone: { required: true },
+      hotelDetails: { required: true },
     },
     documents: {
+      bankDetails: {
+        label: "Upload Bank Details (PDF)",
+        required: true,
+        type: "pdf",
+      },
       passportFront: {
         label: "Upload Passport Front Page",
         required: true,
         example: require("../assets/examples/passport-front.png"),
       },
       passportBack: {
-        label: "Upload Passport Back Page",
+        label: "Upload Passport Last Page",
         required: true,
         example: require("../assets/examples/passport-back.png"),
       },
       photo: {
-        label: "Passport Size Photo",
+        label: "Applicant's Photo",
         required: true,
-        example: require("../assets/examples/passport-photo.png"),
-      },
-      ticket: {
-        label: "Upload Confirm Return Air Ticket",
-        required: true,
-        example: require("../assets/examples/ticket.png"),
-      },
-      hotelConfirmation: {
-        label: "Upload Confirm Hotel Booking",
-        required: true,
-        example: null,
-      },
-      invitationLetter: {
-        label: "Upload Invitation Letter (Business Purpose)",
-        required: true,
-        example: null,
+        example: require("../assets/examples/passportimage.png"),
       },
     },
   },

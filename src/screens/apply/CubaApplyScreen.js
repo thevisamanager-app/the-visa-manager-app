@@ -26,32 +26,33 @@ import PassportPhotoSample from "../../assets/examples/passportimage.png";
 import TicketSample from "../../assets/examples/ticket.png";
 
 const ORANGE = "#FF5C00";
+const MARITAL_STATUS_OPTIONS = ["Single", "Married", "Divorced", "Widowed"];
+const YES_NO_OPTIONS = ["Yes", "No"];
 
 const createTraveller = () => ({
   form: {
     travelDate: "",
-    phone: "",
+    contactNumber: "",
     email: "",
-    hotelName: "",
-    professionDetails: "",
+    addressInCuba: "",
+    maritalStatus: "",
+    covidVaccinationStatus: "",
   },
   documents: {
     passportFront: null,
     passportBack: null,
     photo: null,
-    airTicket: null,
-    travelInsurance: null,
-    itinerary: null,
-    bankStatement: null,
-    professionProof: null,
+    flightTicket: null,
+    hotelBooking: null,
   },
 });
 
-export default function ArmeniaApplyScreen({ navigation }) {
+export default function CubaApplyScreen({ navigation }) {
   const [travellers, setTravellers] = useState([{ isPrimary: true, ...createTraveller() }]);
   const [tempTraveller, setTempTraveller] = useState(createTraveller());
   const [showCoTravellerModal, setShowCoTravellerModal] = useState(false);
   const [showCalendarFor, setShowCalendarFor] = useState(null);
+  const [showMaritalFor, setShowMaritalFor] = useState(null);
 
   const formatDate = (date) => {
     const [y, m, d] = date.split("-");
@@ -62,7 +63,7 @@ export default function ArmeniaApplyScreen({ navigation }) {
     if (key === "passportFront") return PassportFrontSample;
     if (key === "passportBack") return PassportBackSample;
     if (key === "photo") return PassportPhotoSample;
-    if (key === "airTicket") return TicketSample;
+    if (key === "flightTicket") return TicketSample;
     return null;
   };
 
@@ -114,15 +115,20 @@ export default function ArmeniaApplyScreen({ navigation }) {
   };
 
   const validateTraveller = (traveller) => {
-    if (
-      !traveller.form.travelDate ||
-      !traveller.form.phone ||
-      !traveller.form.email ||
-      !traveller.form.hotelName ||
-      !traveller.form.professionDetails
-    ) {
-      Alert.alert("Missing Info", "Please complete all required fields.");
-      return false;
+    const requiredFields = [
+      "travelDate",
+      "contactNumber",
+      "email",
+      "addressInCuba",
+      "maritalStatus",
+      "covidVaccinationStatus",
+    ];
+
+    for (const field of requiredFields) {
+      if (!String(traveller.form[field] || "").trim()) {
+        Alert.alert("Missing Info", "Please fill all required fields.");
+        return false;
+      }
     }
 
     for (const value of Object.values(traveller.documents)) {
@@ -143,8 +149,8 @@ export default function ArmeniaApplyScreen({ navigation }) {
   };
 
   const submit = async () => {
-    for (const traveller of travellers) {
-      if (!validateTraveller(traveller)) return;
+    for (const t of travellers) {
+      if (!validateTraveller(t)) return;
     }
 
     try {
@@ -154,57 +160,46 @@ export default function ArmeniaApplyScreen({ navigation }) {
         return;
       }
 
-      const applicationId = `armenia_${Date.now()}`;
+      const applicationId = `cuba_${Date.now()}`;
 
       const formattedTravellers = await Promise.all(
-        travellers.map(async (traveller, index) => {
+        travellers.map(async (t, index) => {
           const basePath = `applications/${user.uid}/${applicationId}/traveller_${index + 1}`;
 
           const passportFrontUrl = await uploadFile(
-            traveller.documents.passportFront,
-            `${basePath}/passport_front.${getFileExtension(traveller.documents.passportFront, "jpg")}`
+            t.documents.passportFront,
+            `${basePath}/passport_front.${getFileExtension(t.documents.passportFront, "jpg")}`
           );
           const passportBackUrl = await uploadFile(
-            traveller.documents.passportBack,
-            `${basePath}/passport_back.${getFileExtension(traveller.documents.passportBack, "jpg")}`
+            t.documents.passportBack,
+            `${basePath}/passport_back.${getFileExtension(t.documents.passportBack, "jpg")}`
           );
           const photoUrl = await uploadFile(
-            traveller.documents.photo,
-            `${basePath}/passport_photo.${getFileExtension(traveller.documents.photo, "jpg")}`
+            t.documents.photo,
+            `${basePath}/passport_photo.${getFileExtension(t.documents.photo, "jpg")}`
           );
-          const airTicketUrl = await uploadFile(
-            traveller.documents.airTicket,
-            `${basePath}/air_ticket.${getFileExtension(traveller.documents.airTicket, "pdf")}`
+          const flightTicketUrl = await uploadFile(
+            t.documents.flightTicket,
+            `${basePath}/flight_ticket.${getFileExtension(t.documents.flightTicket, "pdf")}`
           );
-          const travelInsuranceUrl = await uploadFile(
-            traveller.documents.travelInsurance,
-            `${basePath}/travel_insurance.${getFileExtension(traveller.documents.travelInsurance, "pdf")}`
+          const hotelBookingUrl = await uploadFile(
+            t.documents.hotelBooking,
+            `${basePath}/hotel_booking.${getFileExtension(t.documents.hotelBooking, "pdf")}`
           );
-          const itineraryUrl = await uploadFile(
-            traveller.documents.itinerary,
-            `${basePath}/itinerary.${getFileExtension(traveller.documents.itinerary, "pdf")}`
-          );
-          const bankStatementUrl = await uploadFile(
-            traveller.documents.bankStatement,
-            `${basePath}/bank_statement.${getFileExtension(traveller.documents.bankStatement, "pdf")}`
-          );
-          const professionProofUrl = await uploadFile(
-            traveller.documents.professionProof,
-            `${basePath}/profession_proof.${getFileExtension(traveller.documents.professionProof, "pdf")}`
-          );
-
           return {
-            isPrimary: traveller.isPrimary,
-            ...traveller.form,
+            isPrimary: t.isPrimary,
+            travelDate: t.form.travelDate,
+            contactNumber: t.form.contactNumber,
+            email: t.form.email,
+            addressInCuba: t.form.addressInCuba,
+            maritalStatus: t.form.maritalStatus,
+            covidVaccinationStatus: t.form.covidVaccinationStatus,
             documents: {
               passportFrontUrl,
               passportBackUrl,
               photoUrl,
-              airTicketUrl,
-              travelInsuranceUrl,
-              itineraryUrl,
-              bankStatementUrl,
-              professionProofUrl,
+              flightTicketUrl,
+              hotelBookingUrl,
             },
           };
         })
@@ -217,7 +212,7 @@ export default function ArmeniaApplyScreen({ navigation }) {
         .doc(applicationId)
         .set({
           userId: user.uid,
-          country: "Armenia",
+          country: "Cuba",
           travellers: formattedTravellers,
           totalTravellers: formattedTravellers.length,
           status: "submitted",
@@ -225,12 +220,12 @@ export default function ArmeniaApplyScreen({ navigation }) {
         });
 
       navigation.navigate("CheckoutScreen", {
-        country: "Armenia",
+        country: "Cuba",
         travellers,
       });
     } catch (error) {
-      console.log("Armenia submit error:", error);
-      Alert.alert("Error", "Unable to submit application.");
+      console.log("Cuba submit error:", error);
+      Alert.alert("Error", "Unable to submit application. Please try again.");
     }
   };
 
@@ -243,12 +238,12 @@ export default function ArmeniaApplyScreen({ navigation }) {
       </TouchableOpacity>
 
       <TextInput
-        placeholder="Mobile Number"
+        placeholder="Contact Number"
         style={styles.input}
         keyboardType="phone-pad"
-        value={traveller.form.phone}
-        onChangeText={(v) => onChange("phone", v)}
-        placeholderTextColor="#9CA3AF"
+        value={traveller.form.contactNumber}
+        onChangeText={(v) => onChange("contactNumber", v)}
+        placeholderTextColor="#111827"
       />
 
       <TextInput
@@ -256,35 +251,54 @@ export default function ArmeniaApplyScreen({ navigation }) {
         style={styles.input}
         value={traveller.form.email}
         onChangeText={(v) => onChange("email", v)}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor="#111827"
         autoCapitalize="none"
       />
 
       <TextInput
-        placeholder="Hotel Name"
-        style={styles.input}
-        value={traveller.form.hotelName}
-        onChangeText={(v) => onChange("hotelName", v)}
-        placeholderTextColor="#9CA3AF"
-      />
-
-      <TextInput
-        placeholder="Profession Details"
+        placeholder="Address In Cuba"
         style={[styles.input, styles.textArea]}
         multiline
-        value={traveller.form.professionDetails}
-        onChangeText={(v) => onChange("professionDetails", v)}
-        placeholderTextColor="#9CA3AF"
+        value={traveller.form.addressInCuba}
+        onChangeText={(v) => onChange("addressInCuba", v)}
+        placeholderTextColor="#111827"
       />
+
+      <TouchableOpacity style={styles.input} onPress={() => setShowMaritalFor(target)}>
+        <Text style={traveller.form.maritalStatus ? styles.inputText : styles.inputPlaceholder}>
+          {traveller.form.maritalStatus || "Select Marital Status"}
+        </Text>
+      </TouchableOpacity>
+
+      <View style={styles.radioCard}>
+        <Text style={styles.radioTitle}>COVID Vaccination Status *</Text>
+        <View style={styles.radioRow}>
+          {YES_NO_OPTIONS.map((option) => {
+            const active = traveller.form.covidVaccinationStatus === option;
+            return (
+              <TouchableOpacity
+                key={option}
+                style={[styles.radioOption, active && styles.radioOptionActive]}
+                onPress={() => onChange("covidVaccinationStatus", option)}
+              >
+                <Ionicons
+                  name={active ? "radio-button-on" : "radio-button-off"}
+                  size={16}
+                  color={active ? ORANGE : "#111827"}
+                />
+                <Text style={[styles.radioLabel, active && styles.radioLabelActive]}>{option}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </View>
+
       {[
         { key: "passportFront", label: "Upload Passport Front Page" },
         { key: "passportBack", label: "Upload Passport Back Page" },
         { key: "photo", label: "Upload Passport Size Photo" },
-        { key: "airTicket", label: "Upload Air Ticket" },
-        { key: "travelInsurance", label: "Upload Travel Insurance" },
-        { key: "itinerary", label: "Upload Travel Itinerary" },
-        { key: "bankStatement", label: "Upload Bank Statement (Last 3 Months)" },
-        { key: "professionProof", label: "Upload Salary Slip / Business Registration" },
+        { key: "flightTicket", label: "Upload Confirm Flight Ticket" },
+        { key: "hotelBooking", label: "Upload Confirm Hotel Booking" },
       ].map(({ key, label }) => (
         <View key={key} style={styles.docCard}>
           <Text style={styles.docLabel}>{label} *</Text>
@@ -295,15 +309,11 @@ export default function ArmeniaApplyScreen({ navigation }) {
               <Image source={getSample(key)} style={styles.sampleImage} resizeMode="contain" />
             </View>
           ) : null}
-          {traveller.documents[key] ? (
-            <TouchableOpacity style={styles.uploadBtn} onPress={() => pickDocument(target, key)}>
-              <Text style={styles.uploadText}>Replace Document</Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity style={styles.uploadBtn} onPress={() => pickDocument(target, key)}>
-              <Text style={styles.uploadText}>Upload Document</Text>
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity style={styles.uploadBtn} onPress={() => pickDocument(target, key)}>
+            <Text style={styles.uploadText}>
+              {traveller.documents[key] ? "Replace Document" : "Upload Document"}
+            </Text>
+          </TouchableOpacity>
         </View>
       ))}
     </>
@@ -312,7 +322,7 @@ export default function ArmeniaApplyScreen({ navigation }) {
   return (
     <ScreenWrapper>
       <ScrollView contentContainerStyle={styles.container}>
-        <ApplyCountryHeader navigation={navigation} countryName="Armenia" />
+        <ApplyCountryHeader navigation={navigation} countryName="Cuba" />
 
         {renderForm(
           travellers[0],
@@ -393,6 +403,40 @@ export default function ArmeniaApplyScreen({ navigation }) {
           </View>
         </View>
       </Modal>
+
+      <Modal visible={!!showMaritalFor} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.selectModalBox}>
+            <Text style={styles.selectModalTitle}>Select Marital Status</Text>
+            <ScrollView>
+              {MARITAL_STATUS_OPTIONS.map((status) => (
+                <TouchableOpacity
+                  key={status}
+                  style={styles.optionBtn}
+                  onPress={() => {
+                    if (showMaritalFor === "main") {
+                      const updated = [...travellers];
+                      updated[0].form.maritalStatus = status;
+                      setTravellers(updated);
+                    } else {
+                      setTempTraveller((prev) => ({
+                        ...prev,
+                        form: { ...prev.form, maritalStatus: status },
+                      }));
+                    }
+                    setShowMaritalFor(null);
+                  }}
+                >
+                  <Text style={styles.optionText}>{status}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+            <TouchableOpacity style={styles.cancelBtn} onPress={() => setShowMaritalFor(null)}>
+              <Text style={styles.cancelText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScreenWrapper>
   );
 }
@@ -406,13 +450,6 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   headerTitle: { fontSize: 17, fontWeight: "700" },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    marginTop: 8,
-    marginBottom: 12,
-    textAlign: "center",
-  },
   input: {
     borderWidth: 1,
     borderColor: "#ddd",
@@ -423,12 +460,46 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   inputText: { color: "#111827" },
-  inputPlaceholder: { color: "#9CA3AF" },
+  inputPlaceholder: { color: "#111827F" },
   textArea: { minHeight: 90, textAlignVertical: "top" },
-  noteText: {
-    fontSize: 12,
+  radioCard: {
+    backgroundColor: "#FFFFFF",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 12,
+  },
+  radioTitle: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#111827",
+    marginBottom: 10,
+  },
+  radioRow: {
+    flexDirection: "row",
+    gap: 10,
+  },
+  radioOption: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    borderRadius: 999,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+  },
+  radioOptionActive: {
+    borderColor: "#FFB37D",
+    backgroundColor: "#FFF7ED",
+  },
+  radioLabel: {
+    marginLeft: 6,
     color: "#6B7280",
-    marginBottom: 8,
+    fontWeight: "600",
+  },
+  radioLabelActive: {
+    color: ORANGE,
   },
   docCard: {
     backgroundColor: "#fff",
@@ -448,17 +519,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 6,
     marginBottom: 8,
-    justifyContent: "center",
   },
   sampleImage: {
     height: 95,
     width: "100%",
-  },
-  noSampleText: {
-    textAlign: "center",
-    color: "#9CA3AF",
-    paddingVertical: 28,
-    fontWeight: "600",
   },
   previewImage: {
     height: 110,
@@ -473,15 +537,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   uploadText: { color: ORANGE, fontWeight: "700" },
-  addTravellerBtn: {
-    borderWidth: 1,
-    borderColor: ORANGE,
-    borderRadius: 999,
-    paddingVertical: 14,
-    alignItems: "center",
-    marginVertical: 12,
-  },
-  addTravellerText: { color: ORANGE, fontWeight: "700" },
   submitBtn: {
     backgroundColor: ORANGE,
     borderRadius: 999,
@@ -512,6 +567,41 @@ const styles = StyleSheet.create({
     margin: 20,
     borderRadius: 16,
     padding: 12,
+  },
+  selectModalBox: {
+    backgroundColor: "#fff",
+    margin: 20,
+    borderRadius: 16,
+    padding: 14,
+    maxHeight: "65%",
+  },
+  selectModalTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    marginBottom: 12,
+    textAlign: "center",
+  },
+  optionBtn: {
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderColor: "#F3F4F6",
+  },
+  optionText: {
+    fontSize: 15,
+    color: "#111827",
+    textAlign: "center",
+  },
+  cancelBtn: {
+    marginTop: 12,
+    borderWidth: 1,
+    borderColor: ORANGE,
+    borderRadius: 10,
+    paddingVertical: 10,
+    alignItems: "center",
+  },
+  cancelText: {
+    color: ORANGE,
+    fontWeight: "700",
   },
 });
 

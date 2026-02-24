@@ -90,6 +90,7 @@ export const COUNTRY_IMAGES = {
   "Cook Islands": require("../assets/images/Cook Islands.webp"),
   Réunion:require("../assets/images/Réunion.webp"),
 "St. Vincent & Grenadines": require("../assets/images/St.Vincent&Grenadines.webp"),
+ Cuba:require("../assets/images/Cuba.webp"),
 
 };
 
@@ -117,11 +118,6 @@ const COUNTRY_IMAGE_ALIASES = {
   northkorea: "North Korea",
   monoglia: "Mongolia",
   cambodia: "Combodia",
-  armeniya: "Armenia",
-  azerbaijain: "Azerbaijan",
-  russiya: "Russia",
-  qater: "Qatar",
-  marocoo: "Morocco",
   malawi: "malawi",
   // reunion: "Réunion",
 };

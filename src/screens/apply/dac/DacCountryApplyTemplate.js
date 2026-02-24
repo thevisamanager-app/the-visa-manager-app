@@ -17,6 +17,7 @@ import { Calendar } from "react-native-calendars";
 import { Picker } from "@react-native-picker/picker";
 import { launchImageLibrary } from "react-native-image-picker";
 import RNFS from "react-native-fs";
+import { validatePickedDocument } from "../../../utils/documentValidation";
 
 import { getAuth } from "@react-native-firebase/auth/lib/modular";
 import {
@@ -37,7 +38,7 @@ import ScreenWrapper from "../../../components/ScreenWrapper";
 import { ApplyCountryHeader } from "../../../components/ApplyFlowCards";
 import PassportFrontSample from "../../../assets/examples/passport-front.png";
 import PassportBackSample from "../../../assets/examples/passport-back.png";
-import PassportPhotoSample from "../../../assets/examples/passport-photo.png";
+import PassportPhotoSample from "../../../assets/examples/passportimage.png";
 import TicketSample from "../../../assets/examples/ticket.png";
 
 const ORANGE = "#FF5C00";
@@ -185,10 +186,18 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
     try {
       const res = await launchImageLibrary({ mediaType: "photo", quality: 0.6, maxWidth: 1600, maxHeight: 1600 });
       if (!res.assets?.[0]) return;
+      const selectedAsset = res.assets[0];
+
+      const validation = await validatePickedDocument(key, selectedAsset);
+      if (!validation.ok) {
+        Alert.alert("Invalid Document", validation.message);
+        return;
+      }
+
       if (target === "co") {
-        setCoDocs((p) => ({ ...p, [key]: res.assets[0] }));
+        setCoDocs((p) => ({ ...p, [key]: selectedAsset }));
       } else {
-        setDocs((p) => ({ ...p, [key]: res.assets[0] }));
+        setDocs((p) => ({ ...p, [key]: selectedAsset }));
       }
     } catch (e) {
       Alert.alert("Error", e?.message || "Unable to pick image");
@@ -252,74 +261,126 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
       const db = getFirestore();
       const userRef = doc(collection(db, "users"), user.uid);
       const applicationRef = doc(collection(userRef, "passportData"), applicationId);
-
-      await setDoc(applicationRef, {
-        country: countryName,
-        status: "uploading",
-        createdAt: serverTimestamp(),
-        totalTravellers: coTravellers.length + 1,
-      });
-
       const allTravellers = [{ isPrimary: true, form, docs }, ...coTravellers.map((t) => ({ isPrimary: false, ...t }))];
       const basePath = `applications/${user.uid}/${applicationId}`;
 
-      const payloadTravellers = await Promise.all(
-        allTravellers.map(async (traveller, idx) => {
-          const i = idx + 1;
-          const travellerPath = `${basePath}/traveller_${i}`;
+      await setDoc(applicationRef, {
+        country: countryName,
+        status: "processing",
+        createdAt: serverTimestamp(),
+        totalTravellers: allTravellers.length,
+        form: { ...form },
+        travellers: allTravellers.map((t) => ({
+          isPrimary: t.isPrimary,
+          form: { ...t.form },
+        })),
+      });
 
-          const frontUri = await resolveUploadUri(traveller.docs.passportFront, { prefix: `front-${i}` });
-          const backUri = await resolveUploadUri(traveller.docs.passportBack, { prefix: `back-${i}` });
-          const ticketUri = await resolveUploadUri(traveller.docs.ticket, { prefix: `ticket-${i}` });
-          const photoUri = traveller.docs.photo ? await resolveUploadUri(traveller.docs.photo, { prefix: `photo-${i}` }) : null;
-
-          if (!frontUri || !backUri || !ticketUri) {
-            throw new Error(`Traveller ${i}: File URI missing. Please re-upload.`);
-          }
-
-          const uploadTasks = [
-            uploadFile(frontUri, `${travellerPath}/passport_front.jpg`),
-            uploadFile(backUri, `${travellerPath}/passport_back.jpg`),
-            uploadFile(ticketUri, `${travellerPath}/ticket.jpg`),
-          ];
-          if (photoUri) uploadTasks.push(uploadFile(photoUri, `${travellerPath}/photo.jpg`));
-
-          const uploaded = await Promise.all(uploadTasks);
-
-          return {
-            isPrimary: traveller.isPrimary,
-            form: { ...traveller.form },
-            documents: {
-              passportFront: uploaded[0],
-              passportBack: uploaded[1],
-              ticket: uploaded[2],
-              photo: uploaded[3] || null,
-            },
-          };
-        })
-      );
-
-      await setDoc(
-        applicationRef,
-        {
-          country: countryName,
-          status: "submitted",
-          submittedAt: serverTimestamp(),
-          totalTravellers: payloadTravellers.length,
-          form: payloadTravellers[0]?.form || {},
-          documents: payloadTravellers[0]?.documents || {},
-          travellers: payloadTravellers,
-        },
-        { merge: true }
-      );
+      setLoading(false);
 
       navigation.navigate("CheckoutScreen", {
         country: countryName,
         applicationId,
-        totalTravellers: payloadTravellers.length,
-        travellers: payloadTravellers,
-        coTravellers: payloadTravellers.slice(1),
+        totalTravellers: allTravellers.length,
+        travellers: allTravellers.map((t) => ({ isPrimary: t.isPrimary, form: t.form })),
+        coTravellers: allTravellers
+          .slice(1)
+          .map((t) => ({ isPrimary: t.isPrimary, form: t.form })),
       });
+
+      // Continue uploads in background to speed up the button flow.
+      (async () => {
+        try {
+          const payloadTravellers = await Promise.all(
+            allTravellers.map(async (traveller, idx) => {
+              const i = idx + 1;
+              const travellerPath = `${basePath}/traveller_${i}`;
+
+              const frontUri = await resolveUploadUri(traveller.docs.passportFront, {
+                prefix: `front-${i}`,
+              });
+              const backUri = await resolveUploadUri(traveller.docs.passportBack, {
+                prefix: `back-${i}`,
+              });
+              const ticketUri = await resolveUploadUri(traveller.docs.ticket, {
+                prefix: `ticket-${i}`,
+              });
+              const photoUri = traveller.docs.photo
+                ? await resolveUploadUri(traveller.docs.photo, { prefix: `photo-${i}` })
+                : null;
+
+              if (!frontUri || !backUri || !ticketUri) {
+                throw new Error(
+                  `Traveller ${i}: File URI missing. Please re-upload.`
+                );
+              }
+
+              const uploadTasks = [
+                uploadFile(frontUri, `${travellerPath}/passport_front.jpg`),
+                uploadFile(backUri, `${travellerPath}/passport_back.jpg`),
+                uploadFile(ticketUri, `${travellerPath}/ticket.jpg`),
+              ];
+              if (photoUri)
+                uploadTasks.push(uploadFile(photoUri, `${travellerPath}/photo.jpg`));
+
+              const uploaded = await Promise.all(uploadTasks);
+
+              return {
+                isPrimary: traveller.isPrimary,
+                form: { ...traveller.form },
+                documents: {
+                  passportFront: uploaded[0],
+                  passportBack: uploaded[1],
+                  ticket: uploaded[2],
+                  photo: uploaded[3] || null,
+                },
+              };
+            })
+          );
+
+          await setDoc(
+            applicationRef,
+            {
+              country: countryName,
+              status: "submitted",
+              submittedAt: serverTimestamp(),
+              totalTravellers: payloadTravellers.length,
+              form: payloadTravellers[0]?.form || {},
+              documents: payloadTravellers[0]?.documents || {},
+              travellers: payloadTravellers,
+            },
+            { merge: true }
+          );
+
+          await setDoc(
+            userRef,
+            {
+              lastApplicationId: applicationId,
+              lastApplicationCountry: countryName,
+              lastApplicationStatus: "submitted",
+              lastApplicationUpdatedAt: serverTimestamp(),
+            },
+            { merge: true }
+          );
+        } catch (bgError) {
+          console.log(`${countryName} background submit error:`, bgError);
+          try {
+            await setDoc(
+              applicationRef,
+              {
+                country: countryName,
+                status: "failed",
+                errorMessage: bgError?.message || "Unknown submit error",
+                failedAt: serverTimestamp(),
+                totalTravellers: allTravellers.length,
+              },
+              { merge: true }
+            );
+          } catch (innerError) {
+            console.log("Failed to update failed status:", innerError);
+          }
+        }
+      })();
     } catch (e) {
       Alert.alert("Error", e?.message || "Submission failed.");
     } finally {
@@ -702,3 +763,4 @@ const styles = StyleSheet.create({
   },
   saveBtnText: { color: "#fff", fontWeight: "700" },
 });
+

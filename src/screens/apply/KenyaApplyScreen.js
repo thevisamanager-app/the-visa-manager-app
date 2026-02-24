@@ -13,17 +13,18 @@ import {
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Calendar } from "react-native-calendars";
 import { launchImageLibrary } from "react-native-image-picker";
+import { validatePickedDocument } from "../../utils/documentValidation";
 import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import ScreenWrapper from "../../components/ScreenWrapper";
-import { CountryApplyBanner, CoPassengerCard } from "../../components/ApplyFlowCards";
+import { ApplyCountryHeader, CoPassengerCard } from "../../components/ApplyFlowCards";
 import { extractTextFromImage } from "../../api/ocr/visionApi";
 import { parseMRZ } from "../../api/ocr/mrzParser";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
 import PassportBackSample from "../../assets/examples/passport-back.png";
-import PassportPhotoSample from "../../assets/examples/passport-photo.png";
+import PassportPhotoSample from "../../assets/examples/passportimage.png";
 import TicketSample from "../../assets/examples/ticket.png";
 
 const ORANGE = "#FF5C00";
@@ -128,6 +129,12 @@ export default function KenyaApplyScreen({ navigation }) {
     });
     if (!res.assets?.[0]) return;
     const selectedAsset = res.assets[0];
+
+    const validation = await validatePickedDocument(key, selectedAsset);
+    if (!validation.ok) {
+      Alert.alert("Invalid Document", validation.message);
+      return;
+    }
     let frontPageData = null;
 
     if (isFrontPage && selectedAsset.base64) {
@@ -242,6 +249,7 @@ export default function KenyaApplyScreen({ navigation }) {
           return {
             isPrimary: t.isPrimary,
             ...t.form,
+            passportNumber: t?.frontPageData?.parsed?.passportNumber || "",
             frontPageData: t.frontPageData || null,
             documents: {
               passportFrontUrl,
@@ -263,6 +271,8 @@ export default function KenyaApplyScreen({ navigation }) {
         .set({
           userId: user.uid,
           country: "Kenya",
+          travelDate: formattedTravellers[0]?.travelDate || "",
+          passportNumber: formattedTravellers[0]?.passportNumber || "",
           travellers: formattedTravellers,
           totalTravellers: formattedTravellers.length,
           status: "submitted",
@@ -391,22 +401,7 @@ export default function KenyaApplyScreen({ navigation }) {
   return (
     <ScreenWrapper>
       <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="chevron-back" size={26} />
-          </TouchableOpacity>
-
-          <View />
-
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("Tabs", { screen: "Destination" })
-            }
-          >
-            <Ionicons name="home-outline" size={24} color={ORANGE} />
-          </TouchableOpacity>
-        </View>
-        <CountryApplyBanner countryName="Kenya" />
+        <ApplyCountryHeader navigation={navigation} countryName="Kenya" />
 
         {renderForm(
           travellers[0],
@@ -526,3 +521,5 @@ const styles = StyleSheet.create({
   dropdown: { backgroundColor: "#fff", borderWidth: 1, borderColor: "#ddd", marginBottom: 12 },
   dropdownItem: { padding: 12 },
 });
+
+

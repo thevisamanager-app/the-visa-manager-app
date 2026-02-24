@@ -13,17 +13,18 @@ import {
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Calendar } from "react-native-calendars";
 import { launchImageLibrary } from "react-native-image-picker";
+import { validatePickedDocument } from "../../utils/documentValidation";
 import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import ScreenWrapper from "../../components/ScreenWrapper";
-import { CoPassengerCard } from "../../components/ApplyFlowCards";
+import { ApplyCountryHeader, CoPassengerCard } from "../../components/ApplyFlowCards";
 import { extractTextFromImage } from "../../api/ocr/visionApi";
 import { parseMRZ } from "../../api/ocr/mrzParser";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
 import PassportBackSample from "../../assets/examples/passport-back.png";
-import PassportPhotoSample from "../../assets/examples/passport-photo.png";
+import PassportPhotoSample from "../../assets/examples/passportimage.png";
 import TicketSample from "../../assets/examples/ticket.png";
 
 const ORANGE = "#FF5C00";
@@ -123,6 +124,12 @@ export default function VietnamApplyScreen({ navigation }) {
         });
         if (!res.assets?.[0]) return;
         const selectedAsset = res.assets[0];
+
+    const validation = await validatePickedDocument(key, selectedAsset);
+    if (!validation.ok) {
+      Alert.alert("Invalid Document", validation.message);
+      return;
+    }
         let frontPageData = null;
 
         if (isFrontPage && selectedAsset.base64) {
@@ -223,6 +230,7 @@ export default function VietnamApplyScreen({ navigation }) {
                     return {
                         isPrimary: t.isPrimary,
                         travelDate: t.form.travelDate,
+                        passportNumber: t?.frontPageData?.parsed?.passportNumber || "",
                         phone: t.form.phone,
                         email: t.form.email,
                         hotelDetails: t.form.hotelDetails,
@@ -245,6 +253,8 @@ export default function VietnamApplyScreen({ navigation }) {
                 .set({
                     userId: user.uid,
                     country: "Vietnam",
+                    travelDate: formattedTravellers[0]?.travelDate || "",
+                    passportNumber: formattedTravellers[0]?.passportNumber || "",
                     travellers: formattedTravellers,
                     totalTravellers: formattedTravellers.length,
                     status: "submitted",
@@ -349,28 +359,7 @@ export default function VietnamApplyScreen({ navigation }) {
         <ScreenWrapper>
             <ScrollView contentContainerStyle={styles.container}>
                 {/* HEADER */}
-                <View style={styles.header}>
-                    <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerIconBtn}>
-                        <Ionicons name="chevron-back" size={26} color="#111827" />
-                    </TouchableOpacity>
-
-                    <View style={styles.headerCenterCard}>
-                        <View style={styles.headerFlagBubble}>
-                            <Text style={styles.headerFlagText}>🇻🇳</Text>
-                        </View>
-                        <View style={styles.headerTextWrap}>
-                            <Text style={styles.headerCountryName}>Vietnam</Text>
-                            <Text style={styles.headerSubText}>Get Vietnam E-Visa in 5 Working Days</Text>
-                        </View>
-                    </View>
-
-                    <TouchableOpacity
-                        onPress={() => navigation.navigate("Tabs", { screen: "Destination" })}
-                        style={styles.headerIconBtn}
-                    >
-                        <Ionicons name="home-outline" size={24} color={ORANGE} />
-                    </TouchableOpacity>
-                </View>
+                <ApplyCountryHeader navigation={navigation} countryName="Vietnam" />
 
                 {renderForm(
                     travellers[0],
@@ -657,3 +646,7 @@ const styles = StyleSheet.create({
         padding: 12,
     },
 });
+
+
+
+

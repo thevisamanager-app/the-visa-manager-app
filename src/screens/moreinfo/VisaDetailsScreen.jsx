@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import CountryFlag from "react-native-country-flag";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -17,6 +17,9 @@ import {
   ActivityIndicator,
   Image,
   Linking,
+  Animated,
+  Easing,
+  Dimensions,
 } from "react-native";
 
 import { getCountryFaqs } from "../../utils/countryFaqs";
@@ -28,6 +31,9 @@ import { useDispatch } from "react-redux";
 import { setSelectedDestination } from "../../Redux/destinationsSlice";
 
 const ORANGE = "#FF5C00";
+const NOTICE_TEXT =
+  "Visa Fees Are Subject to Change. Please Confirm The Final Amount with your Visa Manager.";
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 
 const HIGHLIGHT_COUNTRIES = [
@@ -176,6 +182,7 @@ export default function VisaDetailsScreen({ navigation }) {
   const [loadingReviews, setLoadingReviews] = useState(true);
   const [showAllReviews, setShowAllReviews] = useState(false);
   const [openIndex, setOpenIndex] = useState(null);
+  const noticeAnim = useRef(new Animated.Value(0)).current;
 
 
 
@@ -189,6 +196,20 @@ export default function VisaDetailsScreen({ navigation }) {
       .catch((e) => console.log("Reviews fetch error:", e))
       .finally(() => setLoadingReviews(false));
   }, []);
+
+  useEffect(() => {
+    noticeAnim.setValue(0);
+    const loop = Animated.loop(
+      Animated.timing(noticeAnim, {
+        toValue: 1,
+        duration: 7000,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      })
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [noticeAnim]);
 
   // 🔹 RECENT REVIEWS (latest 3)
   const recentReviews = [...reviews]
@@ -666,6 +687,43 @@ export default function VisaDetailsScreen({ navigation }) {
               <View style={styles.totalRow}>
                 <Text style={styles.totalLabel}>Total Amount</Text>
                 <Text style={styles.totalAmount}>₹{totalAmount}</Text>
+              </View>
+
+              <View style={styles.noticeBar}>
+                <View style={styles.noticeTrack}>
+                  <Animated.View
+                    style={[
+                      styles.noticeMarquee,
+                      {
+                        transform: [
+                          {
+                            translateX: noticeAnim.interpolate({
+                              inputRange: [0, 1],
+                              outputRange: [SCREEN_WIDTH * 0.45, -SCREEN_WIDTH * 1.75],
+                            }),
+                          },
+                        ],
+                      },
+                    ]}
+                  >
+                    <View style={styles.noticeItem}>
+                      <View style={styles.noticeIconWrap}>
+                        <Icon name="alert" size={14} color="#A35D00" />
+                      </View>
+                      <Text style={styles.noticeText}>
+                        {NOTICE_TEXT}
+                      </Text>
+                    </View>
+                    <View style={styles.noticeItem}>
+                      <View style={styles.noticeIconWrap}>
+                        <Icon name="alert" size={14} color="#A35D00" />
+                      </View>
+                      <Text style={styles.noticeText}>
+                        {NOTICE_TEXT}
+                      </Text>
+                    </View>
+                  </Animated.View>
+                </View>
               </View>
 
             </View>
@@ -1206,6 +1264,46 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "800",
     color: "#FF5C00",
+  },
+  noticeBar: {
+    marginTop: 14,
+    borderWidth: 1,
+    borderColor: "#F6C453",
+    borderRadius: 10,
+    backgroundColor: "#FFF9E8",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+  },
+  noticeIconWrap: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: "#FCE79E",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 10,
+  },
+  noticeTrack: {
+    flex: 1,
+    overflow: "hidden",
+  },
+  noticeMarquee: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  noticeItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: 12,
+  },
+  noticeText: {
+    color: "#8A4B00",
+    fontSize: 14,
+    fontWeight: "600",
+    maxWidth: SCREEN_WIDTH * 2,
+    includeFontPadding: false,
   },
 
   headerRow: {

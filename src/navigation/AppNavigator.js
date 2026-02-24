@@ -237,19 +237,13 @@ import VisaDetailsScreen from "../screens/moreinfo/VisaDetailsScreen";
 import JoinAsTravelAgentScreen from "../screens/agent/JoinAsTravelAgentScreen";
 import PartnerLoginScreen from "../screens/agent/PartnerLoginScreen";
 import VietnamApplyScreen from "../screens/apply/VietnamApplyScreen";
-import ArmeniaApplyScreen from "../screens/apply/ArmeniaApplyScreen";
 import AzerbaijanApplyScreen from "../screens/apply/AzerbaijanApplyScreen";
 import OtpScreen from "../screens/OtpScreen";
 import CombodiaApplyScreen from "../screens/apply/CombodiaApplyScreen";
-import EgyptApplyScreen from "../screens/apply/EgyptApplyScreen";
 import HongKongApplyScreen from "../screens/apply/HongKongApplyScreen";
-import KenyaApplyScreen from "../screens/apply/KenyaApplyScreen";
 import SriLankaApplyScreen from "../screens/apply/SriLankaApplyScreen";
 import MaldivesApplyScreen from "../screens/apply/MaldivesApplyScreen";
 import MalaysiaApplyScreen from "../screens/apply/MalaysiaApplyScreen";
-import MoroccoApplyScreen from "../screens/apply/MoroccoApplyScreen";
-import QatarApplyScreen from "../screens/apply/QatarApplyScreen";
-import RussiaApplyScreen from "../screens/apply/RussiaApplyScreen";
 import ThailandApplyScreen from "../screens/apply/ThailandApplyScreen";
 import MauritiusApplyScreen from "../screens/apply/MauritiusApplyScreen";
 
@@ -264,6 +258,15 @@ import SchengenCountriesVisitScreen from "../screens/Schengen/SchengenCountriesV
 import SchengenDocumentsScreen from "../screens/Schengen/SchengenDocumentsScreen";
 import SchengenStepper from "../components/SchengenStepper"
 import SingaporeApplyScreen from "../screens/apply/SingaporeApplyScreen";
+import KenyaApplyScreen from "../screens/apply/KenyaApplyScreen";
+import CubaApplyScreen from "../screens/apply/CubaApplyScreen";
+import GeorgiaApplyScreen from "../screens/apply/GeorgiaApplyScreen";
+import RussiaApplyScreen from "../screens/apply/RussiaApplyScreen";
+import QatarApplyScreen from "../screens/apply/QatarApplyScreen";
+import MoroccoApplyScreen from "../screens/apply/MoroccoApplyScreen";
+import ArmeniaApplyScreen from "../screens/apply/ArmeniaApplyScreen";
+import EgyptApplyScreen from "../screens/apply/EgyptApplyScreen";
+import BhutanApplyScreen from "../screens/apply/BhutanApplyScreen";
 
 const Stack = createStackNavigator();
 
@@ -333,10 +336,6 @@ function UserStack() {
         component={VietnamApplyScreen}
       />
       <Stack.Screen
-        name="ArmeniaApplyScreen"
-        component={ArmeniaApplyScreen}
-      />
-      <Stack.Screen
         name="OtpScreen"
         component={OtpScreen}
       />
@@ -355,25 +354,40 @@ function UserStack() {
         name="CombodiaApplyScreen"
         component={CombodiaApplyScreen}
       />
-      <Stack.Screen
-        name="EgyptApplyScreen"
-        component={EgyptApplyScreen}
-      />
+
       <Stack.Screen
         name="KenyaApplyScreen"
         component={KenyaApplyScreen}
+      />
+      <Stack.Screen
+        name="CubaApplyScreen"
+        component={CubaApplyScreen}
+      />
+      <Stack.Screen
+        name="GeorgiaApplyScreen"
+        component={GeorgiaApplyScreen}
+      />
+
+      <Stack.Screen
+        name="RussiaApplyScreen"
+        component={RussiaApplyScreen}
+      />
+
+      <Stack.Screen
+        name="QatarApplyScreen"
+        component={QatarApplyScreen}
       />
       <Stack.Screen
         name="MoroccoApplyScreen"
         component={MoroccoApplyScreen}
       />
       <Stack.Screen
-        name="QatarApplyScreen"
-        component={QatarApplyScreen}
+        name="ArmeniaApplyScreen"
+        component={ArmeniaApplyScreen}
       />
       <Stack.Screen
-        name="RussiaApplyScreen"
-        component={RussiaApplyScreen}
+        name="EgyptApplyScreen"
+        component={EgyptApplyScreen}
       />
 
       <Stack.Screen name="HongKongApplyScreen" component={HongKongApplyScreen} />
@@ -382,6 +396,7 @@ function UserStack() {
       <Stack.Screen name="MalaysiaApplyScreen" component={MalaysiaApplyScreen} />
       <Stack.Screen name="ThailandApplyScreen" component={ThailandApplyScreen} />
       <Stack.Screen name="MauritiusApplyScreen" component={MauritiusApplyScreen} />
+      <Stack.Screen name="BhutanApplyScreen" component={BhutanApplyScreen} />
 
       {/* EXISTING FLOW */}
       <Stack.Screen name="PhotoUploadScreen" component={PhotoUploadScreen} />

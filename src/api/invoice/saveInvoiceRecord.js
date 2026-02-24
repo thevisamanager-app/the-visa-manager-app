@@ -1,4 +1,5 @@
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
+import { collection, doc, getFirestore, setDoc } from "firebase/firestore";
 
 export const saveInvoiceRecord = async (userId, invoiceId, downloadURL, amount) => {
   const db = getFirestore();
@@ -12,21 +13,10 @@ export const saveInvoiceRecord = async (userId, invoiceId, downloadURL, amount) 
       id: invoiceId,
       url: downloadURL,
       amount,
-      createdAt: serverTimestamp(),
+      createdAt: firestore.FieldValue.serverTimestamp(),
     });
-    return { ok: true };
   } catch (error) {
-    const code = String(error?.code || "");
-    const message = String(error?.message || "");
-    const isPermissionDenied =
-      code === "firestore/permission-denied" ||
-      code === "permission-denied" ||
-      message.includes("permission-denied");
-
-    // Do not block invoice download if Firestore rules deny write.
-    if (isPermissionDenied) {
-      return { ok: false, reason: "permission-denied" };
-    }
+    console.error("Failed to save invoice record:", error);
     throw error;
   }
 };

@@ -15,6 +15,7 @@ import {
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Calendar } from "react-native-calendars";
 import { launchImageLibrary } from "react-native-image-picker";
+import { validatePickedDocument } from "../../utils/documentValidation";
 import {
   pick,
   types,
@@ -42,12 +43,14 @@ import {
 } from "@react-native-firebase/storage/lib/modular";
 
 import ScreenWrapper from "../../components/ScreenWrapper";
-import { ApplyCountryHeader } from "../../components/ApplyFlowCards";
 import { COUNTRY_APPLY_CONFIG } from "../../config/countryApplyConfig";
+import { extractTextFromImage } from "../../api/ocr/visionApi";
+import { parseMRZ } from "../../api/ocr/mrzParser";
+import { ApplyCountryHeader } from "../../components/ApplyFlowCards";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
 import PassportBackSample from "../../assets/examples/passport-back.png";
-import PassportPhotoSample from "../../assets/examples/passport-photo.png";
+import PassportPhotoSample from "../../assets/examples/passportimage.png";
 
 const ORANGE = "#FF5C00";
 
@@ -66,6 +69,7 @@ const createTraveller = () => ({
     passportBack: null,
     photo: null,
   },
+  frontPageData: null,
 });
 
 export default function SingaporeApplyScreen({ navigation }) {
@@ -91,6 +95,31 @@ export default function SingaporeApplyScreen({ navigation }) {
     const [y, m, d] = date.split("-");
     if (!y || !m || !d) return "";
     return `${d}/${m}/${y}`;
+  };
+  const toDDMMYY = (value) => {
+    const digits = String(value || "").replace(/\D/g, "");
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    if (digits.length === 6) {
+      const yy = digits.slice(0, 2);
+      const mm = digits.slice(2, 4);
+      const dd = digits.slice(4, 6);
+      const monthIndex = Number(mm) - 1;
+      if (monthIndex < 0 || monthIndex > 11) return "";
+      const fullYear = Number(yy) >= 40 ? `19${yy}` : `20${yy}`;
+      return `${dd} ${months[monthIndex]} ${fullYear}`;
+    }
+
+    if (digits.length === 8 && (digits.startsWith("19") || digits.startsWith("20"))) {
+      const yyyy = digits.slice(0, 4);
+      const mm = digits.slice(4, 6);
+      const dd = digits.slice(6, 8);
+      const monthIndex = Number(mm) - 1;
+      if (monthIndex < 0 || monthIndex > 11) return "";
+      return `${dd} ${months[monthIndex]} ${yyyy}`;
+    }
+
+    return "";
   };
 
   const getPdfName = (file) => {
@@ -141,36 +170,56 @@ export default function SingaporeApplyScreen({ navigation }) {
 
   const pickImage = async (key, target = "main") => {
     try {
+      const isFrontPage = key === "passportFront";
       const res = await launchImageLibrary({
         mediaType: "photo",
-        quality: 0.6,
-        maxWidth: 1600,
-        maxHeight: 1600,
+        quality: 0.8,
+        includeBase64: isFrontPage,
       });
 
       if (!res.assets?.[0]) return;
-      const selectedImage = await resolveUploadUri(res.assets[0], {
-        prefix: key,
-        fallbackExt: "jpg",
-      });
-      const selectedImageAsset = {
-        ...res.assets[0],
-        uri: selectedImage ? `file://${selectedImage}` : res.assets[0].uri,
-      };
+      const selectedAsset = res.assets[0];
+
+    const validation = await validatePickedDocument(key, selectedAsset);
+    if (!validation.ok) {
+      Alert.alert("Invalid Document", validation.message);
+      return;
+    }
+      let frontPageData = null;
+
+      if (isFrontPage && selectedAsset.base64) {
+        try {
+          const rawText = await extractTextFromImage(selectedAsset.base64);
+          const parsed = parseMRZ(rawText);
+          frontPageData = {
+            parsed: {
+              ...parsed,
+              birthDate: toDDMMYY(parsed.birthDate),
+              expiryDate: toDDMMYY(parsed.expiryDate),
+            },
+          };
+        } catch (error) {
+          console.log("Singapore front page OCR failed:", error);
+        }
+      }
 
       if (target === "co") {
         setCoTravellerDraft((prev) => ({
           ...prev,
           documents: {
             ...prev.documents,
-            [key]: selectedImageAsset,
+            [key]: selectedAsset,
           },
+          ...(isFrontPage ? { frontPageData } : {}),
         }));
         return;
       }
 
       const updated = [...travellers];
-      updated[0].documents[key] = selectedImageAsset;
+      updated[0].documents[key] = selectedAsset;
+      if (isFrontPage) {
+        updated[0].frontPageData = frontPageData;
+      }
       setTravellers(updated);
     } catch (err) {
       Alert.alert("Error", err?.message || "Unable to pick image");
@@ -472,15 +521,19 @@ export default function SingaporeApplyScreen({ navigation }) {
       const basePath = `applications/${user.uid}/${applicationId}`;
       applicationRef = doc(passportDataRef, applicationId);
 
-      // Step 1: Save application instantly so user doesn't wait on file uploads.
       await setDoc(applicationRef, {
         country: "Singapore",
         status: "processing",
         createdAt: serverTimestamp(),
         totalTravellers: travellers.length,
+        travelDate: travellers[0]?.form?.travelDate || "",
+        passportNumber:
+          travellers[0]?.frontPageData?.parsed?.passportNumber || "",
         travellers: travellers.map((t) => ({
           isPrimary: t.isPrimary,
           form: { ...t.form },
+          passportNumber: t?.frontPageData?.parsed?.passportNumber || "",
+          frontPageData: t.frontPageData || null,
         })),
       });
 
@@ -546,6 +599,9 @@ export default function SingaporeApplyScreen({ navigation }) {
               return {
                 isPrimary: traveller.isPrimary,
                 form: { ...traveller.form },
+                passportNumber:
+                  traveller?.frontPageData?.parsed?.passportNumber || "",
+                frontPageData: traveller.frontPageData || null,
                 documents: {
                   bankPdf: bankUrl,
                   passportFront: passportFrontUrl,
@@ -569,6 +625,14 @@ export default function SingaporeApplyScreen({ navigation }) {
               status: "submitted",
               submittedAt: serverTimestamp(),
               totalTravellers: payloadTravellers.length,
+              travelDate:
+                payloadTravellers[0]?.form?.travelDate ||
+                travellers[0]?.form?.travelDate ||
+                "",
+              passportNumber:
+                payloadTravellers[0]?.passportNumber ||
+                travellers[0]?.frontPageData?.parsed?.passportNumber ||
+                "",
               form: payloadTravellers[0]?.form || {},
               documents: payloadTravellers[0]?.documents || {},
               travellers: payloadTravellers,
@@ -817,24 +881,23 @@ export default function SingaporeApplyScreen({ navigation }) {
                 <View style={styles.formPreview}>
                   {!formPreviewError[form.key] &&
                   getPreviewImageUri(form.previewImageAssetPath) ? (
-                    <TouchableOpacity
-                      style={styles.formPreviewTouch}
-                      onPress={() =>
-                        form.key === "form14a"
-                          ? openSignatureReference()
-                          : openSignSample(form)
-                      }
-                      activeOpacity={0.85}
-                    >
-                      <Image
-                        source={{ uri: getPreviewImageUri(form.previewImageAssetPath) }}
-                        style={styles.formPreviewImage}
-                        resizeMode="contain"
-                        onError={() =>
-                          setFormPreviewError((prev) => ({ ...prev, [form.key]: true }))
-                        }
-                      />
-                    </TouchableOpacity>
+                    <View style={styles.formPreviewTouch}>
+                      <ScrollView
+                        style={styles.formPreviewScroll}
+                        contentContainerStyle={styles.formPreviewScrollContent}
+                        showsVerticalScrollIndicator
+                        nestedScrollEnabled
+                      >
+                        <Image
+                          source={{ uri: getPreviewImageUri(form.previewImageAssetPath) }}
+                          style={styles.formPreviewImageTall}
+                          resizeMode="contain"
+                          onError={() =>
+                            setFormPreviewError((prev) => ({ ...prev, [form.key]: true }))
+                          }
+                        />
+                      </ScrollView>
+                    </View>
                   ) : !formPreviewError[form.key] && getFormPreviewUri(form) ? (
                     <WebView
                       source={{ uri: getFormPreviewUri(form) }}
@@ -1161,29 +1224,28 @@ export default function SingaporeApplyScreen({ navigation }) {
                     <View style={styles.formPreview}>
                       {!formPreviewError[form.key] &&
                       getPreviewImageUri(form.previewImageAssetPath) ? (
-                        <TouchableOpacity
-                          style={styles.formPreviewTouch}
-                          onPress={() =>
-                            form.key === "form14a"
-                              ? openSignatureReference()
-                              : openSignSample(form)
-                          }
-                          activeOpacity={0.85}
-                        >
-                          <Image
-                            source={{
-                              uri: getPreviewImageUri(form.previewImageAssetPath),
-                            }}
-                            style={styles.formPreviewImage}
-                            resizeMode="contain"
-                            onError={() =>
-                              setFormPreviewError((prev) => ({
-                                ...prev,
-                                [form.key]: true,
-                              }))
-                            }
-                          />
-                        </TouchableOpacity>
+                        <View style={styles.formPreviewTouch}>
+                          <ScrollView
+                            style={styles.formPreviewScroll}
+                            contentContainerStyle={styles.formPreviewScrollContent}
+                            showsVerticalScrollIndicator
+                            nestedScrollEnabled
+                          >
+                            <Image
+                              source={{
+                                uri: getPreviewImageUri(form.previewImageAssetPath),
+                              }}
+                              style={styles.formPreviewImageTall}
+                              resizeMode="contain"
+                              onError={() =>
+                                setFormPreviewError((prev) => ({
+                                  ...prev,
+                                  [form.key]: true,
+                                }))
+                              }
+                            />
+                          </ScrollView>
+                        </View>
                       ) : !formPreviewError[form.key] && getFormPreviewUri(form) ? (
                         <WebView
                           source={{ uri: getFormPreviewUri(form) }}
@@ -1334,7 +1396,6 @@ const styles = StyleSheet.create({
   },
 
   headerTitle: { fontSize: 17, fontWeight: "700" },
-  headerTitlePlaceholder: { width: 1, height: 1 },
   headerCenterContainer: {
     flex: 1,
     marginHorizontal: 10,
@@ -1342,17 +1403,41 @@ const styles = StyleSheet.create({
     borderColor: "#F2DCC6",
     borderRadius: 18,
     backgroundColor: "#F5EFE8",
-    height: 44,
+    minHeight: 62,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+  },
+  headerFlagBubble: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: ORANGE,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 8,
+  },
+  headerFlagText: {
+    fontSize: 18,
+  },
+  headerTextWrap: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },
-  headerCenterTitle: { fontSize: 16, fontWeight: "700", color: "#111827" },
-  countryNameUnderHeader: {
-    textAlign: "center",
-    fontSize: 18,
+  headerCountryName: {
+    fontSize: 16,
     fontWeight: "700",
     color: "#111827",
-    marginBottom: 10,
+    textAlign: "center",
+  },
+  headerSubText: {
+    marginTop: 2,
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#374151",
+    textAlign: "center",
   },
   topCard: {
     borderWidth: 1,
@@ -1494,24 +1579,25 @@ const styles = StyleSheet.create({
 
   formsRow: {
     flexDirection: "row",
+    justifyContent: "space-between",
     gap: 10,
     marginBottom: 12,
   },
 
   formCard: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#FFD9BF",
-    padding: 10,
+    backgroundColor: "transparent",
+    borderRadius: 10,
+    borderWidth: 0,
+    padding: 0,
   },
 
   formTitle: {
     flex: 1,
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: "500",
     color: "#1F2937",
+    textAlign: "center",
   },
 
   formHeader: {
@@ -1522,12 +1608,12 @@ const styles = StyleSheet.create({
   },
 
   formPreview: {
-    height: 150,
+    height: 160,
     borderWidth: 1,
-    borderColor: "#F59E0B",
+    borderColor: "#F4A261",
     borderStyle: "dashed",
-    borderRadius: 10,
-    backgroundColor: "#F9FAFB",
+    borderRadius: 12,
+    backgroundColor: "#FFFFFF",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 10,
@@ -1545,9 +1631,19 @@ const styles = StyleSheet.create({
     height: "100%",
   },
 
-  formPreviewImage: {
+  formPreviewScroll: {
     width: "100%",
     height: "100%",
+  },
+
+  formPreviewScrollContent: {
+    alignItems: "center",
+    justifyContent: "flex-start",
+  },
+
+  formPreviewImageTall: {
+    width: "100%",
+    minHeight: 280,
     backgroundColor: "#fff",
   },
 
@@ -1573,18 +1669,20 @@ const styles = StyleSheet.create({
   },
 
   formDownloadBtn: {
+    width: "72%",
+    alignSelf: "center",
     borderWidth: 1,
-    borderColor: "#C7D2FE",
-    backgroundColor: "#EEF2FF",
+    borderColor: "#B7C6FF",
+    backgroundColor: "#E8EEFF",
     borderRadius: 10,
-    paddingVertical: 10,
+    paddingVertical: 9,
     alignItems: "center",
   },
 
   formDownloadText: {
-    color: "#4338CA",
-    fontSize: 16,
-    fontWeight: "700",
+    color: "#3F51B5",
+    fontSize: 15,
+    fontWeight: "600",
   },
 
   noticeCard: {
@@ -1948,6 +2046,8 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
 });
+
+
 
 
 

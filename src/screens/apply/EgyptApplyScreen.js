@@ -13,6 +13,7 @@ import {
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Calendar } from "react-native-calendars";
 import { launchImageLibrary } from "react-native-image-picker";
+import { validatePickedDocument } from "../../utils/documentValidation";
 import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
@@ -21,7 +22,7 @@ import { ApplyCountryHeader, CoPassengerCard } from "../../components/ApplyFlowC
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
 import PassportBackSample from "../../assets/examples/passport-back.png";
-import PassportPhotoSample from "../../assets/examples/passport-photo.png";
+import PassportPhotoSample from "../../assets/examples/passportimage.png";
 
 const ORANGE = "#FF5C00";
 
@@ -85,6 +86,12 @@ export default function EgyptApplyScreen({ navigation }) {
     });
     if (!res.assets?.[0]) return;
     const selectedAsset = res.assets[0];
+
+    const validation = await validatePickedDocument(key, selectedAsset);
+    if (!validation.ok) {
+      Alert.alert("Invalid Document", validation.message);
+      return;
+    }
 
     if (target === "main") {
       const updated = [...travellers];
@@ -464,3 +471,5 @@ const styles = StyleSheet.create({
     padding: 12,
   },
 });
+
+

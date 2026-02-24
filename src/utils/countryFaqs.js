@@ -98,9 +98,9 @@ const COUNTRY_FAQS = {
   ],
 
   Malaysia: [
-    { question: "Is Malaysia DAC mandatory for Indians?", answer: "Yes, Indian travellers must complete Malaysia DAC before travel, and the process is handled online." },
-    { question: "What documents are required for Malaysia?", answer: "A valid passport, passport-size photo, itinerary, accommodation proof, and bank statement are among the standard documents." },
-    { question: "How long does Malaysia visa processing take?", answer: "Processing typically takes 1 working day once documents are complete." },
+    { question: "Do I need a visa for Malaysia?", answer: "Indian citizens can enter Malaysia visa-free for a limited period depending on current rules." },
+    { question: "How long does Malaysia visa processing take?", answer: "If required, visa processing usually takes 3–7 working days." },
+    { question: "What documents are required for Malaysia?", answer: "Passport, travel itinerary, accommodation details, and proof of funds are required." },
     { question: "Can I extend my visa after arrival?", answer: "Visa extensions are subject to approval by Malaysian immigration authorities." },
   ],
 
@@ -125,452 +125,6 @@ const COUNTRY_FAQS = {
     { question: "Who is eligible for Vietnam e-visa?", answer: "Indian passport holders meeting eligibility criteria can apply online." },
     { question: "What documents are required?", answer: "Passport, photograph, and travel details are mandatory." },
     { question: "Can I apply if my passport is near expiry?", answer: "Your passport must have at least 6 months validity." },
-  ],
-
-  Combodia: [
-    {
-      question: "Can Indian travelers apply for a Cambodia e-visa?",
-      answer:
-        "Yes. Indian passport holders can apply online for a Cambodia e-visa for eligible travel purposes.",
-    },
-    {
-      question: "Do I need a return ticket for Cambodia visa?",
-      answer:
-        "Yes. A return or onward ticket is generally required as proof of planned departure.",
-    },
-    {
-      question: "How long is the Cambodia e-visa valid?",
-      answer:
-        "Cambodia e-visa validity and allowed stay depend on the visa issued, typically for short tourist travel.",
-    },
-    {
-      question: "Is a visa extension possible?",
-      answer:
-        "Extensions may be possible subject to Cambodian immigration rules and approval.",
-    },
-    {
-      question: "Do I need a hotel booking for Cambodia?",
-      answer:
-        "Yes. Proof of accommodation, such as a hotel booking, is commonly required.",
-    },
-    {
-      question: "Do I receive a physical visa stamp?",
-      answer:
-        "For e-visa applications, approval is issued electronically; entry endorsement is handled by immigration at arrival.",
-    },
-  ],
-
-  Azerbaijan: [
-    {
-      question: "What are the advantages of an Azerbaijan e-visa?",
-      answer:
-        "The Azerbaijan e-visa allows travellers to apply completely online without visiting an embassy. It offers faster processing, digital approval via email, reduced paperwork, and convenient entry without a physical visa stamp.",
-    },
-    {
-      question: "How long will my Azerbaijan e-visa be valid for?",
-      answer:
-        "An Azerbaijan e-visa is generally valid for 90 days from the date of issue and allows a stay of up to 30 days within that validity period.",
-    },
-    {
-      question: "How many people may I create a family application for?",
-      answer:
-        "A family e-visa application for Azerbaijan can include a maximum of 10 applicants in a single submission.",
-    },
-    {
-      question: "What should I do if my family members are more than 10 persons?",
-      answer:
-        "If your family group exceeds 10 members, you must submit multiple e-visa applications, each covering up to 10 travellers.",
-    },
-    {
-      question: "How many people may I create a group application for?",
-      answer:
-        "A group application for the Azerbaijan e-visa can include up to 10 individuals per application.",
-    },
-    {
-      question:
-        "My child is registered in my passport. Do I need to make a separate e-visa application for her or him?",
-      answer:
-        "Yes, each traveller must have an individual Azerbaijan e-visa, including children listed on a parent's passport.",
-    },
-    {
-      question:
-        "Do I have to obtain a visa if I do not leave the international transit area?",
-      answer:
-        "No, a visa is not required if you remain within the international transit area and do not pass through Azerbaijan immigration control.",
-    },
-    {
-      question: "What does the CVV, CVC, or CVC2 number mean?",
-      answer:
-        "CVV, CVC, or CVC2 is the card security code printed on your debit or credit card. It is used to verify secure online payments during the e-visa transaction.",
-    },
-    {
-      question:
-        "The information on my e-visa does not fully match my travel document. Can I enter Azerbaijan with this e-visa?",
-      answer:
-        "No, all details on your Azerbaijan e-visa must exactly match your passport. Any discrepancy may result in denial of entry at immigration.",
-    },
-    {
-      question:
-        "I realised that some information on my e-visa does not match my travel document and the e-visa is invalid. Can I get a refund?",
-      answer:
-        "No, e-visa fees are non-refundable if incorrect or inaccurate information was submitted during the application process.",
-    },
-    {
-      question:
-        "I realised that some of the information provided in my e-visa application requires correction. What should I do?",
-      answer:
-        "Corrections cannot be made once the application is submitted. You must apply again with the correct details.",
-    },
-    {
-      question: "Why is there a service fee?",
-      answer:
-        "The service fee covers application processing, secure payment handling, system maintenance, and customer support services.",
-    },
-    {
-      question:
-        "I do not have a credit card or debit card. Is there any other way of e-visa fee payment?",
-      answer:
-        "Currently, Azerbaijan e-visa fees can only be paid online using a valid credit or debit card.",
-    },
-    {
-      question:
-        "If my e-visa application is denied, will my payment be refunded?",
-      answer:
-        "No, the Azerbaijan e-visa fee is non-refundable even if the application is denied.",
-    },
-    {
-      question:
-        "How long should the validity of the passport be in order to apply for an e-visa?",
-      answer:
-        "Your passport must be valid for at least six months beyond your intended date of entry into Azerbaijan.",
-    },
-    {
-      question: "Should the e-visa be attached in the passport?",
-      answer:
-        "No, the Azerbaijan e-visa is electronically linked to your passport. However, carrying a printed or digital copy is recommended while travelling.",
-    },
-    {
-      question:
-        "Within how many days and in which order should foreigners or stateless persons get registered in their place of stay?",
-      answer:
-        "Foreigners staying in Azerbaijan for more than 15 days must register their place of residence with the State Migration Service, usually via their hotel or host.",
-    },
-    {
-      question: "What should be done if the e-visa is denied?",
-      answer:
-        "If the e-visa is denied, you may submit a new application with corrected details or apply through an Azerbaijani embassy or consulate.",
-    },
-    {
-      question:
-        "Is it possible to apply for a new e-visa without leaving the territory of the Republic of Azerbaijan?",
-      answer:
-        "No, travellers must leave Azerbaijan before applying for a new e-visa. Extensions are handled separately by the State Migration Service.",
-    },
-    {
-      question:
-        "How will I get information about the status of the e-visa application?",
-      answer:
-        "You will receive updates via email, and once approved, the e-visa will be sent electronically to your registered email address.",
-    },
-    {
-      question:
-        "What should be done if I would like to stay in the Republic of Azerbaijan for a period longer than the e-visa permits?",
-      answer:
-        "You must apply for a visa extension through the State Migration Service of Azerbaijan before your permitted stay expires.",
-    },
-    {
-      question:
-        "Can citizens of all eligible countries apply and obtain a visa upon arrival at the border checkpoint of the Republic of Azerbaijan?",
-      answer:
-        "No, visa-on-arrival is available only for selected nationalities. Most travellers must apply for an Azerbaijan e-visa in advance.",
-    },
-  ],
-
-  Armenia: [
-    {
-      question: "Do Indians need a visa for Armenia?",
-      answer:
-        "Yes. Indian passport holders generally need a valid visa or e-visa before traveling to Armenia, unless they qualify under a specific exemption.",
-    },
-    {
-      question: "Can Indians get an Armenia visa on arrival?",
-      answer:
-        "Visa-on-arrival is available only in limited cases. Most Indian travellers should apply for an Armenia e-visa in advance.",
-    },
-    {
-      question: "What does an Armenia e-visa look like?",
-      answer:
-        "An Armenia e-visa is issued electronically as a digital approval document containing your personal details, visa validity, and entry information.",
-    },
-    {
-      question: "Who is eligible to apply for an Armenia e-visa?",
-      answer:
-        "Indian citizens with a valid passport, clear travel purpose, and supporting documents can generally apply, subject to Armenia immigration rules.",
-    },
-    {
-      question: "Is Armenia visa-free for Indians holding certain residence permits?",
-      answer:
-        "In some situations, holders of valid residence permits or visas from selected countries may receive exemptions. Eligibility should be confirmed before travel.",
-    },
-    {
-      question: "How can Indians apply for an Armenia e-visa?",
-      answer:
-        "Apply online by filling in passport and travel details, uploading required documents, and paying the applicable visa fee.",
-    },
-    {
-      question: "Can I apply for an Armenia e-visa for my family members together?",
-      answer:
-        "Group or family submissions may be possible depending on the platform, but each traveller must have an individual approved visa linked to their passport.",
-    },
-    {
-      question: "What should I do if there is a mistake on my Armenia e-visa?",
-      answer:
-        "Do not travel with incorrect visa details. Apply for correction or submit a fresh application so the visa exactly matches your passport.",
-    },
-    {
-      question: "Is there a fee waiver for children or senior citizens applying for an Armenia e-visa?",
-      answer:
-        "Fee waivers depend on the latest government policy. Unless specifically exempted, standard visa fees usually apply.",
-    },
-    {
-      question: "What is the Armenia visa fee for Indians?",
-      answer:
-        "The visa fee depends on visa type, stay duration, and processing route. Final payable amount may include government and service charges.",
-    },
-    {
-      question: "What types of Armenia tourist visas are available for Indians?",
-      answer:
-        "Tourist options generally include short-stay e-visas, typically issued as single-entry or multiple-entry based on eligibility and travel plan.",
-    },
-    {
-      question: "Can Indians extend their stay in Armenia?",
-      answer:
-        "Extensions may be possible by applying to Armenia migration authorities before the permitted stay expires, subject to approval.",
-    },
-    {
-      question: "What happens if I overstay my Armenia e-visa?",
-      answer:
-        "Overstaying can lead to fines, legal penalties, and possible future visa restrictions. You should regularize your status immediately with authorities.",
-    },
-    {
-      question: "Can I reapply for an Armenia visa after rejection?",
-      answer:
-        "Yes. You can reapply after addressing the rejection reason and submitting complete, accurate documents.",
-    },
-    {
-      question: "How can I reduce the chances of Armenia visa rejection?",
-      answer:
-        "Submit accurate information, valid passport details, complete supporting documents, clear travel plans, and strong financial proof.",
-    },
-  ],
-
-  Qatar: [
-    {
-      question: "Do Indians need a visa to travel to Qatar?",
-      answer:
-        "Yes. Indian passport holders require a valid visa or entry authorization to travel to Qatar. However, eligible Indian travellers may obtain a visa on arrival if they meet specific conditions set by Qatar immigration authorities.",
-    },
-    {
-      question: "Can Indians get a visa on arrival in Qatar?",
-      answer:
-        "Yes. Indian citizens may be eligible for a visa on arrival in Qatar for up to 30 days, provided they hold a valid passport (minimum 6 months validity), confirmed return ticket, hotel booking through Discover Qatar or confirmed accommodation, and a valid credit/debit card. Conditions are subject to change.",
-    },
-    {
-      question: "What is the validity of a Qatar tourist visa for Indians?",
-      answer:
-        "A Qatar tourist visa or visa on arrival typically allows a stay of up to 30 days. In some cases, it may be extended for an additional 30 days, subject to approval by the Ministry of Interior.",
-    },
-    {
-      question: "What types of Qatar visas are available for Indians?",
-      answer:
-        "Common Qatar visa types include Tourist Visa, Business Visa, Transit Visa, Family Visit Visa, and Work Visa. The visa category depends on the purpose and duration of stay.",
-    },
-    {
-      question: "What is the Hayya entry permit for Qatar?",
-      answer:
-        "The Hayya platform is Qatar's official digital entry system used during major events and for certain visitor categories. Eligible travellers may need to apply through the Hayya portal depending on entry regulations in effect at the time of travel.",
-    },
-    {
-      question: "What are the passport requirements for a Qatar visa?",
-      answer:
-        "Your passport must be valid for at least six months from the date of arrival in Qatar and must have sufficient blank pages for entry stamps.",
-    },
-    {
-      question: "What documents are required for a Qatar tourist visa?",
-      answer:
-        "Applicants typically require a valid passport, passport-size photograph, confirmed return flight ticket, proof of accommodation, financial proof, and a valid debit or credit card. Additional documents may be requested depending on the visa category.",
-    },
-    {
-      question: "Is there a minimum bank balance requirement for Qatar visa?",
-      answer:
-        "While Qatar does not publish a fixed minimum amount, travellers must demonstrate sufficient financial means to support their stay, especially when applying for certain visa categories.",
-    },
-    {
-      question: "Do Indians need a transit visa for Qatar?",
-      answer:
-        "Indian travellers transiting through Hamad International Airport without exiting the transit area do not require a transit visa. If leaving the airport during transit, a transit or short-term entry visa may be required.",
-    },
-    {
-      question: "Can I extend my stay in Qatar?",
-      answer:
-        "Yes. Eligible visitors may apply for a visa extension through the Ministry of Interior before their current stay expires. Approval is discretionary.",
-    },
-    {
-      question: "Can I work in Qatar on a tourist visa?",
-      answer:
-        "No. Working in Qatar on a tourist visa is illegal. Employment requires a valid work visa sponsored by a Qatari employer.",
-    },
-    {
-      question: "Can I apply for a Qatar visa for my family?",
-      answer:
-        "Yes. Each family member must have a separate visa or entry approval. Family Visit Visas are available for residents sponsoring relatives.",
-    },
-    {
-      question: "How long does it take to process a Qatar visa?",
-      answer:
-        "Qatar visa processing times vary by category but typically range from 3 to 7 working days once a complete application is submitted.",
-    },
-    {
-      question: "Can I reapply if my Qatar visa is rejected?",
-      answer:
-        "Yes. Applicants may reapply after addressing the reasons for refusal and ensuring all documentation is accurate and complete.",
-    },
-    {
-      question: "What happens if I overstay my Qatar visa?",
-      answer:
-        "Overstaying may result in daily fines, exit penalties, and potential travel restrictions. Visitors must leave Qatar before the authorised stay expires.",
-    },
-    {
-      question: "Are Qatar visa fees refundable if rejected?",
-      answer:
-        "Visa fees are generally non-refundable, even if the application is refused.",
-    },
-  ],
-
-  Kenya: [
-    {
-      question: "What is the Kenya Electronic Travel Authorization (eTA)?",
-      answer:
-        "Kenya eTA is a mandatory online travel authorisation for eligible travellers visiting Kenya. It is linked digitally to your passport and must be approved before travel.",
-    },
-    {
-      question: "Do diplomatic passport holders need to apply for a Kenya eTA?",
-      answer:
-        "Diplomatic passport exemptions depend on bilateral arrangements. Travellers should verify the latest exemption rules before travel; if no exemption applies, eTA is required.",
-    },
-    {
-      question: "Do diplomats need to pay for the Kenya eTA?",
-      answer:
-        "If a diplomat is exempt under official policy, payment may not be required. Otherwise, standard applicable eTA fees are charged.",
-    },
-    {
-      question: "If we are travelling as a couple or group, is one Kenya eTA enough?",
-      answer:
-        "No. Each traveller, including spouses, children, and group members, must have an individual Kenya eTA approval linked to their own passport.",
-    },
-    {
-      question: "How do I apply for the Kenya eTA?",
-      answer:
-        "Apply online by filling personal and passport details, uploading required documents, and paying the fee. After submission, the application is reviewed and approved electronically.",
-    },
-    {
-      question: "What documents are required for a Kenya eTA application?",
-      answer:
-        "Typically required: passport bio page, recent photograph, travel itinerary/flight details, accommodation details, and any additional supporting documents requested for your trip type.",
-    },
-    {
-      question: "How long does it take to process a Kenya eTA?",
-      answer:
-        "Processing commonly takes a few working days, but timelines can vary based on application volume and document verification.",
-    },
-    {
-      question: "How much does the Kenya eTA cost?",
-      answer:
-        "The cost includes official government charges and may include service fees depending on the application channel used.",
-    },
-    {
-      question: "How can I track my Kenya eTA application status?",
-      answer:
-        "You can track status using your application reference details on the application portal or through updates sent to your registered email.",
-    },
-    {
-      question: "Can someone apply for a Kenya eTA on behalf of another traveller?",
-      answer:
-        "Yes. A representative can submit the form, but traveller details and documents must be accurate, and the approved eTA remains tied to the traveller's passport.",
-    },
-  ],
-
-  Russia: [
-    {
-      question: "How can I apply for a Russia visa?",
-      answer:
-        "To apply for a Russia visa, complete the online visa application form, gather the required supporting documents, and submit your application through an authorised visa channel or Russian Embassy/Consulate. After payment and document verification, the application is processed for approval. Once approved, you will receive either a visa sticker in your passport or an electronic visa, depending on your eligibility.",
-    },
-    {
-      question: "Can I get a visa-on-arrival in Russia?",
-      answer:
-        "No. Russia does not offer visa-on-arrival for Indian passport holders. Travellers must obtain a valid Russia visa before departure.",
-    },
-    {
-      question: "How long can I stay in Russia?",
-      answer:
-        "The permitted stay in Russia depends on the type of visa issued and the conditions specified on the visa. Tourist visas typically allow short stays, while business, student, or work visas may permit longer durations.",
-    },
-    {
-      question: "What is the validity period of a Russia visa?",
-      answer:
-        "The validity of a Russia visa varies by visa category. Tourist visas are commonly issued for 30 to 90 days and may allow single or multiple entries depending on approval.",
-    },
-    {
-      question: "Do Schengen visa holders need a Russia visa?",
-      answer:
-        "Yes. A valid Schengen visa does not grant entry into Russia. Travellers must apply separately for a Russia visa based on the purpose of travel.",
-    },
-    {
-      question: "What are the photo requirements for a Russia visa application?",
-      answer:
-        "Russia visa photographs must be in colour, taken against a white background, and without glasses. The photo should clearly show the applicant's face with a neutral expression.",
-    },
-    {
-      question: "In what format should Russia visa documents be uploaded?",
-      answer:
-        "Supporting documents for a Russia visa application must typically be uploaded in PDF or JPG format. Ensure all files are clear and legible.",
-    },
-    {
-      question: "How long does it take to process a Russia visa?",
-      answer:
-        "Russia visa processing generally takes between 3 to 10 business days after submission of complete documentation. Processing time may vary depending on visa type and consular workload.",
-    },
-    {
-      question: "How will I receive my Russia visa?",
-      answer:
-        "If issued as a sticker visa, the approved visa will be affixed inside your passport. If eligible for an eVisa, you will receive the approved visa electronically via email.",
-    },
-    {
-      question: "Does every Indian national travelling to Russia need a visa?",
-      answer:
-        "Yes. Indian passport holders must obtain a valid Russia visa before travelling. The visa type depends on the purpose and duration of the visit.",
-    },
-    {
-      question: "Can I cancel my Russia visa?",
-      answer:
-        "Yes, a Russia visa can be cancelled depending on the visa category and circumstances. It is advisable to contact the relevant visa authority or authorised service provider for guidance before proceeding.",
-    },
-    {
-      question: "Will I get a refund if I cancel my Russia visa?",
-      answer:
-        "No. Russia visa fees are non-refundable, even if the visa is cancelled or unused.",
-    },
-    {
-      question: "Will I get a refund if my Russia visa application is rejected?",
-      answer:
-        "No. Russia visa fees are non-refundable regardless of whether the application is approved or refused.",
-    },
-    {
-      question: "How soon can I reapply if my Russia visa is rejected?",
-      answer:
-        "There is no mandatory waiting period to reapply after a Russia visa refusal. However, applicants should carefully address the reasons for rejection before submitting a new application.",
-    },
   ],
 
   Singapore: [
@@ -741,57 +295,27 @@ const COUNTRY_FAQS = {
 
   "Hong Kong": [
     {
-      question: "Do Indians need a visa for Hong Kong?",
+      question: "Is Hong Kong pre-arrival registration mandatory for Indians?",
       answer:
-        "Yes, Indian nationals must obtain a pre-approved visa or entry permit to visit Hong Kong. The application is digital and does not require a physical embassy visit.",
+        "Yes. Indian passport holders must complete Hong Kong Pre-Arrival Registration (PAR) before traveling.",
     },
     {
-      question: "What is the processing time for Hong Kong visas?",
+      question: "Is this a visa?",
       answer:
-        "Processing typically takes 1 working day when the paperwork is complete. We keep you updated at every step.",
+        "No. Pre-Arrival Registration is not a visa. It is an entry pre-clearance required for eligible Indian travellers.",
     },
     {
-      question: "Can I submit the Hong Kong visa application online?",
+      question: "How long does the registration take?",
       answer:
-        "Yes, we submit your application electronically to the Hong Kong Immigration Department after verifying your documents.",
-    },
-    {
-      question: "What documents are mandatory?",
-      answer:
-        "You need a passport, photo, itinerary, hotel reservation, bank proof, and optionally an invitation letter if visiting family or business contacts.",
-    },
-    {
-      question: "Can I extend my stay in Hong Kong?",
-      answer:
-        "Extensions are evaluated by Hong Kong immigration. Apply for the required duration upfront and contact us if you need further assistance.",
-    },
-    {
-      question: "What should I do after approval?",
-      answer:
-        "Download and print the approval letter, carry it when you travel, and present it along with your passport at the Hong Kong immigration counter.",
+        "Hong Kong Pre-Arrival Registration is usually processed instantly or within a few minutes after successful submission.",
     },
   ],
 
   "Mauritius": [
     {
-      question: "Is the Mauritius travel digital form mandatory for Indians?",
+      question: "What is the Mauritius Travel Digital Form (TDA)?",
       answer:
-        "Yes, Indian travellers must complete the required travel digital form before travel.",
-    },
-     {
-      question: "How long does processing take?",
-      answer:
-        "Processing typically takes 1 working day when all details are complete.",
-    },
-     {
-      question: "Can I complete the process online?",
-      answer:
-        "Yes, the process is fully online and handled digitally.",
-    },
-     {
-      question: "What should I carry while travelling?",
-      answer:
-        "Carry your passport and the processed confirmation along with your itinerary.",
+        "The Mauritius Travel Digital Form is an online travel declaration required to be completed before arrival.",
     },
   ],
 
@@ -1344,6 +868,9 @@ const DEFAULT_FAQS = (countryName) => [
     question: `${countryName} Visa Documents Required`,
     answer: `Passport, photographs, travel details, and supporting documents are required.`,
   },
+
+
+  
 ];
 
 

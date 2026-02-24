@@ -23,31 +23,24 @@ import { ApplyCountryHeader, CoPassengerCard } from "../../components/ApplyFlowC
 import PassportFrontSample from "../../assets/examples/passport-front.png";
 import PassportBackSample from "../../assets/examples/passport-back.png";
 import PassportPhotoSample from "../../assets/examples/passportimage.png";
-import TicketSample from "../../assets/examples/ticket.png";
 
 const ORANGE = "#FF5C00";
 
 const createTraveller = () => ({
   form: {
-    travelDate: "",
-    phone: "",
+    entryDate: "",
+    exitDate: "",
+    mobileNumber: "",
     email: "",
-    hotelName: "",
-    professionDetails: "",
   },
   documents: {
     passportFront: null,
     passportBack: null,
     photo: null,
-    airTicket: null,
-    travelInsurance: null,
-    itinerary: null,
-    bankStatement: null,
-    professionProof: null,
   },
 });
 
-export default function ArmeniaApplyScreen({ navigation }) {
+export default function BhutanApplyScreen({ navigation }) {
   const [travellers, setTravellers] = useState([{ isPrimary: true, ...createTraveller() }]);
   const [tempTraveller, setTempTraveller] = useState(createTraveller());
   const [showCoTravellerModal, setShowCoTravellerModal] = useState(false);
@@ -62,7 +55,6 @@ export default function ArmeniaApplyScreen({ navigation }) {
     if (key === "passportFront") return PassportFrontSample;
     if (key === "passportBack") return PassportBackSample;
     if (key === "photo") return PassportPhotoSample;
-    if (key === "airTicket") return TicketSample;
     return null;
   };
 
@@ -88,7 +80,7 @@ export default function ArmeniaApplyScreen({ navigation }) {
 
   const pickDocument = async (target, key) => {
     const res = await launchImageLibrary({
-      mediaType: "mixed",
+      mediaType: "photo",
       quality: 0.9,
     });
     if (!res.assets?.[0]) return;
@@ -114,15 +106,12 @@ export default function ArmeniaApplyScreen({ navigation }) {
   };
 
   const validateTraveller = (traveller) => {
-    if (
-      !traveller.form.travelDate ||
-      !traveller.form.phone ||
-      !traveller.form.email ||
-      !traveller.form.hotelName ||
-      !traveller.form.professionDetails
-    ) {
-      Alert.alert("Missing Info", "Please complete all required fields.");
-      return false;
+    const requiredFields = ["entryDate", "exitDate", "mobileNumber", "email"];
+    for (const field of requiredFields) {
+      if (!String(traveller.form[field] || "").trim()) {
+        Alert.alert("Missing Info", "Please fill all required fields.");
+        return false;
+      }
     }
 
     for (const value of Object.values(traveller.documents)) {
@@ -143,8 +132,8 @@ export default function ArmeniaApplyScreen({ navigation }) {
   };
 
   const submit = async () => {
-    for (const traveller of travellers) {
-      if (!validateTraveller(traveller)) return;
+    for (const t of travellers) {
+      if (!validateTraveller(t)) return;
     }
 
     try {
@@ -154,57 +143,35 @@ export default function ArmeniaApplyScreen({ navigation }) {
         return;
       }
 
-      const applicationId = `armenia_${Date.now()}`;
+      const applicationId = `bhutan_${Date.now()}`;
 
       const formattedTravellers = await Promise.all(
-        travellers.map(async (traveller, index) => {
+        travellers.map(async (t, index) => {
           const basePath = `applications/${user.uid}/${applicationId}/traveller_${index + 1}`;
 
           const passportFrontUrl = await uploadFile(
-            traveller.documents.passportFront,
-            `${basePath}/passport_front.${getFileExtension(traveller.documents.passportFront, "jpg")}`
+            t.documents.passportFront,
+            `${basePath}/passport_front.${getFileExtension(t.documents.passportFront, "jpg")}`
           );
           const passportBackUrl = await uploadFile(
-            traveller.documents.passportBack,
-            `${basePath}/passport_back.${getFileExtension(traveller.documents.passportBack, "jpg")}`
+            t.documents.passportBack,
+            `${basePath}/passport_back.${getFileExtension(t.documents.passportBack, "jpg")}`
           );
           const photoUrl = await uploadFile(
-            traveller.documents.photo,
-            `${basePath}/passport_photo.${getFileExtension(traveller.documents.photo, "jpg")}`
-          );
-          const airTicketUrl = await uploadFile(
-            traveller.documents.airTicket,
-            `${basePath}/air_ticket.${getFileExtension(traveller.documents.airTicket, "pdf")}`
-          );
-          const travelInsuranceUrl = await uploadFile(
-            traveller.documents.travelInsurance,
-            `${basePath}/travel_insurance.${getFileExtension(traveller.documents.travelInsurance, "pdf")}`
-          );
-          const itineraryUrl = await uploadFile(
-            traveller.documents.itinerary,
-            `${basePath}/itinerary.${getFileExtension(traveller.documents.itinerary, "pdf")}`
-          );
-          const bankStatementUrl = await uploadFile(
-            traveller.documents.bankStatement,
-            `${basePath}/bank_statement.${getFileExtension(traveller.documents.bankStatement, "pdf")}`
-          );
-          const professionProofUrl = await uploadFile(
-            traveller.documents.professionProof,
-            `${basePath}/profession_proof.${getFileExtension(traveller.documents.professionProof, "pdf")}`
+            t.documents.photo,
+            `${basePath}/passport_photo.${getFileExtension(t.documents.photo, "jpg")}`
           );
 
           return {
-            isPrimary: traveller.isPrimary,
-            ...traveller.form,
+            isPrimary: t.isPrimary,
+            entryDate: t.form.entryDate,
+            exitDate: t.form.exitDate,
+            mobileNumber: t.form.mobileNumber,
+            email: t.form.email,
             documents: {
               passportFrontUrl,
               passportBackUrl,
               photoUrl,
-              airTicketUrl,
-              travelInsuranceUrl,
-              itineraryUrl,
-              bankStatementUrl,
-              professionProofUrl,
             },
           };
         })
@@ -217,7 +184,7 @@ export default function ArmeniaApplyScreen({ navigation }) {
         .doc(applicationId)
         .set({
           userId: user.uid,
-          country: "Armenia",
+          country: "Bhutan",
           travellers: formattedTravellers,
           totalTravellers: formattedTravellers.length,
           status: "submitted",
@@ -225,20 +192,32 @@ export default function ArmeniaApplyScreen({ navigation }) {
         });
 
       navigation.navigate("CheckoutScreen", {
-        country: "Armenia",
+        country: "Bhutan",
         travellers,
       });
     } catch (error) {
-      console.log("Armenia submit error:", error);
-      Alert.alert("Error", "Unable to submit application.");
+      console.log("Bhutan submit error:", error);
+      Alert.alert("Error", "Unable to submit application. Please try again.");
     }
   };
 
   const renderForm = (traveller, onChange, target) => (
     <>
-      <TouchableOpacity style={styles.input} onPress={() => setShowCalendarFor(target)}>
-        <Text style={traveller.form.travelDate ? styles.inputText : styles.inputPlaceholder}>
-          {traveller.form.travelDate ? formatDate(traveller.form.travelDate) : "Select Travel Date"}
+      <TouchableOpacity
+        style={styles.input}
+        onPress={() => setShowCalendarFor({ target, field: "entryDate" })}
+      >
+        <Text style={traveller.form.entryDate ? styles.inputText : styles.inputPlaceholder}>
+          {traveller.form.entryDate ? formatDate(traveller.form.entryDate) : "Select Entry Travel Date"}
+        </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.input}
+        onPress={() => setShowCalendarFor({ target, field: "exitDate" })}
+      >
+        <Text style={traveller.form.exitDate ? styles.inputText : styles.inputPlaceholder}>
+          {traveller.form.exitDate ? formatDate(traveller.form.exitDate) : "Select Exit Travel Date"}
         </Text>
       </TouchableOpacity>
 
@@ -246,9 +225,9 @@ export default function ArmeniaApplyScreen({ navigation }) {
         placeholder="Mobile Number"
         style={styles.input}
         keyboardType="phone-pad"
-        value={traveller.form.phone}
-        onChangeText={(v) => onChange("phone", v)}
-        placeholderTextColor="#9CA3AF"
+        value={traveller.form.mobileNumber}
+        onChangeText={(v) => onChange("mobileNumber", v)}
+        placeholderTextColor="#111827"
       />
 
       <TextInput
@@ -256,54 +235,29 @@ export default function ArmeniaApplyScreen({ navigation }) {
         style={styles.input}
         value={traveller.form.email}
         onChangeText={(v) => onChange("email", v)}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor="#111827"
         autoCapitalize="none"
       />
 
-      <TextInput
-        placeholder="Hotel Name"
-        style={styles.input}
-        value={traveller.form.hotelName}
-        onChangeText={(v) => onChange("hotelName", v)}
-        placeholderTextColor="#9CA3AF"
-      />
-
-      <TextInput
-        placeholder="Profession Details"
-        style={[styles.input, styles.textArea]}
-        multiline
-        value={traveller.form.professionDetails}
-        onChangeText={(v) => onChange("professionDetails", v)}
-        placeholderTextColor="#9CA3AF"
-      />
       {[
         { key: "passportFront", label: "Upload Passport Front Page" },
         { key: "passportBack", label: "Upload Passport Back Page" },
         { key: "photo", label: "Upload Passport Size Photo" },
-        { key: "airTicket", label: "Upload Air Ticket" },
-        { key: "travelInsurance", label: "Upload Travel Insurance" },
-        { key: "itinerary", label: "Upload Travel Itinerary" },
-        { key: "bankStatement", label: "Upload Bank Statement (Last 3 Months)" },
-        { key: "professionProof", label: "Upload Salary Slip / Business Registration" },
       ].map(({ key, label }) => (
         <View key={key} style={styles.docCard}>
           <Text style={styles.docLabel}>{label} *</Text>
           {traveller.documents[key] ? (
             <Image source={{ uri: traveller.documents[key].uri }} style={styles.previewImage} />
-          ) : getSample(key) ? (
+          ) : (
             <View style={styles.sampleWrapper}>
               <Image source={getSample(key)} style={styles.sampleImage} resizeMode="contain" />
             </View>
-          ) : null}
-          {traveller.documents[key] ? (
-            <TouchableOpacity style={styles.uploadBtn} onPress={() => pickDocument(target, key)}>
-              <Text style={styles.uploadText}>Replace Document</Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity style={styles.uploadBtn} onPress={() => pickDocument(target, key)}>
-              <Text style={styles.uploadText}>Upload Document</Text>
-            </TouchableOpacity>
           )}
+          <TouchableOpacity style={styles.uploadBtn} onPress={() => pickDocument(target, key)}>
+            <Text style={styles.uploadText}>
+              {traveller.documents[key] ? "Replace Document" : "Upload Document"}
+            </Text>
+          </TouchableOpacity>
         </View>
       ))}
     </>
@@ -312,7 +266,7 @@ export default function ArmeniaApplyScreen({ navigation }) {
   return (
     <ScreenWrapper>
       <ScrollView contentContainerStyle={styles.container}>
-        <ApplyCountryHeader navigation={navigation} countryName="Armenia" />
+        <ApplyCountryHeader navigation={navigation} countryName="Bhutan" />
 
         {renderForm(
           travellers[0],
@@ -377,14 +331,20 @@ export default function ArmeniaApplyScreen({ navigation }) {
             <Calendar
               minDate={new Date().toISOString().split("T")[0]}
               onDayPress={(day) => {
-                if (showCalendarFor === "main") {
+                const { target, field } = showCalendarFor || {};
+                if (!target || !field) {
+                  setShowCalendarFor(null);
+                  return;
+                }
+
+                if (target === "main") {
                   const updated = [...travellers];
-                  updated[0].form.travelDate = day.dateString;
+                  updated[0].form[field] = day.dateString;
                   setTravellers(updated);
                 } else {
                   setTempTraveller((prev) => ({
                     ...prev,
-                    form: { ...prev.form, travelDate: day.dateString },
+                    form: { ...prev.form, [field]: day.dateString },
                   }));
                 }
                 setShowCalendarFor(null);
@@ -406,13 +366,6 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   headerTitle: { fontSize: 17, fontWeight: "700" },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    marginTop: 8,
-    marginBottom: 12,
-    textAlign: "center",
-  },
   input: {
     borderWidth: 1,
     borderColor: "#ddd",
@@ -423,13 +376,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   inputText: { color: "#111827" },
-  inputPlaceholder: { color: "#9CA3AF" },
-  textArea: { minHeight: 90, textAlignVertical: "top" },
-  noteText: {
-    fontSize: 12,
-    color: "#6B7280",
-    marginBottom: 8,
-  },
+  inputPlaceholder: { color: "#111827" },
   docCard: {
     backgroundColor: "#fff",
     borderRadius: 14,
@@ -448,17 +395,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 6,
     marginBottom: 8,
-    justifyContent: "center",
   },
   sampleImage: {
     height: 95,
     width: "100%",
-  },
-  noSampleText: {
-    textAlign: "center",
-    color: "#9CA3AF",
-    paddingVertical: 28,
-    fontWeight: "600",
   },
   previewImage: {
     height: 110,
@@ -473,15 +413,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   uploadText: { color: ORANGE, fontWeight: "700" },
-  addTravellerBtn: {
-    borderWidth: 1,
-    borderColor: ORANGE,
-    borderRadius: 999,
-    paddingVertical: 14,
-    alignItems: "center",
-    marginVertical: 12,
-  },
-  addTravellerText: { color: ORANGE, fontWeight: "700" },
   submitBtn: {
     backgroundColor: ORANGE,
     borderRadius: 999,
@@ -514,5 +445,6 @@ const styles = StyleSheet.create({
     padding: 12,
   },
 });
+
 
 

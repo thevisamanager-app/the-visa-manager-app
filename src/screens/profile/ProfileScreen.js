@@ -401,6 +401,7 @@ import { getPassportData } from "../../services/passport/passportService";
 import { Linking } from "react-native";
 import ScreenWrapper from "../../components/ScreenWrapper";
 
+
 const COLORS = {
   primary: "#FF5C00",
   black: "#000",

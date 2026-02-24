@@ -13,10 +13,11 @@ import {
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Calendar } from "react-native-calendars";
 import { launchImageLibrary } from "react-native-image-picker";
+import { validatePickedDocument } from "../../utils/documentValidation";
 import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import ScreenWrapper from "../../components/ScreenWrapper";
-import { CountryApplyBanner, CoPassengerCard } from "../../components/ApplyFlowCards";
+import { ApplyCountryHeader, CoPassengerCard } from "../../components/ApplyFlowCards";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
 import PassportBackSample from "../../assets/examples/passport-back.png";
@@ -55,15 +56,22 @@ export default function AzerbaijanApplyScreen({ navigation }) {
   const pickDocument = async (target, key) => {
     const res = await launchImageLibrary({ mediaType: "photo", quality: 0.9 });
     if (!res.assets?.[0]) return;
+    const selectedAsset = res.assets[0];
+
+    const validation = await validatePickedDocument(key, selectedAsset);
+    if (!validation.ok) {
+      Alert.alert("Invalid Document", validation.message);
+      return;
+    }
 
     if (target === "main") {
       const updated = [...travellers];
-      updated[0].documents[key] = res.assets[0];
+      updated[0].documents[key] = selectedAsset;
       setTravellers(updated);
     } else {
       setTempTraveller((p) => ({
         ...p,
-        documents: { ...p.documents, [key]: res.assets[0] },
+        documents: { ...p.documents, [key]: selectedAsset },
       }));
     }
   };
@@ -218,22 +226,7 @@ export default function AzerbaijanApplyScreen({ navigation }) {
   return (
     <ScreenWrapper>
       <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="chevron-back" size={26} />
-          </TouchableOpacity>
-
-          <View />
-
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("Tabs", { screen: "Destination" })
-            }
-          >
-            <Ionicons name="home-outline" size={24} color={ORANGE} />
-          </TouchableOpacity>
-        </View>
-        <CountryApplyBanner countryName="Azerbaijan" />
+        <ApplyCountryHeader navigation={navigation} countryName="Azerbaijan" />
 
         {renderForm(
           travellers[0],
@@ -425,3 +418,4 @@ const styles = StyleSheet.create({
     padding: 12,
   },
 });
+

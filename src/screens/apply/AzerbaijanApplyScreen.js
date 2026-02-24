@@ -17,7 +17,7 @@ import { validatePickedDocument } from "../../utils/documentValidation";
 import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import ScreenWrapper from "../../components/ScreenWrapper";
-import { ApplyCountryHeader, CoPassengerCard } from "../../components/ApplyFlowCards";
+import { CountryApplyBanner, CoPassengerCard } from "../../components/ApplyFlowCards";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
 import PassportBackSample from "../../assets/examples/passport-back.png";
@@ -54,7 +54,11 @@ export default function AzerbaijanApplyScreen({ navigation }) {
   };
 
   const pickDocument = async (target, key) => {
-    const res = await launchImageLibrary({ mediaType: "photo", quality: 0.9 });
+    const res = await launchImageLibrary({
+      mediaType: "photo",
+      quality: 0.9,
+      includeBase64: key === "passportFront",
+    });
     if (!res.assets?.[0]) return;
     const selectedAsset = res.assets[0];
 
@@ -118,17 +122,26 @@ export default function AzerbaijanApplyScreen({ navigation }) {
 
       const applicationId = `azerbaijan_${Date.now()}`;
 
-      const formattedTravellers = travellers.map(t => ({
-        isPrimary: t.isPrimary,
-        travelDate: t.form.travelDate,
-        phone: t.form.phone,
-        email: t.form.email,
-        hotelName: t.form.hotelName,
-        documents: {
-          passportFrontUrl: t.documents.passportFront?.uri || null,
-          passportBackUrl: t.documents.passportBack?.uri || null,
-        }
-      }));
+      const formattedTravellers = await Promise.all(
+        travellers.map(async (t) => {
+          const passportFrontPage = await extractPassportFrontPageFromAsset(
+            t.documents.passportFront,
+            t.form.phone
+          );
+          return {
+            isPrimary: t.isPrimary,
+            travelDate: t.form.travelDate,
+            phone: t.form.phone,
+            email: t.form.email,
+            hotelName: t.form.hotelName,
+            passportFrontPage,
+            documents: {
+              passportFrontUrl: t.documents.passportFront?.uri || null,
+              passportBackUrl: t.documents.passportBack?.uri || null,
+            },
+          };
+        })
+      );
 
       await firestore()
         .collection("users")
@@ -171,6 +184,7 @@ export default function AzerbaijanApplyScreen({ navigation }) {
       <TextInput
         placeholder="Mobile Number"
         style={styles.input}
+        placeholderTextColor="#000000"
         value={traveller.form.phone}
         onChangeText={(v) => onChange("phone", v)}
       />
@@ -178,6 +192,7 @@ export default function AzerbaijanApplyScreen({ navigation }) {
       <TextInput
         placeholder="Email ID"
         style={styles.input}
+        placeholderTextColor="#000000"
         value={traveller.form.email}
         onChangeText={(v) => onChange("email", v)}
       />
@@ -185,6 +200,7 @@ export default function AzerbaijanApplyScreen({ navigation }) {
       <TextInput
         placeholder="Hotel Name"
         style={styles.input}
+        placeholderTextColor="#000000"
         value={traveller.form.hotelName}
         onChangeText={(v) => onChange("hotelName", v)}
       />
@@ -228,6 +244,7 @@ export default function AzerbaijanApplyScreen({ navigation }) {
       <ScrollView contentContainerStyle={styles.container}>
         <ApplyCountryHeader navigation={navigation} countryName="Azerbaijan" />
 
+        <View style={styles.formCard}>
         {renderForm(
           travellers[0],
           (k, v) => {
@@ -237,7 +254,7 @@ export default function AzerbaijanApplyScreen({ navigation }) {
           },
           "main"
         )}
-
+        </View>
         <CoPassengerCard
           coTravellerCount={Math.max(0, travellers.length - 1)}
           onAddPress={() => setShowCoTravellerModal(true)}
@@ -317,7 +334,16 @@ export default function AzerbaijanApplyScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { padding: 16, paddingBottom: 40 },
-
+  formCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 14,
+    padding: 12,
+    marginTop: 10,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    elevation: 2,
+  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -418,4 +444,3 @@ const styles = StyleSheet.create({
     padding: 12,
   },
 });
-

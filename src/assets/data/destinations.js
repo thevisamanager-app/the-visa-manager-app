@@ -106,16 +106,16 @@ const DESTINATIONS = [
   {
     id: 8,
     countrName: 'Philippines',
-    VisaManagerFee: "1180",
+    VisaManagerFee: "2950",
     AuthorityCharges: "0",
-    GovernmentFee: "5800",
+    GovernmentFee: "6240",
     currency: "",
     countryType: "evisa",
+    subtitle: "Get Visa in 7-12 Days",
     bullets: [
-      "Quick & Easy Process",
-      "Trusted by 10k+ Customers",
-      "120+ countries"
-    ],
+      "1200+ visas successfully Processed",
+      "online process",
+    ]
   },
 
   {
@@ -1343,6 +1343,35 @@ const DESTINATIONS = [
       "online process",
     ]
   },
+
+  {
+    id: 95,
+    countrName: 'Kazakhstan',
+    VisaManagerFee: "590",
+    AuthorityCharges: "0",
+    GovernmentFee: "5642",
+    countryType: "evisa",
+    subtitle: "Get visa in 4-5 working days",
+    bullets: [
+      "1200+ visas successfully Processed",
+      "online process",
+    ]
+  },
+
+{
+    id: 95,
+    countrName: 'Israel',
+    VisaManagerFee: "1003",
+    AuthorityCharges: "0",
+    GovernmentFee: "3200",
+    countryType: "evisa",
+    subtitle: "Get visa in 8-10 days",
+    bullets: [
+      "1200+ visas successfully Processed",
+      "online process",
+    ]
+  },
+
 
 ];
 export default DESTINATIONS;

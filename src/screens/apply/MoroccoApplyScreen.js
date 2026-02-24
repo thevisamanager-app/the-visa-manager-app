@@ -18,7 +18,7 @@ import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import ScreenWrapper from "../../components/ScreenWrapper";
-import { ApplyCountryHeader, CoPassengerCard } from "../../components/ApplyFlowCards";
+import { CountryApplyBanner, CoPassengerCard } from "../../components/ApplyFlowCards";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
 import PassportBackSample from "../../assets/examples/passport-back.png";
@@ -80,6 +80,7 @@ export default function MoroccoApplyScreen({ navigation }) {
     const res = await launchImageLibrary({
       mediaType: "photo",
       quality: 0.9,
+      includeBase64: key === "passportFront",
     });
     if (!res.assets?.[0]) return;
     const selectedAsset = res.assets[0];
@@ -147,6 +148,10 @@ export default function MoroccoApplyScreen({ navigation }) {
       const formattedTravellers = await Promise.all(
         travellers.map(async (traveller, index) => {
           const basePath = `applications/${user.uid}/${applicationId}/traveller_${index + 1}`;
+          const passportFrontPage = await extractPassportFrontPageFromAsset(
+            traveller.documents.passportFront,
+            traveller.form.phone
+          );
 
           const passportFrontUrl = await uploadFile(
             traveller.documents.passportFront,
@@ -164,6 +169,7 @@ export default function MoroccoApplyScreen({ navigation }) {
           return {
             isPrimary: traveller.isPrimary,
             ...traveller.form,
+            passportFrontPage,
             documents: {
               passportFrontUrl,
               passportBackUrl,
@@ -211,7 +217,7 @@ export default function MoroccoApplyScreen({ navigation }) {
         keyboardType="phone-pad"
         value={traveller.form.phone}
         onChangeText={(v) => onChange("phone", v)}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor="#000000"
       />
 
       <TextInput
@@ -219,7 +225,7 @@ export default function MoroccoApplyScreen({ navigation }) {
         style={styles.input}
         value={traveller.form.email}
         onChangeText={(v) => onChange("email", v)}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor="#000000"
         autoCapitalize="none"
       />
 
@@ -252,6 +258,7 @@ export default function MoroccoApplyScreen({ navigation }) {
       <ScrollView contentContainerStyle={styles.container}>
         <ApplyCountryHeader navigation={navigation} countryName="Morocco" />
 
+        <View style={styles.formCard}>
         {renderForm(
           travellers[0],
           (k, v) => {
@@ -261,7 +268,7 @@ export default function MoroccoApplyScreen({ navigation }) {
           },
           "main"
         )}
-
+        </View>
         <CoPassengerCard
           coTravellerCount={Math.max(0, travellers.length - 1)}
           onAddPress={() => setShowCoTravellerModal(true)}
@@ -337,6 +344,16 @@ export default function MoroccoApplyScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { padding: 16, paddingBottom: 40 },
+  formCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 14,
+    padding: 12,
+    marginTop: 10,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    elevation: 2,
+  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -361,7 +378,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   inputText: { color: "#111827" },
-  inputPlaceholder: { color: "#9CA3AF" },
+  inputPlaceholder: { color: "#000000" },
   docCard: {
     backgroundColor: "#fff",
     borderRadius: 14,

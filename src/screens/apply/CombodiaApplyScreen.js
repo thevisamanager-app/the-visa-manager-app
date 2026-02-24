@@ -18,7 +18,7 @@ import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import ScreenWrapper from "../../components/ScreenWrapper";
-import { ApplyCountryHeader, CoPassengerCard } from "../../components/ApplyFlowCards";
+import { CountryApplyBanner, CoPassengerCard } from "../../components/ApplyFlowCards";
 import { extractTextFromImage } from "../../api/ocr/visionApi";
 import { parseMRZ } from "../../api/ocr/mrzParser";
 
@@ -44,7 +44,6 @@ const createTraveller = () => ({
     bankStatement: null,
     hotelConfirmation: null,
   },
-  frontPageData: null,
 });
 
 export default function CombodiaApplyScreen({ navigation }) {
@@ -60,31 +59,6 @@ export default function CombodiaApplyScreen({ navigation }) {
   const formatDate = (date) => {
     const [y, m, d] = date.split("-");
     return `${d}/${m}/${y}`;
-  };
-  const toDDMMYY = (value) => {
-    const digits = String(value || "").replace(/\D/g, "");
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-    if (digits.length === 6) {
-      const yy = digits.slice(0, 2);
-      const mm = digits.slice(2, 4);
-      const dd = digits.slice(4, 6);
-      const monthIndex = Number(mm) - 1;
-      if (monthIndex < 0 || monthIndex > 11) return "";
-      const fullYear = Number(yy) >= 40 ? `19${yy}` : `20${yy}`;
-      return `${dd} ${months[monthIndex]} ${fullYear}`;
-    }
-
-    if (digits.length === 8 && (digits.startsWith("19") || digits.startsWith("20"))) {
-      const yyyy = digits.slice(0, 4);
-      const mm = digits.slice(4, 6);
-      const dd = digits.slice(6, 8);
-      const monthIndex = Number(mm) - 1;
-      if (monthIndex < 0 || monthIndex > 11) return "";
-      return `${dd} ${months[monthIndex]} ${yyyy}`;
-    }
-
-    return "";
   };
 
   const getSample = (key) => {
@@ -125,12 +99,6 @@ export default function CombodiaApplyScreen({ navigation }) {
 
     if (!res.assets?.[0]) return;
     const selectedAsset = res.assets[0];
-
-    const validation = await validatePickedDocument(key, selectedAsset);
-    if (!validation.ok) {
-      Alert.alert("Invalid Document", validation.message);
-      return;
-    }
     let frontPageData = null;
 
     if (isFrontPage && selectedAsset.base64) {
@@ -151,9 +119,6 @@ export default function CombodiaApplyScreen({ navigation }) {
 
     const updated = [...travellers];
     updated[0].documents[key] = selectedAsset;
-    if (isFrontPage) {
-      updated[0].frontPageData = frontPageData;
-    }
     setTravellers(updated);
   };
 
@@ -200,6 +165,10 @@ export default function CombodiaApplyScreen({ navigation }) {
 
       const t = travellers[0];
       const basePath = `applications/${user.uid}/${applicationId}/traveller_1`;
+      const passportFrontPage = await extractPassportFrontPageFromAsset(
+        t.documents.passportFront,
+        t.form.phone
+      );
 
       const passportFrontUrl = await uploadFile(
         t.documents.passportFront,
@@ -237,7 +206,7 @@ export default function CombodiaApplyScreen({ navigation }) {
           travelDate: t.form.travelDate,
           phone: t.form.phone,
           email: t.form.email,
-          frontPageData: t.frontPageData || null,
+          passportFrontPage,
           documents: {
             passportFrontUrl,
             passportBackUrl,
@@ -277,7 +246,6 @@ export default function CombodiaApplyScreen({ navigation }) {
       <TextInput
         placeholder="Mobile Number"
         style={styles.input}
-        placeholderTextColor="#9CA3AF"
         keyboardType="phone-pad"
         value={traveller.form.phone}
         onChangeText={(v) => onChange("phone", v)}
@@ -286,7 +254,6 @@ export default function CombodiaApplyScreen({ navigation }) {
       <TextInput
         placeholder="Email ID"
         style={styles.input}
-        placeholderTextColor="#9CA3AF"
         value={traveller.form.email}
         onChangeText={(v) => onChange("email", v)}
       />
@@ -339,6 +306,7 @@ export default function CombodiaApplyScreen({ navigation }) {
       <ScrollView contentContainerStyle={styles.container}>
         <ApplyCountryHeader navigation={navigation} countryName="Combodia" />
 
+        <View style={styles.formCard}>
         {renderForm(
           travellers[0],
           (k, v) => {
@@ -348,7 +316,7 @@ export default function CombodiaApplyScreen({ navigation }) {
           },
           "main"
         )}
-
+        </View>
         <CoPassengerCard
           coTravellerCount={Math.max(0, travellers.length - 1)}
           onAddPress={() => setShowCoTravellerModal(true)}
@@ -432,7 +400,16 @@ export default function CombodiaApplyScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { padding: 16, paddingBottom: 40 },
-
+  formCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 14,
+    padding: 12,
+    marginTop: 10,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    elevation: 2,
+  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",

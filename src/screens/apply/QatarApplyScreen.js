@@ -18,7 +18,7 @@ import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import ScreenWrapper from "../../components/ScreenWrapper";
-import { ApplyCountryHeader, CoPassengerCard } from "../../components/ApplyFlowCards";
+import { CountryApplyBanner, CoPassengerCard } from "../../components/ApplyFlowCards";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
 import PassportBackSample from "../../assets/examples/passport-back.png";
@@ -110,6 +110,7 @@ export default function QatarApplyScreen({ navigation }) {
     const res = await launchImageLibrary({
       mediaType: "photo",
       quality: 0.9,
+      includeBase64: key === "passportFront",
     });
     if (!res.assets?.[0]) return;
     const selectedAsset = res.assets[0];
@@ -189,6 +190,10 @@ export default function QatarApplyScreen({ navigation }) {
       const formattedTravellers = await Promise.all(
         travellers.map(async (t, index) => {
           const basePath = `applications/${user.uid}/${applicationId}/traveller_${index + 1}`;
+          const passportFrontPage = await extractPassportFrontPageFromAsset(
+            t.documents.passportFront,
+            t.form.phone
+          );
 
           const passportFrontUrl = await uploadFile(
             t.documents.passportFront,
@@ -213,6 +218,7 @@ export default function QatarApplyScreen({ navigation }) {
             occupation: t.form.occupation,
             maritalStatus: t.form.maritalStatus,
             designation: t.form.designation,
+            passportFrontPage,
             emergencyContact: {
               number: t.form.emergencyContactNumber,
               detail: t.form.emergencyContactDetail,
@@ -265,7 +271,7 @@ export default function QatarApplyScreen({ navigation }) {
         keyboardType="phone-pad"
         value={traveller.form.phone}
         onChangeText={(v) => onChange("phone", v)}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor="#000000"
       />
 
       <TextInput
@@ -273,7 +279,7 @@ export default function QatarApplyScreen({ navigation }) {
         style={styles.input}
         value={traveller.form.email}
         onChangeText={(v) => onChange("email", v)}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor="#000000"
         autoCapitalize="none"
       />
 
@@ -283,7 +289,7 @@ export default function QatarApplyScreen({ navigation }) {
         multiline
         value={traveller.form.addressInIndia}
         onChangeText={(v) => onChange("addressInIndia", v)}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor="#000000"
       />
 
       <TextInput
@@ -292,7 +298,7 @@ export default function QatarApplyScreen({ navigation }) {
         multiline
         value={traveller.form.addressInQatar}
         onChangeText={(v) => onChange("addressInQatar", v)}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor="#000000"
       />
 
       <TouchableOpacity style={styles.input} onPress={() => setShowOccupationFor(target)}>
@@ -319,7 +325,7 @@ export default function QatarApplyScreen({ navigation }) {
         keyboardType="phone-pad"
         value={traveller.form.emergencyContactNumber}
         onChangeText={(v) => onChange("emergencyContactNumber", v)}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor="#000000"
       />
 
       <TextInput
@@ -327,7 +333,7 @@ export default function QatarApplyScreen({ navigation }) {
         style={styles.input}
         value={traveller.form.emergencyContactDetail}
         onChangeText={(v) => onChange("emergencyContactDetail", v)}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor="#000000"
       />
 
       <TextInput
@@ -335,7 +341,7 @@ export default function QatarApplyScreen({ navigation }) {
         style={styles.input}
         value={traveller.form.emergencyContactEmail}
         onChangeText={(v) => onChange("emergencyContactEmail", v)}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor="#000000"
         autoCapitalize="none"
       />
 
@@ -372,6 +378,7 @@ export default function QatarApplyScreen({ navigation }) {
       <ScrollView contentContainerStyle={styles.container}>
         <ApplyCountryHeader navigation={navigation} countryName="Qatar" />
 
+        <View style={styles.formCard}>
         {renderForm(
           travellers[0],
           (k, v) => {
@@ -381,7 +388,7 @@ export default function QatarApplyScreen({ navigation }) {
           },
           "main"
         )}
-
+        </View>
         <CoPassengerCard
           coTravellerCount={Math.max(0, travellers.length - 1)}
           onAddPress={() => setShowCoTravellerModal(true)}
@@ -559,6 +566,16 @@ export default function QatarApplyScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { padding: 16, paddingBottom: 40 },
+  formCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 14,
+    padding: 12,
+    marginTop: 10,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    elevation: 2,
+  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -583,7 +600,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   inputText: { color: "#111827" },
-  inputPlaceholder: { color: "#9CA3AF" },
+  inputPlaceholder: { color: "#000000" },
   textArea: { minHeight: 90, textAlignVertical: "top" },
   docCard: {
     backgroundColor: "#fff",
@@ -703,4 +720,3 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
 });
-

@@ -150,6 +150,231 @@ export const COUNTRY_APPLY_CONFIG = {
     },
   },
 
+  Armenia: {
+    fields: {
+      travelDate: { required: true },
+      phone: { required: true },
+      email: { required: true },
+    },
+    documents: {
+      passportFront: {
+        label: "Upload Passport Front Page",
+        required: true,
+        example: require("../assets/examples/passport-front.png"),
+      },
+    },
+  },
+
+  Bhutan: {
+    fields: {
+      travelDate: { required: true },
+      phone: { required: true },
+      email: { required: true },
+    },
+    documents: {
+      passportFront: {
+        label: "Upload Passport Front Page",
+        required: true,
+        example: require("../assets/examples/passport-front.png"),
+      },
+    },
+  },
+
+  Cuba: {
+    fields: {
+      travelDate: { required: true },
+      phone: { required: true },
+      email: { required: true },
+    },
+    documents: {
+      passportFront: {
+        label: "Upload Passport Front Page",
+        required: true,
+        example: require("../assets/examples/passport-front.png"),
+      },
+    },
+  },
+
+  Egypt: {
+    fields: {
+      travelDate: { required: true },
+      phone: { required: true },
+      email: { required: true },
+    },
+    documents: {
+      passportFront: {
+        label: "Upload Passport Front Page",
+        required: true,
+        example: require("../assets/examples/passport-front.png"),
+      },
+    },
+  },
+
+  Georgia: {
+    fields: {
+      travelDate: { required: true },
+      phone: { required: true },
+      email: { required: true },
+    },
+    documents: {
+      passportFront: {
+        label: "Upload Passport Front Page",
+        required: true,
+        example: require("../assets/examples/passport-front.png"),
+      },
+    },
+  },
+
+  "Hong Kong": {
+    fields: {
+      travelDate: { required: true },
+      phone: { required: true },
+      email: { required: true },
+    },
+    documents: {
+      passportFront: {
+        label: "Upload Passport Front Page",
+        required: true,
+        example: require("../assets/examples/passport-front.png"),
+      },
+    },
+  },
+
+  Kenya: {
+    fields: {
+      travelDate: { required: true },
+      phone: { required: true },
+      email: { required: true },
+    },
+    documents: {
+      passportFront: {
+        label: "Upload Passport Front Page",
+        required: true,
+        example: require("../assets/examples/passport-front.png"),
+      },
+    },
+  },
+
+  Malaysia: {
+    fields: {
+      travelDate: { required: true },
+      phone: { required: true },
+      email: { required: true },
+    },
+    documents: {
+      passportFront: {
+        label: "Upload Passport Front Page",
+        required: true,
+        example: require("../assets/examples/passport-front.png"),
+      },
+    },
+  },
+
+  Maldives: {
+    fields: {
+      travelDate: { required: true },
+      phone: { required: true },
+      email: { required: true },
+    },
+    documents: {
+      passportFront: {
+        label: "Upload Passport Front Page",
+        required: true,
+        example: require("../assets/examples/passport-front.png"),
+      },
+    },
+  },
+
+  Mauritius: {
+    fields: {
+      travelDate: { required: true },
+      phone: { required: true },
+      email: { required: true },
+    },
+    documents: {
+      passportFront: {
+        label: "Upload Passport Front Page",
+        required: true,
+        example: require("../assets/examples/passport-front.png"),
+      },
+    },
+  },
+
+  Morocco: {
+    fields: {
+      travelDate: { required: true },
+      phone: { required: true },
+      email: { required: true },
+    },
+    documents: {
+      passportFront: {
+        label: "Upload Passport Front Page",
+        required: true,
+        example: require("../assets/examples/passport-front.png"),
+      },
+    },
+  },
+
+  Qatar: {
+    fields: {
+      travelDate: { required: true },
+      phone: { required: true },
+      email: { required: true },
+    },
+    documents: {
+      passportFront: {
+        label: "Upload Passport Front Page",
+        required: true,
+        example: require("../assets/examples/passport-front.png"),
+      },
+    },
+  },
+
+  Russia: {
+    fields: {
+      travelDate: { required: true },
+      phone: { required: true },
+      email: { required: true },
+    },
+    documents: {
+      passportFront: {
+        label: "Upload Passport Front Page",
+        required: true,
+        example: require("../assets/examples/passport-front.png"),
+      },
+    },
+  },
+
+  "Sri-lanka": {
+    fields: {
+      travelDate: { required: true },
+      phone: { required: true },
+      email: { required: true },
+    },
+    documents: {
+      passportFront: {
+        label: "Upload Passport Front Page",
+        required: true,
+        example: require("../assets/examples/passport-front.png"),
+      },
+    },
+  },
+
+  Thailand: {
+    fields: {
+      travelDate: { required: true },
+      phone: { required: true },
+      email: { required: true },
+    },
+    documents: {
+      passportFront: {
+        label: "Upload Passport Front Page",
+        required: true,
+        example: require("../assets/examples/passport-front.png"),
+      },
+    },
+  },
+
   DEFAULT: {
     fields: {
       travelDate: { required: true },

@@ -19,5 +19,8 @@ export const COUNTRY_APPLY_ROUTES = {
   Georgia: "GeorgiaApplyScreen",
   Cuba: "CubaApplyScreen",
   Bhutan: "BhutanApplyScreen",
+  Kazakhstan: "KazakhstanApplyScreen",
+  Philippines: "PhilippinesApplyScreen",
+  Israel: "IsraelApplyScreen",
   DEFAULT: "GenericApplyScreen",
 };

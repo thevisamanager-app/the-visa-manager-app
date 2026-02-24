@@ -1,11 +1,10 @@
 import React from "react";
 import { View, StyleSheet, StatusBar } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
 import useNetworkStatus from "../hooks/useNetworkStatus";
 import OfflineBanner from "../components/OfflineBanner";
 
 export default function ScreenWrapper({ children, style }) {
-  const insets = useSafeAreaInsets();
   const isOnline = useNetworkStatus();
 
   return (
@@ -21,10 +20,6 @@ export default function ScreenWrapper({ children, style }) {
       <View
         style={[
           styles.container,
-          {
-            paddingTop: insets.top,
-            paddingBottom: insets.bottom,
-          },
           style,
         ]}
       >

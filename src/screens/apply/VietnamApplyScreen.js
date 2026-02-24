@@ -18,7 +18,7 @@ import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import ScreenWrapper from "../../components/ScreenWrapper";
-import { ApplyCountryHeader, CoPassengerCard } from "../../components/ApplyFlowCards";
+import { CountryApplyBanner, CoPassengerCard } from "../../components/ApplyFlowCards";
 import { extractTextFromImage } from "../../api/ocr/visionApi";
 import { parseMRZ } from "../../api/ocr/mrzParser";
 
@@ -43,7 +43,6 @@ const createTraveller = () => ({
         photo: null,
         ticket: null,
     },
-    frontPageData: null,
 });
 
 export default function VietnamApplyScreen({ navigation }) {
@@ -60,31 +59,6 @@ export default function VietnamApplyScreen({ navigation }) {
     const formatDate = (date) => {
         const [y, m, d] = date.split("-");
         return `${d}/${m}/${y}`;
-    };
-    const toDDMMYY = (value) => {
-        const digits = String(value || "").replace(/\D/g, "");
-        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-        if (digits.length === 6) {
-            const yy = digits.slice(0, 2);
-            const mm = digits.slice(2, 4);
-            const dd = digits.slice(4, 6);
-            const monthIndex = Number(mm) - 1;
-            if (monthIndex < 0 || monthIndex > 11) return "";
-            const fullYear = Number(yy) >= 40 ? `19${yy}` : `20${yy}`;
-            return `${dd} ${months[monthIndex]} ${fullYear}`;
-        }
-
-        if (digits.length === 8 && (digits.startsWith("19") || digits.startsWith("20"))) {
-            const yyyy = digits.slice(0, 4);
-            const mm = digits.slice(4, 6);
-            const dd = digits.slice(6, 8);
-            const monthIndex = Number(mm) - 1;
-            if (monthIndex < 0 || monthIndex > 11) return "";
-            return `${dd} ${months[monthIndex]} ${yyyy}`;
-        }
-
-        return "";
     };
 
     const getSample = (key) => {
@@ -124,12 +98,6 @@ export default function VietnamApplyScreen({ navigation }) {
         });
         if (!res.assets?.[0]) return;
         const selectedAsset = res.assets[0];
-
-    const validation = await validatePickedDocument(key, selectedAsset);
-    if (!validation.ok) {
-      Alert.alert("Invalid Document", validation.message);
-      return;
-    }
         let frontPageData = null;
 
         if (isFrontPage && selectedAsset.base64) {
@@ -151,15 +119,11 @@ export default function VietnamApplyScreen({ navigation }) {
         if (target === "main") {
             const updated = [...travellers];
             updated[0].documents[key] = selectedAsset;
-            if (isFrontPage) {
-                updated[0].frontPageData = frontPageData;
-            }
             setTravellers(updated);
         } else {
             setTempTraveller((p) => ({
                 ...p,
                 documents: { ...p.documents, [key]: selectedAsset },
-                ...(isFrontPage ? { frontPageData } : {}),
             }));
         }
     };
@@ -209,6 +173,10 @@ export default function VietnamApplyScreen({ navigation }) {
             const formattedTravellers = await Promise.all(
                 travellers.map(async (t, index) => {
                     const basePath = `applications/${user.uid}/${applicationId}/traveller_${index + 1}`;
+                    const passportFrontPage = await extractPassportFrontPageFromAsset(
+                        t.documents.passportFront,
+                        t.form.phone
+                    );
 
                     const passportFrontUrl = await uploadFile(
                         t.documents.passportFront,
@@ -240,7 +208,7 @@ export default function VietnamApplyScreen({ navigation }) {
                             photoUrl,
                             ticketUrl,
                         },
-                        frontPageData: t.frontPageData || null,
+                        passportFrontPage,
                     };
                 })
             );
@@ -296,7 +264,7 @@ export default function VietnamApplyScreen({ navigation }) {
                 keyboardType="phone-pad"
                 value={traveller.form.phone}
                 onChangeText={(v) => onChange("phone", v)}
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor="#000000"
             />
 
             <TextInput
@@ -304,7 +272,7 @@ export default function VietnamApplyScreen({ navigation }) {
                 style={styles.input}
                 value={traveller.form.email}
                 onChangeText={(v) => onChange("email", v)}
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor="#000000"
             />
 
             <TextInput
@@ -313,7 +281,7 @@ export default function VietnamApplyScreen({ navigation }) {
                 multiline
                 value={traveller.form.hotelDetails}
                 onChangeText={(v) => onChange("hotelDetails", v)}
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor="#000000"
             />
 
             {[
@@ -361,6 +329,7 @@ export default function VietnamApplyScreen({ navigation }) {
                 {/* HEADER */}
                 <ApplyCountryHeader navigation={navigation} countryName="Vietnam" />
 
+        <View style={styles.formCard}>
                 {renderForm(
                     travellers[0],
                     (k, v) => {
@@ -370,7 +339,7 @@ export default function VietnamApplyScreen({ navigation }) {
                     },
                     "main"
                 )}
-
+        </View>
                 <CoPassengerCard
                     coTravellerCount={Math.max(0, travellers.length - 1)}
                     onAddPress={() => setShowCoTravellerModal(true)}
@@ -453,8 +422,17 @@ export default function VietnamApplyScreen({ navigation }) {
 
 const styles = StyleSheet.create({
     container: { padding: 16, paddingBottom: 40 },
-
-    header: {
+  formCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 14,
+    padding: 12,
+    marginTop: 10,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    elevation: 2,
+  },
+  header: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
@@ -531,7 +509,7 @@ const styles = StyleSheet.create({
         color: "#111827",
     },
     inputPlaceholder: {
-        color: "#9CA3AF",
+        color: "#000000",
     },
 
     textArea: { height: 90 },
@@ -646,7 +624,3 @@ const styles = StyleSheet.create({
         padding: 12,
     },
 });
-
-
-
-

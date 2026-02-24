@@ -87,7 +87,9 @@ export const COUNTRY_ISO_MAP = {
   Niue: "NU",
   Haiti: "HT",
   Gambia: "GM",
-  Cuba: "CU"
+  Cuba: "CU",
+  Kazakhstan: "KZ",
+  Israel: "IL"
 };
 export const getFlagEmoji = (countryName) => {
   const iso = COUNTRY_ISO_MAP[countryName];

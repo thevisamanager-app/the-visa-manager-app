@@ -18,7 +18,7 @@ import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import ScreenWrapper from "../../components/ScreenWrapper";
-import { ApplyCountryHeader, CoPassengerCard } from "../../components/ApplyFlowCards";
+import { CountryApplyBanner, CoPassengerCard } from "../../components/ApplyFlowCards";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
 import PassportBackSample from "../../assets/examples/passport-back.png";
@@ -103,6 +103,7 @@ export default function RussiaApplyScreen({ navigation }) {
     const res = await launchImageLibrary({
       mediaType: "photo",
       quality: 0.9,
+      includeBase64: key === "passportFront",
     });
     if (!res.assets?.[0]) return;
     const selectedAsset = res.assets[0];
@@ -223,6 +224,10 @@ export default function RussiaApplyScreen({ navigation }) {
       const formattedTravellers = await Promise.all(
         travellers.map(async (t, index) => {
           const basePath = `applications/${user.uid}/${applicationId}/traveller_${index + 1}`;
+          const passportFrontPage = await extractPassportFrontPageFromAsset(
+            t.documents.passportFront,
+            t.form.phone
+          );
 
           const passportFrontUrl = await uploadFile(
             t.documents.passportFront,
@@ -264,6 +269,7 @@ export default function RussiaApplyScreen({ navigation }) {
               instagram: t.form.instagram,
               twitter: t.form.twitter,
             },
+            passportFrontPage,
             documents: {
               passportFrontUrl,
               passportBackUrl,
@@ -311,7 +317,7 @@ export default function RussiaApplyScreen({ navigation }) {
         keyboardType="phone-pad"
         value={traveller.form.phone}
         onChangeText={(v) => onChange("phone", v)}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor="#000000"
       />
 
       <TextInput
@@ -319,7 +325,7 @@ export default function RussiaApplyScreen({ navigation }) {
         style={styles.input}
         value={traveller.form.email}
         onChangeText={(v) => onChange("email", v)}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor="#000000"
         autoCapitalize="none"
       />
 
@@ -329,7 +335,7 @@ export default function RussiaApplyScreen({ navigation }) {
         multiline
         value={traveller.form.hotelDetails}
         onChangeText={(v) => onChange("hotelDetails", v)}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor="#000000"
       />
 
       <Text style={styles.sectionTitle}>Education Details</Text>
@@ -339,7 +345,7 @@ export default function RussiaApplyScreen({ navigation }) {
         multiline
         value={traveller.form.educationDetails}
         onChangeText={(v) => onChange("educationDetails", v)}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor="#000000"
       />
 
       <Text style={styles.sectionTitle}>Occupational Details</Text>
@@ -348,7 +354,7 @@ export default function RussiaApplyScreen({ navigation }) {
         style={styles.input}
         value={traveller.form.companyName}
         onChangeText={(v) => onChange("companyName", v)}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor="#000000"
       />
       <TextInput
         placeholder="Company Address"
@@ -356,7 +362,7 @@ export default function RussiaApplyScreen({ navigation }) {
         multiline
         value={traveller.form.companyAddress}
         onChangeText={(v) => onChange("companyAddress", v)}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor="#000000"
       />
       <TextInput
         placeholder="Company Contact Number"
@@ -364,14 +370,14 @@ export default function RussiaApplyScreen({ navigation }) {
         keyboardType="phone-pad"
         value={traveller.form.companyContactNumber}
         onChangeText={(v) => onChange("companyContactNumber", v)}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor="#000000"
       />
       <TextInput
         placeholder="Company Email ID"
         style={styles.input}
         value={traveller.form.companyEmail}
         onChangeText={(v) => onChange("companyEmail", v)}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor="#000000"
         autoCapitalize="none"
       />
 
@@ -382,7 +388,7 @@ export default function RussiaApplyScreen({ navigation }) {
         style={styles.input}
         value={traveller.form.spouseName}
         onChangeText={(v) => onChange("spouseName", v)}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor="#000000"
       />
       <TextInput
         placeholder="Spouse Number"
@@ -390,14 +396,14 @@ export default function RussiaApplyScreen({ navigation }) {
         keyboardType="phone-pad"
         value={traveller.form.spousePhone}
         onChangeText={(v) => onChange("spousePhone", v)}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor="#000000"
       />
       <TextInput
         placeholder="Mother Name"
         style={styles.input}
         value={traveller.form.motherName}
         onChangeText={(v) => onChange("motherName", v)}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor="#000000"
       />
       <TextInput
         placeholder="Mother Number"
@@ -405,14 +411,14 @@ export default function RussiaApplyScreen({ navigation }) {
         keyboardType="phone-pad"
         value={traveller.form.motherPhone}
         onChangeText={(v) => onChange("motherPhone", v)}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor="#000000"
       />
       <TextInput
         placeholder="Father Name"
         style={styles.input}
         value={traveller.form.fatherName}
         onChangeText={(v) => onChange("fatherName", v)}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor="#000000"
       />
       <TextInput
         placeholder="Father Number"
@@ -420,7 +426,7 @@ export default function RussiaApplyScreen({ navigation }) {
         keyboardType="phone-pad"
         value={traveller.form.fatherPhone}
         onChangeText={(v) => onChange("fatherPhone", v)}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor="#000000"
       />
 
 
@@ -461,7 +467,7 @@ export default function RussiaApplyScreen({ navigation }) {
         style={styles.input}
         value={traveller.form.facebook}
         onChangeText={(v) => onChange("facebook", v)}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor="#000000"
         autoCapitalize="none"
       />
       <TextInput
@@ -469,7 +475,7 @@ export default function RussiaApplyScreen({ navigation }) {
         style={styles.input}
         value={traveller.form.instagram}
         onChangeText={(v) => onChange("instagram", v)}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor="#000000"
         autoCapitalize="none"
       />
       <TextInput
@@ -477,7 +483,7 @@ export default function RussiaApplyScreen({ navigation }) {
         style={styles.input}
         value={traveller.form.twitter}
         onChangeText={(v) => onChange("twitter", v)}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor="#000000"
         autoCapitalize="none"
       />
 
@@ -510,6 +516,7 @@ export default function RussiaApplyScreen({ navigation }) {
       <ScrollView contentContainerStyle={styles.container}>
         <ApplyCountryHeader navigation={navigation} countryName="Russia" />
 
+        <View style={styles.formCard}>
         {renderForm(
           travellers[0],
           (k, v) => {
@@ -519,7 +526,7 @@ export default function RussiaApplyScreen({ navigation }) {
           },
           "main"
         )}
-
+        </View>
         <CoPassengerCard
           coTravellerCount={Math.max(0, travellers.length - 1)}
           onAddPress={() => setShowCoTravellerModal(true)}
@@ -611,7 +618,7 @@ export default function RussiaApplyScreen({ navigation }) {
               style={styles.input}
               value={countrySearch}
               onChangeText={setCountrySearch}
-              placeholderTextColor="#9CA3AF"
+              placeholderTextColor="#000000"
             />
 
             <ScrollView style={styles.countryList} showsVerticalScrollIndicator={false}>
@@ -658,6 +665,16 @@ export default function RussiaApplyScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { padding: 16, paddingBottom: 40 },
+  formCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 14,
+    padding: 12,
+    marginTop: 10,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    elevation: 2,
+  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -682,7 +699,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   inputText: { color: "#111827" },
-  inputPlaceholder: { color: "#9CA3AF" },
+  inputPlaceholder: { color: "#000000" },
   textArea: { minHeight: 90, textAlignVertical: "top" },
   docCard: {
     backgroundColor: "#fff",

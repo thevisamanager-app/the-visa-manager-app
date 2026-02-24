@@ -13,46 +13,61 @@ import {
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Calendar } from "react-native-calendars";
 import { launchImageLibrary } from "react-native-image-picker";
-import { validatePickedDocument } from "../../utils/documentValidation";
 import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import ScreenWrapper from "../../components/ScreenWrapper";
-import { CountryApplyBanner, CoPassengerCard } from "../../components/ApplyFlowCards";
+import {
+  CountryApplyBanner,
+  CoPassengerCard,
+} from "../../components/ApplyFlowCards";
+import { extractPassportFrontPageFromAsset } from "../../utils/passportFrontPage";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
 import PassportBackSample from "../../assets/examples/passport-back.png";
-import PassportPhotoSample from "../../assets/examples/passportimage.png";
+import PassportPhotoSample from "../../assets/examples/passport-photo.png";
 
 const ORANGE = "#FF5C00";
-const YES_NO_OPTIONS = ["Yes", "No"];
+const MARITAL_STATUS_OPTIONS = ["Single", "Married", "Divorced", "Widowed"];
+const OCCUPATION_OPTIONS = [
+  "Private Employee",
+  "Government Employee",
+  "Business",
+  "Self Employed",
+  "Student",
+  "Retired",
+  "Other",
+];
 
 const createTraveller = () => ({
   form: {
     travelDate: "",
-    mobileNumber: "",
+    phone: "",
     email: "",
-    hasOldPassport: "",
+    hotelName: "",
+    occupation: "",
+    maritalStatus: "",
   },
   documents: {
     passportFront: null,
     passportBack: null,
     photo: null,
-    currentAddressProof: null,
-    flightBooking: null,
-    hotelBooking: null,
-    bankStatement: null,
   },
 });
 
-export default function GeorgiaApplyScreen({ navigation }) {
-  const [travellers, setTravellers] = useState([{ isPrimary: true, ...createTraveller() }]);
+export default function KazakhstanApplyScreen({ navigation }) {
+  const [travellers, setTravellers] = useState([
+    { isPrimary: true, ...createTraveller() },
+  ]);
   const [tempTraveller, setTempTraveller] = useState(createTraveller());
   const [showCoTravellerModal, setShowCoTravellerModal] = useState(false);
   const [showCalendarFor, setShowCalendarFor] = useState(null);
+  const [showMaritalFor, setShowMaritalFor] = useState(null);
+  const [showOccupationFor, setShowOccupationFor] = useState(null);
 
   const formatDate = (date) => {
-    const [y, m, d] = date.split("-");
+    const [y, m, d] = String(date || "").split("-");
+    if (!y || !m || !d) return "";
     return `${d}/${m}/${y}`;
   };
 
@@ -85,18 +100,12 @@ export default function GeorgiaApplyScreen({ navigation }) {
 
   const pickDocument = async (target, key) => {
     const res = await launchImageLibrary({
-      mediaType: "mixed",
+      mediaType: "photo",
       quality: 0.9,
       includeBase64: key === "passportFront",
     });
     if (!res.assets?.[0]) return;
     const selectedAsset = res.assets[0];
-
-    const validation = await validatePickedDocument(key, selectedAsset);
-    if (!validation.ok) {
-      Alert.alert("Invalid Document", validation.message);
-      return;
-    }
 
     if (target === "main") {
       const updated = [...travellers];
@@ -112,7 +121,14 @@ export default function GeorgiaApplyScreen({ navigation }) {
   };
 
   const validateTraveller = (traveller) => {
-    const requiredFields = ["travelDate", "mobileNumber", "email", "hasOldPassport"];
+    const requiredFields = [
+      "travelDate",
+      "phone",
+      "email",
+      "hotelName",
+      "occupation",
+      "maritalStatus",
+    ];
 
     for (const field of requiredFields) {
       if (!String(traveller.form[field] || "").trim()) {
@@ -150,60 +166,51 @@ export default function GeorgiaApplyScreen({ navigation }) {
         return;
       }
 
-      const applicationId = `georgia_${Date.now()}`;
+      const applicationId = `kazakhstan_${Date.now()}`;
 
       const formattedTravellers = await Promise.all(
         travellers.map(async (t, index) => {
           const basePath = `applications/${user.uid}/${applicationId}/traveller_${index + 1}`;
           const passportFrontPage = await extractPassportFrontPageFromAsset(
             t.documents.passportFront,
-            t.form.mobileNumber
+            t.form.phone
           );
 
           const passportFrontUrl = await uploadFile(
             t.documents.passportFront,
-            `${basePath}/passport_front.${getFileExtension(t.documents.passportFront, "jpg")}`
+            `${basePath}/passport_front.${getFileExtension(
+              t.documents.passportFront,
+              "jpg"
+            )}`
           );
           const passportBackUrl = await uploadFile(
             t.documents.passportBack,
-            `${basePath}/passport_back.${getFileExtension(t.documents.passportBack, "jpg")}`
+            `${basePath}/passport_back.${getFileExtension(
+              t.documents.passportBack,
+              "jpg"
+            )}`
           );
           const photoUrl = await uploadFile(
             t.documents.photo,
-            `${basePath}/passport_photo.${getFileExtension(t.documents.photo, "jpg")}`
-          );
-          const currentAddressProofUrl = await uploadFile(
-            t.documents.currentAddressProof,
-            `${basePath}/current_address_proof.${getFileExtension(t.documents.currentAddressProof, "pdf")}`
-          );
-          const flightBookingUrl = await uploadFile(
-            t.documents.flightBooking,
-            `${basePath}/flight_booking.${getFileExtension(t.documents.flightBooking, "pdf")}`
-          );
-          const hotelBookingUrl = await uploadFile(
-            t.documents.hotelBooking,
-            `${basePath}/hotel_booking.${getFileExtension(t.documents.hotelBooking, "pdf")}`
-          );
-          const bankStatementUrl = await uploadFile(
-            t.documents.bankStatement,
-            `${basePath}/bank_statement_6_month.${getFileExtension(t.documents.bankStatement, "pdf")}`
+            `${basePath}/passport_photo.${getFileExtension(
+              t.documents.photo,
+              "jpg"
+            )}`
           );
 
           return {
             isPrimary: t.isPrimary,
             travelDate: t.form.travelDate,
-            mobileNumber: t.form.mobileNumber,
+            phone: t.form.phone,
             email: t.form.email,
-            hasOldPassport: t.form.hasOldPassport,
+            hotelName: t.form.hotelName,
+            occupation: t.form.occupation,
+            maritalStatus: t.form.maritalStatus,
             passportFrontPage,
             documents: {
               passportFrontUrl,
               passportBackUrl,
               photoUrl,
-              currentAddressProofUrl,
-              flightBookingUrl,
-              hotelBookingUrl,
-              bankStatementUrl,
             },
           };
         })
@@ -216,7 +223,7 @@ export default function GeorgiaApplyScreen({ navigation }) {
         .doc(applicationId)
         .set({
           userId: user.uid,
-          country: "Georgia",
+          country: "Kazakhstan",
           travellers: formattedTravellers,
           totalTravellers: formattedTravellers.length,
           status: "submitted",
@@ -224,11 +231,13 @@ export default function GeorgiaApplyScreen({ navigation }) {
         });
 
       navigation.navigate("CheckoutScreen", {
-        country: "Georgia",
+        country: "Kazakhstan",
+        totalTravellers: travellers.length,
         travellers,
+        coTravellers: travellers.slice(1),
       });
     } catch (error) {
-      console.log("Georgia submit error:", error);
+      console.log("Kazakhstan submit error:", error);
       Alert.alert("Error", "Unable to submit application. Please try again.");
     }
   };
@@ -237,7 +246,9 @@ export default function GeorgiaApplyScreen({ navigation }) {
     <>
       <TouchableOpacity style={styles.input} onPress={() => setShowCalendarFor(target)}>
         <Text style={traveller.form.travelDate ? styles.inputText : styles.inputPlaceholder}>
-          {traveller.form.travelDate ? formatDate(traveller.form.travelDate) : "Select Travel Date"}
+          {traveller.form.travelDate
+            ? formatDate(traveller.form.travelDate)
+            : "Select Travel Date"}
         </Text>
       </TouchableOpacity>
 
@@ -245,8 +256,8 @@ export default function GeorgiaApplyScreen({ navigation }) {
         placeholder="Mobile Number"
         style={styles.input}
         keyboardType="phone-pad"
-        value={traveller.form.mobileNumber}
-        onChangeText={(v) => onChange("mobileNumber", v)}
+        value={traveller.form.phone}
+        onChangeText={(v) => onChange("phone", v)}
         placeholderTextColor="#111827"
       />
 
@@ -259,37 +270,30 @@ export default function GeorgiaApplyScreen({ navigation }) {
         autoCapitalize="none"
       />
 
-      <View style={styles.radioCard}>
-        <Text style={styles.radioTitle}>Do you have old passport? *</Text>
-        <View style={styles.radioRow}>
-          {YES_NO_OPTIONS.map((option) => {
-            const active = traveller.form.hasOldPassport === option;
-            return (
-              <TouchableOpacity
-                key={option}
-                style={[styles.radioOption, active && styles.radioOptionActive]}
-                onPress={() => onChange("hasOldPassport", option)}
-              >
-                <Ionicons
-                  name={active ? "radio-button-on" : "radio-button-off"}
-                  size={16}
-                  color={active ? ORANGE : "#111827"}
-                />
-                <Text style={[styles.radioLabel, active && styles.radioLabelActive]}>{option}</Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-      </View>
+      <TextInput
+        placeholder="Hotel Name"
+        style={styles.input}
+        value={traveller.form.hotelName}
+        onChangeText={(v) => onChange("hotelName", v)}
+        placeholderTextColor="#111827"
+      />
+
+      <TouchableOpacity style={styles.input} onPress={() => setShowOccupationFor(target)}>
+        <Text style={traveller.form.occupation ? styles.inputText : styles.inputPlaceholder}>
+          {traveller.form.occupation || "Select Occupation"}
+        </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.input} onPress={() => setShowMaritalFor(target)}>
+        <Text style={traveller.form.maritalStatus ? styles.inputText : styles.inputPlaceholder}>
+          {traveller.form.maritalStatus || "Select Marital Status"}
+        </Text>
+      </TouchableOpacity>
 
       {[
         { key: "passportFront", label: "Upload Passport Front Page" },
         { key: "passportBack", label: "Upload Passport Back Page" },
         { key: "photo", label: "Upload Passport Size Photo" },
-        { key: "currentAddressProof", label: "Upload Current Address Proof" },
-        { key: "flightBooking", label: "Upload Flight Booking" },
-        { key: "hotelBooking", label: "Upload Hotel Booking" },
-        { key: "bankStatement", label: "Upload 6 Month Bank Statement" },
       ].map(({ key, label }) => (
         <View key={key} style={styles.docCard}>
           <Text style={styles.docLabel}>{label} *</Text>
@@ -313,19 +317,30 @@ export default function GeorgiaApplyScreen({ navigation }) {
   return (
     <ScreenWrapper>
       <ScrollView contentContainerStyle={styles.container}>
-        <ApplyCountryHeader navigation={navigation} countryName="Georgia" />
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons name="chevron-back" size={26} />
+          </TouchableOpacity>
+          <View />
+          <TouchableOpacity onPress={() => navigation.navigate("Tabs", { screen: "Destination" })}>
+            <Ionicons name="home-outline" size={24} color={ORANGE} />
+          </TouchableOpacity>
+        </View>
+
+        <CountryApplyBanner countryName="Kazakhstan" />
 
         <View style={styles.formCard}>
-        {renderForm(
-          travellers[0],
-          (k, v) => {
-            const updated = [...travellers];
-            updated[0].form[k] = v;
-            setTravellers(updated);
-          },
-          "main"
-        )}
+          {renderForm(
+            travellers[0],
+            (k, v) => {
+              const updated = [...travellers];
+              updated[0].form[k] = v;
+              setTravellers(updated);
+            },
+            "main"
+          )}
         </View>
+
         <CoPassengerCard
           coTravellerCount={Math.max(0, travellers.length - 1)}
           onAddPress={() => setShowCoTravellerModal(true)}
@@ -395,6 +410,74 @@ export default function GeorgiaApplyScreen({ navigation }) {
           </View>
         </View>
       </Modal>
+
+      <Modal visible={!!showMaritalFor} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.selectModalBox}>
+            <Text style={styles.selectModalTitle}>Select Marital Status</Text>
+            <ScrollView>
+              {MARITAL_STATUS_OPTIONS.map((status) => (
+                <TouchableOpacity
+                  key={status}
+                  style={styles.optionBtn}
+                  onPress={() => {
+                    if (showMaritalFor === "main") {
+                      const updated = [...travellers];
+                      updated[0].form.maritalStatus = status;
+                      setTravellers(updated);
+                    } else {
+                      setTempTraveller((prev) => ({
+                        ...prev,
+                        form: { ...prev.form, maritalStatus: status },
+                      }));
+                    }
+                    setShowMaritalFor(null);
+                  }}
+                >
+                  <Text style={styles.optionText}>{status}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+            <TouchableOpacity style={styles.cancelBtn} onPress={() => setShowMaritalFor(null)}>
+              <Text style={styles.cancelText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal visible={!!showOccupationFor} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.selectModalBox}>
+            <Text style={styles.selectModalTitle}>Select Occupation</Text>
+            <ScrollView>
+              {OCCUPATION_OPTIONS.map((occupation) => (
+                <TouchableOpacity
+                  key={occupation}
+                  style={styles.optionBtn}
+                  onPress={() => {
+                    if (showOccupationFor === "main") {
+                      const updated = [...travellers];
+                      updated[0].form.occupation = occupation;
+                      setTravellers(updated);
+                    } else {
+                      setTempTraveller((prev) => ({
+                        ...prev,
+                        form: { ...prev.form, occupation },
+                      }));
+                    }
+                    setShowOccupationFor(null);
+                  }}
+                >
+                  <Text style={styles.optionText}>{occupation}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+            <TouchableOpacity style={styles.cancelBtn} onPress={() => setShowOccupationFor(null)}>
+              <Text style={styles.cancelText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScreenWrapper>
   );
 }
@@ -429,45 +512,6 @@ const styles = StyleSheet.create({
   },
   inputText: { color: "#111827" },
   inputPlaceholder: { color: "#111827" },
-  radioCard: {
-    backgroundColor: "#FFFFFF",
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 12,
-  },
-  radioTitle: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#111827",
-    marginBottom: 10,
-  },
-  radioRow: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  radioOption: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    borderRadius: 999,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-  },
-  radioOptionActive: {
-    borderColor: "#FFB37D",
-    backgroundColor: "#FFF7ED",
-  },
-  radioLabel: {
-    marginLeft: 6,
-    color: "#6B7280",
-    fontWeight: "600",
-  },
-  radioLabelActive: {
-    color: ORANGE,
-  },
   docCard: {
     backgroundColor: "#fff",
     borderRadius: 14,
@@ -535,5 +579,39 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 12,
   },
+  selectModalBox: {
+    backgroundColor: "#fff",
+    margin: 20,
+    borderRadius: 16,
+    padding: 14,
+    maxHeight: "65%",
+  },
+  selectModalTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    marginBottom: 12,
+    textAlign: "center",
+  },
+  optionBtn: {
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderColor: "#F3F4F6",
+  },
+  optionText: {
+    fontSize: 15,
+    color: "#111827",
+    textAlign: "center",
+  },
+  cancelBtn: {
+    marginTop: 12,
+    borderWidth: 1,
+    borderColor: ORANGE,
+    borderRadius: 10,
+    paddingVertical: 10,
+    alignItems: "center",
+  },
+  cancelText: {
+    color: ORANGE,
+    fontWeight: "700",
+  },
 });
-

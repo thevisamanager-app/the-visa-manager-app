@@ -44,9 +44,6 @@ import {
 
 import ScreenWrapper from "../../components/ScreenWrapper";
 import { COUNTRY_APPLY_CONFIG } from "../../config/countryApplyConfig";
-import { extractTextFromImage } from "../../api/ocr/visionApi";
-import { parseMRZ } from "../../api/ocr/mrzParser";
-import { ApplyCountryHeader } from "../../components/ApplyFlowCards";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
 import PassportBackSample from "../../assets/examples/passport-back.png";
@@ -69,7 +66,6 @@ const createTraveller = () => ({
     passportBack: null,
     photo: null,
   },
-  frontPageData: null,
 });
 
 export default function SingaporeApplyScreen({ navigation }) {
@@ -210,7 +206,6 @@ export default function SingaporeApplyScreen({ navigation }) {
             ...prev.documents,
             [key]: selectedAsset,
           },
-          ...(isFrontPage ? { frontPageData } : {}),
         }));
         return;
       }
@@ -555,6 +550,10 @@ export default function SingaporeApplyScreen({ navigation }) {
               const travellerLabel = traveller.isPrimary
                 ? "Main Traveller"
                 : `Co-Passenger ${i}`;
+              const passportFrontPage = await extractPassportFrontPageFromAsset(
+                traveller.documents.passportFront,
+                traveller.form?.phone
+              );
 
               const [bankUri, passportFrontUri, passportBackUri, photoUri] =
                 await Promise.all([
@@ -599,21 +598,13 @@ export default function SingaporeApplyScreen({ navigation }) {
               return {
                 isPrimary: traveller.isPrimary,
                 form: { ...traveller.form },
-                passportNumber:
-                  traveller?.frontPageData?.parsed?.passportNumber || "",
-                frontPageData: traveller.frontPageData || null,
                 documents: {
                   bankPdf: bankUrl,
                   passportFront: passportFrontUrl,
                   passportBack: passportBackUrl,
                   photo: photoUrl,
                 },
-                storagePaths: {
-                  bankPdf: bankStoragePath,
-                  passportFront: passportFrontStoragePath,
-                  passportBack: passportBackStoragePath,
-                  photo: photoStoragePath,
-                },
+                frontPageData: traveller.frontPageData || null,
               };
             })
           );
@@ -699,16 +690,22 @@ export default function SingaporeApplyScreen({ navigation }) {
 
   const traveller = travellers[0];
   const coTravellers = travellers.slice(1);
+  const hasCoTraveller = coTravellers.length > 0;
 
   const openCoTravellerModal = (travellerIndex = null) => {
-    const existing =
-      travellerIndex !== null ? travellers[travellerIndex] : createTraveller();
+    const isValidIndex =
+      Number.isInteger(travellerIndex) &&
+      travellerIndex > 0 &&
+      travellerIndex < travellers.length;
+    const existing = isValidIndex
+      ? travellers[travellerIndex]
+      : createTraveller();
     setCoTravellerDraft({
       ...existing,
       form: { ...existing.form },
       documents: { ...existing.documents },
     });
-    setCoTravellerEditIndex(travellerIndex);
+    setCoTravellerEditIndex(isValidIndex ? travellerIndex : null);
     setIsCoTravellerModalOpen(true);
   };
 
@@ -744,7 +741,19 @@ export default function SingaporeApplyScreen({ navigation }) {
   return (
     <ScreenWrapper>
       <ScrollView contentContainerStyle={styles.container}>
-        <ApplyCountryHeader navigation={navigation} countryName="Singapore" />
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons name="chevron-back" size={26} />
+          </TouchableOpacity>
+
+          <Text style={styles.headerTitle}>
+            Singapore Visa Application
+          </Text>
+
+          <TouchableOpacity onPress={() => navigation.navigate("Tabs", { screen: "Destination" })}>
+            <Ionicons name="home-outline" size={24} color={ORANGE} />
+          </TouchableOpacity>
+        </View>
 
         {/* Travel Date */}
         <TouchableOpacity style={styles.inputLarge} onPress={() => setShowCalendarFor("main")}>
@@ -765,7 +774,7 @@ export default function SingaporeApplyScreen({ navigation }) {
           placeholder="Mobile Number"
           style={styles.inputLarge}
           keyboardType="phone-pad"
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor="#000000"
           value={traveller.form.phone}
           onChangeText={(v) => {
             const updated = [...travellers];
@@ -777,7 +786,7 @@ export default function SingaporeApplyScreen({ navigation }) {
         <TextInput
           placeholder="Email ID"
           style={styles.inputLarge}
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor="#000000"
           value={traveller.form.email}
           onChangeText={(v) => {
             const updated = [...travellers];
@@ -790,7 +799,7 @@ export default function SingaporeApplyScreen({ navigation }) {
           placeholder="Hotel Details"
           style={styles.inputLarge}
           multiline
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor="#000000"
           value={traveller.form.hotelDetails}
           onChangeText={(v) => {
             const updated = [...travellers];
@@ -963,19 +972,13 @@ export default function SingaporeApplyScreen({ navigation }) {
             </Text>
           </View>
 
-        </View>
-
-        <View style={styles.coPassengersPanel}>
-          <View style={styles.coPassengersHeader}>
-            <Text style={styles.coPassengersTitle}>Co-Passengers</Text>
-            <TouchableOpacity onPress={() => openCoTravellerModal(null)}>
-              <Text style={styles.coPassengersAddText}>+ Add Co-Passenger</Text>
-            </TouchableOpacity>
-          </View>
-
-          {coTravellers.length === 0 ? (
-            <Text style={styles.coPassengersEmptyText}>
-              No co-passengers added yet.
+          <TouchableOpacity
+            style={styles.addCoTravellerBtn}
+            onPress={openCoTravellerModal}
+          >
+            <Ionicons name="person-add-outline" size={18} color="#FFFFFF" />
+            <Text style={styles.addCoTravellerBtnText}>
+              {hasCoTraveller ? "Edit co - traveller" : "Add co - traveller"}
             </Text>
           ) : (
             coTravellers.map((coTraveller, idx) => {
@@ -1005,6 +1008,7 @@ export default function SingaporeApplyScreen({ navigation }) {
               );
             })
           )}
+        </View>
         </View>
 
         <TouchableOpacity style={styles.submitBtn} onPress={submit}>
@@ -1387,6 +1391,16 @@ export default function SingaporeApplyScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { padding: 16, paddingBottom: 40 },
+  mainFormCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 14,
+    padding: 12,
+    marginTop: 10,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    elevation: 2,
+  },
 
   header: {
     flexDirection: "row",
@@ -1461,7 +1475,7 @@ const styles = StyleSheet.create({
   },
 
   inputText: { color: "#111827" },
-  inputPlaceholder: { color: "#9CA3AF" },
+  inputPlaceholder: { color: "#000000" },
   textArea: { height: 90 },
   inputLarge: {
     borderWidth: 1,

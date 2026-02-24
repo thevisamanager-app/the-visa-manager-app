@@ -89,8 +89,10 @@ export const COUNTRY_IMAGES = {
   Barbados: require("../assets/images/Barbados.webp"),
   "Cook Islands": require("../assets/images/Cook Islands.webp"),
   Réunion:require("../assets/images/Réunion.webp"),
-"St. Vincent & Grenadines": require("../assets/images/St.Vincent&Grenadines.webp"),
+"St. Vincent & Grenadines": require("../assets/images/St. Vincent & Grenadines.webp"),
  Cuba:require("../assets/images/Cuba.webp"),
+ Kazakhstan:require("../assets/images/Kazakhstan.webp"),
+ Israel:require("../assets/images/Israel.webp")
 
 };
 

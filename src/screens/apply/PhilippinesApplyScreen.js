@@ -13,46 +13,52 @@ import {
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Calendar } from "react-native-calendars";
 import { launchImageLibrary } from "react-native-image-picker";
-import { validatePickedDocument } from "../../utils/documentValidation";
 import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import ScreenWrapper from "../../components/ScreenWrapper";
-import { CountryApplyBanner, CoPassengerCard } from "../../components/ApplyFlowCards";
+import {
+  CountryApplyBanner,
+  CoPassengerCard,
+} from "../../components/ApplyFlowCards";
+import { extractPassportFrontPageFromAsset } from "../../utils/passportFrontPage";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
 import PassportBackSample from "../../assets/examples/passport-back.png";
-import PassportPhotoSample from "../../assets/examples/passportimage.png";
+import PassportPhotoSample from "../../assets/examples/passport-photo.png";
+import TicketSample from "../../assets/examples/ticket.png";
 
 const ORANGE = "#FF5C00";
-const YES_NO_OPTIONS = ["Yes", "No"];
 
 const createTraveller = () => ({
   form: {
     travelDate: "",
-    mobileNumber: "",
+    phone: "",
     email: "",
-    hasOldPassport: "",
   },
   documents: {
     passportFront: null,
     passportBack: null,
     photo: null,
-    currentAddressProof: null,
-    flightBooking: null,
+    airTicket: null,
     hotelBooking: null,
+    itinerary: null,
+    salarySlipOrItr: null,
     bankStatement: null,
   },
 });
 
-export default function GeorgiaApplyScreen({ navigation }) {
-  const [travellers, setTravellers] = useState([{ isPrimary: true, ...createTraveller() }]);
+export default function PhilippinesApplyScreen({ navigation }) {
+  const [travellers, setTravellers] = useState([
+    { isPrimary: true, ...createTraveller() },
+  ]);
   const [tempTraveller, setTempTraveller] = useState(createTraveller());
   const [showCoTravellerModal, setShowCoTravellerModal] = useState(false);
   const [showCalendarFor, setShowCalendarFor] = useState(null);
 
   const formatDate = (date) => {
-    const [y, m, d] = date.split("-");
+    const [y, m, d] = String(date || "").split("-");
+    if (!y || !m || !d) return "";
     return `${d}/${m}/${y}`;
   };
 
@@ -60,6 +66,7 @@ export default function GeorgiaApplyScreen({ navigation }) {
     if (key === "passportFront") return PassportFrontSample;
     if (key === "passportBack") return PassportBackSample;
     if (key === "photo") return PassportPhotoSample;
+    if (key === "airTicket") return TicketSample;
     return null;
   };
 
@@ -92,12 +99,6 @@ export default function GeorgiaApplyScreen({ navigation }) {
     if (!res.assets?.[0]) return;
     const selectedAsset = res.assets[0];
 
-    const validation = await validatePickedDocument(key, selectedAsset);
-    if (!validation.ok) {
-      Alert.alert("Invalid Document", validation.message);
-      return;
-    }
-
     if (target === "main") {
       const updated = [...travellers];
       updated[0].documents[key] = selectedAsset;
@@ -112,8 +113,7 @@ export default function GeorgiaApplyScreen({ navigation }) {
   };
 
   const validateTraveller = (traveller) => {
-    const requiredFields = ["travelDate", "mobileNumber", "email", "hasOldPassport"];
-
+    const requiredFields = ["travelDate", "phone", "email"];
     for (const field of requiredFields) {
       if (!String(traveller.form[field] || "").trim()) {
         Alert.alert("Missing Info", "Please fill all required fields.");
@@ -150,59 +150,78 @@ export default function GeorgiaApplyScreen({ navigation }) {
         return;
       }
 
-      const applicationId = `georgia_${Date.now()}`;
+      const applicationId = `philippines_${Date.now()}`;
 
       const formattedTravellers = await Promise.all(
         travellers.map(async (t, index) => {
           const basePath = `applications/${user.uid}/${applicationId}/traveller_${index + 1}`;
           const passportFrontPage = await extractPassportFrontPageFromAsset(
             t.documents.passportFront,
-            t.form.mobileNumber
+            t.form.phone
           );
 
           const passportFrontUrl = await uploadFile(
             t.documents.passportFront,
-            `${basePath}/passport_front.${getFileExtension(t.documents.passportFront, "jpg")}`
+            `${basePath}/passport_front.${getFileExtension(
+              t.documents.passportFront,
+              "jpg"
+            )}`
           );
           const passportBackUrl = await uploadFile(
             t.documents.passportBack,
-            `${basePath}/passport_back.${getFileExtension(t.documents.passportBack, "jpg")}`
+            `${basePath}/passport_back.${getFileExtension(
+              t.documents.passportBack,
+              "jpg"
+            )}`
           );
           const photoUrl = await uploadFile(
             t.documents.photo,
             `${basePath}/passport_photo.${getFileExtension(t.documents.photo, "jpg")}`
           );
-          const currentAddressProofUrl = await uploadFile(
-            t.documents.currentAddressProof,
-            `${basePath}/current_address_proof.${getFileExtension(t.documents.currentAddressProof, "pdf")}`
-          );
-          const flightBookingUrl = await uploadFile(
-            t.documents.flightBooking,
-            `${basePath}/flight_booking.${getFileExtension(t.documents.flightBooking, "pdf")}`
+          const airTicketUrl = await uploadFile(
+            t.documents.airTicket,
+            `${basePath}/air_ticket.${getFileExtension(t.documents.airTicket, "pdf")}`
           );
           const hotelBookingUrl = await uploadFile(
             t.documents.hotelBooking,
-            `${basePath}/hotel_booking.${getFileExtension(t.documents.hotelBooking, "pdf")}`
+            `${basePath}/hotel_booking.${getFileExtension(
+              t.documents.hotelBooking,
+              "pdf"
+            )}`
+          );
+          const itineraryUrl = await uploadFile(
+            t.documents.itinerary,
+            `${basePath}/itinerary.${getFileExtension(t.documents.itinerary, "pdf")}`
+          );
+          const salarySlipOrItrUrl = await uploadFile(
+            t.documents.salarySlipOrItr,
+            `${basePath}/salary_slip_or_itr.${getFileExtension(
+              t.documents.salarySlipOrItr,
+              "pdf"
+            )}`
           );
           const bankStatementUrl = await uploadFile(
             t.documents.bankStatement,
-            `${basePath}/bank_statement_6_month.${getFileExtension(t.documents.bankStatement, "pdf")}`
+            `${basePath}/bank_statement.${getFileExtension(
+              t.documents.bankStatement,
+              "pdf"
+            )}`
           );
 
           return {
             isPrimary: t.isPrimary,
             travelDate: t.form.travelDate,
-            mobileNumber: t.form.mobileNumber,
+            phone: t.form.phone,
             email: t.form.email,
-            hasOldPassport: t.form.hasOldPassport,
             passportFrontPage,
             documents: {
               passportFrontUrl,
               passportBackUrl,
               photoUrl,
-              currentAddressProofUrl,
-              flightBookingUrl,
+              airTicketUrl,
               hotelBookingUrl,
+              itineraryUrl,
+              salarySlipOrItrUrl,
               bankStatementUrl,
             },
           };
@@ -216,7 +235,7 @@ export default function GeorgiaApplyScreen({ navigation }) {
         .doc(applicationId)
         .set({
           userId: user.uid,
-          country: "Georgia",
+          country: "Philippines",
           travellers: formattedTravellers,
           totalTravellers: formattedTravellers.length,
           status: "submitted",
@@ -224,20 +243,58 @@ export default function GeorgiaApplyScreen({ navigation }) {
         });
 
       navigation.navigate("CheckoutScreen", {
-        country: "Georgia",
+        country: "Philippines",
+        totalTravellers: travellers.length,
         travellers,
+        coTravellers: travellers.slice(1),
       });
     } catch (error) {
-      console.log("Georgia submit error:", error);
+      console.log("Philippines submit error:", error);
       Alert.alert("Error", "Unable to submit application. Please try again.");
     }
+  };
+
+  const getFileLabel = (file) => file?.fileName || file?.name || "File selected";
+
+  const renderDocumentCard = (traveller, target, key, label) => {
+    const file = traveller.documents[key];
+    const sample = getSample(key);
+    const isImage = file?.type?.startsWith("image/");
+    const hideImagePreview = key === "itinerary" || key === "hotelBooking";
+
+    return (
+      <View key={key} style={styles.docCard}>
+        <Text style={styles.docLabel}>{label} *</Text>
+
+        {file ? (
+          isImage && !hideImagePreview ? (
+            <Image source={{ uri: file.uri }} style={styles.previewImage} />
+          ) : (
+            <View style={styles.filePreviewBox}>
+              <Ionicons name="document-outline" size={30} color="#6B7280" />
+              <Text style={styles.filePreviewText}>{getFileLabel(file)}</Text>
+            </View>
+          )
+        ) : sample ? (
+          <View style={styles.sampleWrapper}>
+            <Image source={sample} style={styles.sampleImage} resizeMode="contain" />
+          </View>
+        ) : null}
+
+        <TouchableOpacity style={styles.uploadBtn} onPress={() => pickDocument(target, key)}>
+          <Text style={styles.uploadText}>{file ? "Replace Document" : "Upload Document"}</Text>
+        </TouchableOpacity>
+      </View>
+    );
   };
 
   const renderForm = (traveller, onChange, target) => (
     <>
       <TouchableOpacity style={styles.input} onPress={() => setShowCalendarFor(target)}>
         <Text style={traveller.form.travelDate ? styles.inputText : styles.inputPlaceholder}>
-          {traveller.form.travelDate ? formatDate(traveller.form.travelDate) : "Select Travel Date"}
+          {traveller.form.travelDate
+            ? formatDate(traveller.form.travelDate)
+            : "Select Travel Date"}
         </Text>
       </TouchableOpacity>
 
@@ -245,8 +302,8 @@ export default function GeorgiaApplyScreen({ navigation }) {
         placeholder="Mobile Number"
         style={styles.input}
         keyboardType="phone-pad"
-        value={traveller.form.mobileNumber}
-        onChangeText={(v) => onChange("mobileNumber", v)}
+        value={traveller.form.phone}
+        onChangeText={(v) => onChange("phone", v)}
         placeholderTextColor="#111827"
       />
 
@@ -259,73 +316,46 @@ export default function GeorgiaApplyScreen({ navigation }) {
         autoCapitalize="none"
       />
 
-      <View style={styles.radioCard}>
-        <Text style={styles.radioTitle}>Do you have old passport? *</Text>
-        <View style={styles.radioRow}>
-          {YES_NO_OPTIONS.map((option) => {
-            const active = traveller.form.hasOldPassport === option;
-            return (
-              <TouchableOpacity
-                key={option}
-                style={[styles.radioOption, active && styles.radioOptionActive]}
-                onPress={() => onChange("hasOldPassport", option)}
-              >
-                <Ionicons
-                  name={active ? "radio-button-on" : "radio-button-off"}
-                  size={16}
-                  color={active ? ORANGE : "#111827"}
-                />
-                <Text style={[styles.radioLabel, active && styles.radioLabelActive]}>{option}</Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-      </View>
-
       {[
-        { key: "passportFront", label: "Upload Passport Front Page" },
-        { key: "passportBack", label: "Upload Passport Back Page" },
-        { key: "photo", label: "Upload Passport Size Photo" },
-        { key: "currentAddressProof", label: "Upload Current Address Proof" },
-        { key: "flightBooking", label: "Upload Flight Booking" },
-        { key: "hotelBooking", label: "Upload Hotel Booking" },
-        { key: "bankStatement", label: "Upload 6 Month Bank Statement" },
-      ].map(({ key, label }) => (
-        <View key={key} style={styles.docCard}>
-          <Text style={styles.docLabel}>{label} *</Text>
-          {traveller.documents[key] ? (
-            <Image source={{ uri: traveller.documents[key].uri }} style={styles.previewImage} />
-          ) : getSample(key) ? (
-            <View style={styles.sampleWrapper}>
-              <Image source={getSample(key)} style={styles.sampleImage} resizeMode="contain" />
-            </View>
-          ) : null}
-          <TouchableOpacity style={styles.uploadBtn} onPress={() => pickDocument(target, key)}>
-            <Text style={styles.uploadText}>
-              {traveller.documents[key] ? "Replace Document" : "Upload Document"}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      ))}
+        ["passportFront", "Upload Passport Front Page"],
+        ["passportBack", "Upload Passport Back Page"],
+        ["photo", "Upload Passport Size Photo"],
+        ["airTicket", "Upload Air Ticket"],
+        ["hotelBooking", "Upload Hotel Booking"],
+        ["itinerary", "Upload Itinerary"],
+        ["salarySlipOrItr", "Upload 3 Months Salary Slip or ITR (3 Years)"],
+        ["bankStatement", "Upload 6 Months Bank Statement"],
+      ].map(([key, label]) => renderDocumentCard(traveller, target, key, label))}
     </>
   );
 
   return (
     <ScreenWrapper>
       <ScrollView contentContainerStyle={styles.container}>
-        <ApplyCountryHeader navigation={navigation} countryName="Georgia" />
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons name="chevron-back" size={26} />
+          </TouchableOpacity>
+          <View />
+          <TouchableOpacity onPress={() => navigation.navigate("Tabs", { screen: "Destination" })}>
+            <Ionicons name="home-outline" size={24} color={ORANGE} />
+          </TouchableOpacity>
+        </View>
+
+        <CountryApplyBanner countryName="Philippines" />
 
         <View style={styles.formCard}>
-        {renderForm(
-          travellers[0],
-          (k, v) => {
-            const updated = [...travellers];
-            updated[0].form[k] = v;
-            setTravellers(updated);
-          },
-          "main"
-        )}
+          {renderForm(
+            travellers[0],
+            (k, v) => {
+              const updated = [...travellers];
+              updated[0].form[k] = v;
+              setTravellers(updated);
+            },
+            "main"
+          )}
         </View>
+
         <CoPassengerCard
           coTravellerCount={Math.max(0, travellers.length - 1)}
           onAddPress={() => setShowCoTravellerModal(true)}
@@ -429,45 +459,6 @@ const styles = StyleSheet.create({
   },
   inputText: { color: "#111827" },
   inputPlaceholder: { color: "#111827" },
-  radioCard: {
-    backgroundColor: "#FFFFFF",
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 12,
-  },
-  radioTitle: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#111827",
-    marginBottom: 10,
-  },
-  radioRow: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  radioOption: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    borderRadius: 999,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-  },
-  radioOptionActive: {
-    borderColor: "#FFB37D",
-    backgroundColor: "#FFF7ED",
-  },
-  radioLabel: {
-    marginLeft: 6,
-    color: "#6B7280",
-    fontWeight: "600",
-  },
-  radioLabelActive: {
-    color: ORANGE,
-  },
   docCard: {
     backgroundColor: "#fff",
     borderRadius: 14,
@@ -495,6 +486,24 @@ const styles = StyleSheet.create({
     height: 110,
     borderRadius: 10,
     marginBottom: 8,
+  },
+  filePreviewBox: {
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    borderStyle: "dashed",
+    borderRadius: 10,
+    paddingVertical: 20,
+    paddingHorizontal: 10,
+    marginBottom: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#F9FAFB",
+  },
+  filePreviewText: {
+    marginTop: 8,
+    color: "#374151",
+    fontSize: 12,
+    textAlign: "center",
   },
   uploadBtn: {
     borderWidth: 1,
@@ -536,4 +545,3 @@ const styles = StyleSheet.create({
     padding: 12,
   },
 });
-

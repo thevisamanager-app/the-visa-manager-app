@@ -40,6 +40,7 @@ import PassportFrontSample from "../../../assets/examples/passport-front.png";
 import PassportBackSample from "../../../assets/examples/passport-back.png";
 import PassportPhotoSample from "../../../assets/examples/passportimage.png";
 import TicketSample from "../../../assets/examples/ticket.png";
+import { extractPassportFrontPageFromAsset } from "../../../utils/passportFrontPage";
 
 const ORANGE = "#FF5C00";
 
@@ -184,7 +185,13 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
 
   const pickImage = async (key, target = "main") => {
     try {
-      const res = await launchImageLibrary({ mediaType: "photo", quality: 0.6, maxWidth: 1600, maxHeight: 1600 });
+      const res = await launchImageLibrary({
+        mediaType: "photo",
+        quality: 0.6,
+        maxWidth: 1600,
+        maxHeight: 1600,
+        includeBase64: key === "passportFront",
+      });
       if (!res.assets?.[0]) return;
       const selectedAsset = res.assets[0];
 
@@ -268,33 +275,16 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
         country: countryName,
         status: "processing",
         createdAt: serverTimestamp(),
-        totalTravellers: allTravellers.length,
-        form: { ...form },
-        travellers: allTravellers.map((t) => ({
-          isPrimary: t.isPrimary,
-          form: { ...t.form },
-        })),
+        totalTravellers: coTravellers.length + 1,
       });
 
-      setLoading(false);
+      const allTravellers = [{ isPrimary: true, form, docs }, ...coTravellers.map((t) => ({ isPrimary: false, ...t }))];
+      const basePath = `applications/${user.uid}/${applicationId}`;
 
-      navigation.navigate("CheckoutScreen", {
-        country: countryName,
-        applicationId,
-        totalTravellers: allTravellers.length,
-        travellers: allTravellers.map((t) => ({ isPrimary: t.isPrimary, form: t.form })),
-        coTravellers: allTravellers
-          .slice(1)
-          .map((t) => ({ isPrimary: t.isPrimary, form: t.form })),
-      });
-
-      // Continue uploads in background to speed up the button flow.
-      (async () => {
-        try {
-          const payloadTravellers = await Promise.all(
-            allTravellers.map(async (traveller, idx) => {
-              const i = idx + 1;
-              const travellerPath = `${basePath}/traveller_${i}`;
+      const payloadTravellers = await Promise.all(
+        allTravellers.map(async (traveller, idx) => {
+          const i = idx + 1;
+          const travellerPath = `${basePath}/traveller_${i}`;
 
               const frontUri = await resolveUploadUri(traveller.docs.passportFront, {
                 prefix: `front-${i}`,
@@ -325,18 +315,18 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
 
               const uploaded = await Promise.all(uploadTasks);
 
-              return {
-                isPrimary: traveller.isPrimary,
-                form: { ...traveller.form },
-                documents: {
-                  passportFront: uploaded[0],
-                  passportBack: uploaded[1],
-                  ticket: uploaded[2],
-                  photo: uploaded[3] || null,
-                },
-              };
-            })
-          );
+          return {
+            isPrimary: traveller.isPrimary,
+            form: { ...traveller.form },
+            documents: {
+              passportFront: uploaded[0],
+              passportBack: uploaded[1],
+              ticket: uploaded[2],
+              photo: uploaded[3] || null,
+            },
+          };
+        })
+      );
 
           await setDoc(
             applicationRef,
@@ -392,8 +382,8 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
     const placeholderValue = `__${fieldKey}_placeholder__`;
     const selectedValue = formData[fieldKey] || placeholderValue;
     const isPlaceholder = selectedValue === placeholderValue;
-    const dropdownTextColor = Platform.OS === "android" ? "#FFFFFF" : "#111827";
-    const dropdownPlaceholderColor = Platform.OS === "android" ? "#D1D5DB" : "#9CA3AF";
+    const dropdownTextColor = "#111827";
+    const dropdownPlaceholderColor = "#111827";
     return (
       <View style={styles.fieldFull}>
         <Text style={styles.labelText}>{placeholder} *</Text>
@@ -406,7 +396,7 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
             mode={Platform.OS === "android" ? "dropdown" : undefined}
             itemStyle={styles.pickerItem}
             prompt={placeholder}
-            themeVariant={Platform.OS === "android" ? "dark" : undefined}
+            themeVariant={Platform.OS === "android" ? "light" : undefined}
           >
             <Picker.Item label={placeholder} value={placeholderValue} color={dropdownPlaceholderColor} />
             {options.map((o) => (
@@ -447,7 +437,7 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
       <View style={styles.fieldFull}>
         <TextInput
           placeholder="Mobile Number"
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor="#000000"
           style={styles.inputLarge}
           value={formData.phone}
           onChangeText={(v) => setFieldFn("phone", v)}
@@ -458,7 +448,7 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
       <View style={styles.fieldFull}>
         <TextInput
           placeholder="Email ID"
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor="#000000"
           style={styles.inputLarge}
           value={formData.email}
           onChangeText={(v) => setFieldFn("email", v)}
@@ -475,7 +465,7 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
         <View style={styles.fieldFull}>
           <TextInput
             placeholder="Hotel Details"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor="#000000"
             style={styles.inputLarge}
             value={formData.hotelDetails}
             onChangeText={(v) => setFieldFn("hotelDetails", v)}
@@ -654,7 +644,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   inputText: { color: "#111827" },
-  inputPlaceholder: { color: "#9CA3AF" },
+  inputPlaceholder: { color: "#000000" },
   pickerWrap: {
     borderWidth: 1,
     borderColor: "#ddd",
@@ -665,9 +655,9 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   picker: { marginTop: Platform.OS === "android" ? -2 : 0, width: "100%" },
-  pickerItem: { color: "#111827" },
-  pickerPlaceholderText: { color: "#9CA3AF" },
-  pickerSelectedText: { color: "#111827" },
+  pickerItem: { color: "#000000" },
+  pickerPlaceholderText: { color: "#000000" },
+  pickerSelectedText: { color: "#000000" },
   docsStack: { width: "100%", marginTop: 4 },
   uploadCard: {
     width: "100%",

@@ -110,7 +110,13 @@ export default function VisaDetailsScreen({ navigation }) {
   const totalAmount = governmentTotal + tvmTotal + authorityTotal;
   const isoCode = (COUNTRY_ISO_MAP[countryName] || "un").toLowerCase();
   const [activeStep, setActiveStep] = useState(0);
-  const countryConfig = COUNTRY_VISA_CONFIG[normalizedCountryName];
+  const normalizedSelectedCountryKey = normalizeCountryKey(normalizedCountryName);
+  const countryConfig =
+    COUNTRY_VISA_CONFIG[normalizedCountryName] ||
+    Object.entries(COUNTRY_VISA_CONFIG).find(
+      ([key]) => normalizeCountryKey(key) === normalizedSelectedCountryKey
+    )?.[1] ||
+    null;
   const highlightCountries = DESTINATIONS.filter((item) =>
     HIGHLIGHT_COUNTRIES.some(
       (name) =>
@@ -138,9 +144,17 @@ export default function VisaDetailsScreen({ navigation }) {
     "haiti",
     "gambia",
   ];
-  const normalizedCountryKey = normalizedCountryName?.toLowerCase();
+  const normalizedVisaFreeFallback = new Set(
+    FALLBACK_VISA_FREE.map((name) => normalizeCountryKey(name))
+  );
+  const destinationCountryType = String(destinationPrice?.countryType || "")
+    .trim()
+    .toLowerCase();
   const finalIsVisaFree =
-    isVisaFree || FALLBACK_VISA_FREE.includes(normalizedCountryKey);
+    isVisaFree ||
+    normalizedVisaFreeFallback.has(normalizedSelectedCountryKey) ||
+    destinationCountryType === "visa free" ||
+    destinationCountryType === "visa-free";
   const handleCountryPress = (item) => {
     dispatch(setSelectedDestination(item));
     navigation.push("VisaDetailsScreen");

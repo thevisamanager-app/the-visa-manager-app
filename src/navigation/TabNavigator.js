@@ -300,6 +300,7 @@ import HomeStack from "./HomeStack";
 import VisaStatusScreen from "../screens/visa/VisaStatusScreen";
 import ProfileScreen from "../screens/profile/ProfileScreen";
 import JoinTravelAgentScreen from "../screens/agent/JoinAsTravelAgentScreen";
+import EnquiryNowScreen from "../screens/EnquiryNowScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -330,6 +331,8 @@ export default function TabNavigator() {
             iconName = "globe-outline";
           } else if (route.name === "Status") {
             iconName = "cloud-upload-outline";
+          } else if (route.name === "EnquiryNow") {
+            iconName = "chatbubble-outline";
           } else if (route.name === "JoinAgent") {
             iconName = "briefcase-outline"; // Join Travel Agent
           } else if (route.name === "Profile") {
@@ -349,6 +352,12 @@ export default function TabNavigator() {
         name="Status"
         component={VisaStatusScreen}
         options={{ tabBarLabel: "Status" }}
+      />
+
+      <Tab.Screen
+        name="EnquiryNow"
+        component={EnquiryNowScreen}
+        options={{ tabBarLabel: "Enquiry Now" }}
       />
 
       <Tab.Screen

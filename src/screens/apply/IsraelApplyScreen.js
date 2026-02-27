@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import {
   View,
   Text,
@@ -17,7 +17,7 @@ import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import ScreenWrapper from "../../components/ScreenWrapper";
-import { CountryApplyBanner, CoPassengerCard } from "../../components/ApplyFlowCards";
+import { ApplyCountryHeader, CoPassengerCard } from "../../components/ApplyFlowCards";
 import { extractPassportFrontPageFromAsset } from "../../utils/passportFrontPage";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
@@ -295,17 +295,7 @@ export default function IsraelApplyScreen({ navigation }) {
   return (
     <ScreenWrapper>
       <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="chevron-back" size={26} />
-          </TouchableOpacity>
-          <View />
-          <TouchableOpacity onPress={() => navigation.navigate("Tabs", { screen: "Destination" })}>
-            <Ionicons name="home-outline" size={24} color={ORANGE} />
-          </TouchableOpacity>
-        </View>
-
-        <CountryApplyBanner countryName="Israel" />
+        <ApplyCountryHeader navigation={navigation} countryName="Israel" />
 
         <View style={styles.formCard}>
           {renderForm(
@@ -358,10 +348,17 @@ export default function IsraelApplyScreen({ navigation }) {
                 "co"
               )}
             </ScrollView>
-
-            <TouchableOpacity style={styles.submitBtn} onPress={saveCoTraveller}>
-              <Text style={styles.submitText}>Save Co-Traveller</Text>
-            </TouchableOpacity>
+            <View style={styles.modalActions}>
+              <TouchableOpacity
+                style={styles.closeBtn}
+                onPress={() => setShowCoTravellerModal(false)}
+              >
+                <Text style={styles.closeBtnText}>Close</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.saveBtn} onPress={saveCoTraveller}>
+                <Text style={styles.saveBtnText}>Save</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
@@ -506,5 +503,38 @@ const styles = StyleSheet.create({
     margin: 20,
     borderRadius: 16,
     padding: 12,
+  },
+  modalActions: {
+    marginTop: 8,
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 10,
+  },
+  closeBtn: {
+    borderWidth: 1,
+    borderColor: ORANGE,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    minWidth: 90,
+    alignItems: "center",
+  },
+  closeBtnText: {
+    color: ORANGE,
+    fontWeight: "700",
+  },
+  saveBtn: {
+    backgroundColor: ORANGE,
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    minWidth: 90,
+    alignItems: "center",
+  },
+  saveBtnText: {
+    color: "#fff",
+    fontWeight: "700",
   },
 });
+

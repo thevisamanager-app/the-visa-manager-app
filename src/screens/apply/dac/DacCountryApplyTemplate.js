@@ -35,12 +35,11 @@ import {
 } from "@react-native-firebase/storage/lib/modular";
 
 import ScreenWrapper from "../../../components/ScreenWrapper";
-import { ApplyCountryHeader } from "../../../components/ApplyFlowCards";
+import { ApplyCountryHeader, CoPassengerCard } from "../../../components/ApplyFlowCards";
 import PassportFrontSample from "../../../assets/examples/passport-front.png";
 import PassportBackSample from "../../../assets/examples/passport-back.png";
 import PassportPhotoSample from "../../../assets/examples/passportimage.png";
 import TicketSample from "../../../assets/examples/ticket.png";
-import { extractPassportFrontPageFromAsset } from "../../../utils/passportFrontPage";
 
 const ORANGE = "#FF5C00";
 
@@ -236,6 +235,7 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
       Alert.alert("Missing Info", err);
       return;
     }
+
     setCoTravellers((prev) => [...prev, { form: { ...coForm }, docs: { ...coDocs } }]);
     setCoForm(createForm());
     setCoDocs(createDocs());
@@ -262,58 +262,51 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
       return;
     }
 
+    let applicationRef = null;
+    let allTravellers = [];
+    const applicationId = `dac_${countryName.replace(/\s+/g, "_").toLowerCase()}_${Date.now()}`;
+
     try {
       setLoading(true);
-      const applicationId = `dac_${countryName.replace(/\s+/g, "_").toLowerCase()}_${Date.now()}`;
       const db = getFirestore();
       const userRef = doc(collection(db, "users"), user.uid);
-      const applicationRef = doc(collection(userRef, "passportData"), applicationId);
-      const allTravellers = [{ isPrimary: true, form, docs }, ...coTravellers.map((t) => ({ isPrimary: false, ...t }))];
+      applicationRef = doc(collection(userRef, "passportData"), applicationId);
+      allTravellers = [{ isPrimary: true, form, docs }, ...coTravellers.map((t) => ({ isPrimary: false, ...t }))];
       const basePath = `applications/${user.uid}/${applicationId}`;
 
       await setDoc(applicationRef, {
         country: countryName,
         status: "processing",
         createdAt: serverTimestamp(),
-        totalTravellers: coTravellers.length + 1,
+        totalTravellers: allTravellers.length,
       });
-
-      const allTravellers = [{ isPrimary: true, form, docs }, ...coTravellers.map((t) => ({ isPrimary: false, ...t }))];
-      const basePath = `applications/${user.uid}/${applicationId}`;
 
       const payloadTravellers = await Promise.all(
         allTravellers.map(async (traveller, idx) => {
           const i = idx + 1;
           const travellerPath = `${basePath}/traveller_${i}`;
 
-              const frontUri = await resolveUploadUri(traveller.docs.passportFront, {
-                prefix: `front-${i}`,
-              });
-              const backUri = await resolveUploadUri(traveller.docs.passportBack, {
-                prefix: `back-${i}`,
-              });
-              const ticketUri = await resolveUploadUri(traveller.docs.ticket, {
-                prefix: `ticket-${i}`,
-              });
-              const photoUri = traveller.docs.photo
-                ? await resolveUploadUri(traveller.docs.photo, { prefix: `photo-${i}` })
-                : null;
+          const frontUri = await resolveUploadUri(traveller.docs.passportFront, { prefix: `front-${i}` });
+          const backUri = await resolveUploadUri(traveller.docs.passportBack, { prefix: `back-${i}` });
+          const ticketUri = await resolveUploadUri(traveller.docs.ticket, { prefix: `ticket-${i}` });
+          const photoUri = traveller.docs.photo
+            ? await resolveUploadUri(traveller.docs.photo, { prefix: `photo-${i}` })
+            : null;
 
-              if (!frontUri || !backUri || !ticketUri) {
-                throw new Error(
-                  `Traveller ${i}: File URI missing. Please re-upload.`
-                );
-              }
+          if (!frontUri || !backUri || !ticketUri) {
+            throw new Error(`Traveller ${i}: File URI missing. Please re-upload.`);
+          }
 
-              const uploadTasks = [
-                uploadFile(frontUri, `${travellerPath}/passport_front.jpg`),
-                uploadFile(backUri, `${travellerPath}/passport_back.jpg`),
-                uploadFile(ticketUri, `${travellerPath}/ticket.jpg`),
-              ];
-              if (photoUri)
-                uploadTasks.push(uploadFile(photoUri, `${travellerPath}/photo.jpg`));
+          const uploadTasks = [
+            uploadFile(frontUri, `${travellerPath}/passport_front.jpg`),
+            uploadFile(backUri, `${travellerPath}/passport_back.jpg`),
+            uploadFile(ticketUri, `${travellerPath}/ticket.jpg`),
+          ];
+          if (photoUri) {
+            uploadTasks.push(uploadFile(photoUri, `${travellerPath}/photo.jpg`));
+          }
 
-              const uploaded = await Promise.all(uploadTasks);
+          const uploaded = await Promise.all(uploadTasks);
 
           return {
             isPrimary: traveller.isPrimary,
@@ -328,62 +321,75 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
         })
       );
 
+      await setDoc(
+        applicationRef,
+        {
+          country: countryName,
+          status: "submitted",
+          submittedAt: serverTimestamp(),
+          totalTravellers: payloadTravellers.length,
+          form: payloadTravellers[0]?.form || {},
+          documents: payloadTravellers[0]?.documents || {},
+          travellers: payloadTravellers,
+        },
+        { merge: true }
+      );
+
+      await setDoc(
+        userRef,
+        {
+          lastApplicationId: applicationId,
+          lastApplicationCountry: countryName,
+          lastApplicationStatus: "submitted",
+          lastApplicationUpdatedAt: serverTimestamp(),
+        },
+        { merge: true }
+      );
+
+      navigation.navigate("CheckoutScreen", {
+        country: countryName,
+        applicationId,
+        totalTravellers: payloadTravellers.length,
+        travellers: payloadTravellers.map((t) => ({ isPrimary: t.isPrimary, form: t.form })),
+        coTravellers: payloadTravellers.filter((t) => !t.isPrimary).map((t) => ({ isPrimary: false, form: t.form })),
+      });
+    } catch (e) {
+      console.log(`${countryName} submit error:`, e);
+      try {
+        if (applicationRef) {
           await setDoc(
             applicationRef,
             {
               country: countryName,
-              status: "submitted",
-              submittedAt: serverTimestamp(),
-              totalTravellers: payloadTravellers.length,
-              form: payloadTravellers[0]?.form || {},
-              documents: payloadTravellers[0]?.documents || {},
-              travellers: payloadTravellers,
+              status: "failed",
+              errorMessage: e?.message || "Unknown submit error",
+              failedAt: serverTimestamp(),
+              totalTravellers: allTravellers.length || coTravellers.length + 1,
             },
             { merge: true }
           );
-
-          await setDoc(
-            userRef,
-            {
-              lastApplicationId: applicationId,
-              lastApplicationCountry: countryName,
-              lastApplicationStatus: "submitted",
-              lastApplicationUpdatedAt: serverTimestamp(),
-            },
-            { merge: true }
-          );
-        } catch (bgError) {
-          console.log(`${countryName} background submit error:`, bgError);
-          try {
-            await setDoc(
-              applicationRef,
-              {
-                country: countryName,
-                status: "failed",
-                errorMessage: bgError?.message || "Unknown submit error",
-                failedAt: serverTimestamp(),
-                totalTravellers: allTravellers.length,
-              },
-              { merge: true }
-            );
-          } catch (innerError) {
-            console.log("Failed to update failed status:", innerError);
-          }
         }
-      })();
-    } catch (e) {
+      } catch (innerError) {
+        console.log("Failed to update failed status:", innerError);
+      }
       Alert.alert("Error", e?.message || "Submission failed.");
     } finally {
       setLoading(false);
     }
   };
 
-  const renderPicker = (fieldKey, placeholder, options, formData, setFieldFn) => {
+  const renderPicker = (fieldKey, placeholder, options, formData, setFieldFn, target = "main") => {
     const placeholderValue = `__${fieldKey}_placeholder__`;
     const selectedValue = formData[fieldKey] || placeholderValue;
     const isPlaceholder = selectedValue === placeholderValue;
-    const dropdownTextColor = "#111827";
-    const dropdownPlaceholderColor = "#111827";
+    const isAndroid = Platform.OS === "android";
+    const useWhitePopupText =
+      isAndroid &&
+      (fieldKey === "purpose" ||
+        fieldKey === "accommodation" ||
+        fieldKey === "occupation");
+    const dropdownTextColor = useWhitePopupText ? "#FFFFFF" : "#111827";
+    const dropdownPlaceholderColor = useWhitePopupText ? "#FFFFFF" : "#111827";
     return (
       <View style={styles.fieldFull}>
         <Text style={styles.labelText}>{placeholder} *</Text>
@@ -393,10 +399,10 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
             onValueChange={(v) => setFieldFn(fieldKey, v === placeholderValue ? "" : v)}
             style={[styles.picker, isPlaceholder ? styles.pickerPlaceholderText : styles.pickerSelectedText]}
             dropdownIconColor="#111827"
-            mode={Platform.OS === "android" ? "dropdown" : undefined}
+            mode={isAndroid ? "dropdown" : undefined}
             itemStyle={styles.pickerItem}
             prompt={placeholder}
-            themeVariant={Platform.OS === "android" ? "light" : undefined}
+            themeVariant={isAndroid ? "light" : undefined}
           >
             <Picker.Item label={placeholder} value={placeholderValue} color={dropdownPlaceholderColor} />
             {options.map((o) => (
@@ -456,10 +462,10 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
       </View>
 
       {cfg.requires.purpose
-        ? renderPicker("purpose", "Purpose of Visit", purposeOptions, formData, setFieldFn)
+        ? renderPicker("purpose", "Purpose of Visit", purposeOptions, formData, setFieldFn, target)
         : null}
       {cfg.requires.accommodation
-        ? renderPicker("accommodation", "Accommodation Details", ACCOMMODATION_OPTIONS, formData, setFieldFn)
+        ? renderPicker("accommodation", "Accommodation Details", ACCOMMODATION_OPTIONS, formData, setFieldFn, target)
         : null}
       {cfg.requires.hotelDetails ? (
         <View style={styles.fieldFull}>
@@ -473,7 +479,7 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
         </View>
       ) : null}
       {cfg.requires.occupation
-        ? renderPicker("occupation", "Occupation", OCCUPATION_OPTIONS, formData, setFieldFn)
+        ? renderPicker("occupation", "Occupation", OCCUPATION_OPTIONS, formData, setFieldFn, target)
         : null}
 
       <View style={styles.docsStack}>
@@ -512,32 +518,17 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
         <ApplyCountryHeader navigation={navigation} countryName={countryName} />
 
         <View style={styles.card}>
-          <Text style={styles.sectionTitle}>Passport Information</Text>
           {renderTravellerForm(form, setMainField, docs, "main")}
         </View>
 
-        <View style={styles.coCard}>
-          <View style={styles.coHeader}>
-            <Text style={styles.coTitle}>Co-Passengers</Text>
-            <TouchableOpacity
-              onPress={() => {
-                setCoForm(createForm());
-                setCoDocs(createDocs());
-                setCoModalOpen(true);
-              }}
-            >
-              <Text style={styles.coAdd}>+ Add Co-Passenger</Text>
-            </TouchableOpacity>
-          </View>
-
-          {coTravellers.length === 0 ? (
-            <Text style={styles.coEmpty}>No co-passengers added yet.</Text>
-          ) : (
-            coTravellers.map((t, i) => (
-              <Text style={styles.coItem} key={`co-${i + 1}`}>Co-Passenger {i + 1}: {t.form.email || "No email"}</Text>
-            ))
-          )}
-        </View>
+        <CoPassengerCard
+          coTravellerCount={coTravellers.length}
+          onAddPress={() => {
+            setCoForm(createForm());
+            setCoDocs(createDocs());
+            setCoModalOpen(true);
+          }}
+        />
 
         <TouchableOpacity style={styles.submitBtn} onPress={submit}>
           {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.submitText}>Complete Process</Text>}
@@ -701,20 +692,6 @@ const styles = StyleSheet.create({
   radioOuter: { width: 14, height: 14, borderRadius: 7, borderWidth: 1, borderColor: "#9CA3AF", marginRight: 6 },
   radioOuterActive: { borderColor: ORANGE, backgroundColor: ORANGE },
   radioText: { color: "#111827", fontSize: 13 },
-  coCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 18,
-    padding: 12,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    elevation: 1,
-  },
-  coHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  coTitle: { fontSize: 14, fontWeight: "700", color: "#111827" },
-  coAdd: { color: ORANGE, fontWeight: "700", fontSize: 13 },
-  coEmpty: { color: "#6B7280", fontSize: 12, marginTop: 8 },
-  coItem: { color: "#374151", fontSize: 12, marginTop: 8 },
   submitBtn: {
     backgroundColor: ORANGE,
     borderRadius: 999,
@@ -728,7 +705,7 @@ const styles = StyleSheet.create({
   calendarOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.4)", justifyContent: "center" },
   calendarBox: { backgroundColor: "#fff", margin: 20, borderRadius: 16, padding: 12 },
   modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.45)", justifyContent: "center", padding: 12 },
-  modalCard: { backgroundColor: "#E5E7EB", borderRadius: 12, maxHeight: "90%" },
+  modalCard: { backgroundColor: "#FFFFFF", borderRadius: 12, maxHeight: "90%" },
   modalContent: { padding: 12, paddingBottom: 20 },
   modalTitle: { fontSize: 18, fontWeight: "700", color: "#1F2937", marginBottom: 10 },
   modalActions: { marginTop: 8, flexDirection: "row", justifyContent: "center", gap: 10 },

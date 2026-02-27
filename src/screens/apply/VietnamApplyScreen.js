@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import {
     View,
     Text,
@@ -18,7 +18,11 @@ import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import ScreenWrapper from "../../components/ScreenWrapper";
-import { CountryApplyBanner, CoPassengerCard } from "../../components/ApplyFlowCards";
+import {
+    CountryApplyBanner,
+    CoPassengerCard,
+    ApplyCountryHeader,
+} from "../../components/ApplyFlowCards";
 import { extractTextFromImage } from "../../api/ocr/visionApi";
 import { parseMRZ } from "../../api/ocr/mrzParser";
 
@@ -383,10 +387,17 @@ export default function VietnamApplyScreen({ navigation }) {
                                 "co"
                             )}
                         </ScrollView>
-
-                        <TouchableOpacity style={styles.submitBtn} onPress={saveCoTraveller}>
-                            <Text style={styles.submitText}>Save Co-Traveller</Text>
-                        </TouchableOpacity>
+            <View style={styles.modalActions}>
+              <TouchableOpacity
+                style={styles.closeBtn}
+                onPress={() => setShowCoTravellerModal(false)}
+              >
+                <Text style={styles.closeBtnText}>Close</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.saveBtn} onPress={saveCoTraveller}>
+                <Text style={styles.saveBtnText}>Save</Text>
+              </TouchableOpacity>
+            </View>
                     </View>
                 </View>
             </Modal>
@@ -493,7 +504,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "700",
         marginBottom: 16,
-        textAlign: "center",      // 👈 center it
+        textAlign: "center",      // ðŸ‘ˆ center it
     },
 
     input: {
@@ -531,7 +542,7 @@ const styles = StyleSheet.create({
     docLabel: {
         fontWeight: "600",
         fontSize: 14,
-        textAlign: "center",   // 👈 center text
+        textAlign: "center",   // ðŸ‘ˆ center text
         marginBottom: 8,
     },
 
@@ -622,5 +633,38 @@ const styles = StyleSheet.create({
         margin: 20,
         borderRadius: 16,
         padding: 12,
-    },
+    },
+  modalActions: {
+    marginTop: 8,
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 10,
+  },
+  closeBtn: {
+    borderWidth: 1,
+    borderColor: ORANGE,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    minWidth: 90,
+    alignItems: "center",
+  },
+  closeBtnText: {
+    color: ORANGE,
+    fontWeight: "700",
+  },
+  saveBtn: {
+    backgroundColor: ORANGE,
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    minWidth: 90,
+    alignItems: "center",
+  },
+  saveBtnText: {
+    color: "#fff",
+    fontWeight: "700",
+  },
 });
+

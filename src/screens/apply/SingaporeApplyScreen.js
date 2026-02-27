@@ -26,6 +26,8 @@ import {
 import RNFS from "react-native-fs";
 import FileViewer from "react-native-file-viewer";
 import { WebView } from "react-native-webview";
+import { extractTextFromImage } from "../../api/ocr/visionApi";
+import { parseMRZ } from "../../api/ocr/mrzParser";
 
 import { getAuth } from "@react-native-firebase/auth/lib/modular";
 import {
@@ -43,6 +45,7 @@ import {
 } from "@react-native-firebase/storage/lib/modular";
 
 import ScreenWrapper from "../../components/ScreenWrapper";
+import { ApplyCountryHeader } from "../../components/ApplyFlowCards";
 import { COUNTRY_APPLY_CONFIG } from "../../config/countryApplyConfig";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
@@ -550,10 +553,6 @@ export default function SingaporeApplyScreen({ navigation }) {
               const travellerLabel = traveller.isPrimary
                 ? "Main Traveller"
                 : `Co-Passenger ${i}`;
-              const passportFrontPage = await extractPassportFrontPageFromAsset(
-                traveller.documents.passportFront,
-                traveller.form?.phone
-              );
 
               const [bankUri, passportFrontUri, passportBackUri, photoUri] =
                 await Promise.all([
@@ -598,6 +597,8 @@ export default function SingaporeApplyScreen({ navigation }) {
               return {
                 isPrimary: traveller.isPrimary,
                 form: { ...traveller.form },
+                passportNumber:
+                  traveller?.frontPageData?.parsed?.passportNumber || "",
                 documents: {
                   bankPdf: bankUrl,
                   passportFront: passportFrontUrl,
@@ -690,7 +691,6 @@ export default function SingaporeApplyScreen({ navigation }) {
 
   const traveller = travellers[0];
   const coTravellers = travellers.slice(1);
-  const hasCoTraveller = coTravellers.length > 0;
 
   const openCoTravellerModal = (travellerIndex = null) => {
     const isValidIndex =
@@ -741,245 +741,238 @@ export default function SingaporeApplyScreen({ navigation }) {
   return (
     <ScreenWrapper>
       <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="chevron-back" size={26} />
-          </TouchableOpacity>
+        <ApplyCountryHeader navigation={navigation} countryName="Singapore" />
 
-          <Text style={styles.headerTitle}>
-            Singapore Visa Application
-          </Text>
+        <View style={styles.card}>
 
-          <TouchableOpacity onPress={() => navigation.navigate("Tabs", { screen: "Destination" })}>
-            <Ionicons name="home-outline" size={24} color={ORANGE} />
-          </TouchableOpacity>
-        </View>
-
-        {/* Travel Date */}
-        <TouchableOpacity style={styles.inputLarge} onPress={() => setShowCalendarFor("main")}>
-          <Text
-            style={
-              traveller.form.travelDate
-                ? styles.inputText
-                : styles.inputPlaceholder
-            }
-          >
-            {traveller.form.travelDate
-              ? formatDate(traveller.form.travelDate)
-              : "Select Travel Date"}
-          </Text>
-        </TouchableOpacity>
-
-        <TextInput
-          placeholder="Mobile Number"
-          style={styles.inputLarge}
-          keyboardType="phone-pad"
-          placeholderTextColor="#000000"
-          value={traveller.form.phone}
-          onChangeText={(v) => {
-            const updated = [...travellers];
-            updated[0].form.phone = v;
-            setTravellers(updated);
-          }}
-        />
-
-        <TextInput
-          placeholder="Email ID"
-          style={styles.inputLarge}
-          placeholderTextColor="#000000"
-          value={traveller.form.email}
-          onChangeText={(v) => {
-            const updated = [...travellers];
-            updated[0].form.email = v;
-            setTravellers(updated);
-          }}
-        />
-
-        <TextInput
-          placeholder="Hotel Details"
-          style={styles.inputLarge}
-          multiline
-          placeholderTextColor="#000000"
-          value={traveller.form.hotelDetails}
-          onChangeText={(v) => {
-            const updated = [...travellers];
-            updated[0].form.hotelDetails = v;
-            setTravellers(updated);
-          }}
-        />
-
-        {/* Bank PDF */}
-        <View style={styles.uploadCard}>
-          <Text style={styles.uploadCardTitle}>Upload Bank Details (PDF) *</Text>
-          <TouchableOpacity style={styles.uploadCardBtn} onPress={pickPdf}>
-            <Text style={styles.uploadCardBtnText}>
-              {traveller.documents.bankPdf ? "Replace PDF" : "Upload"}
-            </Text>
-          </TouchableOpacity>
-          {traveller.documents.bankPdf ? (
-            <Text style={styles.pdfUploadedText}>
-              PDF Uploaded: {getPdfName(traveller.documents.bankPdf)}
-            </Text>
-          ) : null}
-        </View>
-
-        {/* Passport + Photo */}
-        {[
-          { key: "passportFront", label: "Passport Front", sample: PassportFrontSample },
-          { key: "passportBack", label: "Passport Back", sample: PassportBackSample },
-          { key: "photo", label: "Applicant Photo", sample: PassportPhotoSample },
-        ].map(({ key, label, sample }) => (
-          <View key={key} style={styles.uploadCard}>
-            <Text style={styles.uploadCardTitle}>{label} *</Text>
-
-            <View style={styles.uploadSampleWrap}>
-              {!traveller.documents[key] ? (
-                <Image source={sample} style={styles.uploadSample} resizeMode="contain" />
-              ) : (
-                <Image
-                  source={{ uri: traveller.documents[key].uri }}
-                  style={styles.uploadSample}
-                  resizeMode="cover"
-                />
-              )}
-            </View>
-
-            <TouchableOpacity
-              style={styles.uploadCardBtn}
-              onPress={() => pickImage(key)}
+          {/* Travel Date */}
+          <TouchableOpacity style={styles.inputLarge} onPress={() => setShowCalendarFor("main")}>
+            <Text
+              style={
+                traveller.form.travelDate
+                  ? styles.inputText
+                  : styles.inputPlaceholder
+              }
             >
+              {traveller.form.travelDate
+                ? formatDate(traveller.form.travelDate)
+                : "Select Travel Date"}
+            </Text>
+          </TouchableOpacity>
+
+          <TextInput
+            placeholder="Mobile Number"
+            style={styles.inputLarge}
+            keyboardType="phone-pad"
+            placeholderTextColor="#000000"
+            value={traveller.form.phone}
+            onChangeText={(v) => {
+              const updated = [...travellers];
+              updated[0].form.phone = v;
+              setTravellers(updated);
+            }}
+          />
+
+          <TextInput
+            placeholder="Email ID"
+            style={styles.inputLarge}
+            placeholderTextColor="#000000"
+            value={traveller.form.email}
+            onChangeText={(v) => {
+              const updated = [...travellers];
+              updated[0].form.email = v;
+              setTravellers(updated);
+            }}
+          />
+
+          <TextInput
+            placeholder="Hotel Details"
+            style={styles.inputLarge}
+            multiline
+            placeholderTextColor="#000000"
+            value={traveller.form.hotelDetails}
+            onChangeText={(v) => {
+              const updated = [...travellers];
+              updated[0].form.hotelDetails = v;
+              setTravellers(updated);
+            }}
+          />
+
+          {/* Bank PDF */}
+          <View style={styles.uploadCard}>
+            <Text style={styles.uploadCardTitle}>Upload Bank Details (PDF) *</Text>
+            <TouchableOpacity style={styles.uploadCardBtn} onPress={pickPdf}>
               <Text style={styles.uploadCardBtnText}>
-                {traveller.documents[key] ? "Replace" : "Upload"}
+                {traveller.documents.bankPdf ? "Replace PDF" : "Upload"}
               </Text>
             </TouchableOpacity>
+            {traveller.documents.bankPdf ? (
+              <Text style={styles.pdfUploadedText}>
+                PDF Uploaded: {getPdfName(traveller.documents.bankPdf)}
+              </Text>
+            ) : null}
           </View>
-        ))}
 
+          {/* Passport + Photo */}
+          {[
+            { key: "passportFront", label: "Passport Front", sample: PassportFrontSample },
+            { key: "passportBack", label: "Passport Back", sample: PassportBackSample },
+            { key: "photo", label: "Applicant Photo", sample: PassportPhotoSample },
+          ].map(({ key, label, sample }) => (
+            <View key={key} style={styles.uploadCard}>
+              <Text style={styles.uploadCardTitle}>{label} *</Text>
 
-        {/* Forms */}
-        <View style={styles.formsSection}>
-          <View style={styles.formsRow}>
-            {[
-              {
-                key: "form14a",
-                title: "Download Application Form",
-                label: "Application Form",
-                fileName: "Form14a.pdf",
-                assetPath: singaporeForms.applicationFormAssetPath,
-                previewImageAssetPath:
-                  singaporeForms.applicationFormPreviewImageAssetPath,
-                url: singaporeForms.applicationFormUrl,
-              },
-              {
-                key: "authority",
-                title: "Download Authority Letter",
-                label: "Authority Letter",
-                fileName: "Authority-letter.pdf",
-                assetPath: singaporeForms.authorityLetterAssetPath,
-                previewImageAssetPath:
-                  singaporeForms.authorityLetterPreviewImageAssetPath,
-                url: singaporeForms.authorityLetterUrl,
-              },
-            ].map((form) => (
-              <View key={form.key} style={styles.formCard}>
-                <View style={styles.formHeader}>
-                  <Text style={styles.formTitle}>{form.title}</Text>
-                  <Ionicons name="information-circle" size={18} color="#4F46E5" />
-                </View>
-
-                <View style={styles.formPreview}>
-                  {!formPreviewError[form.key] &&
-                  getPreviewImageUri(form.previewImageAssetPath) ? (
-                    <View style={styles.formPreviewTouch}>
-                      <ScrollView
-                        style={styles.formPreviewScroll}
-                        contentContainerStyle={styles.formPreviewScrollContent}
-                        showsVerticalScrollIndicator
-                        nestedScrollEnabled
-                      >
-                        <Image
-                          source={{ uri: getPreviewImageUri(form.previewImageAssetPath) }}
-                          style={styles.formPreviewImageTall}
-                          resizeMode="contain"
-                          onError={() =>
-                            setFormPreviewError((prev) => ({ ...prev, [form.key]: true }))
-                          }
-                        />
-                      </ScrollView>
-                    </View>
-                  ) : !formPreviewError[form.key] && getFormPreviewUri(form) ? (
-                    <WebView
-                      source={{ uri: getFormPreviewUri(form) }}
-                      style={styles.formPreviewWebView}
-                      originWhitelist={["*"]}
-                      scrollEnabled
-                      onError={() =>
-                        setFormPreviewError((prev) => ({ ...prev, [form.key]: true }))
-                      }
-                    />
-                  ) : (
-                    <TouchableOpacity
-                      style={styles.noPreviewBox}
-                      onPress={() =>
-                        form.key === "form14a"
-                          ? openSignatureReference()
-                          : openSignSample(form)
-                      }
-                      activeOpacity={0.8}
-                    >
-                      <Ionicons
-                        name="document-outline"
-                        size={30}
-                        color="#6B7280"
-                      />
-                      <Text style={styles.formFileName}>{form.fileName}</Text>
-                      <Text style={styles.formHint}>
-                        Tap to open form sample (preview not supported here)
-                      </Text>
-                    </TouchableOpacity>
-                  )}
-                </View>
-
-                <TouchableOpacity
-                  style={styles.formDownloadBtn}
-                  onPress={() => handleFormDownload(form)}
-                >
-                  <Text style={styles.formDownloadText}>
-                    {downloadingDoc === form.fileName ? "Downloading..." : "Download"}
-                  </Text>
-                </TouchableOpacity>
+              <View style={styles.uploadSampleWrap}>
+                {!traveller.documents[key] ? (
+                  <Image source={sample} style={styles.uploadSample} resizeMode="contain" />
+                ) : (
+                  <Image
+                    source={{ uri: traveller.documents[key].uri }}
+                    style={styles.uploadSample}
+                    resizeMode="cover"
+                  />
+                )}
               </View>
-            ))}
-          </View>
 
-          <View style={styles.noticeCard}>
-            <View style={styles.noticeIcon}>
-              <Ionicons name="information" size={16} color="#FFFFFF" />
+              <TouchableOpacity
+                style={styles.uploadCardBtn}
+                onPress={() => pickImage(key)}
+              >
+                <Text style={styles.uploadCardBtnText}>
+                  {traveller.documents[key] ? "Replace" : "Upload"}
+                </Text>
+              </TouchableOpacity>
             </View>
-            <Text style={styles.noticeText}>
-              Download and print the form, sign it in blue ink as per the sample,
-              and keep it ready for courier.
-            </Text>
-          </View>
+          ))}
 
-          <View style={styles.noticeCard}>
-            <View style={styles.noticeIcon}>
-              <Ionicons name="information" size={16} color="#FFFFFF" />
+          {/* Forms */}
+          <View style={styles.formsSection}>
+            <View style={styles.formsRow}>
+              {[
+                {
+                  key: "form14a",
+                  title: "Download Application Form",
+                  label: "Application Form",
+                  fileName: "Form14a.pdf",
+                  assetPath: singaporeForms.applicationFormAssetPath,
+                  previewImageAssetPath:
+                    singaporeForms.applicationFormPreviewImageAssetPath,
+                  url: singaporeForms.applicationFormUrl,
+                },
+                {
+                  key: "authority",
+                  title: "Download Authority Letter",
+                  label: "Authority Letter",
+                  fileName: "Authority-letter.pdf",
+                  assetPath: singaporeForms.authorityLetterAssetPath,
+                  previewImageAssetPath:
+                    singaporeForms.authorityLetterPreviewImageAssetPath,
+                  url: singaporeForms.authorityLetterUrl,
+                },
+              ].map((form) => (
+                <View key={form.key} style={styles.formCard}>
+                  <View style={styles.formHeader}>
+                    <Text style={styles.formTitle}>{form.title}</Text>
+                    <Ionicons name="information-circle" size={18} color="#4F46E5" />
+                  </View>
+
+                  <View style={styles.formPreview}>
+                    {!formPreviewError[form.key] &&
+                    getPreviewImageUri(form.previewImageAssetPath) ? (
+                      <View style={styles.formPreviewTouch}>
+                        <ScrollView
+                          style={styles.formPreviewScroll}
+                          contentContainerStyle={styles.formPreviewScrollContent}
+                          showsVerticalScrollIndicator
+                          nestedScrollEnabled
+                        >
+                          <Image
+                            source={{ uri: getPreviewImageUri(form.previewImageAssetPath) }}
+                            style={styles.formPreviewImageTall}
+                            resizeMode="contain"
+                            onError={() =>
+                              setFormPreviewError((prev) => ({ ...prev, [form.key]: true }))
+                            }
+                          />
+                        </ScrollView>
+                      </View>
+                    ) : !formPreviewError[form.key] && getFormPreviewUri(form) ? (
+                      <WebView
+                        source={{ uri: getFormPreviewUri(form) }}
+                        style={styles.formPreviewWebView}
+                        originWhitelist={["*"]}
+                        scrollEnabled
+                        onError={() =>
+                          setFormPreviewError((prev) => ({ ...prev, [form.key]: true }))
+                        }
+                      />
+                    ) : (
+                      <TouchableOpacity
+                        style={styles.noPreviewBox}
+                        onPress={() =>
+                          form.key === "form14a"
+                            ? openSignatureReference()
+                            : openSignSample(form)
+                        }
+                        activeOpacity={0.8}
+                      >
+                        <Ionicons
+                          name="document-outline"
+                          size={30}
+                          color="#6B7280"
+                        />
+                        <Text style={styles.formFileName}>{form.fileName}</Text>
+                        <Text style={styles.formHint}>
+                          Tap to open form sample (preview not supported here)
+                        </Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+
+                  <TouchableOpacity
+                    style={styles.formDownloadBtn}
+                    onPress={() => handleFormDownload(form)}
+                  >
+                    <Text style={styles.formDownloadText}>
+                      {downloadingDoc === form.fileName ? "Downloading..." : "Download"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              ))}
             </View>
-            <Text style={styles.noticeText}>
-              Download and print this authority letter, sign below, and keep it
-              ready for courier.
-            </Text>
+
+            <View style={styles.noticeCard}>
+              <View style={styles.noticeIcon}>
+                <Ionicons name="information" size={16} color="#FFFFFF" />
+              </View>
+              <Text style={styles.noticeText}>
+                Download and print the form, sign it in blue ink as per the sample,
+                and keep it ready for courier.
+              </Text>
+            </View>
+
+            <View style={styles.noticeCard}>
+              <View style={styles.noticeIcon}>
+                <Ionicons name="information" size={16} color="#FFFFFF" />
+              </View>
+              <Text style={styles.noticeText}>
+                Download and print this authority letter, sign below, and keep it
+                ready for courier.
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.coCard}>
+          <View style={styles.coHeader}>
+            <Text style={styles.coTitle}>Co-Passengers</Text>
+            <TouchableOpacity onPress={() => openCoTravellerModal(null)}>
+              <Text style={styles.coAdd}>+ Add Co-Passenger</Text>
+            </TouchableOpacity>
           </View>
 
-          <TouchableOpacity
-            style={styles.addCoTravellerBtn}
-            onPress={openCoTravellerModal}
-          >
-            <Ionicons name="person-add-outline" size={18} color="#FFFFFF" />
-            <Text style={styles.addCoTravellerBtnText}>
-              {hasCoTraveller ? "Edit co - traveller" : "Add co - traveller"}
-            </Text>
+          {coTravellers.length === 0 ? (
+            <Text style={styles.coEmpty}>No co-passengers added yet.</Text>
           ) : (
             coTravellers.map((coTraveller, idx) => {
               const travellerIndex = idx + 1;
@@ -1008,7 +1001,6 @@ export default function SingaporeApplyScreen({ navigation }) {
               );
             })
           )}
-        </View>
         </View>
 
         <TouchableOpacity style={styles.submitBtn} onPress={submit}>
@@ -1497,6 +1489,12 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     elevation: 2,
   },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#111827",
+    marginBottom: 8,
+  },
 
   label: {
     fontWeight: "600",
@@ -1794,6 +1792,36 @@ const styles = StyleSheet.create({
     fontSize: 13,
     textAlign: "center",
     paddingVertical: 8,
+  },
+  coCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 18,
+    padding: 12,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    elevation: 1,
+  },
+  coHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  coTitle: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#111827",
+  },
+  coAdd: {
+    color: ORANGE,
+    fontWeight: "700",
+    fontSize: 13,
+  },
+  coEmpty: {
+    color: "#6B7280",
+    fontSize: 12,
+    marginTop: 8,
   },
 
   coPassengerItem: {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import {
   View,
   Text,
@@ -358,10 +358,17 @@ export default function CombodiaApplyScreen({ navigation }) {
                 "co"
               )}
             </ScrollView>
-
-            <TouchableOpacity style={styles.submitBtn} onPress={saveCoTraveller}>
-              <Text style={styles.submitText}>Save Co-Traveller</Text>
-            </TouchableOpacity>
+            <View style={styles.modalActions}>
+              <TouchableOpacity
+                style={styles.closeBtn}
+                onPress={() => setShowCoTravellerModal(false)}
+              >
+                <Text style={styles.closeBtnText}>Close</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.saveBtn} onPress={saveCoTraveller}>
+                <Text style={styles.saveBtnText}>Save</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
@@ -423,7 +430,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
     marginBottom: 16,
-    textAlign: "center",      // 👈 center it
+    textAlign: "center",      // ðŸ‘ˆ center it
   },
 
 
@@ -525,7 +532,38 @@ const styles = StyleSheet.create({
     margin: 20,
     borderRadius: 16,
     padding: 12,
+  },
+  modalActions: {
+    marginTop: 8,
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 10,
+  },
+  closeBtn: {
+    borderWidth: 1,
+    borderColor: ORANGE,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    minWidth: 90,
+    alignItems: "center",
+  },
+  closeBtnText: {
+    color: ORANGE,
+    fontWeight: "700",
+  },
+  saveBtn: {
+    backgroundColor: ORANGE,
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    minWidth: 90,
+    alignItems: "center",
+  },
+  saveBtnText: {
+    color: "#fff",
+    fontWeight: "700",
   },
 });
-
 

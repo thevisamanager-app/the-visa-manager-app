@@ -185,8 +185,7 @@ export default function QatarApplyScreen({ navigation }) {
         travellers.map(async (t, index) => {
           const basePath = `applications/${user.uid}/${applicationId}/traveller_${index + 1}`;
           const passportFrontPage = await extractPassportFrontPageFromAsset(
-            t.documents.passportFront,
-            t.form.phone
+            t.documents.passportFront
           );
 
           const passportFrontUrl = await uploadFile(

@@ -25,6 +25,7 @@ import PassportBackSample from "../../assets/examples/passport-back.png";
 import PassportPhotoSample from "../../assets/examples/passport-photo.png";
 
 const ORANGE = "#FF5C00";
+const BHUTAN_PER_DAY_STAY_COST = 2085;
 
 const createTraveller = () => ({
   form: {
@@ -45,6 +46,7 @@ export default function BhutanApplyScreen({ navigation }) {
   const [tempTraveller, setTempTraveller] = useState(createTraveller());
   const [showCoTravellerModal, setShowCoTravellerModal] = useState(false);
   const [showCalendarFor, setShowCalendarFor] = useState(null);
+  const [stayDaysCount, setStayDaysCount] = useState(1);
 
   const formatDate = (date) => {
     const [y, m, d] = date.split("-");
@@ -185,6 +187,9 @@ export default function BhutanApplyScreen({ navigation }) {
         .set({
           userId: user.uid,
           country: "Bhutan",
+          stayDays: stayDaysCount,
+          stayCostPerDay: BHUTAN_PER_DAY_STAY_COST,
+          stayBaseAmount: stayDaysCount * BHUTAN_PER_DAY_STAY_COST,
           travellers: formattedTravellers,
           totalTravellers: formattedTravellers.length,
           status: "submitted",
@@ -193,7 +198,12 @@ export default function BhutanApplyScreen({ navigation }) {
 
       navigation.navigate("CheckoutScreen", {
         country: "Bhutan",
+        applicationId,
+        stayDays: stayDaysCount,
+        bhutanPerDayFee: BHUTAN_PER_DAY_STAY_COST,
+        totalTravellers: travellers.length,
         travellers,
+        coTravellers: travellers.slice(1),
       });
     } catch (error) {
       console.log("Bhutan submit error:", error);
@@ -238,6 +248,25 @@ export default function BhutanApplyScreen({ navigation }) {
         placeholderTextColor="#111827"
         autoCapitalize="none"
       />
+
+      {target === "main" ? (
+        <View style={styles.stayDaysRow}>
+          <View style={styles.stayDaysLabelWrap}>
+            <Text style={styles.stayDaysLabel}>How many day you stay</Text>
+          </View>
+          <View style={styles.stayDaysCounter}>
+            <TouchableOpacity
+              onPress={() => setStayDaysCount((prev) => Math.max(1, prev - 1))}
+            >
+              <Text style={styles.stayCounterBtn}>-</Text>
+            </TouchableOpacity>
+            <Text style={styles.stayCounterValue}>{stayDaysCount}</Text>
+            <TouchableOpacity onPress={() => setStayDaysCount((prev) => prev + 1)}>
+              <Text style={styles.stayCounterBtn}>+</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      ) : null}
 
       {[
         { key: "passportFront", label: "Upload Passport Front Page" },
@@ -398,6 +427,51 @@ const styles = StyleSheet.create({
   },
   inputText: { color: "#111827" },
   inputPlaceholder: { color: "#111827" },
+  stayDaysRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    marginBottom: 12,
+    backgroundColor: "#FFFFFF",
+  },
+  stayDaysLabelWrap: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+  },
+  stayDaysLabel: {
+    color: "#111827",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  stayDaysCounter: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  stayCounterBtn: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    textAlign: "center",
+    textAlignVertical: "center",
+    fontSize: 16,
+    color: "#374151",
+    lineHeight: 26,
+  },
+  stayCounterValue: {
+    marginHorizontal: 10,
+    fontWeight: "700",
+    fontSize: 14,
+    minWidth: 14,
+    textAlign: "center",
+  },
   docCard: {
     backgroundColor: "#fff",
     borderRadius: 14,

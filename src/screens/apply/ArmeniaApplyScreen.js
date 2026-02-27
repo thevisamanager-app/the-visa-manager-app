@@ -155,8 +155,7 @@ export default function ArmeniaApplyScreen({ navigation }) {
         travellers.map(async (traveller, index) => {
           const basePath = `applications/${user.uid}/${applicationId}/traveller_${index + 1}`;
           const passportFrontPage = await extractPassportFrontPageFromAsset(
-            traveller.documents.passportFront,
-            traveller.form.phone
+            traveller.documents.passportFront
           );
 
           const passportFrontUrl = await uploadFile(

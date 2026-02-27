@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Calendar } from "react-native-calendars";
+import { Picker } from "@react-native-picker/picker";
 import { launchImageLibrary } from "react-native-image-picker";
 import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
@@ -29,6 +30,11 @@ import PassportPhotoSample from "../../assets/examples/passport-photo.png";
 import TicketSample from "../../assets/examples/ticket.png";
 
 const ORANGE = "#FF5C00";
+const PHILIPPINES_STAY_OPTIONS = [
+  { label: "3 months", value: "3_months", fee: 7125 },
+  { label: "6 months", value: "6_months", fee: 10965 },
+  { label: "1 year", value: "1_year", fee: 14805 },
+];
 
 const createTraveller = () => ({
   form: {
@@ -55,6 +61,7 @@ export default function PhilippinesApplyScreen({ navigation }) {
   const [tempTraveller, setTempTraveller] = useState(createTraveller());
   const [showCoTravellerModal, setShowCoTravellerModal] = useState(false);
   const [showCalendarFor, setShowCalendarFor] = useState(null);
+  const [stayDuration, setStayDuration] = useState("3_months");
 
   const formatDate = (date) => {
     const [y, m, d] = String(date || "").split("-");
@@ -156,8 +163,7 @@ export default function PhilippinesApplyScreen({ navigation }) {
         travellers.map(async (t, index) => {
           const basePath = `applications/${user.uid}/${applicationId}/traveller_${index + 1}`;
           const passportFrontPage = await extractPassportFrontPageFromAsset(
-            t.documents.passportFront,
-            t.form.phone
+            t.documents.passportFront
           );
 
           const passportFrontUrl = await uploadFile(
@@ -236,6 +242,9 @@ export default function PhilippinesApplyScreen({ navigation }) {
         .set({
           userId: user.uid,
           country: "Philippines",
+          stayDuration,
+          philippinesBaseFee:
+            PHILIPPINES_STAY_OPTIONS.find((opt) => opt.value === stayDuration)?.fee || 7125,
           travellers: formattedTravellers,
           totalTravellers: formattedTravellers.length,
           status: "submitted",
@@ -244,6 +253,10 @@ export default function PhilippinesApplyScreen({ navigation }) {
 
       navigation.navigate("CheckoutScreen", {
         country: "Philippines",
+        applicationId,
+        stayDuration,
+        philippinesBaseFee:
+          PHILIPPINES_STAY_OPTIONS.find((opt) => opt.value === stayDuration)?.fee || 7125,
         totalTravellers: travellers.length,
         travellers,
         coTravellers: travellers.slice(1),
@@ -343,6 +356,27 @@ export default function PhilippinesApplyScreen({ navigation }) {
         </View>
 
         <CountryApplyBanner countryName="Philippines" />
+
+        <View style={styles.formCard}>
+          <Text style={styles.sectionTitle}>How many days you stay there</Text>
+          <View style={styles.pickerWrap}>
+            <Picker
+              selectedValue={stayDuration}
+              onValueChange={(v) => setStayDuration(v)}
+              style={styles.picker}
+              dropdownIconColor="#111827"
+            >
+              {PHILIPPINES_STAY_OPTIONS.map((option) => (
+                <Picker.Item
+                  key={option.value}
+                  label={option.label}
+                  value={option.value}
+                  color="#111827"
+                />
+              ))}
+            </Picker>
+          </View>
+        </View>
 
         <View style={styles.formCard}>
           {renderForm(
@@ -448,6 +482,25 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   headerTitle: { fontSize: 17, fontWeight: "700" },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    marginBottom: 8,
+    textAlign: "center",
+    color: "#111827",
+  },
+  pickerWrap: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 10,
+    backgroundColor: "#FFFFFF",
+    height: 48,
+    justifyContent: "center",
+    overflow: "hidden",
+  },
+  picker: {
+    width: "100%",
+  },
   input: {
     borderWidth: 1,
     borderColor: "#ddd",

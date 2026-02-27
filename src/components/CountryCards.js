@@ -14,7 +14,7 @@ import { getCountryImage } from "../utils/countryImages";
 
 /* -------- helpers -------- */
 
-const getGovernmentFee = (fee) => {
+const getVisaManagerFee = (fee) => {
   if (!fee) return 0;
 
   if (typeof fee === "number" || typeof fee === "string") {
@@ -32,13 +32,6 @@ const getGovernmentFee = (fee) => {
   return 0;
 };
 
-const getServiceFee = (fee) => {
-  if (!fee) return 0;
-  if (typeof fee === "number" || typeof fee === "string") return fee;
-  if (typeof fee === "object") return fee.Single || 0;
-  return 0;
-};
-
 export default function CountryCards({ item, countrName, onPress }) {
   const visaType = item.countryType?.toUpperCase() || "VISA";
   const flag = getFlagEmoji(countrName);
@@ -46,8 +39,7 @@ export default function CountryCards({ item, countrName, onPress }) {
 
   const [liveCount, setLiveCount] = useState(item.liveCount ?? 5);
 
-  const governmentFee = getGovernmentFee(item.GovernmentFee);
-  const serviceFee = getServiceFee(item.AuthorityCharges);
+  const governmentFee = getVisaManagerFee(item.VisaManagerFee);
 
   /* -------- AUTO LIVE COUNT -------- */
   useEffect(() => {
@@ -114,11 +106,7 @@ export default function CountryCards({ item, countrName, onPress }) {
           <Text style={styles.perAdult}> per adult</Text>
         </Text>
 
-        <Text style={styles.fee}>
-          {serviceFee && Number(String(serviceFee).replace(/,/g, "")) > 0
-            ? `+ ${"\u20B9"}${serviceFee} service fees`
-            : "All inclusive final price"}
-        </Text>
+        <Text style={styles.fee}>All inclusive + GST</Text>
       </View>
 
       {/* -------- APPLY BUTTON -------- */}

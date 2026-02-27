@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Calendar } from "react-native-calendars";
+import { Picker } from "@react-native-picker/picker";
 import { launchImageLibrary } from "react-native-image-picker";
 import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
@@ -26,6 +27,14 @@ import PassportPhotoSample from "../../assets/examples/passport-photo.png";
 import TicketSample from "../../assets/examples/ticket.png";
 
 const ORANGE = "#FF5C00";
+const OCR_PASSPORT_FRONT_KEYS = [
+    "gender",
+    "issuingCountry",
+    "lastName",
+    "firstName",
+    "nationality",
+    "passportNumber",
+];
 
 /* ---------- reusable traveller factory ---------- */
 const createTraveller = () => ({
@@ -53,6 +62,7 @@ export default function VietnamApplyScreen({ navigation }) {
     const [showCalendarFor, setShowCalendarFor] = useState(null);
     const [showCoTravellerModal, setShowCoTravellerModal] = useState(false);
     const [tempTraveller, setTempTraveller] = useState(createTraveller());
+    const [visaEntryType, setVisaEntryType] = useState("");
 
     const formatDate = (date) => {
         const [y, m, d] = date.split("-");
@@ -85,6 +95,13 @@ export default function VietnamApplyScreen({ navigation }) {
         const ref = storage().ref(path);
         await ref.putFile(uri);
         return await ref.getDownloadURL();
+    };
+    const sanitizePassportFrontPage = (passportFrontPage) => {
+        if (!passportFrontPage || typeof passportFrontPage !== "object") return null;
+        return OCR_PASSPORT_FRONT_KEYS.reduce((acc, key) => {
+            if (passportFrontPage[key]) acc[key] = passportFrontPage[key];
+            return acc;
+        }, {});
     };
 
     const pickDocument = async (target, key) => {
@@ -154,10 +171,10 @@ export default function VietnamApplyScreen({ navigation }) {
             const formattedTravellers = await Promise.all(
                 travellers.map(async (t, index) => {
                     const basePath = `applications/${user.uid}/${applicationId}/traveller_${index + 1}`;
-                    const passportFrontPage = await extractPassportFrontPageFromAsset(
-                        t.documents.passportFront,
-                        t.form.phone
+                    const passportFrontPageRaw = await extractPassportFrontPageFromAsset(
+                        t.documents.passportFront
                     );
+                    const passportFrontPage = sanitizePassportFrontPage(passportFrontPageRaw);
 
                     const passportFrontUrl = await uploadFile(
                         t.documents.passportFront,
@@ -201,6 +218,7 @@ export default function VietnamApplyScreen({ navigation }) {
                 .set({
                     userId: user.uid,
                     country: "Vietnam",
+                    visaEntryType: visaEntryType || "single",
                     travellers: formattedTravellers,
                     totalTravellers: formattedTravellers.length,
                     status: "submitted",
@@ -210,6 +228,8 @@ export default function VietnamApplyScreen({ navigation }) {
             navigation.navigate("CheckoutScreen", {
                 country: "Vietnam",
                 travellers,
+                applicationId,
+                visaEntryType: visaEntryType || "single",
             });
         } catch (error) {
             console.log("Submit Error:", error);
@@ -252,6 +272,22 @@ export default function VietnamApplyScreen({ navigation }) {
                 onChangeText={(v) => onChange("email", v)}
                 placeholderTextColor="#000000"
             />
+            {target === "main" ? (
+                <>
+                    
+                    <View style={styles.pickerWrap}>
+                        <Picker
+                            selectedValue={visaEntryType}
+                            onValueChange={(v) => setVisaEntryType(v)}
+                            style={styles.picker}
+                        >
+                            <Picker.Item label="Select Entry Type" value="" />
+                            <Picker.Item label="Single Entry" value="single" />
+                            <Picker.Item label="Multiple Entry" value="multiple" />
+                        </Picker>
+                    </View>
+                </>
+            ) : null}
 
             <TextInput
                 placeholder="Hotel Name & Address"
@@ -322,7 +358,6 @@ export default function VietnamApplyScreen({ navigation }) {
                 </View>
 
                 <CountryApplyBanner countryName="Vietnam" />
-
         <View style={styles.formCard}>
                 {renderForm(
                     travellers[0],
@@ -439,9 +474,21 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "700",
         marginBottom: 16,
-        textAlign: "center",      // 👈 center it
+        textAlign: "center",
     },
 
+    
+    pickerWrap: {
+        borderWidth: 1,
+        borderColor: "#ddd",
+        borderRadius: 10,
+        marginBottom: 12,
+        overflow: "hidden",
+        backgroundColor: "#FFFFFF",
+    },
+    picker: {
+        color: "#111827",
+    },
     input: {
         borderWidth: 1,
         borderColor: "#ddd",
@@ -570,5 +617,6 @@ const styles = StyleSheet.create({
         padding: 12,
     },
 });
+
 
 

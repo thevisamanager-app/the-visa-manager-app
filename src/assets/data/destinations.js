@@ -3,9 +3,7 @@ const DESTINATIONS = [
     id: 1,
     countrName: "Vietnam",
     countryType: "evisa",
-    VisaManagerFee: "1770",
-    AuthorityCharges: "750",
-    GovernmentFee: "2350",
+    VisaManagerFee: "3157.72",
     liveCount: 9,
     subtitle: "Get Visa in 1-3 Business Days",
     bullets: [
@@ -19,9 +17,7 @@ const DESTINATIONS = [
     countrName: "Singapore",
     countryType: "evisa",
 
-    VisaManagerFee: "670",
-    AuthorityCharges: "1180",
-    GovernmentFee: "2100",
+    VisaManagerFee: "4165",
     subtitle: "Get Visa in 1-3 Business Days",
     bullets: [
       "Visa on arrival / DAC",
@@ -35,8 +31,6 @@ const DESTINATIONS = [
     countrName: 'South Korea',
     countryType: "evisa",
     VisaManagerFee: "3540",
-    AuthorityCharges: "1200",
-    GovernmentFee: "5800",
     bullets: [
       "Quick & Easy Process",
       "Trusted by 10k+ Customers",
@@ -49,8 +43,6 @@ const DESTINATIONS = [
     countrName: 'Indonesia',
     countryType: "evisa",
     VisaManagerFee: " 590",
-    AuthorityCharges: "0",
-    GovernmentFee: "2900",
     bullets: [
       "Quick & Easy Process",
       "Trusted by 10k+ Customers",
@@ -61,10 +53,8 @@ const DESTINATIONS = [
   {
     id: 5,
     countrName: 'Hong Kong',
-    VisaManagerFee: "1",
-    AuthorityCharges: "0",
-    GovernmentFee: "0",
-    countryType: "DAC",
+    VisaManagerFee: "885",
+    countryType: "evisa",
     subtitle: "Mandatory for Indain Travellers",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -76,9 +66,7 @@ const DESTINATIONS = [
   {
     id: 6,
     countrName: 'Combodia',
-    VisaManagerFee: "590",
-    AuthorityCharges: "0",
-    GovernmentFee: "3500",
+    VisaManagerFee: "3793.85",
     countryType: "evisa",
     subtitle: "Get Visa in 3-5 Working days",
     bullets: [
@@ -91,9 +79,7 @@ const DESTINATIONS = [
   {
     id: 7,
     countrName: 'Sri-lanka',
-    VisaManagerFee: "1",
-    AuthorityCharges: "0",
-    GovernmentFee: "0",
+    VisaManagerFee: "590",
     countryType: "DAC",
     subtitle: "Get Your ETA in just 1 day",
     bullets: [
@@ -106,9 +92,7 @@ const DESTINATIONS = [
   {
     id: 8,
     countrName: 'Philippines',
-    VisaManagerFee: "2950",
-    AuthorityCharges: "0",
-    GovernmentFee: "6240",
+    VisaManagerFee: "7125",
     currency: "",
     countryType: "evisa",
     subtitle: "Get Visa in 7-12 Days",
@@ -122,12 +106,6 @@ const DESTINATIONS = [
     id: 9,
     countrName: 'Uzbekistan',
     VisaManagerFee: "1770 per traveler",
-    AuthorityCharges: "0",
-    GovernmentFee: {
-      Single: "1721",
-      Double: "3012",
-      multiple: "4303 "
-    },
     countryType: "evisa",
     bullets: [
       "Quick & Easy Process",
@@ -139,9 +117,7 @@ const DESTINATIONS = [
   {
     id: 10,
     countrName: 'Armenia',
-    VisaManagerFee: "1770 per traveler",
-    AuthorityCharges: "0",
-    GovernmentFee: "3600",
+    VisaManagerFee: "1612.44",
     countryType: "evisa",
     subtitle: "Get visa in 6-7 days",
     bullets: [
@@ -153,9 +129,7 @@ const DESTINATIONS = [
   {
     id: 11,
     countrName: 'Russia',
-    VisaManagerFee: "3540",
-    AuthorityCharges: "944",
-    GovernmentFee: "8200",
+    VisaManagerFee: "5948",
     countryType: "evisa",
     subtitle: "Get visa in 6 to 7 days",
     bullets: [
@@ -168,8 +142,6 @@ const DESTINATIONS = [
     id: 12,
     countrName: 'France',
     VisaManagerFee: "2948.82",
-    AuthorityCharges: "2311.62",
-    GovernmentFee: "9100",
     countryType: "Schengen",
     bullets: [
       "Quick & Easy Process",
@@ -182,8 +154,6 @@ const DESTINATIONS = [
     id: 13,
     countrName: 'Italy',
     VisaManagerFee: "2948.82",
-    AuthorityCharges: "537",
-    GovernmentFee: "9200 ",
     countryType: "Schengen",
     bullets: [
       "Quick & Easy Process",
@@ -196,8 +166,6 @@ const DESTINATIONS = [
     id: 14,
     countrName: 'Usa',
     VisaManagerFee: "2948.82",
-    AuthorityCharges: "0",
-    GovernmentFee: "17020",
     countryType: "Stamp Visa",
     bullets: [
       "Quick & Easy Process",
@@ -210,8 +178,6 @@ const DESTINATIONS = [
     id: 15,
     countrName: 'Sweden',
     VisaManagerFee: "3540",
-    AuthorityCharges: "944",
-    GovernmentFee: "8200",
     countryType: "Schengen",
     bullets: [
       "Quick & Easy Process",
@@ -223,9 +189,7 @@ const DESTINATIONS = [
   {
     id: 16,
     countrName: 'Qatar',
-    VisaManagerFee: "2949",
-    AuthorityCharges: "944",
-    GovernmentFee: "5000",
+    VisaManagerFee: "3389.28",
     countryType: "evisa",
     subtitle: "Get Visa in 4-5 Working days",
     bullets: [
@@ -238,8 +202,6 @@ const DESTINATIONS = [
     id: 17,
     countrName: 'Romania',
     VisaManagerFee: "2949",
-    AuthorityCharges: "944",
-    GovernmentFee: "5000",
     countryType: "evisa",
     bullets: [
       "Quick & Easy Process",
@@ -252,8 +214,6 @@ const DESTINATIONS = [
     id: 18,
     countrName: 'Uganda',
     VisaManagerFee: "2949",
-    AuthorityCharges: "944",
-    GovernmentFee: "6395",
     countryType: "evisa",
     bullets: [
       "Quick & Easy Process",
@@ -266,8 +226,6 @@ const DESTINATIONS = [
     id: 19,
     countrName: 'Uk',
     VisaManagerFee: "4130",
-    AuthorityCharges: "0",
-    GovernmentFee: "15400 ",
     countryType: "Stamp Visa",
     bullets: [
       "Quick & Easy Process",
@@ -280,8 +238,6 @@ const DESTINATIONS = [
     id: 20,
     countrName: 'Poland',
     VisaManagerFee: "3540",
-    AuthorityCharges: "944",
-    GovernmentFee: "9743",
     countryType: "Schengen",
     bullets: [
       "Quick & Easy Process",
@@ -294,8 +250,6 @@ const DESTINATIONS = [
     id: 21,
     countrName: 'Portugal',
     VisaManagerFee: "2950",
-    AuthorityCharges: "944",
-    GovernmentFee: "9200",
     countryType: "Schengen",
     bullets: [
       "Quick & Easy Process",
@@ -308,8 +262,6 @@ const DESTINATIONS = [
     id: 22,
     countrName: 'Norway',
     VisaManagerFee: "2948.82",
-    AuthorityCharges: "944",
-    GovernmentFee: "1740(",
     countryType: "Schengen",
     bullets: [
       "Quick & Easy Process",
@@ -322,8 +274,6 @@ const DESTINATIONS = [
     id: 23,
     countrName: 'Nigeria',
     VisaManagerFee: "2948.82",
-    AuthorityCharges: "944",
-    GovernmentFee: "3000",
     countryType: "evisa",
     bullets: [
       "Quick & Easy Process",
@@ -336,8 +286,6 @@ const DESTINATIONS = [
     id: 24,
     countrName: 'Netherland',
     VisaManagerFee: "2948.82",
-    AuthorityCharges: "1931.66",
-    GovernmentFee: "9200 ",
     countryType: "Schengen",
     bullets: [
       "Quick & Easy Process",
@@ -350,8 +298,6 @@ const DESTINATIONS = [
     id: 25,
     countrName: 'Mongolia',
     VisaManagerFee: "3540",
-    AuthorityCharges: "944",
-    GovernmentFee: "5720",
     countryType: "evisa",
     bullets: [
       "Quick & Easy Process",
@@ -363,9 +309,7 @@ const DESTINATIONS = [
   {
     id: 26,
     countrName: 'Maldives',
-    VisaManagerFee: "1",
-    AuthorityCharges: "0",
-    GovernmentFee: "0",
+    VisaManagerFee: "885",
     countryType: "DAC",
     subtitle: "Get Your Visa by 1 day",
     bullets: [
@@ -379,8 +323,6 @@ const DESTINATIONS = [
     id: 27,
     countrName: 'Malawi',
     VisaManagerFee: "1770",
-    AuthorityCharges: "944",
-    GovernmentFee: "4306",
     countryType: "evisa",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -393,8 +335,6 @@ const DESTINATIONS = [
     id: 28,
     countrName: 'Liechtenstein',
     VisaManagerFee: "2948.82",
-    AuthorityCharges: "944",
-    GovernmentFee: "2500",
     countryType: "evisa",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -407,8 +347,6 @@ const DESTINATIONS = [
     id: 29,
     countrName: 'Lebanon',
     VisaManagerFee: "2948.82",
-    AuthorityCharges: "944",
-    GovernmentFee: "10870",
     countryType: "evisa",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -421,8 +359,6 @@ const DESTINATIONS = [
     id: 30,
     countrName: 'Finland',
     VisaManagerFee: "2948.82",
-    AuthorityCharges: "944",
-    GovernmentFee: "9100",
     countryType: "Schengen",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -435,8 +371,6 @@ const DESTINATIONS = [
     id: 31,
     countrName: 'Colombia',
     VisaManagerFee: "2948.82",
-    AuthorityCharges: "944",
-    GovernmentFee: "6500",
     countryType: "evisa",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -449,8 +383,6 @@ const DESTINATIONS = [
     id: 32,
     countrName: 'Australia',
     VisaManagerFee: "4130",
-    AuthorityCharges: "0",
-    GovernmentFee: "12400",
     countryType: "Stamp Visa",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -463,8 +395,6 @@ const DESTINATIONS = [
     id: 33,
     countrName: 'Austria',
     VisaManagerFee: "2948.82",
-    AuthorityCharges: "1931.66",
-    GovernmentFee: "9100",
     countryType: "Schengen",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -478,8 +408,6 @@ const DESTINATIONS = [
     id: 34,
     countrName: 'Bulgaria',
     VisaManagerFee: "2950",
-    AuthorityCharges: "2070",
-    GovernmentFee: "8600",
     countryType: "Schengen",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -492,8 +420,6 @@ const DESTINATIONS = [
     id: 35,
     countrName: 'Malaysia',
     VisaManagerFee: "1",
-    AuthorityCharges: "0",
-    GovernmentFee: "0",
     countryType: "DAC",
 
     subtitle: "Get Your Visa by 1 day",
@@ -508,8 +434,6 @@ const DESTINATIONS = [
     id: 36,
     countrName: 'Japan',
     VisaManagerFee: "1770",
-    AuthorityCharges: "750",
-    GovernmentFee: "550",
     countryType: "Stamp Visa",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -522,15 +446,12 @@ const DESTINATIONS = [
     id: 37,
     countrName: 'Thailand',
     VisaManagerFee: "1",
-    AuthorityCharges: "0",
-    GovernmentFee: "0",
     countryType: "DAC",
     subtitle: "Mandatory for Indians",
     bullets: [
       "15K+ visas sucessfully processed",
       "₹1 per adult",
       "₹0 Service Fees",
-      "All inclusive final price no additional Charges"
     ],
   },
 
@@ -538,8 +459,6 @@ const DESTINATIONS = [
     id: 38,
     countrName: 'Belgium',
     VisaManagerFee: "2950",
-    AuthorityCharges: "0",
-    GovernmentFee: "9200",
     countryType: "Schengen",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -552,8 +471,6 @@ const DESTINATIONS = [
     id: 39,
     countrName: 'Croatia',
     VisaManagerFee: "2950",
-    AuthorityCharges: "0",
-    GovernmentFee: "9200",
     countryType: "Schengen",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -566,8 +483,6 @@ const DESTINATIONS = [
     id: 40,
     countrName: 'Czechia',
     VisaManagerFee: "2950",
-    AuthorityCharges: "0",
-    GovernmentFee: "9200",
     countryType: "Schengen",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -580,8 +495,6 @@ const DESTINATIONS = [
     id: 41,
     countrName: 'Denmark',
     VisaManagerFee: "2950",
-    AuthorityCharges: "0",
-    GovernmentFee: "9200",
     countryType: "Schengen",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -594,8 +507,6 @@ const DESTINATIONS = [
     id: 42,
     countrName: 'Estonia',
     VisaManagerFee: "2950",
-    AuthorityCharges: "0",
-    GovernmentFee: "9200",
     countryType: "Schengen",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -608,8 +519,6 @@ const DESTINATIONS = [
     id: 43,
     countrName: 'Germany',
     VisaManagerFee: "2950",
-    AuthorityCharges: "0",
-    GovernmentFee: "9200",
     countryType: "Schengen",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -622,8 +531,6 @@ const DESTINATIONS = [
     id: 44,
     countrName: 'Greece',
     VisaManagerFee: "2950",
-    AuthorityCharges: "0",
-    GovernmentFee: "9200",
     countryType: "Schengen",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -636,8 +543,6 @@ const DESTINATIONS = [
     id: 45,
     countrName: 'Hungary',
     VisaManagerFee: "2950",
-    AuthorityCharges: "0",
-    GovernmentFee: "9200",
     countryType: "Schengen",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -650,8 +555,6 @@ const DESTINATIONS = [
     id: 46,
     countrName: 'Iceland',
     VisaManagerFee: "2950",
-    AuthorityCharges: "0",
-    GovernmentFee: "9200",
     countryType: "Schengen",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -663,8 +566,6 @@ const DESTINATIONS = [
     id: 47,
     countrName: 'Latvia',
     VisaManagerFee: "2950",
-    AuthorityCharges: "0",
-    GovernmentFee: "9200",
     countryType: "Schengen",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -677,8 +578,6 @@ const DESTINATIONS = [
     id: 48,
     countrName: 'Lithuania',
     VisaManagerFee: "2950",
-    AuthorityCharges: "0",
-    GovernmentFee: "9200",
     countryType: "Schengen",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -691,8 +590,6 @@ const DESTINATIONS = [
     id: 49,
     countrName: 'Luxembourg',
     VisaManagerFee: "2950",
-    AuthorityCharges: "0",
-    GovernmentFee: "9200",
     countryType: "Schengen",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -705,8 +602,6 @@ const DESTINATIONS = [
     id: 50,
     countrName: 'Malta',
     VisaManagerFee: "2950",
-    AuthorityCharges: "0",
-    GovernmentFee: "9200",
     countryType: "Schengen",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -719,8 +614,6 @@ const DESTINATIONS = [
     id: 51,
     countrName: 'Netherland',
     VisaManagerFee: "2950",
-    AuthorityCharges: "0",
-    GovernmentFee: "9200",
     countryType: "Schengen",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -733,8 +626,6 @@ const DESTINATIONS = [
     id: 52,
     countrName: 'Norway',
     VisaManagerFee: "2950",
-    AuthorityCharges: "0",
-    GovernmentFee: "9200",
     countryType: "Schengen",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -747,8 +638,6 @@ const DESTINATIONS = [
     id: 53,
     countrName: 'Portugal',
     VisaManagerFee: "2950",
-    AuthorityCharges: "0",
-    GovernmentFee: "9200",
     countryType: "Schengen",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -761,8 +650,6 @@ const DESTINATIONS = [
     id: 54,
     countrName: 'Romania',
     VisaManagerFee: "2950",
-    AuthorityCharges: "944",
-    GovernmentFee: "5000",
     countryType: "Schengen",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -775,8 +662,6 @@ const DESTINATIONS = [
     id: 55,
     countrName: 'Slovakia',
     VisaManagerFee: "2950",
-    AuthorityCharges: "0",
-    GovernmentFee: "9200",
     countryType: "Schengen",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -789,8 +674,6 @@ const DESTINATIONS = [
     id: 56,
     countrName: 'Spain',
     VisaManagerFee: "2950",
-    AuthorityCharges: "0",
-    GovernmentFee: "9200",
     countryType: "Schengen",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -803,8 +686,6 @@ const DESTINATIONS = [
     id: 57,
     countrName: 'Slovenia',
     VisaManagerFee: "2950",
-    AuthorityCharges: "0",
-    GovernmentFee: "9200",
     countryType: "Schengen",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -817,8 +698,6 @@ const DESTINATIONS = [
     id: 58,
     countrName: 'Switzerland',
     VisaManagerFee: "2950",
-    AuthorityCharges: "0",
-    GovernmentFee: "9200",
     countryType: "Schengen",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -831,8 +710,6 @@ const DESTINATIONS = [
     id: 59,
     countrName: 'Cyprus',
     VisaManagerFee: "3540",
-    AuthorityCharges: "944",
-    GovernmentFee: "9743",
     countryType: "Schengen",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -844,8 +721,6 @@ const DESTINATIONS = [
     id: 61,
     countrName: "Nepal",
     VisaManagerFee: "0",
-    AuthorityCharges: "0",
-    GovernmentFee: "0",
     countryType: "Visa-Free",
     bullets: [
       "Quick and Easy Process",
@@ -859,8 +734,6 @@ const DESTINATIONS = [
     id: 62,
     countrName: 'Azerbaijan',
     VisaManagerFee: "3540",
-    AuthorityCharges: "1200",
-    GovernmentFee: "5800",
     countryType: "evisa",
     subtitle: "Get Visa in 1-3 Business Days",
     bullets: [
@@ -872,9 +745,7 @@ const DESTINATIONS = [
   {
     id: 63,
     countrName: 'Egypt',
-    VisaManagerFee: "1770",
-    AuthorityCharges: "750",
-    GovernmentFee: "550",
+    VisaManagerFee: "3157.27",
     currency: "",
     countryType: "evisa",
     subtitle: "Get Visa in 6-7 Business Days",
@@ -887,9 +758,7 @@ const DESTINATIONS = [
   {
     id: 64,
     countrName: 'Kenya',
-    VisaManagerFee: "1770",
-    AuthorityCharges: "750",
-    GovernmentFee: "550",
+    VisaManagerFee: "3884.75",
     countryType: "evisa",
     subtitle: "Get Visa in 2-3 Working Days",
     bullets: [
@@ -901,25 +770,20 @@ const DESTINATIONS = [
   {
     id: 65,
     countrName: 'Mauritius',
-    VisaManagerFee: "1",
-    AuthorityCharges: "0",
-    GovernmentFee: "0",
+    VisaManagerFee: "885",
     countryType: "DAC",
     subtitle: "Get Your TDA in 1 day",
     bullets: [
       "Mandatory for Indain Travellers",
       "15k+ ETAs Processed",
       "Online Process",
-      "All inclusive final price. No additional charges"
     ],
   },
 
   {
     id: 66,
     countrName: 'Morocco',
-    VisaManagerFee: "1770",
-    AuthorityCharges: "750",
-    GovernmentFee: "550",
+    VisaManagerFee: "8527.24",
     countryType: "evisa",
     subtitle: "Get visa in 4 -5 days",
     bullets: [
@@ -932,8 +796,6 @@ const DESTINATIONS = [
     id: 67,
     countrName: 'New Zealand',
     VisaManagerFee: "1770",
-    AuthorityCharges: "750",
-    GovernmentFee: "550",
     countryType: "evisa",
     bullets: [
       "Quick and Easy Process",
@@ -946,8 +808,6 @@ const DESTINATIONS = [
     id: 68,
     countrName: 'Oman',
     VisaManagerFee: "1770",
-    AuthorityCharges: "750",
-    GovernmentFee: "550",
     countryType: "evisa",
     bullets: [
       "Quick and Easy Process",
@@ -960,8 +820,6 @@ const DESTINATIONS = [
     id: 69,
     countrName: 'Turkey',
     VisaManagerFee: "1770",
-    AuthorityCharges: "750",
-    GovernmentFee: "550",
     countryType: "evisa",
     bullets: [
       "Quick and Easy Process",
@@ -974,8 +832,6 @@ const DESTINATIONS = [
     id: 70,
     countrName: 'Ukraine',
     VisaManagerFee: "1770",
-    AuthorityCharges: "750",
-    GovernmentFee: "550",
     countryType: "evisa",
     bullets: [
       "Quick and Easy Process",
@@ -987,9 +843,7 @@ const DESTINATIONS = [
   {
     id: 71,
     countrName: 'Georgia',
-    VisaManagerFee: "1180",
-    AuthorityCharges: "o",
-    GovernmentFee: "3366",
+    VisaManagerFee: "4248.36",
     countryType: "evisa",
     subtitle: "Get Visa in 4-5 Business Days",
     bullets: [
@@ -1002,8 +856,6 @@ const DESTINATIONS = [
     id: 72,
     countrName: 'China',
     VisaManagerFee: "3540",
-    AuthorityCharges: "1951",
-    GovernmentFee: "2900",
     countryType: "Stamp Visa",
     bullets: [
       "Quick and Easy Process",
@@ -1016,8 +868,6 @@ const DESTINATIONS = [
     id: 73,
     countrName: 'Canada',
     VisaManagerFee: "3540",
-    AuthorityCharges: "900",
-    GovernmentFee: "11700",
     countryType: "Stamp Visa",
     bullets: [
       "Quick and Easy Process",
@@ -1030,8 +880,6 @@ const DESTINATIONS = [
     id: 74,
     countrName: 'Ireland',
     VisaManagerFee: "3540",
-    AuthorityCharges: "3700",
-    GovernmentFee: "9318",
     countryType: "Stamp Visa",
     bullets: [
       "Quick and Easy Process",
@@ -1044,8 +892,6 @@ const DESTINATIONS = [
     id: 75,
     countrName: 'Jamaica',
     VisaManagerFee: "1",
-    AuthorityCharges: "0",
-    GovernmentFee: "0",
     countryType: "Visa Free",
 
     bullets: [
@@ -1059,8 +905,6 @@ const DESTINATIONS = [
     id: 76,
     countrName: 'Micronesia',
     VisaManagerFee: "1",
-    AuthorityCharges: "0",
-    GovernmentFee: "0",
     countryType: "Visa Free",
 
     bullets: [
@@ -1074,8 +918,6 @@ const DESTINATIONS = [
     id: 77,
     countrName: 'Fiji',
     VisaManagerFee: "1",
-    AuthorityCharges: "0",
-    GovernmentFee: "0",
     countryType: "Visa Free",
 
     bullets: [
@@ -1090,8 +932,6 @@ const DESTINATIONS = [
     id: 78,
     countrName: 'North Korea',
     VisaManagerFee: "1",
-    AuthorityCharges: "0",
-    GovernmentFee: "0",
     countryType: "Visa Free",
     subtitle: "No Visa Required for Indian Travellers",
     bullets: [
@@ -1106,8 +946,6 @@ const DESTINATIONS = [
     id: 79,
     countrName: 'British Virgin Islands',
     VisaManagerFee: "1",
-    AuthorityCharges: "0",
-    GovernmentFee: "0",
     countryType: "Visa Free",
 
     bullets: [
@@ -1122,8 +960,6 @@ const DESTINATIONS = [
     id: 80,
     countrName: 'Barbados',
     VisaManagerFee: "1",
-    AuthorityCharges: "0",
-    GovernmentFee: "0",
     countryType: "Visa Free",
 
     bullets: [
@@ -1137,8 +973,6 @@ const DESTINATIONS = [
     id: 81,
     countrName: 'Cook Islands',
     VisaManagerFee: "1",
-    AuthorityCharges: "0",
-    GovernmentFee: "0",
     countryType: "Visa Free",
 
     bullets: [
@@ -1152,8 +986,6 @@ const DESTINATIONS = [
     id: 82,
     countrName: 'El Salvador',
     VisaManagerFee: "1",
-    AuthorityCharges: "0",
-    GovernmentFee: "0",
     countryType: "Visa Free",
 
     bullets: [
@@ -1167,8 +999,6 @@ const DESTINATIONS = [
     id: 83,
     countrName: 'Montserrat',
     VisaManagerFee: "1",
-    AuthorityCharges: "0",
-    GovernmentFee: "0",
     countryType: "Visa Free",
 
     bullets: [
@@ -1182,8 +1012,6 @@ const DESTINATIONS = [
     id: 84,
     countrName: 'Trinidad & Tobago',
     VisaManagerFee: "1",
-    AuthorityCharges: "0",
-    GovernmentFee: "0",
     countryType: "Visa Free",
 
     bullets: [
@@ -1197,8 +1025,6 @@ const DESTINATIONS = [
     id: 85,
     countrName: 'Dominica',
     VisaManagerFee: "1",
-    AuthorityCharges: "0",
-    GovernmentFee: "0",
     countryType: "Visa Free",
 
     bullets: [
@@ -1212,8 +1038,6 @@ const DESTINATIONS = [
     id: 86,
     countrName: 'Senegal',
     VisaManagerFee: "1",
-    AuthorityCharges: "0",
-    GovernmentFee: "0",
     countryType: "Visa Free",
 
     bullets: [
@@ -1227,8 +1051,6 @@ const DESTINATIONS = [
     id: 87,
     countrName: 'Réunion',
     VisaManagerFee: "1",
-    AuthorityCharges: "0",
-    GovernmentFee: "0",
     countryType: "Visa Free",
 
     bullets: [
@@ -1243,8 +1065,6 @@ const DESTINATIONS = [
     id: 88,
     countrName: 'St. Kitts & Nevis',
     VisaManagerFee: "1",
-    AuthorityCharges: "0",
-    GovernmentFee: "0",
     countryType: "Visa Free",
 
     bullets: [
@@ -1258,8 +1078,6 @@ const DESTINATIONS = [
     id: 89,
     countrName: 'St. Vincent & Grenadines',
     VisaManagerFee: "1",
-    AuthorityCharges: "0",
-    GovernmentFee: "0",
     countryType: "Visa Free",
 
     bullets: [
@@ -1273,8 +1091,6 @@ const DESTINATIONS = [
     id: 90,
     countrName: 'Niue',
     VisaManagerFee: "1",
-    AuthorityCharges: "0",
-    GovernmentFee: "0",
     countryType: "Visa Free",
 
     bullets: [
@@ -1289,8 +1105,6 @@ const DESTINATIONS = [
     id: 91,
     countrName: 'Haiti',
     VisaManagerFee: "1",
-    AuthorityCharges: "0",
-    GovernmentFee: "0",
     countryType: "Visa Free",
 
     bullets: [
@@ -1305,8 +1119,6 @@ const DESTINATIONS = [
     id: 92,
     countrName: 'Gambia',
     VisaManagerFee: "1",
-    AuthorityCharges: "0",
-    GovernmentFee: "0",
     countryType: "Visa Free",
 
     bullets: [
@@ -1319,9 +1131,7 @@ const DESTINATIONS = [
   {
     id: 93,
     countrName: 'Cuba',
-    VisaManagerFee: "1180",
-    AuthorityCharges: "0",
-    GovernmentFee: "4700",
+    VisaManagerFee: "6150",
     countryType: "evisa",
     subtitle: "Get Visa in 5-6 Working Days",
     bullets: [
@@ -1333,9 +1143,7 @@ const DESTINATIONS = [
   {
     id: 94,
     countrName: 'Bhutan',
-    VisaManagerFee: "590",
-    AuthorityCharges: "0",
-    GovernmentFee: "1200",
+    VisaManagerFee: "2085",
     countryType: "evisa",
     subtitle: "Get entry permit 3-6 Working Days",
     bullets: [
@@ -1347,10 +1155,8 @@ const DESTINATIONS = [
   {
     id: 95,
     countrName: 'Kazakhstan',
-    VisaManagerFee: "590",
-    AuthorityCharges: "0",
-    GovernmentFee: "5642",
-    countryType: "evisa",
+    VisaManagerFee: "6517.23",
+    countryType: "evisa",  
     subtitle: "Get visa in 4-5 working days",
     bullets: [
       "1200+ visas successfully Processed",
@@ -1359,11 +1165,9 @@ const DESTINATIONS = [
   },
 
 {
-    id: 95,
+    id: 96,
     countrName: 'Israel',
-    VisaManagerFee: "1003",
-    AuthorityCharges: "0",
-    GovernmentFee: "3200",
+    VisaManagerFee: "3985",
     countryType: "evisa",
     subtitle: "Get visa in 8-10 days",
     bullets: [
@@ -1375,3 +1179,6 @@ const DESTINATIONS = [
 
 ];
 export default DESTINATIONS;
+
+
+

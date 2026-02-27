@@ -506,8 +506,7 @@ export default function SingaporeApplyScreen({ navigation }) {
                 ? "Main Traveller"
                 : `Co-Passenger ${i}`;
               const passportFrontPage = await extractPassportFrontPageFromAsset(
-                traveller.documents.passportFront,
-                traveller.form?.phone
+                traveller.documents.passportFront
               );
 
               const [bankUri, passportFrontUri, passportBackUri, photoUri] =

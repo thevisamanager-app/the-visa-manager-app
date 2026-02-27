@@ -73,8 +73,12 @@ export default function VisaDetailsScreen({ navigation }) {
   const selected = useSelector((state) => state.destinations.selected);
   const countryName = selected?.countrName || "Country";
   const normalizedCountryName = countryName?.trim();
+  const isSchengen =
+    selected?.countryType?.toString().trim().toLowerCase() === "schengen";
   const applyRoute =
-    COUNTRY_APPLY_ROUTES?.[countryName] ||
+    (isSchengen
+      ? "SchengenFlowScreen"
+      : COUNTRY_APPLY_ROUTES?.[countryName]) ||
     COUNTRY_APPLY_ROUTES?.DEFAULT ||
     "TravelDateScreen";
   const [faqSearch, setFaqSearch] = useState("");
@@ -99,14 +103,17 @@ export default function VisaDetailsScreen({ navigation }) {
   const [travellers, setTravellers] = useState(1);
 
   const visaManagerFee = toNumber(destinationPrice?.VisaManagerFee);
-  const authorityCharges = toNumber(destinationPrice?.AuthorityCharges);
-  const governmentFee = toNumber(destinationPrice?.GovernmentFee);
+  const governmentFee = toNumber(
+    destinationPrice?.AllInclusive ?? destinationPrice?.GovernmentFee
+  );
+  const authorityCharges =
+    destinationPrice?.AllInclusive != null
+      ? 0
+      : toNumber(destinationPrice?.AuthorityCharges);
 
   const governmentTotal = governmentFee * travellers;
   const tvmTotal = visaManagerFee * travellers;
   const authorityTotal = authorityCharges * travellers;
-  const payNow = governmentTotal;
-  const payLater = tvmTotal + authorityTotal;
   const totalAmount = governmentTotal + tvmTotal + authorityTotal;
   const isoCode = (COUNTRY_ISO_MAP[countryName] || "un").toLowerCase();
   const [activeStep, setActiveStep] = useState(0);
@@ -631,62 +638,12 @@ export default function VisaDetailsScreen({ navigation }) {
                 </View>
               </View>
 
-              {/* PAY NOW */}
-              <View style={styles.payNowSection}>
-                <Text style={styles.amountBig}>₹{payNow}</Text>
-                <Text style={styles.payNowLabel}>TO BE PAID NOW</Text>
-              </View>
-
-              <View style={styles.divider} />
-
-              {/* PAY NOW ROW */}
-              <View style={styles.priceRow}>
-                <View style={styles.rowLeft}>
-                  <Icon name="card-outline" size={18} color="#374151" />
-                  <View>
-                    <Text style={styles.rowTitle}>Government Fee</Text>
-                    <Text style={styles.rowSub}>
-                      Government Fee x {travellers}
-                    </Text>
-                  </View>
-                </View>
-                <Text style={styles.rowAmount}>₹{governmentTotal}</Text>
-              </View>
-
-              {/* TVM FEE ROW */}
-              <View style={styles.priceRow}>
-                <View style={styles.rowLeft}>
-                  <Icon name="time-outline" size={18} color="#374151" />
-                  <View>
-                    <Text style={styles.rowTitle}>TVM Fee</Text>
-                    <Text style={styles.rowSub}>
-                      TVM Fee x {travellers}
-                    </Text>
-                  </View>
-                </View>
-                <Text style={styles.rowAmount}>₹{tvmTotal}</Text>
-              </View>
-
-              {/* AUTHORITY FEE ROW */}
-              <View style={styles.priceRow}>
-                <View style={styles.rowLeft}>
-                  <Icon name="shield-checkmark-outline" size={18} color="#374151" />
-                  <View>
-                    <Text style={styles.rowTitle}>Authority Charges</Text>
-                    <Text style={styles.rowSub}>
-                      Authority Charges x {travellers}
-                    </Text>
-                  </View>
-                </View>
-                <Text style={styles.rowAmount}>₹{authorityTotal}</Text>
-              </View>
-
               <View style={styles.divider} />
 
               {/* TOTAL */}
               <View style={styles.totalRow}>
                 <Text style={styles.totalLabel}>Total Amount</Text>
-                <Text style={styles.totalAmount}>₹{totalAmount}</Text>
+                <Text style={styles.totalAmount}>{totalAmount}</Text>
               </View>
 
               <View style={styles.noticeBar}>

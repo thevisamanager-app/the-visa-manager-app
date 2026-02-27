@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Calendar } from "react-native-calendars";
+import { Picker } from "@react-native-picker/picker";
 import { launchImageLibrary } from "react-native-image-picker";
 import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
@@ -47,6 +48,7 @@ export default function AzerbaijanApplyScreen({ navigation }) {
   const [showCalendarFor, setShowCalendarFor] = useState(null);
   const [showCoTravellerModal, setShowCoTravellerModal] = useState(false);
   const [tempTraveller, setTempTraveller] = useState(createTraveller());
+  const [azerbaijanEntryType, setAzerbaijanEntryType] = useState("");
 
   const formatDate = (date) => {
     const [y, m, d] = date.split("-");
@@ -118,14 +120,14 @@ export default function AzerbaijanApplyScreen({ navigation }) {
       const formattedTravellers = await Promise.all(
         travellers.map(async (t) => {
           const passportFrontPage = await extractPassportFrontPageFromAsset(
-            t.documents.passportFront,
-            t.form.phone
+            t.documents.passportFront
           );
           return {
             isPrimary: t.isPrimary,
             travelDate: t.form.travelDate,
             phone: t.form.phone,
             email: t.form.email,
+            entryType: azerbaijanEntryType || "single",
             hotelName: t.form.hotelName,
             passportFrontPage,
             documents: {
@@ -144,6 +146,7 @@ export default function AzerbaijanApplyScreen({ navigation }) {
         .set({
           userId: user.uid,
           country: "Azerbaijan",
+          entryType: azerbaijanEntryType || "single",
           travellers: formattedTravellers,
           totalTravellers: formattedTravellers.length,
           status: "submitted",
@@ -153,6 +156,7 @@ export default function AzerbaijanApplyScreen({ navigation }) {
       navigation.navigate("CheckoutScreen", {
         country: "Azerbaijan",
         applicationId,
+        entryType: azerbaijanEntryType || "single",
       });
 
     } catch (error) {
@@ -189,6 +193,22 @@ export default function AzerbaijanApplyScreen({ navigation }) {
         value={traveller.form.email}
         onChangeText={(v) => onChange("email", v)}
       />
+      {target === "main" ? (
+        <>
+          
+          <View style={styles.pickerWrap}>
+            <Picker
+              selectedValue={azerbaijanEntryType}
+              onValueChange={(v) => setAzerbaijanEntryType(v)}
+              style={styles.picker}
+            >
+              <Picker.Item label="Select Entry Type" value="" />
+              <Picker.Item label="Single Entry" value="single" />
+              <Picker.Item label="Multiple Entry" value="multiple" />
+            </Picker>
+          </View>
+        </>
+      ) : null}
 
       <TextInput
         placeholder="Hotel Name"
@@ -423,6 +443,17 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     marginBottom: 16,
     textAlign: "center",
+  },
+  pickerWrap: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 10,
+    marginBottom: 12,
+    overflow: "hidden",
+    backgroundColor: "#FFFFFF",
+  },
+  picker: {
+    color: "#111827",
   },
 
   modalOverlay: {

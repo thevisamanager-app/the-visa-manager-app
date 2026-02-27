@@ -12,26 +12,29 @@ import {
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Calendar } from "react-native-calendars";
+import { Picker } from "@react-native-picker/picker";
 import { launchImageLibrary } from "react-native-image-picker";
-import { validatePickedDocument } from "../../utils/documentValidation";
 import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import ScreenWrapper from "../../components/ScreenWrapper";
-import {
-    CountryApplyBanner,
-    CoPassengerCard,
-    ApplyCountryHeader,
-} from "../../components/ApplyFlowCards";
-import { extractTextFromImage } from "../../api/ocr/visionApi";
-import { parseMRZ } from "../../api/ocr/mrzParser";
+import { CountryApplyBanner, CoPassengerCard } from "../../components/ApplyFlowCards";
+import { extractPassportFrontPageFromAsset } from "../../utils/passportFrontPage";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
 import PassportBackSample from "../../assets/examples/passport-back.png";
-import PassportPhotoSample from "../../assets/examples/passportimage.png";
+import PassportPhotoSample from "../../assets/examples/passport-photo.png";
 import TicketSample from "../../assets/examples/ticket.png";
 
 const ORANGE = "#FF5C00";
+const OCR_PASSPORT_FRONT_KEYS = [
+    "gender",
+    "issuingCountry",
+    "lastName",
+    "firstName",
+    "nationality",
+    "passportNumber",
+];
 
 /* ---------- reusable traveller factory ---------- */
 const createTraveller = () => ({
@@ -59,6 +62,7 @@ export default function VietnamApplyScreen({ navigation }) {
     const [showCalendarFor, setShowCalendarFor] = useState(null);
     const [showCoTravellerModal, setShowCoTravellerModal] = useState(false);
     const [tempTraveller, setTempTraveller] = useState(createTraveller());
+    const [visaEntryType, setVisaEntryType] = useState("");
 
     const formatDate = (date) => {
         const [y, m, d] = date.split("-");
@@ -92,6 +96,13 @@ export default function VietnamApplyScreen({ navigation }) {
         await ref.putFile(uri);
         return await ref.getDownloadURL();
     };
+    const sanitizePassportFrontPage = (passportFrontPage) => {
+        if (!passportFrontPage || typeof passportFrontPage !== "object") return null;
+        return OCR_PASSPORT_FRONT_KEYS.reduce((acc, key) => {
+            if (passportFrontPage[key]) acc[key] = passportFrontPage[key];
+            return acc;
+        }, {});
+    };
 
     const pickDocument = async (target, key) => {
         const isFrontPage = key === "passportFront";
@@ -102,23 +113,6 @@ export default function VietnamApplyScreen({ navigation }) {
         });
         if (!res.assets?.[0]) return;
         const selectedAsset = res.assets[0];
-        let frontPageData = null;
-
-        if (isFrontPage && selectedAsset.base64) {
-            try {
-                const rawText = await extractTextFromImage(selectedAsset.base64);
-                const parsed = parseMRZ(rawText);
-                frontPageData = {
-                    parsed: {
-                        ...parsed,
-                        birthDate: toDDMMYY(parsed.birthDate),
-                        expiryDate: toDDMMYY(parsed.expiryDate),
-                    },
-                };
-            } catch (error) {
-                console.log("Vietnam front page OCR failed:", error);
-            }
-        }
 
         if (target === "main") {
             const updated = [...travellers];
@@ -177,10 +171,10 @@ export default function VietnamApplyScreen({ navigation }) {
             const formattedTravellers = await Promise.all(
                 travellers.map(async (t, index) => {
                     const basePath = `applications/${user.uid}/${applicationId}/traveller_${index + 1}`;
-                    const passportFrontPage = await extractPassportFrontPageFromAsset(
-                        t.documents.passportFront,
-                        t.form.phone
+                    const passportFrontPageRaw = await extractPassportFrontPageFromAsset(
+                        t.documents.passportFront
                     );
+                    const passportFrontPage = sanitizePassportFrontPage(passportFrontPageRaw);
 
                     const passportFrontUrl = await uploadFile(
                         t.documents.passportFront,
@@ -202,7 +196,6 @@ export default function VietnamApplyScreen({ navigation }) {
                     return {
                         isPrimary: t.isPrimary,
                         travelDate: t.form.travelDate,
-                        passportNumber: t?.frontPageData?.parsed?.passportNumber || "",
                         phone: t.form.phone,
                         email: t.form.email,
                         hotelDetails: t.form.hotelDetails,
@@ -225,8 +218,7 @@ export default function VietnamApplyScreen({ navigation }) {
                 .set({
                     userId: user.uid,
                     country: "Vietnam",
-                    travelDate: formattedTravellers[0]?.travelDate || "",
-                    passportNumber: formattedTravellers[0]?.passportNumber || "",
+                    visaEntryType: visaEntryType || "single",
                     travellers: formattedTravellers,
                     totalTravellers: formattedTravellers.length,
                     status: "submitted",
@@ -236,6 +228,8 @@ export default function VietnamApplyScreen({ navigation }) {
             navigation.navigate("CheckoutScreen", {
                 country: "Vietnam",
                 travellers,
+                applicationId,
+                visaEntryType: visaEntryType || "single",
             });
         } catch (error) {
             console.log("Submit Error:", error);
@@ -278,6 +272,22 @@ export default function VietnamApplyScreen({ navigation }) {
                 onChangeText={(v) => onChange("email", v)}
                 placeholderTextColor="#000000"
             />
+            {target === "main" ? (
+                <>
+                    
+                    <View style={styles.pickerWrap}>
+                        <Picker
+                            selectedValue={visaEntryType}
+                            onValueChange={(v) => setVisaEntryType(v)}
+                            style={styles.picker}
+                        >
+                            <Picker.Item label="Select Entry Type" value="" />
+                            <Picker.Item label="Single Entry" value="single" />
+                            <Picker.Item label="Multiple Entry" value="multiple" />
+                        </Picker>
+                    </View>
+                </>
+            ) : null}
 
             <TextInput
                 placeholder="Hotel Name & Address"
@@ -331,8 +341,23 @@ export default function VietnamApplyScreen({ navigation }) {
         <ScreenWrapper>
             <ScrollView contentContainerStyle={styles.container}>
                 {/* HEADER */}
-                <ApplyCountryHeader navigation={navigation} countryName="Vietnam" />
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                        <Ionicons name="chevron-back" size={26} />
+                    </TouchableOpacity>
 
+                    <View />
+
+                    <TouchableOpacity
+                        onPress={() =>
+                            navigation.navigate("Tabs", { screen: "Destination" })
+                        }
+                    >
+                        <Ionicons name="home-outline" size={24} color={ORANGE} />
+                    </TouchableOpacity>
+                </View>
+
+                <CountryApplyBanner countryName="Vietnam" />
         <View style={styles.formCard}>
                 {renderForm(
                     travellers[0],
@@ -387,17 +412,10 @@ export default function VietnamApplyScreen({ navigation }) {
                                 "co"
                             )}
                         </ScrollView>
-            <View style={styles.modalActions}>
-              <TouchableOpacity
-                style={styles.closeBtn}
-                onPress={() => setShowCoTravellerModal(false)}
-              >
-                <Text style={styles.closeBtnText}>Close</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.saveBtn} onPress={saveCoTraveller}>
-                <Text style={styles.saveBtnText}>Save</Text>
-              </TouchableOpacity>
-            </View>
+
+                        <TouchableOpacity style={styles.submitBtn} onPress={saveCoTraveller}>
+                            <Text style={styles.submitText}>Save Co-Traveller</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
@@ -449,54 +467,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginBottom: 20,
     },
-    headerIconBtn: {
-        width: 30,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    headerCenterCard: {
-        flex: 1,
-        marginHorizontal: 10,
-        borderWidth: 1,
-        borderColor: "#F2DCC6",
-        borderRadius: 18,
-        backgroundColor: "#F5EFE8",
-        minHeight: 62,
-        flexDirection: "row",
-        alignItems: "center",
-        paddingHorizontal: 10,
-        paddingVertical: 8,
-    },
-    headerFlagBubble: {
-        width: 34,
-        height: 34,
-        borderRadius: 17,
-        backgroundColor: ORANGE,
-        alignItems: "center",
-        justifyContent: "center",
-        marginRight: 8,
-    },
-    headerFlagText: {
-        fontSize: 18,
-    },
-    headerTextWrap: {
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    headerCountryName: {
-        fontSize: 16,
-        fontWeight: "700",
-        color: "#111827",
-        textAlign: "center",
-    },
-    headerSubText: {
-        marginTop: 2,
-        fontSize: 13,
-        fontWeight: "600",
-        color: "#374151",
-        textAlign: "center",
-    },
 
     headerTitle: { fontSize: 17, fontWeight: "700" },
 
@@ -504,9 +474,21 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "700",
         marginBottom: 16,
-        textAlign: "center",      // ðŸ‘ˆ center it
+        textAlign: "center",
     },
 
+    
+    pickerWrap: {
+        borderWidth: 1,
+        borderColor: "#ddd",
+        borderRadius: 10,
+        marginBottom: 12,
+        overflow: "hidden",
+        backgroundColor: "#FFFFFF",
+    },
+    picker: {
+        color: "#111827",
+    },
     input: {
         borderWidth: 1,
         borderColor: "#ddd",
@@ -542,7 +524,7 @@ const styles = StyleSheet.create({
     docLabel: {
         fontWeight: "600",
         fontSize: 14,
-        textAlign: "center",   // ðŸ‘ˆ center text
+        textAlign: "center",   // 👈 center text
         marginBottom: 8,
     },
 
@@ -633,38 +615,5 @@ const styles = StyleSheet.create({
         margin: 20,
         borderRadius: 16,
         padding: 12,
-    },
-  modalActions: {
-    marginTop: 8,
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 10,
-  },
-  closeBtn: {
-    borderWidth: 1,
-    borderColor: ORANGE,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    minWidth: 90,
-    alignItems: "center",
-  },
-  closeBtnText: {
-    color: ORANGE,
-    fontWeight: "700",
-  },
-  saveBtn: {
-    backgroundColor: ORANGE,
-    borderRadius: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    minWidth: 90,
-    alignItems: "center",
-  },
-  saveBtnText: {
-    color: "#fff",
-    fontWeight: "700",
-  },
+    },
 });
-

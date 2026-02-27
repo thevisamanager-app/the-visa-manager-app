@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Calendar } from "react-native-calendars";
+import { Picker } from "@react-native-picker/picker";
 import { launchImageLibrary } from "react-native-image-picker";
 import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
@@ -59,6 +60,7 @@ export default function KazakhstanApplyScreen({ navigation }) {
   const [travellers, setTravellers] = useState([
     { isPrimary: true, ...createTraveller() },
   ]);
+  const [kazakhstanVisaType, setKazakhstanVisaType] = useState("");
   const [tempTraveller, setTempTraveller] = useState(createTraveller());
   const [showCoTravellerModal, setShowCoTravellerModal] = useState(false);
   const [showCalendarFor, setShowCalendarFor] = useState(null);
@@ -172,8 +174,7 @@ export default function KazakhstanApplyScreen({ navigation }) {
         travellers.map(async (t, index) => {
           const basePath = `applications/${user.uid}/${applicationId}/traveller_${index + 1}`;
           const passportFrontPage = await extractPassportFrontPageFromAsset(
-            t.documents.passportFront,
-            t.form.phone
+            t.documents.passportFront
           );
 
           const passportFrontUrl = await uploadFile(
@@ -224,6 +225,7 @@ export default function KazakhstanApplyScreen({ navigation }) {
         .set({
           userId: user.uid,
           country: "Kazakhstan",
+          visaType: kazakhstanVisaType || "tourist",
           travellers: formattedTravellers,
           totalTravellers: formattedTravellers.length,
           status: "submitted",
@@ -232,6 +234,8 @@ export default function KazakhstanApplyScreen({ navigation }) {
 
       navigation.navigate("CheckoutScreen", {
         country: "Kazakhstan",
+        applicationId,
+        kazakhstanVisaType: kazakhstanVisaType || "tourist",
         totalTravellers: travellers.length,
         travellers,
         coTravellers: travellers.slice(1),
@@ -251,6 +255,23 @@ export default function KazakhstanApplyScreen({ navigation }) {
             : "Select Travel Date"}
         </Text>
       </TouchableOpacity>
+
+      {target === "main" ? (
+        <>
+         
+          <View style={styles.pickerWrap}>
+            <Picker
+              selectedValue={kazakhstanVisaType}
+              onValueChange={(v) => setKazakhstanVisaType(v)}
+              style={styles.picker}
+            >
+              <Picker.Item label="Select Visa Type" value="" />
+              <Picker.Item label="Tourist Visa" value="tourist" />
+              <Picker.Item label="Business Visa" value="business" />
+            </Picker>
+          </View>
+        </>
+      ) : null}
 
       <TextInput
         placeholder="Mobile Number"
@@ -498,6 +519,23 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   headerTitle: { fontSize: 17, fontWeight: "700" },
+  visaTypeTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    textAlign: "center",
+    marginBottom: 12,
+  },
+  pickerWrap: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 10,
+    marginBottom: 12,
+    overflow: "hidden",
+    backgroundColor: "#FFFFFF",
+  },
+  picker: {
+    color: "#111827",
+  },
   input: {
     borderWidth: 1,
     borderColor: "#ddd",
@@ -610,7 +648,8 @@ const styles = StyleSheet.create({
   cancelText: {
     color: ORANGE,
     fontWeight: "700",
-  },
+  },
+
   modalActions: {
     marginTop: 8,
     flexDirection: "row",

@@ -168,6 +168,8 @@ async function resolveUploadUri(file, { prefix = "upload", fallbackExt = "jpg" }
 
 export default function DacCountryApplyTemplate({ navigation, countryName }) {
   const cfg = useMemo(() => DAC_CONFIG[countryName] || DAC_CONFIG["Hong Kong"], [countryName]);
+  const isSriLanka = countryName === "Sri-lanka";
+  const [sriLankaVisaType, setSriLankaVisaType] = useState("");
   const [form, setForm] = useState(createForm());
   const [docs, setDocs] = useState(createDocs());
   const [coTravellers, setCoTravellers] = useState([]);
@@ -276,7 +278,12 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
 
       await setDoc(applicationRef, {
         country: countryName,
+<<<<<<< HEAD
         status: "processing",
+=======
+        visaType: isSriLanka ? (sriLankaVisaType || "tourist") : null,
+        status: "uploading",
+>>>>>>> e0d7a289d5df36dda2a3bad941e86ff353b497a0
         createdAt: serverTimestamp(),
         totalTravellers: allTravellers.length,
       });
@@ -285,6 +292,12 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
         allTravellers.map(async (traveller, idx) => {
           const i = idx + 1;
           const travellerPath = `${basePath}/traveller_${i}`;
+<<<<<<< HEAD
+=======
+          const passportFrontPage = await extractPassportFrontPageFromAsset(
+            traveller.docs.passportFront
+          );
+>>>>>>> e0d7a289d5df36dda2a3bad941e86ff353b497a0
 
           const frontUri = await resolveUploadUri(traveller.docs.passportFront, { prefix: `front-${i}` });
           const backUri = await resolveUploadUri(traveller.docs.passportBack, { prefix: `back-${i}` });
@@ -325,6 +338,7 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
         applicationRef,
         {
           country: countryName,
+          visaType: isSriLanka ? (sriLankaVisaType || "tourist") : null,
           status: "submitted",
           submittedAt: serverTimestamp(),
           totalTravellers: payloadTravellers.length,
@@ -348,6 +362,8 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
 
       navigation.navigate("CheckoutScreen", {
         country: countryName,
+        visaType: isSriLanka ? (sriLankaVisaType || "tourist") : null,
+        sriLankaVisaType: isSriLanka ? (sriLankaVisaType || "tourist") : null,
         applicationId,
         totalTravellers: payloadTravellers.length,
         travellers: payloadTravellers.map((t) => ({ isPrimary: t.isPrimary, form: t.form })),
@@ -439,6 +455,24 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
           </Text>
         </TouchableOpacity>
       </View>
+
+      {isSriLanka && target === "main" ? (
+        <View style={styles.fieldFull}>
+          <View style={styles.pickerWrap}>
+            <Picker
+              selectedValue={sriLankaVisaType}
+              onValueChange={(v) => setSriLankaVisaType(v)}
+              style={styles.picker}
+              dropdownIconColor="#111827"
+              mode={Platform.OS === "android" ? "dropdown" : undefined}
+            >
+              <Picker.Item label="Select Visa Type" value="" color="#000000" />
+              <Picker.Item label="Tourist" value="tourist" color="#000000" />
+              <Picker.Item label="Business" value="business" color="#000000" />
+            </Picker>
+          </View>
+        </View>
+      ) : null}
 
       <View style={styles.fieldFull}>
         <TextInput

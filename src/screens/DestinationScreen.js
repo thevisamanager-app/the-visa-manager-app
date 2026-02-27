@@ -479,7 +479,9 @@ export default function DestinationScreen() {
       {/* Country List */}
       <FlatList
         data={filteredData}
-        keyExtractor={(item) => String(item.id)}
+        keyExtractor={(item, index) =>
+          `${String(item?.id ?? "na")}-${String(item?.countrName ?? "country")}-${index}`
+        }
         renderItem={({ item }) => (
           <CountryCards
             item={item}

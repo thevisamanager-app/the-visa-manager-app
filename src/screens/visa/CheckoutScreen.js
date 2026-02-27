@@ -52,6 +52,10 @@ export default function CheckoutScreen({ navigation, route }) {
   const routeTravellers = route?.params?.travellers;
   const coTravellers = route?.params?.coTravellers ?? [];
   const applicationId = route?.params?.applicationId;
+  const routeCountry = String(route?.params?.country || selected?.countrName || "").toLowerCase();
+  const isBhutan = routeCountry === "bhutan";
+  const bhutanStayDays = Math.max(1, Number(route?.params?.stayDays || 1));
+  const bhutanPerDayFee = Number(route?.params?.bhutanPerDayFee || 2085);
 
   const routeTravellersCount = Array.isArray(routeTravellers)
     ? routeTravellers.length
@@ -150,7 +154,11 @@ export default function CheckoutScreen({ navigation, route }) {
 
   const minorFeePerPerson = adultFeePerPerson * 0.5;
   const minorTotal = minorFeePerPerson * minors;
-  const totalAmount = Number((visaTotal + tvmTotal + authorityTotal).toFixed(2));
+  const baseTotalAmount = Number((visaTotal + tvmTotal + authorityTotal).toFixed(2));
+  const effectiveUnits = adults + minors * 0.5;
+  const totalAmount = isBhutan
+    ? Number((bhutanStayDays * bhutanPerDayFee * effectiveUnits).toFixed(2))
+    : baseTotalAmount;
 
 
   const handlePay = async () => {
@@ -180,6 +188,9 @@ export default function CheckoutScreen({ navigation, route }) {
             adults,
             minors,
             fees: {
+              bhutanStayDays: isBhutan ? bhutanStayDays : null,
+              bhutanPerDayFee: isBhutan ? bhutanPerDayFee : null,
+              bhutanBaseAmount: isBhutan ? bhutanStayDays * bhutanPerDayFee : null,
               visaFeePerAdult: visaFee,
               visaManagerFeePerAdult: tvmFee,
               authorityFeePerAdult: authorityFee,
@@ -271,18 +282,20 @@ export default function CheckoutScreen({ navigation, route }) {
               Visa Fee x {totalTravelers}
             </Text>
 
-            <Text style={styles.price}>  ₹{visaTotal.toLocaleString("en-IN")}</Text>
-          </View>
+                <Text style={styles.price}>INR {visaTotal.toLocaleString("en-IN")}</Text>
+              </View>
 
-          <View style={styles.rowSpace}>
-            <Text style={styles.itemTitle}>TVM Fee <Text style={styles.gstText}>(including Gst)</Text> x {totalTravelers}</Text>
-            <Text style={styles.price}>  ₹{tvmTotal.toLocaleString("en-IN")}</Text>
-          </View>
+              <View style={styles.rowSpace}>
+                <Text style={styles.itemTitle}>TVM Fee <Text style={styles.gstText}>(including Gst)</Text> x {totalTravelers}</Text>
+                <Text style={styles.price}>INR {tvmTotal.toLocaleString("en-IN")}</Text>
+              </View>
 
-          <View style={styles.rowSpace}>
-            <Text style={styles.itemTitle}> Authority Fee <Text style={styles.gstText}>(including Gst)</Text> x {totalTravelers}</Text>
-            <Text style={styles.price}> ₹{authorityTotal.toLocaleString("en-IN")}</Text>
-          </View>
+              <View style={styles.rowSpace}>
+                <Text style={styles.itemTitle}> Authority Fee <Text style={styles.gstText}>(including Gst)</Text> x {totalTravelers}</Text>
+                <Text style={styles.price}>INR {authorityTotal.toLocaleString("en-IN")}</Text>
+              </View>
+            </>
+          )}
 
           <View style={styles.divider} />
 
@@ -322,7 +335,7 @@ export default function CheckoutScreen({ navigation, route }) {
                 <Text style={styles.itemTitle}>
                   Minor Fee x {minors}
                 </Text>
-                <Text style={styles.price}>₹{minorTotal.toLocaleString("en-IN")}</Text>
+                <Text style={styles.price}>INR {minorTotal.toLocaleString("en-IN")}</Text>
               </View>
             </View>
           )}
@@ -331,7 +344,7 @@ export default function CheckoutScreen({ navigation, route }) {
 
           <View style={styles.rowSpace}>
             <Text style={styles.totalLabel}>Total</Text>
-            <Text style={styles.totalAmount}>₹{totalAmount}</Text>
+            <Text style={styles.totalAmount}>INR {totalAmount}</Text>
           </View>
 
           <View style={styles.protectCard}>
@@ -528,5 +541,7 @@ const styles = StyleSheet.create({
     color: "#444",
   },
 });
+
+
 
 

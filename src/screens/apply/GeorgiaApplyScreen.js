@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -156,8 +156,7 @@ export default function GeorgiaApplyScreen({ navigation }) {
         travellers.map(async (t, index) => {
           const basePath = `applications/${user.uid}/${applicationId}/traveller_${index + 1}`;
           const passportFrontPage = await extractPassportFrontPageFromAsset(
-            t.documents.passportFront,
-            t.form.mobileNumber
+            t.documents.passportFront
           );
 
           const passportFrontUrl = await uploadFile(
@@ -541,7 +540,8 @@ const styles = StyleSheet.create({
     margin: 20,
     borderRadius: 16,
     padding: 12,
-  },
+  },
+
   modalActions: {
     marginTop: 8,
     flexDirection: "row",

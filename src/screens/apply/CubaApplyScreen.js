@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -168,8 +168,7 @@ export default function CubaApplyScreen({ navigation }) {
         travellers.map(async (t, index) => {
           const basePath = `applications/${user.uid}/${applicationId}/traveller_${index + 1}`;
           const passportFrontPage = await extractPassportFrontPageFromAsset(
-            t.documents.passportFront,
-            t.form.contactNumber
+            t.documents.passportFront
           );
 
           const passportFrontUrl = await uploadFile(
@@ -627,7 +626,8 @@ const styles = StyleSheet.create({
   cancelText: {
     color: ORANGE,
     fontWeight: "700",
-  },
+  },
+
   modalActions: {
     marginTop: 8,
     flexDirection: "row",

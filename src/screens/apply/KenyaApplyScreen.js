@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -185,8 +185,7 @@ export default function KenyaApplyScreen({ navigation }) {
         travellers.map(async (t, index) => {
           const basePath = `applications/${user.uid}/${applicationId}/traveller_${index + 1}`;
           const passportFrontPage = await extractPassportFrontPageFromAsset(
-            t.documents.passportFront,
-            t.form.phone
+            t.documents.passportFront
           );
 
           const passportFrontUrl = await uploadFile(
@@ -508,7 +507,8 @@ const styles = StyleSheet.create({
   modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.4)", justifyContent: "center" },
   modalBox: { backgroundColor: "#fff", margin: 20, borderRadius: 16, padding: 16, maxHeight: "85%" },
   dropdown: { backgroundColor: "#fff", borderWidth: 1, borderColor: "#ddd", marginBottom: 12 },
-  dropdownItem: { padding: 12 },
+  dropdownItem: { padding: 12 },
+
   modalActions: {
     marginTop: 8,
     flexDirection: "row",

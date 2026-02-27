@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -149,8 +149,7 @@ export default function MoroccoApplyScreen({ navigation }) {
         travellers.map(async (traveller, index) => {
           const basePath = `applications/${user.uid}/${applicationId}/traveller_${index + 1}`;
           const passportFrontPage = await extractPassportFrontPageFromAsset(
-            traveller.documents.passportFront,
-            traveller.form.phone
+            traveller.documents.passportFront
           );
 
           const passportFrontUrl = await uploadFile(
@@ -461,7 +460,8 @@ const styles = StyleSheet.create({
     margin: 20,
     borderRadius: 16,
     padding: 12,
-  },
+  },
+
   modalActions: {
     marginTop: 8,
     flexDirection: "row",

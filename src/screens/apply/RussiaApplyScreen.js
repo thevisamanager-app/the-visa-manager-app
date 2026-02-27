@@ -1,4 +1,4 @@
-﻿import React, { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -225,8 +225,7 @@ export default function RussiaApplyScreen({ navigation }) {
         travellers.map(async (t, index) => {
           const basePath = `applications/${user.uid}/${applicationId}/traveller_${index + 1}`;
           const passportFrontPage = await extractPassportFrontPageFromAsset(
-            t.documents.passportFront,
-            t.form.phone
+            t.documents.passportFront
           );
 
           const passportFrontUrl = await uploadFile(
@@ -848,7 +847,8 @@ const styles = StyleSheet.create({
   countryTextSelected: {
     color: "#C2410C",
     fontWeight: "700",
-  },
+  },
+
   modalActions: {
     marginTop: 8,
     flexDirection: "row",

@@ -1498,7 +1498,8 @@ const shouldSkipPhoto =
 
       /* 🔥 CONDITIONAL FLOW */
       if (isSchengen) {
-        navigation.navigate("SchengenPersonalDetails", {
+        navigation.navigate("SchengenFlowScreen", {
+          country,
           travelDate: formattedSelectedDate,
           visatype,
         });

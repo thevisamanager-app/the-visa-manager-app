@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Calendar } from "react-native-calendars";
+import { Picker } from "@react-native-picker/picker";
 import { launchImageLibrary } from "react-native-image-picker";
 import { validatePickedDocument } from "../../utils/documentValidation";
 import auth from "@react-native-firebase/auth";
@@ -43,6 +44,7 @@ const createTraveller = () => ({
 
 export default function EgyptApplyScreen({ navigation }) {
   const [travellers, setTravellers] = useState([{ isPrimary: true, ...createTraveller() }]);
+  const [egyptEntryType, setEgyptEntryType] = useState("");
   const [tempTraveller, setTempTraveller] = useState(createTraveller());
   const [showCoTravellerModal, setShowCoTravellerModal] = useState(false);
   const [showCalendarFor, setShowCalendarFor] = useState(null);
@@ -152,8 +154,7 @@ export default function EgyptApplyScreen({ navigation }) {
         travellers.map(async (traveller, index) => {
           const basePath = `applications/${user.uid}/${applicationId}/traveller_${index + 1}`;
           const passportFrontPage = await extractPassportFrontPageFromAsset(
-            traveller.documents.passportFront,
-            traveller.form.phone
+            traveller.documents.passportFront
           );
 
           const passportFrontUrl = await uploadFile(
@@ -203,6 +204,7 @@ export default function EgyptApplyScreen({ navigation }) {
         .set({
           userId: user.uid,
           country: "Egypt",
+          entryType: egyptEntryType || "single",
           travellers: formattedTravellers,
           totalTravellers: formattedTravellers.length,
           status: "submitted",
@@ -211,6 +213,8 @@ export default function EgyptApplyScreen({ navigation }) {
 
       navigation.navigate("CheckoutScreen", {
         country: "Egypt",
+        applicationId,
+        egyptEntryType: egyptEntryType || "single",
         travellers,
       });
     } catch (error) {
@@ -244,6 +248,22 @@ export default function EgyptApplyScreen({ navigation }) {
         placeholderTextColor="#000000"
         autoCapitalize="none"
       />
+      {target === "main" ? (
+        <>
+         
+          <View style={styles.pickerWrap}>
+            <Picker
+              selectedValue={egyptEntryType}
+              onValueChange={(v) => setEgyptEntryType(v)}
+              style={styles.picker}
+            >
+              <Picker.Item label="Select Entry Type" value="" />
+              <Picker.Item label="Single Entry" value="single" />
+              <Picker.Item label="Multiple Entry" value="multiple" />
+            </Picker>
+          </View>
+        </>
+      ) : null}
 
       {[
         { key: "passportFront", label: "Upload Passport Front Page" },
@@ -400,6 +420,17 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     textAlign: "center",
   },
+  pickerWrap: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 10,
+    marginBottom: 12,
+    overflow: "hidden",
+    backgroundColor: "#FFFFFF",
+  },
+  picker: {
+    color: "#111827",
+  },
   input: {
     borderWidth: 1,
     borderColor: "#ddd",
@@ -493,7 +524,8 @@ const styles = StyleSheet.create({
     margin: 20,
     borderRadius: 16,
     padding: 12,
-  },
+  },
+
   modalActions: {
     marginTop: 8,
     flexDirection: "row",

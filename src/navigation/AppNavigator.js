@@ -252,14 +252,8 @@ import IsraelApplyScreen from "../screens/apply/IsraelApplyScreen";
 
 
 
-/* -------------------- SCHENGEN SCREENS -------------------- */
-import SchengenPersonalDetailsScreen from "../screens/Schengen/SchengenPersonalDetailsScreen";
-import SchengenSponsorScreen from "../screens/Schengen/SchengenSponsorScreen";
-import SchengenAddressScreen from "../screens/Schengen/SchengenAddressScreen";
-import SchengenAppointmentScreen from "../screens/Schengen/SchengenAppointmentScreen";
-import SchengenCountriesVisitScreen from "../screens/Schengen/SchengenCountriesVisitScreen";
-import SchengenDocumentsScreen from "../screens/Schengen/SchengenDocumentsScreen";
-import SchengenStepper from "../components/SchengenStepper"
+/* -------------------- SCHENGEN SCREEN -------------------- */
+import SchengenFlowScreen from "../screens/Schengen/SchengenFlowScreen";
 import SingaporeApplyScreen from "../screens/apply/SingaporeApplyScreen";
 import KenyaApplyScreen from "../screens/apply/KenyaApplyScreen";
 import CubaApplyScreen from "../screens/apply/CubaApplyScreen";
@@ -294,35 +288,12 @@ function UserStack() {
       <Stack.Screen name="DestinationScreen" component={DestinationScreen} />
       <Stack.Screen name="TravelDateScreen" component={TravelDateScreen} />
 
-      {/* SCHENGEN FLOW (ALWAYS REGISTERED) */}
+      {/* SCHENGEN FLOW */}
       <Stack.Screen
-        name="SchengenPersonalDetails"
-        component={SchengenPersonalDetailsScreen}
+        name="SchengenFlowScreen"
+        component={SchengenFlowScreen}
       />
-      <Stack.Screen
-        name="SchengenSponsor"
-        component={SchengenSponsorScreen}
-      />
-      <Stack.Screen
-        name="MyTripScreen"
-        component={MyTripsScreen}
-      />
-      <Stack.Screen
-        name="SchengenAddress"
-        component={SchengenAddressScreen}
-      />
-      <Stack.Screen
-        name="SchengenAppointment"
-        component={SchengenAppointmentScreen}
-      />
-      <Stack.Screen
-        name="SchengenCountriesVisit"
-        component={SchengenCountriesVisitScreen}
-      />
-      <Stack.Screen
-        name="SchengenDocuments"
-        component={SchengenDocumentsScreen}
-      />
+      <Stack.Screen name="MyTripScreen" component={MyTripsScreen} />
 
       <Stack.Screen
         name="JoinAsTravelAgent"
@@ -448,8 +419,6 @@ function UserStack() {
       <Stack.Screen name="AddTravellerScreen" component={AddTravellerScreen} />
       <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} />
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
-      <Stack.Screen name="SchengenStepper" component={SchengenStepper} />
-
     </Stack.Navigator>
   );
 }

@@ -272,22 +272,17 @@ export default function VietnamApplyScreen({ navigation }) {
                 onChangeText={(v) => onChange("email", v)}
                 placeholderTextColor="#000000"
             />
-            {target === "main" ? (
-                <>
-                    
-                    <View style={styles.pickerWrap}>
-                        <Picker
-                            selectedValue={visaEntryType}
-                            onValueChange={(v) => setVisaEntryType(v)}
-                            style={styles.picker}
-                        >
-                            <Picker.Item label="Select Entry Type" value="" />
-                            <Picker.Item label="Single Entry" value="single" />
-                            <Picker.Item label="Multiple Entry" value="multiple" />
-                        </Picker>
-                    </View>
-                </>
-            ) : null}
+            <View style={styles.pickerWrap}>
+                <Picker
+                    selectedValue={visaEntryType}
+                    onValueChange={(v) => setVisaEntryType(v)}
+                    style={styles.picker}
+                >
+                    <Picker.Item label="Select Entry Type" value="" />
+                    <Picker.Item label="Single Entry" value="single" />
+                    <Picker.Item label="Multiple Entry" value="multiple" />
+                </Picker>
+            </View>
 
             <TextInput
                 placeholder="Hotel Name & Address"

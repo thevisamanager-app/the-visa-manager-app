@@ -256,22 +256,17 @@ export default function KazakhstanApplyScreen({ navigation }) {
         </Text>
       </TouchableOpacity>
 
-      {target === "main" ? (
-        <>
-         
-          <View style={styles.pickerWrap}>
-            <Picker
-              selectedValue={kazakhstanVisaType}
-              onValueChange={(v) => setKazakhstanVisaType(v)}
-              style={styles.picker}
-            >
-              <Picker.Item label="Select Visa Type" value="" />
-              <Picker.Item label="Tourist Visa" value="tourist" />
-              <Picker.Item label="Business Visa" value="business" />
-            </Picker>
-          </View>
-        </>
-      ) : null}
+      <View style={styles.pickerWrap}>
+        <Picker
+          selectedValue={kazakhstanVisaType}
+          onValueChange={(v) => setKazakhstanVisaType(v)}
+          style={styles.picker}
+        >
+          <Picker.Item label="Select Visa Type" value="" />
+          <Picker.Item label="Tourist Visa" value="tourist" />
+          <Picker.Item label="Business Visa" value="business" />
+        </Picker>
+      </View>
 
       <TextInput
         placeholder="Mobile Number"

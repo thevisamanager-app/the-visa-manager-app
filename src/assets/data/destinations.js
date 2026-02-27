@@ -419,7 +419,7 @@ const DESTINATIONS = [
   {
     id: 35,
     countrName: 'Malaysia',
-    VisaManagerFee: "1",
+    VisaManagerFee: "590",
     countryType: "DAC",
 
     subtitle: "Get Your Visa by 1 day",
@@ -445,7 +445,7 @@ const DESTINATIONS = [
   {
     id: 37,
     countrName: 'Thailand',
-    VisaManagerFee: "1",
+    VisaManagerFee: "590",
     countryType: "DAC",
     subtitle: "Mandatory for Indians",
     bullets: [

@@ -193,22 +193,17 @@ export default function AzerbaijanApplyScreen({ navigation }) {
         value={traveller.form.email}
         onChangeText={(v) => onChange("email", v)}
       />
-      {target === "main" ? (
-        <>
-          
-          <View style={styles.pickerWrap}>
-            <Picker
-              selectedValue={azerbaijanEntryType}
-              onValueChange={(v) => setAzerbaijanEntryType(v)}
-              style={styles.picker}
-            >
-              <Picker.Item label="Select Entry Type" value="" />
-              <Picker.Item label="Single Entry" value="single" />
-              <Picker.Item label="Multiple Entry" value="multiple" />
-            </Picker>
-          </View>
-        </>
-      ) : null}
+      <View style={styles.pickerWrap}>
+        <Picker
+          selectedValue={azerbaijanEntryType}
+          onValueChange={(v) => setAzerbaijanEntryType(v)}
+          style={styles.picker}
+        >
+          <Picker.Item label="Select Entry Type" value="" />
+          <Picker.Item label="Single Entry" value="single" />
+          <Picker.Item label="Multiple Entry" value="multiple" />
+        </Picker>
+      </View>
 
       <TextInput
         placeholder="Hotel Name"

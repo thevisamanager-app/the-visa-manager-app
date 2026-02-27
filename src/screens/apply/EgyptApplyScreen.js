@@ -242,22 +242,17 @@ export default function EgyptApplyScreen({ navigation }) {
         placeholderTextColor="#000000"
         autoCapitalize="none"
       />
-      {target === "main" ? (
-        <>
-         
-          <View style={styles.pickerWrap}>
-            <Picker
-              selectedValue={egyptEntryType}
-              onValueChange={(v) => setEgyptEntryType(v)}
-              style={styles.picker}
-            >
-              <Picker.Item label="Select Entry Type" value="" />
-              <Picker.Item label="Single Entry" value="single" />
-              <Picker.Item label="Multiple Entry" value="multiple" />
-            </Picker>
-          </View>
-        </>
-      ) : null}
+      <View style={styles.pickerWrap}>
+        <Picker
+          selectedValue={egyptEntryType}
+          onValueChange={(v) => setEgyptEntryType(v)}
+          style={styles.picker}
+        >
+          <Picker.Item label="Select Entry Type" value="" />
+          <Picker.Item label="Single Entry" value="single" />
+          <Picker.Item label="Multiple Entry" value="multiple" />
+        </Picker>
+      </View>
 
       {[
         { key: "passportFront", label: "Upload Passport Front Page" },

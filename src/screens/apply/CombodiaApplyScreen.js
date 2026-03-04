@@ -13,14 +13,12 @@ import {
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Calendar } from "react-native-calendars";
 import { launchImageLibrary } from "react-native-image-picker";
-import { validatePickedDocument } from "../../utils/documentValidation";
 import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import ScreenWrapper from "../../components/ScreenWrapper";
 import { ApplyCountryHeader, CoPassengerCard } from "../../components/ApplyFlowCards";
-import { extractTextFromImage } from "../../api/ocr/visionApi";
-import { parseMRZ } from "../../api/ocr/mrzParser";
+import { extractPassportFrontPageFromAsset } from "../../utils/passportFrontPage";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
 import PassportBackSample from "../../assets/examples/passport-back.png";
@@ -90,47 +88,27 @@ export default function CombodiaApplyScreen({ navigation }) {
   };
 
   const pickDocument = async (key) => {
-    const isFrontPage = key === "passportFront";
     const res = await launchImageLibrary({
       mediaType: "mixed",
       quality: 0.9,
-      includeBase64: isFrontPage,
+      includeBase64: key === "passportFront",
     });
 
     if (!res.assets?.[0]) return;
     const selectedAsset = res.assets[0];
-    let frontPageData = null;
-
-    if (isFrontPage && selectedAsset.base64) {
-      try {
-        const rawText = await extractTextFromImage(selectedAsset.base64);
-        const parsed = parseMRZ(rawText);
-        frontPageData = {
-          parsed: {
-            ...parsed,
-            birthDate: toDDMMYY(parsed.birthDate),
-            expiryDate: toDDMMYY(parsed.expiryDate),
-          },
-        };
-      } catch (error) {
-        console.log("Combodia front page OCR failed:", error);
-      }
-    }
 
     const updated = [...travellers];
     updated[0].documents[key] = selectedAsset;
     setTravellers(updated);
   };
 
-  const validate = () => {
-    const t = travellers[0];
-
-    if (!t.form.travelDate || !t.form.phone || !t.form.email) {
+  const validateTraveller = (traveller) => {
+    if (!traveller.form.travelDate || !traveller.form.phone || !traveller.form.email) {
       Alert.alert("Missing Info", "Please fill all required fields.");
       return false;
     }
 
-    for (const value of Object.values(t.documents)) {
+    for (const value of Object.values(traveller.documents)) {
       if (!value) {
         Alert.alert("Missing Document", "Please upload all required documents.");
         return false;
@@ -139,6 +117,8 @@ export default function CombodiaApplyScreen({ navigation }) {
 
     return true;
   };
+
+  const validate = () => validateTraveller(travellers[0]);
 
   const saveCoTraveller = () => {
     if (!validateTraveller(tempTraveller)) return;
@@ -166,7 +146,8 @@ export default function CombodiaApplyScreen({ navigation }) {
       const t = travellers[0];
       const basePath = `applications/${user.uid}/${applicationId}/traveller_1`;
       const passportFrontPage = await extractPassportFrontPageFromAsset(
-        t.documents.passportFront
+        t.documents.passportFront,
+        t.form.phone
       );
 
       const passportFrontUrl = await uploadFile(
@@ -235,7 +216,7 @@ export default function CombodiaApplyScreen({ navigation }) {
         style={styles.input}
         onPress={() => setShowCalendarFor(target)}
       >
-        <Text style={traveller.form.travelDate ? styles.inputText : styles.inputPlaceholder}>
+        <Text>
           {traveller.form.travelDate
             ? formatDate(traveller.form.travelDate)
             : "Select Travel Date"}
@@ -244,7 +225,6 @@ export default function CombodiaApplyScreen({ navigation }) {
 
       <TextInput
         placeholder="Mobile Number"
-        placeholderTextColor="#111827"
         style={styles.input}
         keyboardType="phone-pad"
         value={traveller.form.phone}
@@ -253,7 +233,6 @@ export default function CombodiaApplyScreen({ navigation }) {
 
       <TextInput
         placeholder="Email ID"
-        placeholderTextColor="#111827"
         style={styles.input}
         value={traveller.form.email}
         onChangeText={(v) => onChange("email", v)}
@@ -270,7 +249,7 @@ export default function CombodiaApplyScreen({ navigation }) {
         <View key={key} style={styles.docCard}>
           <Text style={styles.docLabel}>{label} *</Text>
 
-          {!traveller.documents[key] ? (
+          {!travellers[0].documents[key] ? (
             key.includes("passport") || key === "photo" || key === "ticket" ? (
               <View style={styles.sampleWrapper}>
                 <Image
@@ -282,7 +261,7 @@ export default function CombodiaApplyScreen({ navigation }) {
             ) : null
           ) : (
             <Image
-              source={{ uri: traveller.documents[key].uri }}
+              source={{ uri: travellers[0].documents[key].uri }}
               style={styles.previewImage}
             />
           )}
@@ -292,7 +271,7 @@ export default function CombodiaApplyScreen({ navigation }) {
             onPress={() => pickDocument(key)}
           >
             <Text style={styles.uploadText}>
-              {traveller.documents[key]
+              {travellers[0].documents[key]
                 ? "Replace Document"
                 : "Upload Document"}
             </Text>
@@ -334,18 +313,16 @@ export default function CombodiaApplyScreen({ navigation }) {
       <Modal visible={showCoTravellerModal} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.modalBox}>
+            <Text style={styles.sectionTitle}>Add Co-Traveller</Text>
             <View style={styles.header}>
-              <TouchableOpacity onPress={() => setShowCoTravellerModal(false)}>
+              <TouchableOpacity onPress={() => navigation.goBack()}>
                 <Ionicons name="chevron-back" size={26} />
               </TouchableOpacity>
 
-              <Text style={styles.headerTitle}>Add Co-Traveller</Text>
-
               <TouchableOpacity
-                onPress={() => {
-                  setShowCoTravellerModal(false);
-                  navigation.navigate("Tabs", { screen: "Destination" });
-                }}
+                onPress={() =>
+                  navigation.navigate("Tabs", { screen: "Destination" })
+                }
               >
                 <Ionicons name="home-outline" size={24} color={ORANGE} />
               </TouchableOpacity>
@@ -412,12 +389,12 @@ const styles = StyleSheet.create({
   container: { padding: 16, paddingBottom: 40 },
   formCard: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 14,
+    borderRadius: 16,
     padding: 12,
     marginTop: 10,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: "#E2E8F0",
     elevation: 2,
   },
   header: {
@@ -427,31 +404,29 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 
-  headerTitle: { fontSize: 17, fontWeight: "700" },
-  inputText: { color: "#111827" },
-  inputPlaceholder: { color: "#111827" },
+  headerTitle: { fontSize: 17, fontWeight: "800" },
 
   sectionTitle: {
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: "800",
     marginBottom: 16,
-    textAlign: "center",      // ðŸ‘ˆ center it
+    textAlign: "center",      // 👈 center it
   },
 
 
   input: {
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#CBD5E1",
     borderRadius: 10,
     padding: 12,
     marginBottom: 12,
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     color: "#111827",
   },
 
   docCard: {
-    backgroundColor: "#fff",
-    borderRadius: 14,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
     padding: 12,
     marginBottom: 16,
     elevation: 2,
@@ -462,11 +437,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: "center",
     marginBottom: 8,
-    color: "#111827",
   },
 
   sampleWrapper: {
-    backgroundColor: "#F5F6F8",
+    backgroundColor: "#F8FAFC",
     borderRadius: 10,
     padding: 6,
     marginBottom: 8,
@@ -500,7 +474,7 @@ const styles = StyleSheet.create({
     marginVertical: 16,
   },
 
-  uploadText: { color: ORANGE, fontWeight: "700" },
+  uploadText: { color: ORANGE, fontWeight: "800" },
 
   submitBtn: {
     backgroundColor: ORANGE,
@@ -509,7 +483,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  submitText: { color: "#fff", fontWeight: "700", fontSize: 16 },
+  submitText: { color: "#fff", fontWeight: "800", fontSize: 16 },
 
   modalOverlay: {
     flex: 1,
@@ -518,7 +492,7 @@ const styles = StyleSheet.create({
   },
 
   modalBox: {
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     margin: 20,
     borderRadius: 16,
     padding: 16,
@@ -531,15 +505,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 
-  addTravellerText: { color: ORANGE, fontWeight: "700" },
+  addTravellerText: { color: ORANGE, fontWeight: "800" },
 
   calendarBox: {
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     margin: 20,
     borderRadius: 16,
     padding: 12,
-  },
-
+  },
   modalActions: {
     marginTop: 8,
     flexDirection: "row",
@@ -558,7 +531,7 @@ const styles = StyleSheet.create({
   },
   closeBtnText: {
     color: ORANGE,
-    fontWeight: "700",
+    fontWeight: "800",
   },
   saveBtn: {
     backgroundColor: ORANGE,
@@ -570,7 +543,8 @@ const styles = StyleSheet.create({
   },
   saveBtnText: {
     color: "#fff",
-    fontWeight: "700",
+    fontWeight: "800",
   },
 });
+
 

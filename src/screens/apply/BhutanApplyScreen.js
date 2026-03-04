@@ -19,13 +19,13 @@ import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import ScreenWrapper from "../../components/ScreenWrapper";
 import { ApplyCountryHeader, CoPassengerCard } from "../../components/ApplyFlowCards";
+import { extractPassportFrontPageFromAsset } from "../../utils/passportFrontPage";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
 import PassportBackSample from "../../assets/examples/passport-back.png";
 import PassportPhotoSample from "../../assets/examples/passportimage.png";
 
 const ORANGE = "#FF5C00";
-const BHUTAN_PER_DAY_STAY_COST = 2085;
 
 const createTraveller = () => ({
   form: {
@@ -46,7 +46,6 @@ export default function BhutanApplyScreen({ navigation }) {
   const [tempTraveller, setTempTraveller] = useState(createTraveller());
   const [showCoTravellerModal, setShowCoTravellerModal] = useState(false);
   const [showCalendarFor, setShowCalendarFor] = useState(null);
-  const [stayDaysCount, setStayDaysCount] = useState(1);
 
   const formatDate = (date) => {
     const [y, m, d] = date.split("-");
@@ -193,9 +192,6 @@ export default function BhutanApplyScreen({ navigation }) {
         .set({
           userId: user.uid,
           country: "Bhutan",
-          stayDays: stayDaysCount,
-          stayCostPerDay: BHUTAN_PER_DAY_STAY_COST,
-          stayBaseAmount: stayDaysCount * BHUTAN_PER_DAY_STAY_COST,
           travellers: formattedTravellers,
           totalTravellers: formattedTravellers.length,
           status: "submitted",
@@ -204,12 +200,7 @@ export default function BhutanApplyScreen({ navigation }) {
 
       navigation.navigate("CheckoutScreen", {
         country: "Bhutan",
-        applicationId,
-        stayDays: stayDaysCount,
-        bhutanPerDayFee: BHUTAN_PER_DAY_STAY_COST,
-        totalTravellers: travellers.length,
         travellers,
-        coTravellers: travellers.slice(1),
       });
     } catch (error) {
       console.log("Bhutan submit error:", error);
@@ -254,25 +245,6 @@ export default function BhutanApplyScreen({ navigation }) {
         placeholderTextColor="#111827"
         autoCapitalize="none"
       />
-
-      {target === "main" ? (
-        <View style={styles.stayDaysRow}>
-          <View style={styles.stayDaysLabelWrap}>
-            <Text style={styles.stayDaysLabel}>How many day you stay</Text>
-          </View>
-          <View style={styles.stayDaysCounter}>
-            <TouchableOpacity
-              onPress={() => setStayDaysCount((prev) => Math.max(1, prev - 1))}
-            >
-              <Text style={styles.stayCounterBtn}>-</Text>
-            </TouchableOpacity>
-            <Text style={styles.stayCounterValue}>{stayDaysCount}</Text>
-            <TouchableOpacity onPress={() => setStayDaysCount((prev) => prev + 1)}>
-              <Text style={styles.stayCounterBtn}>+</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      ) : null}
 
       {[
         { key: "passportFront", label: "Upload Passport Front Page" },
@@ -404,12 +376,12 @@ const styles = StyleSheet.create({
   container: { padding: 16, paddingBottom: 40 },
   formCard: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 14,
+    borderRadius: 16,
     padding: 12,
     marginTop: 10,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: "#E2E8F0",
     elevation: 2,
   },
   header: {
@@ -418,10 +390,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 14,
   },
-  headerTitle: { fontSize: 17, fontWeight: "700" },
+  headerTitle: { fontSize: 17, fontWeight: "800" },
   input: {
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#CBD5E1",
     borderRadius: 10,
     padding: 12,
     marginBottom: 12,
@@ -430,54 +402,9 @@ const styles = StyleSheet.create({
   },
   inputText: { color: "#111827" },
   inputPlaceholder: { color: "#111827" },
-  stayDaysRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    marginBottom: 12,
-    backgroundColor: "#FFFFFF",
-  },
-  stayDaysLabelWrap: {
-    flexDirection: "row",
-    alignItems: "center",
-    flex: 1,
-  },
-  stayDaysLabel: {
-    color: "#111827",
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  stayDaysCounter: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  stayCounterBtn: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    textAlign: "center",
-    textAlignVertical: "center",
-    fontSize: 16,
-    color: "#374151",
-    lineHeight: 26,
-  },
-  stayCounterValue: {
-    marginHorizontal: 10,
-    fontWeight: "700",
-    fontSize: 14,
-    minWidth: 14,
-    textAlign: "center",
-  },
   docCard: {
-    backgroundColor: "#fff",
-    borderRadius: 14,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
     padding: 12,
     marginBottom: 16,
     elevation: 2,
@@ -489,7 +416,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   sampleWrapper: {
-    backgroundColor: "#F5F6F8",
+    backgroundColor: "#F8FAFC",
     borderRadius: 10,
     padding: 6,
     marginBottom: 8,
@@ -510,7 +437,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     alignItems: "center",
   },
-  uploadText: { color: ORANGE, fontWeight: "700" },
+  uploadText: { color: ORANGE, fontWeight: "800" },
   submitBtn: {
     backgroundColor: ORANGE,
     borderRadius: 999,
@@ -518,14 +445,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 8,
   },
-  submitText: { color: "#fff", fontWeight: "700", fontSize: 16 },
+  submitText: { color: "#fff", fontWeight: "800", fontSize: 16 },
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.55)",
     justifyContent: "center",
   },
   modalBox: {
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     margin: 16,
     borderRadius: 16,
     padding: 14,
@@ -537,12 +464,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   calendarBox: {
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     margin: 20,
     borderRadius: 16,
     padding: 12,
-  },
-
+  },
   modalActions: {
     marginTop: 8,
     flexDirection: "row",
@@ -561,7 +487,7 @@ const styles = StyleSheet.create({
   },
   closeBtnText: {
     color: ORANGE,
-    fontWeight: "700",
+    fontWeight: "800",
   },
   saveBtn: {
     backgroundColor: ORANGE,
@@ -573,6 +499,8 @@ const styles = StyleSheet.create({
   },
   saveBtnText: {
     color: "#fff",
-    fontWeight: "700",
+    fontWeight: "800",
   },
 });
+
+

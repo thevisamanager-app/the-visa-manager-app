@@ -553,10 +553,6 @@ export default function SingaporeApplyScreen({ navigation }) {
               const travellerLabel = traveller.isPrimary
                 ? "Main Traveller"
                 : `Co-Passenger ${i}`;
-              const passportFrontPage = await extractPassportFrontPageFromAsset(
-                traveller.documents.passportFront,
-                traveller.form?.phone
-              );
 
               const [bankUri, passportFrontUri, passportBackUri, photoUri] =
                 await Promise.all([
@@ -747,10 +743,10 @@ export default function SingaporeApplyScreen({ navigation }) {
       <ScrollView contentContainerStyle={styles.container}>
         <ApplyCountryHeader navigation={navigation} countryName="Singapore" />
 
-        <View style={styles.card}>
+        <View style={styles.mainFormCard}>
 
           {/* Travel Date */}
-          <TouchableOpacity style={styles.inputLarge} onPress={() => setShowCalendarFor("main")}>
+          <TouchableOpacity style={styles.input} onPress={() => setShowCalendarFor("main")}>
             <Text
               style={
                 traveller.form.travelDate
@@ -766,7 +762,7 @@ export default function SingaporeApplyScreen({ navigation }) {
 
           <TextInput
             placeholder="Mobile Number"
-            style={styles.inputLarge}
+            style={styles.input}
             keyboardType="phone-pad"
             placeholderTextColor="#000000"
             value={traveller.form.phone}
@@ -779,7 +775,7 @@ export default function SingaporeApplyScreen({ navigation }) {
 
           <TextInput
             placeholder="Email ID"
-            style={styles.inputLarge}
+            style={styles.input}
             placeholderTextColor="#000000"
             value={traveller.form.email}
             onChangeText={(v) => {
@@ -791,7 +787,7 @@ export default function SingaporeApplyScreen({ navigation }) {
 
           <TextInput
             placeholder="Hotel Details"
-            style={styles.inputLarge}
+            style={[styles.input, styles.textArea]}
             multiline
             placeholderTextColor="#000000"
             value={traveller.form.hotelDetails}
@@ -1050,22 +1046,30 @@ export default function SingaporeApplyScreen({ navigation }) {
           <View style={styles.coModalCard}>
             <ScrollView contentContainerStyle={styles.coModalContent}>
               <View style={styles.coTravellerHeader}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setIsCoTravellerModalOpen(false);
+                    setCoTravellerEditIndex(null);
+                  }}
+                >
+                  <Ionicons name="chevron-back" size={26} />
+                </TouchableOpacity>
                 <Text style={styles.coTravellerTitle}>
-                  {coTravellerEditIndex !== null
-                    ? `Co-Passenger ${coTravellerEditIndex} Details`
-                    : "Add Co-Passenger"}
+                  {coTravellerEditIndex !== null ? "Edit Co-Traveller" : "Add Co-Traveller"}
                 </Text>
-                <View style={styles.travellerBadge}>
-                  <Text style={styles.travellerBadgeText}>
-                    {coTravellerEditIndex !== null
-                      ? `Traveller ${coTravellerEditIndex + 1}`
-                      : `Traveller ${travellers.length + 1}`}
-                  </Text>
-                </View>
+                <TouchableOpacity
+                  onPress={() => {
+                    setIsCoTravellerModalOpen(false);
+                    setCoTravellerEditIndex(null);
+                    navigation.navigate("Tabs", { screen: "Destination" });
+                  }}
+                >
+                  <Ionicons name="home-outline" size={24} color={ORANGE} />
+                </TouchableOpacity>
               </View>
 
               <TouchableOpacity
-                style={styles.inputLarge}
+                style={styles.input}
                 onPress={() => setShowCalendarFor("coTraveller")}
               >
                 <Text
@@ -1083,9 +1087,9 @@ export default function SingaporeApplyScreen({ navigation }) {
 
               <TextInput
                 placeholder="Mobile Number"
-                style={styles.inputLarge}
+                style={styles.input}
                 keyboardType="phone-pad"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor="#000000"
                 value={coTravellerDraft.form.phone}
                 onChangeText={(v) =>
                   setCoTravellerDraft((prev) => ({
@@ -1100,8 +1104,8 @@ export default function SingaporeApplyScreen({ navigation }) {
 
               <TextInput
                 placeholder="Email ID"
-                style={styles.inputLarge}
-                placeholderTextColor="#9CA3AF"
+                style={styles.input}
+                placeholderTextColor="#000000"
                 value={coTravellerDraft.form.email}
                 onChangeText={(v) =>
                   setCoTravellerDraft((prev) => ({
@@ -1116,8 +1120,9 @@ export default function SingaporeApplyScreen({ navigation }) {
 
               <TextInput
                 placeholder="Hotel Details"
-                style={styles.inputLarge}
-                placeholderTextColor="#9CA3AF"
+                style={[styles.input, styles.textArea]}
+                placeholderTextColor="#000000"
+                multiline
                 value={coTravellerDraft.form.hotelDetails}
                 onChangeText={(v) =>
                   setCoTravellerDraft((prev) => ({
@@ -1389,12 +1394,12 @@ const styles = StyleSheet.create({
   container: { padding: 16, paddingBottom: 40 },
   mainFormCard: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 14,
+    borderRadius: 16,
     padding: 12,
     marginTop: 10,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: "#E2E8F0",
     elevation: 2,
   },
 
@@ -1405,7 +1410,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 
-  headerTitle: { fontSize: 17, fontWeight: "700" },
+  headerTitle: { fontSize: 17, fontWeight: "800" },
   headerCenterContainer: {
     flex: 1,
     marginHorizontal: 10,
@@ -1438,7 +1443,7 @@ const styles = StyleSheet.create({
   },
   headerCountryName: {
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: "800",
     color: "#111827",
     textAlign: "center",
   },
@@ -1458,16 +1463,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginBottom: 12,
   },
-  countryTitle: { fontSize: 20, fontWeight: "700", color: "#111827", textAlign: "center" },
+  countryTitle: { fontSize: 20, fontWeight: "800", color: "#111827", textAlign: "center" },
   countrySub: { fontSize: 12, color: "#F97316", marginTop: 2, textAlign: "center" },
 
   input: {
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#CBD5E1",
     borderRadius: 10,
     padding: 12,
     marginBottom: 12,
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
   },
 
   inputText: { color: "#111827" },
@@ -1475,11 +1480,11 @@ const styles = StyleSheet.create({
   textArea: { height: 90 },
   inputLarge: {
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#CBD5E1",
     borderRadius: 10,
     paddingHorizontal: 12,
     marginBottom: 12,
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     height: 48,
     color: "#111827",
     justifyContent: "center",
@@ -1487,15 +1492,15 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    backgroundColor: "#fff",
-    borderRadius: 14,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
     padding: 12,
     marginBottom: 16,
     elevation: 2,
   },
   sectionTitle: {
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: "800",
     color: "#111827",
     marginBottom: 8,
   },
@@ -1511,7 +1516,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 120,
     borderRadius: 10,
-    backgroundColor: "#F5F6F8",
+    backgroundColor: "#F8FAFC",
     overflow: "hidden",
     alignItems: "center",
     justifyContent: "center",
@@ -1531,14 +1536,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  uploadText: { color: ORANGE, fontWeight: "700" },
+  uploadText: { color: ORANGE, fontWeight: "800" },
   uploadCard: {
-    backgroundColor: "#fff",
-    borderRadius: 14,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
     padding: 12,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: "#E2E8F0",
     elevation: 2,
   },
   uploadCardTitle: {
@@ -1552,7 +1557,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 120,
     borderRadius: 10,
-    backgroundColor: "#F5F6F8",
+    backgroundColor: "#F8FAFC",
     overflow: "hidden",
     alignItems: "center",
     justifyContent: "center",
@@ -1568,9 +1573,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingVertical: 10,
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
   },
-  uploadCardBtnText: { color: ORANGE, fontWeight: "700", fontSize: 16 },
+  uploadCardBtnText: { color: ORANGE, fontWeight: "800", fontSize: 16 },
 
   pdfUploadedText: {
     marginTop: 8,
@@ -1587,7 +1592,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  submitText: { color: "#fff", fontWeight: "700", fontSize: 16 },
+  submitText: { color: "#fff", fontWeight: "800", fontSize: 16 },
 
   formsSection: {
     marginBottom: 16,
@@ -1639,7 +1644,7 @@ const styles = StyleSheet.create({
   formPreviewWebView: {
     width: "100%",
     height: "100%",
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
   },
 
   formPreviewTouch: {
@@ -1660,7 +1665,7 @@ const styles = StyleSheet.create({
   formPreviewImageTall: {
     width: "100%",
     minHeight: 280,
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
   },
 
   noPreviewBox: {
@@ -1738,7 +1743,7 @@ const styles = StyleSheet.create({
   },
 
   calendarBox: {
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     margin: 20,
     borderRadius: 16,
     padding: 12,
@@ -1759,14 +1764,14 @@ const styles = StyleSheet.create({
   addCoTravellerBtnText: {
     color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: "800",
   },
 
   coPassengersPanel: {
     marginTop: 4,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: "#E2E8F0",
     borderRadius: 18,
     backgroundColor: "#FFFFFF",
     padding: 12,
@@ -1781,14 +1786,14 @@ const styles = StyleSheet.create({
 
   coPassengersTitle: {
     fontSize: 17,
-    fontWeight: "700",
+    fontWeight: "800",
     color: "#111827",
   },
 
   coPassengersAddText: {
     color: ORANGE,
     fontSize: 15,
-    fontWeight: "700",
+    fontWeight: "800",
   },
 
   coPassengersEmptyText: {
@@ -1803,7 +1808,7 @@ const styles = StyleSheet.create({
     padding: 12,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: "#E2E8F0",
     elevation: 1,
   },
   coHeader: {
@@ -1814,12 +1819,12 @@ const styles = StyleSheet.create({
   },
   coTitle: {
     fontSize: 14,
-    fontWeight: "700",
+    fontWeight: "800",
     color: "#111827",
   },
   coAdd: {
     color: ORANGE,
-    fontWeight: "700",
+    fontWeight: "800",
     fontSize: 13,
   },
   coEmpty: {
@@ -1830,7 +1835,7 @@ const styles = StyleSheet.create({
 
   coPassengerItem: {
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: "#E2E8F0",
     borderRadius: 12,
     padding: 12,
     marginBottom: 10,
@@ -1852,7 +1857,7 @@ const styles = StyleSheet.create({
 
   coPassengerName: {
     fontSize: 17,
-    fontWeight: "700",
+    fontWeight: "800",
     color: "#111827",
   },
 
@@ -1878,14 +1883,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.45)",
     justifyContent: "center",
-    paddingHorizontal: 8,
-    paddingVertical: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 24,
   },
 
   coModalCard: {
-    flex: 1,
-    backgroundColor: "#E5E7EB",
-    borderRadius: 12,
+    maxHeight: "92%",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
     overflow: "hidden",
   },
 
@@ -1898,20 +1905,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 14,
   },
 
   coTravellerTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#1F2937",
+    fontSize: 17,
+    fontWeight: "800",
+    color: "#111827",
   },
 
   travellerBadge: {
     backgroundColor: "#E0E7FF",
     borderColor: "#C7D2FE",
     borderWidth: 1,
-    borderRadius: 14,
+    borderRadius: 16,
     paddingHorizontal: 10,
     paddingVertical: 4,
   },
@@ -1919,7 +1926,7 @@ const styles = StyleSheet.create({
   travellerBadgeText: {
     color: "#4338CA",
     fontSize: 12,
-    fontWeight: "700",
+    fontWeight: "800",
   },
 
   coTravellerSubTitle: {
@@ -1988,7 +1995,7 @@ const styles = StyleSheet.create({
 
   coDocUploadBtnText: {
     color: ORANGE,
-    fontWeight: "700",
+    fontWeight: "800",
     fontSize: 13,
   },
 
@@ -2012,7 +2019,7 @@ const styles = StyleSheet.create({
 
   coCloseBtnText: {
     color: ORANGE,
-    fontWeight: "700",
+    fontWeight: "800",
   },
 
   coSaveBtn: {
@@ -2026,7 +2033,7 @@ const styles = StyleSheet.create({
 
   coSaveBtnText: {
     color: "#fff",
-    fontWeight: "700",
+    fontWeight: "800",
   },
 
   sampleModalOverlay: {
@@ -2037,7 +2044,7 @@ const styles = StyleSheet.create({
   },
 
   sampleModalCard: {
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     borderRadius: 12,
     overflow: "hidden",
     maxHeight: "90%",
@@ -2054,7 +2061,7 @@ const styles = StyleSheet.create({
   sampleModalTitle: {
     flex: 1,
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: "800",
     color: "#111827",
     marginRight: 8,
   },
@@ -2068,7 +2075,7 @@ const styles = StyleSheet.create({
   sampleWebView: {
     height: 420,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: "#E2E8F0",
     borderRadius: 8,
     marginBottom: 10,
   },
@@ -2092,6 +2099,7 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
 });
+
 
 
 

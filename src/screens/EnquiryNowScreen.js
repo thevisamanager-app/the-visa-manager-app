@@ -8,9 +8,13 @@ import {
   ScrollView,
   ActivityIndicator,
   Dimensions,
+  Modal,
+  Image,
+  Linking,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { Picker } from "@react-native-picker/picker";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ScreenWrapper from "../components/ScreenWrapper";
 import DESTINATIONS from "../assets/data/destinations";
 
@@ -41,7 +45,12 @@ const APPS_SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbyvuhm5CnMvk7QwU6i_H34SOHPRN254g8V_Qq_PRWSmf9GCqXI973J_pQCBVvBKKGf6/exec";
 
 export default function EnquiryNowScreen() {
+  const insets = useSafeAreaInsets();
   const [loading, setLoading] = useState(false);
+  const [bookCallModalVisible, setBookCallModalVisible] = useState(false);
+  const [confirmedModalVisible, setConfirmedModalVisible] = useState(false);
+  const [appointmentDate, setAppointmentDate] = useState("");
+  const [appointmentTime, setAppointmentTime] = useState("");
   const [touched, setTouched] = useState({});
   const [submitMessage, setSubmitMessage] = useState("");
   const [submitMessageType, setSubmitMessageType] = useState("success");
@@ -52,6 +61,8 @@ export default function EnquiryNowScreen() {
     visaCountry: "",
     query: "",
   });
+
+  const timeSlots = ["10:00 AM", "11:00 AM", "12:00 PM", "02:00 PM", "03:00 PM", "04:00 PM", "05:00 PM"];
 
   const destinationOptions = useMemo(() => {
     const unique = Array.from(
@@ -80,6 +91,24 @@ export default function EnquiryNowScreen() {
   };
 
   const showError = (key) => touched[key] && errors[key];
+
+  const openWhatsApp = async () => {
+    const message = encodeURIComponent("Hi, I want to discuss my visa strategy call.");
+    const url = `https://wa.me/919999999999?text=${message}`;
+    try {
+      await Linking.openURL(url);
+    } catch (_error) {}
+  };
+
+  const handleBookAppointment = () => {
+    if (!appointmentDate.trim() || !appointmentTime.trim()) {
+      setSubmitMessageType("error");
+      setSubmitMessage("Please select date and time for appointment.");
+      return;
+    }
+    setBookCallModalVisible(false);
+    setConfirmedModalVisible(true);
+  };
 
   const submit = async () => {
     if (loading) return;
@@ -131,6 +160,9 @@ export default function EnquiryNowScreen() {
         });
         setSubmitMessageType("success");
         setSubmitMessage("Our team will call you shortly.");
+        setAppointmentDate("");
+        setAppointmentTime("");
+        setBookCallModalVisible(true);
         return;
       }
 
@@ -147,15 +179,19 @@ export default function EnquiryNowScreen() {
   return (
     <ScreenWrapper>
       <ScrollView
-        contentContainerStyle={styles.container}
+        contentContainerStyle={[
+          styles.container,
+          { paddingBottom: Math.max(28, insets.bottom + 92) },
+        ]}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.hero}>
-          <Text style={styles.badge}>ENQUIRY NOW</Text>
-          <Text style={styles.title}>Have a Visa Query for specific country?</Text>
-          <Text style={styles.subTitle}>
-            We usually reply within 30 minutes during working hours.
-          </Text>
+        <View style={styles.heroCard}>
+          <View style={styles.heroBadgeWrap}>
+            <Icon name="sparkles-outline" size={14} color={ORANGE} />
+            <Text style={styles.badge}>ENQUIRY NOW</Text>
+          </View>
+          <Text style={styles.title}>Need Help With Your Visa?</Text>
+          <Text style={styles.subTitle}>Share your query and our team will contact you quickly.</Text>
         </View>
 
         <View style={styles.card}>
@@ -197,13 +233,7 @@ export default function EnquiryNowScreen() {
                 ))}
               </Picker>
             </View>
-            <View
-              style={[
-                styles.inputWrap,
-                styles.phoneWrap,
-                showError("phone") ? styles.inputError : null,
-              ]}
-            >
+            <View style={[styles.inputWrap, styles.phoneWrap, showError("phone") ? styles.inputError : null]}>
               <Icon name="call-outline" size={17} color="#94A3B8" />
               <TextInput
                 placeholder="Phone Number"
@@ -231,18 +261,11 @@ export default function EnquiryNowScreen() {
             >
               <Picker.Item label="Need Visa For" value="" color="#FFFFFF" />
               {destinationOptions.map((country) => (
-                <Picker.Item
-                  key={country}
-                  label={country}
-                  value={country}
-                  color="#FFFFFF"
-                />
+                <Picker.Item key={country} label={country} value={country} color="#FFFFFF" />
               ))}
             </Picker>
           </View>
-          {showError("visaCountry") ? (
-            <Text style={styles.errorText}>{errors.visaCountry}</Text>
-          ) : null}
+          {showError("visaCountry") ? <Text style={styles.errorText}>{errors.visaCountry}</Text> : null}
 
           <View style={[styles.queryBox, showError("query") ? styles.inputError : null]}>
             <Text style={styles.queryLabel}>Your Detailed Query</Text>
@@ -270,6 +293,7 @@ export default function EnquiryNowScreen() {
               </>
             )}
           </TouchableOpacity>
+
           {submitMessage ? (
             <Text
               style={[
@@ -283,16 +307,108 @@ export default function EnquiryNowScreen() {
             </Text>
           ) : null}
 
-          <View style={styles.noteRow}>
-            <Icon name="lock-closed" size={14} color="#94A3B8" />
-            <Text style={styles.noteText}>Your information is secure & confidential</Text>
-          </View>
-          <View style={styles.noteRow}>
-            <Icon name="star" size={14} color="#94A3B8" />
-            <Text style={styles.noteText}>Trusted by 10,000+ travellers</Text>
+          <View style={styles.trustCard}>
+            <View style={styles.noteRow}>
+              <Icon name="lock-closed" size={14} color="#64748B" />
+              <Text style={styles.noteText}>Your information is secure and confidential</Text>
+            </View>
+            <View style={[styles.noteRow, { marginTop: 8 }]}>
+              <Icon name="shield-checkmark-outline" size={14} color="#64748B" />
+              <Text style={styles.noteText}>Trusted by 10,000+ travellers</Text>
+            </View>
           </View>
         </View>
       </ScrollView>
+
+      <Modal visible={bookCallModalVisible} transparent animationType="fade" onRequestClose={() => setBookCallModalVisible(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <TouchableOpacity style={styles.modalCloseBtn} onPress={() => setBookCallModalVisible(false)}>
+              <Icon name="close" size={20} color="#1E3A5F" />
+            </TouchableOpacity>
+
+            <View style={styles.modalBodyRow}>
+              <View style={styles.modalLeft}>
+                <Text style={styles.modalTitle}>Book Strategy Call</Text>
+                <Text style={styles.modalSubTitle}>Speak with our expert and get a personalized visa strategy.</Text>
+
+                <Text style={styles.fieldLabel}>Select Date</Text>
+                <View style={styles.modalInputWrap}>
+                  <TextInput
+                    value={appointmentDate}
+                    onChangeText={setAppointmentDate}
+                    placeholder="dd-mm-yyyy"
+                    placeholderTextColor="#94A3B8"
+                    style={styles.modalInput}
+                  />
+                  <Icon name="calendar-outline" size={18} color="#0F172A" />
+                </View>
+
+                <Text style={styles.fieldLabel}>Select Time</Text>
+                <View style={styles.modalPickerWrap}>
+                  <Picker
+                    selectedValue={appointmentTime}
+                    onValueChange={setAppointmentTime}
+                    style={styles.modalPicker}
+                    dropdownIconColor="#0F172A"
+                  >
+                    <Picker.Item label="Choose a time slot" value="" color="#475569" />
+                    {timeSlots.map((slot) => (
+                      <Picker.Item key={slot} label={slot} value={slot} color="#0F172A" />
+                    ))}
+                  </Picker>
+                </View>
+
+                <TouchableOpacity style={styles.primaryModalBtn} onPress={handleBookAppointment}>
+                  <Text style={styles.primaryModalBtnText}>Book My Appointment</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.waOutlineBtn} onPress={openWhatsApp}>
+                  <Text style={styles.waOutlineBtnText}>Message Us on WhatsApp</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.modalImagePanel}>
+                <Image source={require("../assets/examples/book-strategy-call.png")} style={styles.modalImage} resizeMode="cover" />
+              </View>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal visible={confirmedModalVisible} transparent animationType="fade" onRequestClose={() => setConfirmedModalVisible(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.confirmCard}>
+            <TouchableOpacity style={styles.modalCloseBtn} onPress={() => setConfirmedModalVisible(false)}>
+              <Icon name="close" size={20} color="#1E3A5F" />
+            </TouchableOpacity>
+
+            <Text style={styles.confirmTitle}>Your Appointment is Confirmed!</Text>
+            <Text style={styles.confirmSubTitle}>Your profile evaluation call is scheduled. Check your email for details.</Text>
+
+            <View style={styles.confirmInfoRow}>
+              <Text style={styles.confirmInfoLabel}>Selected date</Text>
+              <Text style={styles.confirmInfoValue}>{appointmentDate}</Text>
+            </View>
+            <View style={styles.confirmInfoRow}>
+              <Text style={styles.confirmInfoLabel}>Selected time</Text>
+              <Text style={styles.confirmInfoValue}>{appointmentTime}</Text>
+            </View>
+
+            <View style={styles.confirmImageWrap}>
+              <Image source={require("../assets/examples/appointment-confirmed.png")} style={styles.confirmImage} resizeMode="cover" />
+            </View>
+
+            <TouchableOpacity style={styles.waOutlineBtn} onPress={openWhatsApp}>
+              <Text style={styles.waOutlineBtnText}>Message Us on WhatsApp</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.closeDarkBtn} onPress={() => setConfirmedModalVisible(false)}>
+              <Text style={styles.closeDarkBtnText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScreenWrapper>
   );
 }
@@ -301,43 +417,58 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     paddingHorizontal: 14,
-    paddingTop: 14,
+    paddingTop: 12,
     paddingBottom: 28,
     backgroundColor: "#F7F8FC",
   },
-  hero: {
+  heroCard: {
     width: CARD_WIDTH,
-    paddingTop: 8,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    backgroundColor: "#FFFFFF",
+    padding: 14,
+    marginBottom: 10,
+  },
+  heroBadgeWrap: {
+    flexDirection: "row",
     alignItems: "center",
+    alignSelf: "flex-start",
+    borderWidth: 1,
+    borderColor: "#FFDCC8",
+    backgroundColor: "#FFF4ED",
+    borderRadius: 999,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    gap: 4,
   },
   badge: {
-    letterSpacing: 2,
-    fontSize: 12,
-    color: "#94A3B8",
+    letterSpacing: 1.2,
+    fontSize: 11,
+    color: ORANGE,
     fontWeight: "700",
   },
   title: {
     marginTop: 10,
-    fontSize: SCREEN_WIDTH < 370 ? 32 : 38,
-    lineHeight: SCREEN_WIDTH < 370 ? 38 : 44,
+    fontSize: SCREEN_WIDTH < 370 ? 24 : 28,
+    lineHeight: SCREEN_WIDTH < 370 ? 30 : 34,
     fontWeight: "800",
-    color: "#334155",
-    textAlign: "center",
+    color: "#0F172A",
+    textAlign: "left",
   },
   subTitle: {
-    marginTop: 10,
-    textAlign: "center",
+    marginTop: 8,
+    textAlign: "left",
     color: "#64748B",
-    fontSize: 16,
-    marginBottom: 14,
+    fontSize: 14,
   },
   card: {
     width: CARD_WIDTH,
     backgroundColor: "#FFFFFF",
-    borderRadius: 22,
+    borderRadius: 16,
     borderWidth: 1,
     borderColor: "#E2E8F0",
-    padding: 16,
+    padding: 14,
     shadowColor: "#0F172A",
     shadowOpacity: 0.08,
     shadowRadius: 12,
@@ -351,45 +482,41 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   formHeaderText: {
-    color: "#334155",
+    color: "#0F172A",
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: "700",
   },
   inputWrap: {
-    minHeight: 54,
+    minHeight: 50,
     borderWidth: 1,
     borderColor: "#CBD5E1",
     backgroundColor: "#F8FAFC",
-    borderRadius: 13,
+    borderRadius: 12,
     paddingHorizontal: 12,
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 12,
+    marginBottom: 10,
   },
   input: {
     flex: 1,
     marginLeft: 8,
     color: "#0F172A",
-    fontSize: 16,
+    fontSize: 15,
   },
   phoneRow: {
     flexDirection: "row",
     gap: 10,
   },
   codeWrap: {
-    width: 130,
+    width: 118,
     alignItems: "flex-start",
     paddingTop: 6,
     position: "relative",
   },
   codeLabel: {
-    fontSize: 12,
+    fontSize: 11,
     color: ORANGE,
     marginBottom: 2,
-  },
-  codeInput: {
-    marginLeft: 0,
-    paddingTop: 0,
   },
   codePicker: {
     width: "100%",
@@ -400,9 +527,9 @@ const styles = StyleSheet.create({
   selectedCodeText: {
     position: "absolute",
     left: 12,
-    top: 24,
+    top: 22,
     color: "#0F172A",
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: "600",
     zIndex: 1,
     pointerEvents: "none",
@@ -411,10 +538,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   pickerWrap: {
-    minHeight: 54,
+    minHeight: 50,
     borderWidth: 1,
     borderColor: "#CBD5E1",
-    borderRadius: 13,
+    borderRadius: 12,
     backgroundColor: "#F8FAFC",
     paddingLeft: 12,
     paddingRight: 2,
@@ -430,13 +557,13 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: "#EF4444",
-    marginTop: 6,
-    marginBottom: 10,
+    marginTop: 4,
+    marginBottom: 8,
     fontSize: 12,
   },
   queryBox: {
-    marginTop: 6,
-    borderRadius: 14,
+    marginTop: 2,
+    borderRadius: 12,
     borderWidth: 1.2,
     borderColor: "#FDBA74",
     padding: 10,
@@ -447,15 +574,15 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   queryInput: {
-    minHeight: 110,
+    minHeight: 96,
     color: "#0F172A",
-    fontSize: 16,
+    fontSize: 15,
   },
   submitBtn: {
-    marginTop: 14,
+    marginTop: 12,
     backgroundColor: ORANGE,
     borderRadius: 999,
-    minHeight: 52,
+    minHeight: 48,
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
@@ -464,7 +591,7 @@ const styles = StyleSheet.create({
   submitText: {
     color: "#fff",
     fontWeight: "700",
-    fontSize: 20,
+    fontSize: 16,
   },
   submitMessage: {
     marginTop: 10,
@@ -477,14 +604,217 @@ const styles = StyleSheet.create({
   submitMessageError: {
     color: "#EF4444",
   },
-  noteRow: {
+  trustCard: {
     marginTop: 12,
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    borderRadius: 12,
+    backgroundColor: "#F8FAFC",
+    padding: 10,
+  },
+  noteRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
   },
   noteText: {
-    color: "#64748B",
+    color: "#475569",
+    fontSize: 13,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(2, 6, 23, 0.65)",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 12,
+  },
+  modalCard: {
+    width: "100%",
+    maxWidth: 760,
+    backgroundColor: "#F8FAFC",
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: "#C8D6EA",
+    padding: 12,
+  },
+  modalCloseBtn: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#E7EDF7",
+    zIndex: 2,
+  },
+  modalBodyRow: {
+    flexDirection: SCREEN_WIDTH < 760 ? "column" : "row",
+    gap: 12,
+  },
+  modalLeft: {
+    flex: 1,
+    paddingTop: 4,
+  },
+  modalTitle: {
+    color: "#1E3A5F",
+    fontSize: SCREEN_WIDTH < 760 ? 30 : 38,
+    fontWeight: "800",
+    lineHeight: SCREEN_WIDTH < 760 ? 34 : 44,
+    marginBottom: 8,
+  },
+  modalSubTitle: {
+    color: "#3E5D86",
+    fontSize: 14,
+    lineHeight: 22,
+    marginBottom: 12,
+  },
+  fieldLabel: {
+    color: "#1E3A5F",
+    fontSize: SCREEN_WIDTH < 760 ? 24 : 32,
+    fontWeight: "700",
+    marginBottom: 6,
+  },
+  modalInputWrap: {
+    minHeight: 52,
+    borderWidth: 1,
+    borderColor: "#BACCE6",
+    borderRadius: 14,
+    backgroundColor: "#EFF4FC",
+    paddingHorizontal: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  modalInput: {
+    flex: 1,
+    color: "#0F172A",
     fontSize: 15,
+  },
+  modalPickerWrap: {
+    minHeight: 52,
+    borderWidth: 1,
+    borderColor: "#BACCE6",
+    borderRadius: 14,
+    backgroundColor: "#EFF4FC",
+    justifyContent: "center",
+    marginBottom: 12,
+    overflow: "hidden",
+  },
+  modalPicker: {
+    color: "#0F172A",
+  },
+  primaryModalBtn: {
+    minHeight: 50,
+    borderRadius: 14,
+    backgroundColor: "#2F8B45",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 10,
+  },
+  primaryModalBtnText: {
+    color: "#FFFFFF",
+    fontSize: 15,
+    fontWeight: "700",
+  },
+  waOutlineBtn: {
+    minHeight: 50,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "#9FD3A8",
+    backgroundColor: "#EFFAF1",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  waOutlineBtnText: {
+    color: "#1F8A3D",
+    fontSize: 15,
+    fontWeight: "700",
+  },
+  modalImagePanel: {
+    width: SCREEN_WIDTH < 760 ? "100%" : 300,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "#C8D6EA",
+    backgroundColor: "#FFFFFF",
+    overflow: "hidden",
+    minHeight: 190,
+  },
+  modalImage: {
+    width: "100%",
+    height: "100%",
+    minHeight: 190,
+  },
+  confirmCard: {
+    width: "100%",
+    maxWidth: 760,
+    backgroundColor: "#F8FAFC",
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: "#C8D6EA",
+    padding: 12,
+    position: "relative",
+  },
+  confirmTitle: {
+    color: "#1E3A5F",
+    fontSize: SCREEN_WIDTH < 760 ? 22 : 34,
+    fontWeight: "800",
+    marginTop: 16,
+    marginBottom: 8,
+    lineHeight: SCREEN_WIDTH < 760 ? 30 : 42,
+  },
+  confirmSubTitle: {
+    color: "#3E5D86",
+    fontSize: 14,
+    lineHeight: 22,
+    marginBottom: 12,
+  },
+  confirmInfoRow: {
+    minHeight: 50,
+    borderWidth: 1,
+    borderColor: "#BACCE6",
+    borderRadius: 12,
+    backgroundColor: "#EFF4FC",
+    paddingHorizontal: 12,
+    marginBottom: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  confirmInfoLabel: {
+    color: "#4A6790",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  confirmInfoValue: {
+    color: "#1E3A5F",
+    fontSize: 15,
+    fontWeight: "800",
+  },
+  confirmImageWrap: {
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "#C8D6EA",
+    overflow: "hidden",
+    backgroundColor: "#FFFFFF",
+    marginBottom: 10,
+  },
+  confirmImage: {
+    width: "100%",
+    height: SCREEN_WIDTH < 760 ? 160 : 220,
+  },
+  closeDarkBtn: {
+    minHeight: 50,
+    borderRadius: 14,
+    backgroundColor: "#173B63",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 10,
+  },
+  closeDarkBtnText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "800",
   },
 });

@@ -295,6 +295,7 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/Ionicons";
+import { View, StyleSheet } from "react-native";
 
 import HomeStack from "./HomeStack";
 import VisaStatusScreen from "../screens/visa/VisaStatusScreen";
@@ -313,22 +314,37 @@ export default function TabNavigator() {
         headerShown: false,
 
         tabBarStyle: {
-          height: 60 + insets.bottom,
-          paddingBottom: insets.bottom,
-          paddingTop: 6,
-          backgroundColor: "#FF5C00",
+          position: "absolute",
+          left: 12,
+          right: 12,
+          bottom: 10,
+          height: 64 + insets.bottom,
+          paddingBottom: Math.max(8, insets.bottom),
+          paddingTop: 8,
+          backgroundColor: "#FFFFFF",
+          borderTopWidth: 0,
+          borderRadius: 18,
+          elevation: 10,
+          shadowColor: "#0F172A",
+          shadowOpacity: 0.12,
+          shadowOffset: { width: 0, height: 6 },
+          shadowRadius: 12,
+        },
+        tabBarItemStyle: {
+          paddingTop: 2,
         },
 
         tabBarLabelStyle: {
           fontSize: 11,
-          marginBottom: 4,
+          marginBottom: 2,
+          fontWeight: "700",
         },
 
-        tabBarIcon: ({ color }) => {
+        tabBarIcon: ({ color, focused }) => {
           let iconName;
 
           if (route.name === "Home") {
-            iconName = "globe-outline";
+            iconName = "home-outline";
           } else if (route.name === "Status") {
             iconName = "cloud-upload-outline";
           } else if (route.name === "EnquiryNow") {
@@ -339,11 +355,15 @@ export default function TabNavigator() {
             iconName = "person-circle-outline";
           }
 
-          return <Icon name={iconName} size={22} color={color} />;
+          return (
+            <View style={[styles.iconWrap, focused && styles.iconWrapActive]}>
+              <Icon name={iconName} size={20} color={color} />
+            </View>
+          );
         },
 
-        tabBarActiveTintColor: "#fff",
-        tabBarInactiveTintColor: "#000",
+        tabBarActiveTintColor: "#FF5C00",
+        tabBarInactiveTintColor: "#475569",
       })}
     >
       <Tab.Screen name="Home" component={HomeStack} />
@@ -374,3 +394,16 @@ export default function TabNavigator() {
     </Tab.Navigator>
   );
 }
+
+const styles = StyleSheet.create({
+  iconWrap: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  iconWrapActive: {
+    backgroundColor: "#FFF1E8",
+  },
+});

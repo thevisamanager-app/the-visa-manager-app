@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -149,7 +149,8 @@ export default function IsraelApplyScreen({ navigation }) {
         travellers.map(async (t, index) => {
           const basePath = `applications/${user.uid}/${applicationId}/traveller_${index + 1}`;
           const passportFrontPage = await extractPassportFrontPageFromAsset(
-            t.documents.passportFront
+            t.documents.passportFront,
+            t.form.phone
           );
 
           const passportFrontUrl = await uploadFile(
@@ -392,12 +393,12 @@ const styles = StyleSheet.create({
   container: { padding: 16, paddingBottom: 40 },
   formCard: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 14,
+    borderRadius: 16,
     padding: 12,
     marginTop: 10,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: "#E2E8F0",
     elevation: 2,
   },
   header: {
@@ -406,10 +407,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 14,
   },
-  headerTitle: { fontSize: 17, fontWeight: "700" },
+  headerTitle: { fontSize: 17, fontWeight: "800" },
   input: {
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#CBD5E1",
     borderRadius: 10,
     padding: 12,
     marginBottom: 12,
@@ -419,8 +420,8 @@ const styles = StyleSheet.create({
   inputText: { color: "#111827" },
   inputPlaceholder: { color: "#111827" },
   docCard: {
-    backgroundColor: "#fff",
-    borderRadius: 14,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
     padding: 12,
     marginBottom: 16,
     elevation: 2,
@@ -432,7 +433,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   sampleWrapper: {
-    backgroundColor: "#F5F6F8",
+    backgroundColor: "#F8FAFC",
     borderRadius: 10,
     padding: 6,
     marginBottom: 8,
@@ -448,7 +449,7 @@ const styles = StyleSheet.create({
   },
   filePreviewBox: {
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: "#E2E8F0",
     borderStyle: "dashed",
     borderRadius: 10,
     paddingVertical: 20,
@@ -471,7 +472,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     alignItems: "center",
   },
-  uploadText: { color: ORANGE, fontWeight: "700" },
+  uploadText: { color: ORANGE, fontWeight: "800" },
   submitBtn: {
     backgroundColor: ORANGE,
     borderRadius: 999,
@@ -479,14 +480,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 8,
   },
-  submitText: { color: "#fff", fontWeight: "700", fontSize: 16 },
+  submitText: { color: "#fff", fontWeight: "800", fontSize: 16 },
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.55)",
     justifyContent: "center",
   },
   modalBox: {
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     margin: 16,
     borderRadius: 16,
     padding: 14,
@@ -498,12 +499,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   calendarBox: {
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     margin: 20,
     borderRadius: 16,
     padding: 12,
-  },
-
+  },
   modalActions: {
     marginTop: 8,
     flexDirection: "row",
@@ -522,7 +522,7 @@ const styles = StyleSheet.create({
   },
   closeBtnText: {
     color: ORANGE,
-    fontWeight: "700",
+    fontWeight: "800",
   },
   saveBtn: {
     backgroundColor: ORANGE,
@@ -534,7 +534,8 @@ const styles = StyleSheet.create({
   },
   saveBtnText: {
     color: "#fff",
-    fontWeight: "700",
+    fontWeight: "800",
   },
 });
+
 

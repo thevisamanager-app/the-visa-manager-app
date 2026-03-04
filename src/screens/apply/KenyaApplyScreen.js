@@ -13,14 +13,12 @@ import {
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Calendar } from "react-native-calendars";
 import { launchImageLibrary } from "react-native-image-picker";
-import { validatePickedDocument } from "../../utils/documentValidation";
 import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import ScreenWrapper from "../../components/ScreenWrapper";
 import { ApplyCountryHeader, CoPassengerCard } from "../../components/ApplyFlowCards";
-import { extractTextFromImage } from "../../api/ocr/visionApi";
-import { parseMRZ } from "../../api/ocr/mrzParser";
+import { extractPassportFrontPageFromAsset } from "../../utils/passportFrontPage";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
 import PassportBackSample from "../../assets/examples/passport-back.png";
@@ -95,31 +93,13 @@ export default function KenyaApplyScreen({ navigation }) {
   };
 
   const pickDocument = async (target, key) => {
-    const isFrontPage = key === "passportFront";
     const res = await launchImageLibrary({
       mediaType: "mixed",
       quality: 0.9,
-      includeBase64: isFrontPage,
+      includeBase64: key === "passportFront",
     });
     if (!res.assets?.[0]) return;
     const selectedAsset = res.assets[0];
-    let frontPageData = null;
-
-    if (isFrontPage && selectedAsset.base64) {
-      try {
-        const rawText = await extractTextFromImage(selectedAsset.base64);
-        const parsed = parseMRZ(rawText);
-        frontPageData = {
-          parsed: {
-            ...parsed,
-            birthDate: toDDMMYY(parsed.birthDate),
-            expiryDate: toDDMMYY(parsed.expiryDate),
-          },
-        };
-      } catch (error) {
-        console.log("Kenya front page OCR failed:", error);
-      }
-    }
 
     if (target === "main") {
       const updated = [...travellers];
@@ -184,8 +164,9 @@ export default function KenyaApplyScreen({ navigation }) {
       const formattedTravellers = await Promise.all(
         travellers.map(async (t, index) => {
           const basePath = `applications/${user.uid}/${applicationId}/traveller_${index + 1}`;
-          const passportFrontPage = await extractPassportFrontPageFromAsset(
-            t.documents.passportFront
+          await extractPassportFrontPageFromAsset(
+            t.documents.passportFront,
+            t.form.phone
           );
 
           const passportFrontUrl = await uploadFile(
@@ -474,12 +455,12 @@ const styles = StyleSheet.create({
   container: { padding: 16, paddingBottom: 40 },
   formCard: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 14,
+    borderRadius: 16,
     padding: 12,
     marginTop: 10,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: "#E2E8F0",
     elevation: 2,
   },
   header: {
@@ -489,26 +470,25 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
 
-    headerTitle: { fontSize: 17, fontWeight: "700" },
-  sectionTitle: { fontSize: 16, fontWeight: "700", marginBottom: 16, textAlign: "center" },
-  input: { borderWidth: 1, borderColor: "#ddd", borderRadius: 10, padding: 12, marginBottom: 12 },
-  docCard: { backgroundColor: "#fff", borderRadius: 14, padding: 12, marginBottom: 16 },
+    headerTitle: { fontSize: 17, fontWeight: "800" },
+  sectionTitle: { fontSize: 16, fontWeight: "800", marginBottom: 16, textAlign: "center" },
+  input: { borderWidth: 1, borderColor: "#CBD5E1", borderRadius: 10, padding: 12, marginBottom: 12 },
+  docCard: { backgroundColor: "#FFFFFF", borderRadius: 16, padding: 12, marginBottom: 16 },
   docLabel: { fontWeight: "600", fontSize: 14, textAlign: "center", marginBottom: 8 },
   sampleImage: { height: 95, width: "100%" },
   previewImage: { height: 110, borderRadius: 10, marginBottom: 8 },
   uploadBtn: { borderWidth: 1, borderColor: ORANGE, borderRadius: 10, paddingVertical: 10, alignItems: "center" },
-  uploadText: { color: ORANGE, fontWeight: "700" },
+  uploadText: { color: ORANGE, fontWeight: "800" },
   submitBtn: { backgroundColor: ORANGE, borderRadius: 999, paddingVertical: 16, alignItems: "center" },
-  submitText: { color: "#fff", fontWeight: "700", fontSize: 16 },
+  submitText: { color: "#fff", fontWeight: "800", fontSize: 16 },
   addTravellerBtn: { borderWidth: 1, borderColor: ORANGE, borderRadius: 999, paddingVertical: 14, alignItems: "center", marginVertical: 16 },
-  addTravellerText: { color: ORANGE, fontWeight: "700" },
+  addTravellerText: { color: ORANGE, fontWeight: "800" },
   calendarOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.4)", justifyContent: "center" },
-  calendarBox: { backgroundColor: "#fff", margin: 20, borderRadius: 16, padding: 12 },
+  calendarBox: { backgroundColor: "#FFFFFF", margin: 20, borderRadius: 16, padding: 12 },
   modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.4)", justifyContent: "center" },
-  modalBox: { backgroundColor: "#fff", margin: 20, borderRadius: 16, padding: 16, maxHeight: "85%" },
-  dropdown: { backgroundColor: "#fff", borderWidth: 1, borderColor: "#ddd", marginBottom: 12 },
-  dropdownItem: { padding: 12 },
-
+  modalBox: { backgroundColor: "#FFFFFF", margin: 20, borderRadius: 16, padding: 16, maxHeight: "85%" },
+  dropdown: { backgroundColor: "#FFFFFF", borderWidth: 1, borderColor: "#CBD5E1", marginBottom: 12 },
+  dropdownItem: { padding: 12 },
   modalActions: {
     marginTop: 8,
     flexDirection: "row",
@@ -527,7 +507,7 @@ const styles = StyleSheet.create({
   },
   closeBtnText: {
     color: ORANGE,
-    fontWeight: "700",
+    fontWeight: "800",
   },
   saveBtn: {
     backgroundColor: ORANGE,
@@ -539,7 +519,8 @@ const styles = StyleSheet.create({
   },
   saveBtnText: {
     color: "#fff",
-    fontWeight: "700",
+    fontWeight: "800",
   },
 });
+
 

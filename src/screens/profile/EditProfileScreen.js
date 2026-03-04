@@ -1,231 +1,3 @@
-// import React from "react";
-// import {
-//   View,
-//   Text,
-//   StyleSheet,
-//   TextInput,
-//   TouchableOpacity,
-//   Image,
-//   ScrollView,
-// } from "react-native";
-
-// const COLORS = {
-//   primary: "#FF7A00",
-//   black: "#000",
-//   white: "#FFF",
-//   gray: "#777",
-//   lightGray: "#F7F7F7",
-// };
-
-// export default function EditProfieScreen({ navigation }) {
-//   return (
-//     <ScrollView style={styles.container}>
-//       {/* Header */}
-//       <TouchableOpacity onPress={() => navigation.goBack()}>
-//         <Text style={styles.backArrow}>‹</Text>
-//       </TouchableOpacity>
-
-//       <Text style={styles.header}>Edit Profile</Text>
-
-//       {/* Avatar */}
-//       <View style={{ alignItems: "center", marginVertical: 20 }}>
-//         <Image
-//           source={{ uri: "https://randomuser.me/api/portraits/men/45.jpg" }}
-//           style={styles.avatar}
-//         />
-//       </View>
-
-//       {/* Inputs */}
-//       <Input label="Full Name" value="Darlene Robertson" />
-//       <Input label="Phone Number" value="+1 212 555 444" />
-//       <Input label="Gender" value="Male" />
-//       <Input label="Email Address" value="darlenereb@gmail.com" />
-//       <Input label="Password" value="" secure />
-
-//       {/* Save button */}
-//       <TouchableOpacity style={styles.saveBtn}>
-//         <Text style={styles.saveText}>Save Changes</Text>
-//       </TouchableOpacity>
-//     </ScrollView>
-//   );
-// }
-
-// function Input({ label, value, secure }) {
-//   return (
-//     <View style={{ marginBottom: 18 }}>
-//       <Text style={styles.inputLabel}>{label}</Text>
-//       <TextInput
-//         secureTextEntry={secure}
-//         defaultValue={value}
-//         style={styles.input}
-//       />
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: { padding: 20, backgroundColor: COLORS.white },
-
-//   backArrow: { fontSize: 30, fontWeight: "300" },
-
-//   header: {
-//     fontSize: 22,
-//     fontWeight: "700",
-//     alignSelf: "center",
-//     marginVertical: 10,
-//   },
-
-//   avatar: { width: 90, height: 90, borderRadius: 50 },
-
-//   inputLabel: { color: COLORS.gray, marginBottom: 6, fontSize: 14 },
-//   input: {
-//     backgroundColor: COLORS.lightGray,
-//     padding: 14,
-//     borderRadius: 10,
-//     fontSize: 15,
-//   },
-
-//   saveBtn: {
-//     backgroundColor: COLORS.primary,
-//     paddingVertical: 16,
-//     borderRadius: 12,
-//     marginTop: 10,
-//   },
-//   saveText: {
-//     color: COLORS.white,
-//     textAlign: "center",
-//     fontSize: 16,
-//     fontWeight: "600",
-//   },
-// });
-
-
-// import React from "react";
-// import {
-//   View,
-//   Text,
-//   StyleSheet,
-//   TextInput,
-//   TouchableOpacity,
-//   Image,
-//   ScrollView,
-// } from "react-native";
-
-// import { wp, hp, scale, verticalScale, moderateScale, RFValue } from "../../utils/metrics";
-// import Icon from "react-native-vector-icons/MaterialIcons";
-// const COLORS = {
-//   primary: "#FF5C00",
-//   black: "#000",
-//   white: "#FFF",
-//   gray: "#777",
-//   lightGray: "#F7F7F7",
-// };
-
-// export default function EditProfileScreen({ navigation }) {
-//   return (
-//     <ScrollView
-//       style={styles.container}
-//       contentContainerStyle={{ paddingBottom: hp("5%") }}
-//     >
-
-//       {/* Back */}
-//       <TouchableOpacity onPress={() => navigation.goBack()}>
-//         <Text style={styles.backArrow}>‹</Text>
-//       </TouchableOpacity>
-
-//       <Text style={styles.header}>Edit Profile</Text>
-
-//       {/* Avatar */}
-//       <View style={styles.avatarBox}>
-//         <Icon name="edit-square" size={58} color={COLORS.primary} style={styles.avatar} />
-//       </View>
-
-//       {/* Inputs */}
-//       <Input label="Full Name" value="Darlene Robertson" />
-//       <Input label="Phone Number" value="+1 212 555 444" />
-//       <Input label="Gender" value="Male" />
-//       <Input label="Email Address" value="darlenereb@gmail.com" />
-//       <Input label="Password" value="" secure />
-
-//       {/* Save */}
-//       <TouchableOpacity style={styles.saveBtn}>
-//         <Text style={styles.saveText}>Save Changes</Text>
-//       </TouchableOpacity>
-//     </ScrollView>
-//   );
-// }
-
-// function Input({ label, value, secure }) {
-//   return (
-//     <View style={{ marginBottom: verticalScale(18) }}>
-//       <Text style={styles.inputLabel}>{label}</Text>
-
-//       <TextInput
-//         secureTextEntry={secure}
-//         defaultValue={value}
-//         style={styles.input}
-//       />
-//     </View>
-//   );
-// }
-
-
-// const styles = StyleSheet.create({
-//   container: {
-//     backgroundColor: COLORS.white,
-//     paddingHorizontal: wp("5%"),  // left + right
-//     paddingBottom: verticalScale(20), // optional bottom padding
-//   },
-
-//   backArrow: {
-//     fontSize: RFValue(30),
-//     fontWeight: "300",
-//     marginTop: verticalScale(10),  // bring it down a bit since padding removed
-//   },
-
-//   header: {
-//     fontSize: RFValue(22),
-//     fontWeight: "700",
-//     alignSelf: "center",
-//     marginVertical: verticalScale(10),
-//     color: COLORS.black,
-//   },
-
-//   avatar: {
-//     width: wp("24%"),
-//     height: wp("24%"),
-//     borderRadius: 100,
-//   },
-
-//   inputLabel: {
-//     color: COLORS.gray,
-//     marginBottom: verticalScale(6),
-//     fontSize: RFValue(14)
-//   },
-
-//   input: {
-//     backgroundColor: COLORS.lightGray,
-//     padding: moderateScale(14),
-//     borderRadius: moderateScale(10),
-//     fontSize: RFValue(15),
-//   },
-
-//   saveBtn: {
-//     backgroundColor: COLORS.primary,
-//     paddingVertical: verticalScale(16),
-//     borderRadius: moderateScale(12),
-//     marginTop: verticalScale(15),
-//   },
-
-//   saveText: {
-//     color: COLORS.white,
-//     textAlign: "center",
-//     fontSize: RFValue(16),
-//     fontWeight: "600",
-//   },
-// });
-
-
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -236,6 +8,7 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
@@ -243,7 +16,6 @@ import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import {
   wp,
   hp,
-  scale,
   verticalScale,
   moderateScale,
   RFValue,
@@ -253,24 +25,18 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 
 const COLORS = {
   primary: "#FF5C00",
-  black: "#000",
   white: "#FFF",
-  gray: "#777",
-  lightGray: "#F7F7F7",
 };
 
 export default function EditProfileScreen({ navigation }) {
+  const insets = useSafeAreaInsets();
   const [loading, setLoading] = useState(false);
 
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [gender, setGender] = useState("");
   const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
 
-  /* =====================================================
-     LOAD USER DATA
-  ===================================================== */
   useEffect(() => {
     const user = auth().currentUser;
     if (!user) return;
@@ -291,9 +57,6 @@ export default function EditProfileScreen({ navigation }) {
       });
   }, []);
 
-  /* =====================================================
-     SAVE PROFILE
-  ===================================================== */
   const handleSave = async () => {
     try {
       setLoading(true);
@@ -301,9 +64,6 @@ export default function EditProfileScreen({ navigation }) {
       const user = auth().currentUser;
       if (!user) throw new Error("User not logged in");
 
-      /* -------------------------
-         UPDATE FIRESTORE PROFILE
-      ------------------------- */
       await firestore()
         .collection("users")
         .doc(user.uid)
@@ -312,18 +72,14 @@ export default function EditProfileScreen({ navigation }) {
             fullName,
             phone,
             gender,
-            email, // store editable email safely here
+            email,
             updatedAt: serverTimestamp(),
           },
           { merge: true }
         );
 
-      /* -------------------------
-         UPDATE AUTH EMAIL (SAFE)
-      ------------------------- */
       if (email && email !== user.email) {
         if (user.providerData[0]?.providerId === "password") {
-          // Send verification before changing email
           await user.verifyBeforeUpdateEmail(email);
 
           Alert.alert(
@@ -338,179 +94,253 @@ export default function EditProfileScreen({ navigation }) {
         }
       }
 
-      /* -------------------------
-         UPDATE PASSWORD (OPTIONAL)
-      ------------------------- */
-      // if (password) {
-      //   await user.updatePassword(password);
-      // }
-
       Alert.alert("Success", "Profile updated successfully");
       navigation.goBack();
     } catch (error) {
       console.error(error);
-
-      Alert.alert(
-        "Update Failed",
-        error.message || "Something went wrong"
-      );
+      Alert.alert("Update Failed", error.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
   };
 
-
   return (
     <ScrollView
       style={styles.container}
-      contentContainerStyle={{ paddingBottom: hp("5%") }}
+      contentContainerStyle={[
+        styles.content,
+        { paddingBottom: Math.max(hp("5%"), insets.bottom + 24) },
+      ]}
     >
-      {/* Back */}
-      <TouchableOpacity onPress={() => navigation.goBack()}>
-        <Text style={styles.backArrow}>‹</Text>
-      </TouchableOpacity>
-
-
-
-      {/* Avatar */}
-      <View style={styles.avatarBox}>
-
-        <Icon
-          name="edit-square"
-          size={58}
-          color={COLORS.primary}
-        />
-        <Text style={styles.header}>Edit Profile</Text>
+      <View style={styles.headerRow}>
+        <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
+          <Icon name="arrow-back-ios-new" size={18} color="#0F172A" />
+        </TouchableOpacity>
+        <View style={styles.headerCenter}>
+          <Text style={styles.header}>Edit Profile</Text>
+          <Text style={styles.headerSub}>Keep your details up to date</Text>
+        </View>
+        <View style={styles.backBtnPlaceholder} />
       </View>
 
-      {/* Inputs */}
-      <Input
-        label="Full Name"
-        value={fullName}
-        onChangeText={setFullName}
-      />
+      <View style={styles.profileCard}>
+        <View style={styles.avatarBox}>
+          <View style={styles.avatarIconWrap}>
+            <Icon name="account-circle" size={64} color={COLORS.primary} />
+          </View>
+          <View style={styles.avatarTextWrap}>
+            <Text style={styles.avatarTitle}>{fullName || "Your Profile"}</Text>
+            <Text style={styles.avatarSub}>Update details for faster support</Text>
+          </View>
+        </View>
 
-      <Input
-        label="Phone Number"
-        value={phone}
-        onChangeText={setPhone}
-        keyboardType="phone-pad"
-      />
+        <Input
+          label="Full Name"
+          value={fullName}
+          onChangeText={setFullName}
+          iconName="person-outline"
+        />
 
-      <Input
-        label="Gender"
-        value={gender}
-        onChangeText={setGender}
-      />
+        <Input
+          label="Phone Number"
+          value={phone}
+          onChangeText={setPhone}
+          keyboardType="phone-pad"
+          iconName="call-outline"
+        />
 
-      <Input
-        label="Email Address"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-      />
+        <Input
+          label="Gender"
+          value={gender}
+          onChangeText={setGender}
+          iconName="wc"
+        />
 
-      {/* <Input
-        label="Password (leave blank to keep same)"
-        value={password}
-        onChangeText={setPassword}
-        secure
-      /> */}
+        <Input
+          label="Email Address"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          iconName="mail-outline"
+        />
+      </View>
 
-      {/* Save */}
       <TouchableOpacity
-        style={styles.saveBtn}
+        style={[styles.saveBtn, loading && styles.saveBtnDisabled]}
         onPress={handleSave}
         disabled={loading}
       >
-        <Text style={styles.saveText}>
-          {loading ? "Saving..." : "Save Changes"}
-        </Text>
+        <Icon name="check-circle" size={18} color="#FFFFFF" />
+        <Text style={styles.saveText}>{loading ? "Saving..." : "Save Changes"}</Text>
       </TouchableOpacity>
     </ScrollView>
   );
 }
 
-/* =====================================================
-   INPUT COMPONENT
-===================================================== */
 function Input({
   label,
   value,
   onChangeText,
   secure,
   keyboardType,
+  iconName,
 }) {
   return (
-    <View style={{ marginBottom: verticalScale(18) }}>
+    <View style={styles.inputGroup}>
       <Text style={styles.inputLabel}>{label}</Text>
-
-      <TextInput
-        value={value}
-        onChangeText={onChangeText}
-        secureTextEntry={secure}
-        keyboardType={keyboardType}
-        style={styles.input}
-      />
+      <View style={styles.inputWrap}>
+        <Icon
+          name={iconName || "edit-note"}
+          size={18}
+          color="#64748B"
+          style={styles.inputIcon}
+        />
+        <TextInput
+          value={value}
+          onChangeText={onChangeText}
+          secureTextEntry={secure}
+          keyboardType={keyboardType}
+          style={styles.input}
+          placeholderTextColor="#94A3B8"
+        />
+      </View>
     </View>
   );
 }
 
-/* =====================================================
-   STYLES
-===================================================== */
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: COLORS.white,
+    backgroundColor: "#F4F7FC",
+  },
+  content: {
     paddingHorizontal: wp("5%"),
+    paddingTop: verticalScale(10),
   },
-
-  backArrow: {
-    fontSize: RFValue(30),
-    fontWeight: "300",
-    marginTop: verticalScale(10),
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: verticalScale(14),
   },
-
+  backBtn: {
+    width: moderateScale(38),
+    height: moderateScale(38),
+    borderRadius: moderateScale(12),
+    borderWidth: 1,
+    borderColor: "#DCE6F3",
+    backgroundColor: "#FFFFFF",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  backBtnPlaceholder: {
+    width: moderateScale(38),
+  },
+  headerCenter: {
+    alignItems: "center",
+    flex: 1,
+    marginHorizontal: 10,
+  },
   header: {
     fontSize: RFValue(22),
-    fontWeight: "700",
-    alignSelf: "center",
-    marginVertical: verticalScale(10),
-    marginHorizontal: verticalScale(10),
-    color: COLORS.black,
+    fontWeight: "800",
+    color: "#0F172A",
   },
-
+  headerSub: {
+    marginTop: 2,
+    fontSize: RFValue(12),
+    color: "#64748B",
+    fontWeight: "600",
+  },
+  profileCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: moderateScale(18),
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    padding: moderateScale(14),
+    shadowColor: "#0F172A",
+    shadowOpacity: 0.06,
+    shadowOffset: { width: 0, height: 5 },
+    shadowRadius: 10,
+    elevation: 3,
+  },
   avatarBox: {
     alignItems: "center",
-    marginVertical: verticalScale(20),
+    marginBottom: verticalScale(12),
     flexDirection: "row",
-    //justifyContent: "ce"
   },
-
+  avatarIconWrap: {
+    width: moderateScale(74),
+    height: moderateScale(74),
+    borderRadius: moderateScale(37),
+    backgroundColor: "#FFF4ED",
+    borderWidth: 1,
+    borderColor: "#FFDCC8",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  avatarTextWrap: {
+    marginLeft: moderateScale(10),
+    flex: 1,
+  },
+  avatarTitle: {
+    fontSize: RFValue(18),
+    color: "#0F172A",
+    fontWeight: "800",
+  },
+  avatarSub: {
+    marginTop: verticalScale(2),
+    fontSize: RFValue(12),
+    color: "#64748B",
+  },
+  inputGroup: {
+    marginBottom: verticalScale(14),
+  },
   inputLabel: {
-    color: COLORS.gray,
+    color: "#475569",
     marginBottom: verticalScale(6),
-    fontSize: RFValue(14),
+    fontSize: RFValue(13),
+    fontWeight: "700",
   },
-
+  inputWrap: {
+    minHeight: moderateScale(50),
+    borderWidth: 1,
+    borderColor: "#CBD5E1",
+    backgroundColor: "#F8FAFC",
+    borderRadius: moderateScale(12),
+    paddingHorizontal: moderateScale(12),
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  inputIcon: {
+    marginRight: moderateScale(8),
+  },
   input: {
-    backgroundColor: COLORS.lightGray,
-    padding: moderateScale(14),
-    borderRadius: moderateScale(10),
+    flex: 1,
     fontSize: RFValue(15),
+    color: "#0F172A",
   },
-
   saveBtn: {
     backgroundColor: COLORS.primary,
     paddingVertical: verticalScale(16),
-    borderRadius: moderateScale(12),
+    borderRadius: moderateScale(999),
     marginTop: verticalScale(15),
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    shadowColor: COLORS.primary,
+    shadowOpacity: 0.28,
+    shadowOffset: { width: 0, height: 8 },
+    shadowRadius: 12,
+    elevation: 4,
   },
-
+  saveBtnDisabled: {
+    opacity: 0.7,
+  },
   saveText: {
     color: COLORS.white,
     textAlign: "center",
     fontSize: RFValue(16),
-    fontWeight: "600",
+    fontWeight: "800",
   },
 });

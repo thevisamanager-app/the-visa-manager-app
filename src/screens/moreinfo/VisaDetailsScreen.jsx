@@ -1,12 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import CountryFlag from "react-native-country-flag";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import Icon from "react-native-vector-icons/Ionicons";
 import DESTINATIONS from "../../assets/data/destinations";
 import { TextInput } from "react-native";
 import WhyChooseTVM from "../../components/WhyChooseTVM";
-import { moderateScale } from "../../utils/metrics";
 import { COUNTRY_APPLY_ROUTES } from "../../config/countryApplyRoutes";
 import {
   View,
@@ -21,6 +19,7 @@ import {
   Easing,
   Dimensions,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { getCountryFaqs } from "../../utils/countryFaqs";
 import { COUNTRY_ISO_MAP } from "../../utils/countryIsoMap";
@@ -29,8 +28,8 @@ import { fetchGoogleReviews } from "../../services/reviews/googleReviews";
 import { COUNTRY_VISA_CONFIG } from "../../assets/data/countryVisaConfig";
 import { useDispatch } from "react-redux";
 import { setSelectedDestination } from "../../Redux/destinationsSlice";
+import { ApplyCountryHeader } from "../../components/ApplyFlowCards";
 
-const ORANGE = "#FF5C00";
 const NOTICE_TEXT =
   "Visa Fees Are Subject to Change. Please Confirm The Final Amount with your Visa Manager.";
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -67,9 +66,15 @@ const splitProcessingText = (value = "") => {
   return { start: text, highlight: "" };
 };
 
+const formatCurrency = (value) =>
+  `\u20B9${Number(value || 0).toLocaleString("en-IN", {
+    maximumFractionDigits: 0,
+  })}`;
+
 
 export default function VisaDetailsScreen({ navigation }) {
   const dispatch = useDispatch();
+  const insets = useSafeAreaInsets();
   const selected = useSelector((state) => state.destinations.selected);
   const countryName = selected?.countrName || "Country";
   const normalizedCountryName = countryName?.trim();
@@ -94,6 +99,7 @@ export default function VisaDetailsScreen({ navigation }) {
     COUNTRY_APPLY_ROUTES?.DEFAULT ||
     "TravelDateScreen";
   const [faqSearch, setFaqSearch] = useState("");
+  const [showAllFaqs, setShowAllFaqs] = useState(false);
   const normalizeCountryKey = (name = "") =>
     String(name).toLowerCase().replace(/[^a-z]/g, "");
   const toNumber = (val) => {
@@ -187,17 +193,7 @@ export default function VisaDetailsScreen({ navigation }) {
   useEffect(() => {
     setActiveStep(0);
   }, [normalizedCountryName]);
-  useEffect(() => {
-    if (PROCESS_STEPS.length <= 1) return;
-
-    const interval = setInterval(() => {
-      setActiveStep((prev) =>
-        prev < PROCESS_STEPS.length - 1 ? prev + 1 : 0
-      );
-    }, 3500);
-
-    return () => clearInterval(interval);
-  }, [normalizedCountryName, PROCESS_STEPS.length]);
+  // Keep process stepper stable: no auto-advance to avoid page jitter/shake.
 
   const processTitle =
     countryConfig?.processTitle || `${countryName} Visa Process`;
@@ -210,6 +206,10 @@ export default function VisaDetailsScreen({ navigation }) {
     faq.question.toLowerCase().includes(faqSearch.toLowerCase()) ||
     faq.answer.toLowerCase().includes(faqSearch.toLowerCase())
   );
+  const hasFaqSearch = faqSearch.trim().length > 0;
+  const visibleFaqs =
+    showAllFaqs || hasFaqSearch ? filteredFaqs : filteredFaqs.slice(0, 3);
+  const canToggleFaqList = !hasFaqSearch && filteredFaqs.length > 3;
   // 🔹 Google Reviews state
   const [reviews, setReviews] = useState([]);
   const [loadingReviews, setLoadingReviews] = useState(true);
@@ -255,18 +255,13 @@ export default function VisaDetailsScreen({ navigation }) {
   return (
     <ScreenWrapper>
       <View style={styles.screen}>
-        <ScrollView contentContainerStyle={styles.container}>
-          {/* HEADER ACTIONS */}
-          <View style={styles.headerRow}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Ionicons name="chevron-back" size={moderateScale(28)} color="black" />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => navigation.navigate("Tabs", { screen: "Destination" })}
-            >
-              <Icon name="home" size={moderateScale(24)} color={ORANGE} />
-            </TouchableOpacity>
-          </View>
+        <ScrollView
+          contentContainerStyle={[
+            styles.container,
+            { paddingBottom: Math.max(140, insets.bottom + 122) },
+          ]}
+        >
+          <ApplyCountryHeader navigation={navigation} countryName={countryName} />
 
           {/* COUNTRY VISA CARD */}
           <View style={styles.countryCard}>
@@ -492,7 +487,7 @@ export default function VisaDetailsScreen({ navigation }) {
                       </Text>
                     </View>
 
-                    <Text style={styles.reviewRating}>⭐ {item.rating}</Text>
+                    <Text style={styles.reviewRating}>Rating {item.rating}</Text>
                   </View>
 
                   <Text
@@ -547,6 +542,11 @@ export default function VisaDetailsScreen({ navigation }) {
               onChangeText={(text) => {
                 setFaqSearch(text);
                 setOpenIndex(null);
+                if (text.trim().length > 0) {
+                  setShowAllFaqs(true);
+                } else {
+                  setShowAllFaqs(false);
+                }
               }}
               placeholder="Search for answers"
               placeholderTextColor="#9CA3AF"
@@ -558,7 +558,7 @@ export default function VisaDetailsScreen({ navigation }) {
           {filteredFaqs.length === 0 ? (
             <Text style={styles.noFaqText}>No matching FAQ found.</Text>
           ) : (
-            filteredFaqs.map((item, index) => (
+            visibleFaqs.map((item, index) => (
             <View key={index} style={styles.faqItem}>
 
               {/* QUESTION ROW */}
@@ -591,6 +591,21 @@ export default function VisaDetailsScreen({ navigation }) {
             ))
           )}
 
+          {canToggleFaqList ? (
+            <TouchableOpacity
+              onPress={() => {
+                setShowAllFaqs((prev) => !prev);
+                setOpenIndex(null);
+              }}
+              style={styles.faqMoreBtn}
+              activeOpacity={0.85}
+            >
+              <Text style={styles.faqMoreBtnText}>
+                {showAllFaqs ? "Show less FAQs" : "More FAQs"}
+              </Text>
+            </TouchableOpacity>
+          ) : null}
+
 
           {finalIsVisaFree && (
             <View style={{ marginTop: 32 }}>
@@ -598,27 +613,19 @@ export default function VisaDetailsScreen({ navigation }) {
                 Popular Destinations for Indians
               </Text>
 
-              <View style={{ gap: 12 }}>
+              <View style={styles.highlightList}>
                 {highlightCountries.map((item, index) => (
                   <TouchableOpacity
                     key={index}
                     activeOpacity={0.8}
                     onPress={() => handleCountryPress(item)}
-                    style={{
-                      backgroundColor: "#FFFFFF",
-                      borderRadius: 14,
-                      padding: 14,
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: 12,
-                      elevation: 3,
-                    }}
+                    style={styles.highlightCountryCard}
                   >
                     <CountryFlag
                       isoCode={(COUNTRY_ISO_MAP[item.countrName] || "UN").toLowerCase()}
                       size={28}
                     />
-                    <Text style={{ fontSize: 14, fontWeight: "600" }}>
+                    <Text style={styles.highlightCountryName}>
                       {item.countrName}
                     </Text>
 
@@ -626,7 +633,7 @@ export default function VisaDetailsScreen({ navigation }) {
                       name="chevron-forward"
                       size={18}
                       color="#9CA3AF"
-                      style={{ marginLeft: "auto" }}
+                      style={styles.highlightCountryArrow}
                     />
                   </TouchableOpacity>
                 ))}
@@ -651,7 +658,7 @@ export default function VisaDetailsScreen({ navigation }) {
                   <TouchableOpacity
                     onPress={() => setTravellers((prev) => Math.max(1, prev - 1))}
                   >
-                    <Text style={styles.counterBtn}>−</Text>
+                    <Text style={styles.counterBtn}>-</Text>
                   </TouchableOpacity>
 
                   <Text style={styles.counterValue}>{travellers}</Text>
@@ -669,7 +676,7 @@ export default function VisaDetailsScreen({ navigation }) {
               {/* TOTAL */}
               <View style={styles.totalRow}>
                 <Text style={styles.totalLabel}>Total Amount</Text>
-                <Text style={styles.totalAmount}>{totalAmount}</Text>
+                <Text style={styles.totalAmount}>{formatCurrency(totalAmount)}</Text>
               </View>
 
               <View style={styles.noticeBar}>
@@ -715,7 +722,9 @@ export default function VisaDetailsScreen({ navigation }) {
         </ScrollView>
 
         {/* STICKY ACTION BUTTON */}
-        <View style={styles.stickyButtonRow}>
+        <View
+          style={[styles.stickyButtonRow, { bottom: Math.max(14, insets.bottom + 10) }]}
+        >
           {!finalIsVisaFree && (
             <TouchableOpacity
               style={styles.secondaryBtn}
@@ -764,82 +773,99 @@ function InfoItem({ label, value, icon, iconBg }) {
    STYLES
 ======================== */
 const styles = StyleSheet.create({
-  screen: { flex: 1 },
-  container: { padding: 16, paddingBottom: 96 },
+  screen: { flex: 1, backgroundColor: "#F4F7FC" },
+  container: { padding: 14, paddingTop: 10 },
 
   countryCard: {
     padding: 16,
-    marginBottom: 24,
+    marginBottom: 20,
     borderWidth: 1,
-    borderColor: "#FFD9BF",
-    borderRadius: 14,
+    borderColor: "#E2E8F0",
+    borderRadius: 18,
     backgroundColor: "#FFFFFF",
-    elevation: 4,
+    shadowColor: "#0F172A",
+    shadowOpacity: 0.06,
+    shadowOffset: { width: 0, height: 5 },
+    shadowRadius: 10,
+    elevation: 3,
   },
 
   countryHeader: {
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 12,
   },
 
   countryName: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: "800",
-    color: "#111827",
+    color: "#0F172A",
     textAlign: "center",
 
     maxWidth: "90%",        // ⬅️ keeps it centered visually
-    lineHeight: 24,         // ⬅️ clean wrapping
+    lineHeight: 28,         // ⬅️ clean wrapping
     marginTop: 10,
   },
 
   processingText: {
-    fontSize: 13,
-    color: "#6B7280",
+    fontSize: 14,
+    color: "#475569",
     marginTop: 8,           // ⬅️ space from title
     textAlign: "center",
   },
 
   processingTextHighlight: {
     color: "#FF5C00",
-    fontWeight: "700",
+    fontWeight: "800",
+  },
+  processingNote: {
+    marginTop: 6,
+    color: "#64748B",
+    fontSize: 12,
+    textAlign: "center",
+    lineHeight: 18,
   },
   subText: { fontSize: 13, color: "#6B7280", marginTop: 4 },
   bold: { fontWeight: "700" },
 
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: "800",
     color: "#111827",
-    marginBottom: 12,
-    marginTop: 24, // ✅ ADD THIS
+    marginBottom: 10,
+    marginTop: 18,
   },
 
 
 
   infoGrid: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 14,
+    borderRadius: 18,
     padding: 16,
-    marginBottom: 32,
+    marginBottom: 22,
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
     gap: 12,
     borderWidth: 1,
-    borderColor: "#F3F4F6",
-    elevation: 4,
+    borderColor: "#E2E8F0",
+    shadowColor: "#0F172A",
+    shadowOpacity: 0.04,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 8,
+    elevation: 2,
   },
 
 
 
   infoItemCentered: {
     width: "45%",
-    backgroundColor: "#F9FAFB",
-    borderRadius: 14,
-    paddingVertical: 16,
+    backgroundColor: "#F7FAFC",
+    borderRadius: 12,
+    paddingVertical: 14,
     paddingHorizontal: 12,
-    alignItems: "center",      // ✅ center everything
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
   },
   infoLabelCentered: {
     fontSize: 12,
@@ -848,9 +874,9 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   infoValueCentered: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: "700",
-    color: "#111827",
+    color: "#0F172A",
     textAlign: "center",
   },
 
@@ -897,20 +923,25 @@ const styles = StyleSheet.create({
 
   reviewCard: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 16,
+    borderRadius: 18,
     padding: 16,
-    marginBottom: 32,
+    marginBottom: 22,
     borderWidth: 1,
-    borderColor: "#F3F4F6",
+    borderColor: "#E2E8F0",
     width: "100%",
+    shadowColor: "#0F172A",
+    shadowOpacity: 0.04,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 8,
+    elevation: 2,
   },
 
 
   reviewItem: {
-    paddingVertical: 14,
+    paddingVertical: 12,
     borderBottomWidth: 1,
     borderColor: "#E5E7EB",
-    marginTop: 6, // ✅ ADD THIS
+    marginTop: 4,
   },
 
 
@@ -923,35 +954,39 @@ const styles = StyleSheet.create({
 
   reviewAvatar: { width: 36, height: 36, borderRadius: 18 },
   reviewName: { fontSize: 14, fontWeight: "700" },
-  reviewTime: { fontSize: 12, color: "#6B7280" },
-  reviewRating: { fontSize: 13, fontWeight: "700" },
+  reviewTime: { fontSize: 12, color: "#64748B" },
+  reviewRating: { fontSize: 12, fontWeight: "700", color: "#0F172A" },
   reviewText: {
     fontSize: 13,
-    color: "#6B7280",
-    lineHeight: 18,
+    color: "#475569",
+    lineHeight: 19,
     textAlign: "justify",
   },
 
   buttonRow: { marginTop: 20 },
   stickyButtonRow: {
     position: "absolute",
-    left: 16,
-    right: 16,
-    bottom: 16,
+    left: 14,
+    right: 14,
+    bottom: 14,
   },
   secondaryBtn: {
     backgroundColor: "#FF5C00",
-    height: 66,
+    height: 56,
     borderRadius: 999,
     alignItems: "center",
     justifyContent: "center",
-    elevation: 3,
+    shadowColor: "#FF5C00",
+    shadowOpacity: 0.28,
+    shadowOffset: { width: 0, height: 8 },
+    shadowRadius: 12,
+    elevation: 5,
   },
 
   secondaryText: {
     fontWeight: "700",
     color: "#fff",
-    fontSize: 18,
+    fontSize: 16,
   },
 
   primaryText: {
@@ -964,12 +999,22 @@ const styles = StyleSheet.create({
 
   processWrapper: {
     marginBottom: 24,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    padding: 14,
+    shadowColor: "#0F172A",
+    shadowOpacity: 0.04,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 8,
+    elevation: 2,
   },
 
   stepCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
     borderWidth: 2,
     borderColor: "#FF5C00",
     justifyContent: "center",
@@ -999,18 +1044,18 @@ const styles = StyleSheet.create({
 
   stepLabel: {
     width: "25%",
-    fontSize: 11,
+    fontSize: 10,
     color: "#9CA3AF",
     textAlign: "center",
   },
 
   processCardCentered: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
-    padding: 18,
+    backgroundColor: "#F8FAFC",
+    borderRadius: 14,
+    padding: 14,
     borderWidth: 1,
-    borderColor: "#FFE5D0",
-    minHeight: 260,     // ⬅️ increase
+    borderColor: "#E2E8F0",
+    minHeight: 206,
     justifyContent: "center",
   },
 
@@ -1040,17 +1085,23 @@ const styles = StyleSheet.create({
 
   processTextCentered: {
     fontSize: 13,
-    color: "#374151",
+    color: "#334155",
     flex: 1,
+    lineHeight: 19,
   },
 
   requirementsCard: {
-    backgroundColor: "#FFF7ED",
-    borderRadius: 16,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 18,
     padding: 16,
-    marginBottom: 32, // ✅ ADD / INCREASE
+    marginBottom: 22,
     borderWidth: 1,
-    borderColor: "#FFE5D0",
+    borderColor: "#E2E8F0",
+    shadowColor: "#0F172A",
+    shadowOpacity: 0.04,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 8,
+    elevation: 2,
   },
   requirementsSubTitle: {
     fontSize: 14,
@@ -1068,13 +1119,13 @@ const styles = StyleSheet.create({
 
   requirementItemCentered: {
     width: "45%",
-    backgroundColor: "#FFFFFF",
-    borderRadius: 14,
-    paddingVertical: 16,
+    backgroundColor: "#F7FAFC",
+    borderRadius: 12,
+    paddingVertical: 14,
     paddingHorizontal: 12,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#FFE5D0",
+    borderColor: "#E2E8F0",
   },
 
 
@@ -1131,13 +1182,18 @@ const styles = StyleSheet.create({
   },
 
   priceCard: {
-    backgroundColor: "#FFF7ED",
+    backgroundColor: "#FFFFFF",
     borderRadius: 18,
     padding: 16,
-    marginTop: 24,
-    marginBottom: 20,
+    marginTop: 18,
+    marginBottom: 16,
     borderWidth: 1,
-    borderColor: "#FFE5D0",
+    borderColor: "#E2E8F0",
+    shadowColor: "#0F172A",
+    shadowOpacity: 0.04,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 8,
+    elevation: 2,
   },
 
   priceHeader: {
@@ -1158,6 +1214,12 @@ const styles = StyleSheet.create({
   counter: {
     flexDirection: "row",
     alignItems: "center",
+    backgroundColor: "#F8FAFC",
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    paddingHorizontal: 6,
+    paddingVertical: 3,
   },
 
   counterBtn: {
@@ -1165,11 +1227,12 @@ const styles = StyleSheet.create({
     height: 28,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: "#CBD5E1",
     textAlign: "center",
     textAlignVertical: "center",
     fontSize: 16,
-    color: "#374151",
+    color: "#1F2937",
+    backgroundColor: "#FFFFFF",
   },
 
   counterValue: {
@@ -1244,20 +1307,20 @@ const styles = StyleSheet.create({
   },
 
   totalAmount: {
-    fontSize: 18,
-    fontWeight: "800",
+    fontSize: 22,
+    fontWeight: "900",
     color: "#FF5C00",
   },
   noticeBar: {
     marginTop: 14,
     borderWidth: 1,
-    borderColor: "#F6C453",
-    borderRadius: 10,
-    backgroundColor: "#FFF9E8",
+    borderColor: "#F8D287",
+    borderRadius: 12,
+    backgroundColor: "#FFF8E1",
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 10,
-    paddingHorizontal: 10,
+    paddingVertical: 11,
+    paddingHorizontal: 12,
   },
   noticeIconWrap: {
     width: 26,
@@ -1282,8 +1345,8 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   noticeText: {
-    color: "#8A4B00",
-    fontSize: 14,
+    color: "#7C4A03",
+    fontSize: 13,
     fontWeight: "600",
     maxWidth: SCREEN_WIDTH * 2,
     includeFontPadding: false,
@@ -1294,6 +1357,16 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 12,
+  },
+  headerActionBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: "#FFFFFF",
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   headerBtn: {
@@ -1333,11 +1406,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#FFFFFF",
     borderRadius: 999,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    marginBottom: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 11,
+    marginBottom: 14,
     borderWidth: 1,
-    borderColor: "#FFE5D0",
+    borderColor: "#D8E1ED",
     width: "100%",
   },
 
@@ -1359,15 +1432,20 @@ const styles = StyleSheet.create({
   centerSectionTitle: {
     fontSize: 18,
     fontWeight: "800",
-    color: "#111827",
-    marginBottom: 16,
-    marginTop: 32,
+    color: "#0F172A",
+    marginBottom: 12,
+    marginTop: 22,
     textAlign: "center",
+    lineHeight: 24,
   },
   faqItem: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-    paddingVertical: 14,
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    marginBottom: 10,
+    backgroundColor: "#FFFFFF",
   },
 
   faqHeader: {
@@ -1386,12 +1464,57 @@ const styles = StyleSheet.create({
 
   faqAnswerBox: {
     marginTop: 10,
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: "#EEF2F7",
   },
 
   faqAnswer: {
     fontSize: 14,
-    color: "#555",
-    lineHeight: 20,
+    color: "#475569",
+    lineHeight: 21,
+  },
+  faqMoreBtn: {
+    alignSelf: "center",
+    marginTop: 4,
+    marginBottom: 10,
+    backgroundColor: "#FFF7ED",
+    borderColor: "#FED7AA",
+    borderWidth: 1,
+    borderRadius: 999,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+  },
+  faqMoreBtnText: {
+    color: "#C2410C",
+    fontSize: 13,
+    fontWeight: "700",
+  },
+  highlightList: {
+    gap: 12,
+  },
+  highlightCountryCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 14,
+    padding: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    shadowColor: "#0F172A",
+    shadowOpacity: 0.04,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  highlightCountryName: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#0F172A",
+  },
+  highlightCountryArrow: {
+    marginLeft: "auto",
   },
 
 

@@ -13,16 +13,18 @@ import {
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Calendar } from "react-native-calendars";
 import { launchImageLibrary } from "react-native-image-picker";
+import { validatePickedDocument } from "../../utils/documentValidation";
 import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import ScreenWrapper from "../../components/ScreenWrapper";
-import { CountryApplyBanner, CoPassengerCard } from "../../components/ApplyFlowCards";
-import { extractPassportFrontPageFromAsset } from "../../utils/passportFrontPage";
+import { ApplyCountryHeader, CoPassengerCard } from "../../components/ApplyFlowCards";
+import { extractTextFromImage } from "../../api/ocr/visionApi";
+import { parseMRZ } from "../../api/ocr/mrzParser";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
 import PassportBackSample from "../../assets/examples/passport-back.png";
-import PassportPhotoSample from "../../assets/examples/passport-photo.png";
+import PassportPhotoSample from "../../assets/examples/passportimage.png";
 import TicketSample from "../../assets/examples/ticket.png";
 
 const ORANGE = "#FF5C00";
@@ -97,6 +99,23 @@ export default function CombodiaApplyScreen({ navigation }) {
 
     if (!res.assets?.[0]) return;
     const selectedAsset = res.assets[0];
+    let frontPageData = null;
+
+    if (isFrontPage && selectedAsset.base64) {
+      try {
+        const rawText = await extractTextFromImage(selectedAsset.base64);
+        const parsed = parseMRZ(rawText);
+        frontPageData = {
+          parsed: {
+            ...parsed,
+            birthDate: toDDMMYY(parsed.birthDate),
+            expiryDate: toDDMMYY(parsed.expiryDate),
+          },
+        };
+      } catch (error) {
+        console.log("Combodia front page OCR failed:", error);
+      }
+    }
 
     const updated = [...travellers];
     updated[0].documents[key] = selectedAsset;
@@ -147,7 +166,8 @@ export default function CombodiaApplyScreen({ navigation }) {
       const t = travellers[0];
       const basePath = `applications/${user.uid}/${applicationId}/traveller_1`;
       const passportFrontPage = await extractPassportFrontPageFromAsset(
-        t.documents.passportFront
+        t.documents.passportFront,
+        t.form.phone
       );
 
       const passportFrontUrl = await uploadFile(
@@ -226,7 +246,6 @@ export default function CombodiaApplyScreen({ navigation }) {
       <TextInput
         placeholder="Mobile Number"
         style={styles.input}
-         placeholderTextColor="#000000"
         keyboardType="phone-pad"
         value={traveller.form.phone}
         onChangeText={(v) => onChange("phone", v)}
@@ -235,7 +254,6 @@ export default function CombodiaApplyScreen({ navigation }) {
       <TextInput
         placeholder="Email ID"
         style={styles.input}
-         placeholderTextColor="#000000"
         value={traveller.form.email}
         onChangeText={(v) => onChange("email", v)}
       />
@@ -286,22 +304,7 @@ export default function CombodiaApplyScreen({ navigation }) {
   return (
     <ScreenWrapper>
       <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="chevron-back" size={26} />
-          </TouchableOpacity>
-
-          <View />
-
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("Tabs", { screen: "Destination" })
-            }
-          >
-            <Ionicons name="home-outline" size={24} color={ORANGE} />
-          </TouchableOpacity>
-        </View>
-        <CountryApplyBanner countryName="Combodia" />
+        <ApplyCountryHeader navigation={navigation} countryName="Combodia" />
 
         <View style={styles.formCard}>
         {renderForm(
@@ -355,10 +358,17 @@ export default function CombodiaApplyScreen({ navigation }) {
                 "co"
               )}
             </ScrollView>
-
-            <TouchableOpacity style={styles.submitBtn} onPress={saveCoTraveller}>
-              <Text style={styles.submitText}>Save Co-Traveller</Text>
-            </TouchableOpacity>
+            <View style={styles.modalActions}>
+              <TouchableOpacity
+                style={styles.closeBtn}
+                onPress={() => setShowCoTravellerModal(false)}
+              >
+                <Text style={styles.closeBtnText}>Close</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.saveBtn} onPress={saveCoTraveller}>
+                <Text style={styles.saveBtnText}>Save</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
@@ -399,12 +409,12 @@ const styles = StyleSheet.create({
   container: { padding: 16, paddingBottom: 40 },
   formCard: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 14,
+    borderRadius: 16,
     padding: 12,
     marginTop: 10,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: "#E2E8F0",
     elevation: 2,
   },
   header: {
@@ -414,11 +424,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 
-  headerTitle: { fontSize: 17, fontWeight: "700" },
+  headerTitle: { fontSize: 17, fontWeight: "800" },
 
   sectionTitle: {
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: "800",
     marginBottom: 16,
     textAlign: "center",      // 👈 center it
   },
@@ -426,15 +436,17 @@ const styles = StyleSheet.create({
 
   input: {
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#CBD5E1",
     borderRadius: 10,
     padding: 12,
     marginBottom: 12,
+    backgroundColor: "#FFFFFF",
+    color: "#111827",
   },
 
   docCard: {
-    backgroundColor: "#fff",
-    borderRadius: 14,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
     padding: 12,
     marginBottom: 16,
     elevation: 2,
@@ -448,7 +460,7 @@ const styles = StyleSheet.create({
   },
 
   sampleWrapper: {
-    backgroundColor: "#F5F6F8",
+    backgroundColor: "#F8FAFC",
     borderRadius: 10,
     padding: 6,
     marginBottom: 8,
@@ -482,7 +494,7 @@ const styles = StyleSheet.create({
     marginVertical: 16,
   },
 
-  uploadText: { color: ORANGE, fontWeight: "700" },
+  uploadText: { color: ORANGE, fontWeight: "800" },
 
   submitBtn: {
     backgroundColor: ORANGE,
@@ -491,7 +503,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  submitText: { color: "#fff", fontWeight: "700", fontSize: 16 },
+  submitText: { color: "#fff", fontWeight: "800", fontSize: 16 },
 
   modalOverlay: {
     flex: 1,
@@ -500,7 +512,7 @@ const styles = StyleSheet.create({
   },
 
   modalBox: {
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     margin: 20,
     borderRadius: 16,
     padding: 16,
@@ -513,13 +525,45 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 
-  addTravellerText: { color: ORANGE, fontWeight: "700" },
+  addTravellerText: { color: ORANGE, fontWeight: "800" },
 
   calendarBox: {
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     margin: 20,
     borderRadius: 16,
     padding: 12,
+  },
+  modalActions: {
+    marginTop: 8,
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 10,
+  },
+  closeBtn: {
+    borderWidth: 1,
+    borderColor: ORANGE,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    minWidth: 90,
+    alignItems: "center",
+  },
+  closeBtnText: {
+    color: ORANGE,
+    fontWeight: "800",
+  },
+  saveBtn: {
+    backgroundColor: ORANGE,
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    minWidth: 90,
+    alignItems: "center",
+  },
+  saveBtnText: {
+    color: "#fff",
+    fontWeight: "800",
   },
 });
 

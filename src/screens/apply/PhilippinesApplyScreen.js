@@ -12,14 +12,13 @@ import {
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Calendar } from "react-native-calendars";
-import { Picker } from "@react-native-picker/picker";
 import { launchImageLibrary } from "react-native-image-picker";
 import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import ScreenWrapper from "../../components/ScreenWrapper";
 import {
-  CountryApplyBanner,
+  ApplyCountryHeader,
   CoPassengerCard,
 } from "../../components/ApplyFlowCards";
 import { extractPassportFrontPageFromAsset } from "../../utils/passportFrontPage";
@@ -30,11 +29,6 @@ import PassportPhotoSample from "../../assets/examples/passport-photo.png";
 import TicketSample from "../../assets/examples/ticket.png";
 
 const ORANGE = "#FF5C00";
-const PHILIPPINES_STAY_OPTIONS = [
-  { label: "3 months", value: "3_months", fee: 7125 },
-  { label: "6 months", value: "6_months", fee: 10965 },
-  { label: "1 year", value: "1_year", fee: 14805 },
-];
 
 const createTraveller = () => ({
   form: {
@@ -61,7 +55,6 @@ export default function PhilippinesApplyScreen({ navigation }) {
   const [tempTraveller, setTempTraveller] = useState(createTraveller());
   const [showCoTravellerModal, setShowCoTravellerModal] = useState(false);
   const [showCalendarFor, setShowCalendarFor] = useState(null);
-  const [stayDuration, setStayDuration] = useState("3_months");
 
   const formatDate = (date) => {
     const [y, m, d] = String(date || "").split("-");
@@ -163,7 +156,8 @@ export default function PhilippinesApplyScreen({ navigation }) {
         travellers.map(async (t, index) => {
           const basePath = `applications/${user.uid}/${applicationId}/traveller_${index + 1}`;
           const passportFrontPage = await extractPassportFrontPageFromAsset(
-            t.documents.passportFront
+            t.documents.passportFront,
+            t.form.phone
           );
 
           const passportFrontUrl = await uploadFile(
@@ -242,9 +236,6 @@ export default function PhilippinesApplyScreen({ navigation }) {
         .set({
           userId: user.uid,
           country: "Philippines",
-          stayDuration,
-          philippinesBaseFee:
-            PHILIPPINES_STAY_OPTIONS.find((opt) => opt.value === stayDuration)?.fee || 7125,
           travellers: formattedTravellers,
           totalTravellers: formattedTravellers.length,
           status: "submitted",
@@ -253,10 +244,6 @@ export default function PhilippinesApplyScreen({ navigation }) {
 
       navigation.navigate("CheckoutScreen", {
         country: "Philippines",
-        applicationId,
-        stayDuration,
-        philippinesBaseFee:
-          PHILIPPINES_STAY_OPTIONS.find((opt) => opt.value === stayDuration)?.fee || 7125,
         totalTravellers: travellers.length,
         travellers,
         coTravellers: travellers.slice(1),
@@ -345,38 +332,7 @@ export default function PhilippinesApplyScreen({ navigation }) {
   return (
     <ScreenWrapper>
       <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="chevron-back" size={26} />
-          </TouchableOpacity>
-          <View />
-          <TouchableOpacity onPress={() => navigation.navigate("Tabs", { screen: "Destination" })}>
-            <Ionicons name="home-outline" size={24} color={ORANGE} />
-          </TouchableOpacity>
-        </View>
-
-        <CountryApplyBanner countryName="Philippines" />
-
-        <View style={styles.formCard}>
-          <Text style={styles.sectionTitle}>How many days you stay there</Text>
-          <View style={styles.pickerWrap}>
-            <Picker
-              selectedValue={stayDuration}
-              onValueChange={(v) => setStayDuration(v)}
-              style={styles.picker}
-              dropdownIconColor="#111827"
-            >
-              {PHILIPPINES_STAY_OPTIONS.map((option) => (
-                <Picker.Item
-                  key={option.value}
-                  label={option.label}
-                  value={option.value}
-                  color="#111827"
-                />
-              ))}
-            </Picker>
-          </View>
-        </View>
+        <ApplyCountryHeader navigation={navigation} countryName="Philippines" />
 
         <View style={styles.formCard}>
           {renderForm(
@@ -429,10 +385,17 @@ export default function PhilippinesApplyScreen({ navigation }) {
                 "co"
               )}
             </ScrollView>
-
-            <TouchableOpacity style={styles.submitBtn} onPress={saveCoTraveller}>
-              <Text style={styles.submitText}>Save Co-Traveller</Text>
-            </TouchableOpacity>
+            <View style={styles.modalActions}>
+              <TouchableOpacity
+                style={styles.closeBtn}
+                onPress={() => setShowCoTravellerModal(false)}
+              >
+                <Text style={styles.closeBtnText}>Close</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.saveBtn} onPress={saveCoTraveller}>
+                <Text style={styles.saveBtnText}>Save</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
@@ -467,12 +430,12 @@ const styles = StyleSheet.create({
   container: { padding: 16, paddingBottom: 40 },
   formCard: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 14,
+    borderRadius: 16,
     padding: 12,
     marginTop: 10,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: "#E2E8F0",
     elevation: 2,
   },
   header: {
@@ -481,29 +444,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 14,
   },
-  headerTitle: { fontSize: 17, fontWeight: "700" },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    marginBottom: 8,
-    textAlign: "center",
-    color: "#111827",
-  },
-  pickerWrap: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 10,
-    backgroundColor: "#FFFFFF",
-    height: 48,
-    justifyContent: "center",
-    overflow: "hidden",
-  },
-  picker: {
-    width: "100%",
-  },
+  headerTitle: { fontSize: 17, fontWeight: "800" },
   input: {
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#CBD5E1",
     borderRadius: 10,
     padding: 12,
     marginBottom: 12,
@@ -513,8 +457,8 @@ const styles = StyleSheet.create({
   inputText: { color: "#111827" },
   inputPlaceholder: { color: "#111827" },
   docCard: {
-    backgroundColor: "#fff",
-    borderRadius: 14,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
     padding: 12,
     marginBottom: 16,
     elevation: 2,
@@ -526,7 +470,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   sampleWrapper: {
-    backgroundColor: "#F5F6F8",
+    backgroundColor: "#F8FAFC",
     borderRadius: 10,
     padding: 6,
     marginBottom: 8,
@@ -542,7 +486,7 @@ const styles = StyleSheet.create({
   },
   filePreviewBox: {
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: "#E2E8F0",
     borderStyle: "dashed",
     borderRadius: 10,
     paddingVertical: 20,
@@ -565,7 +509,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     alignItems: "center",
   },
-  uploadText: { color: ORANGE, fontWeight: "700" },
+  uploadText: { color: ORANGE, fontWeight: "800" },
   submitBtn: {
     backgroundColor: ORANGE,
     borderRadius: 999,
@@ -573,14 +517,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 8,
   },
-  submitText: { color: "#fff", fontWeight: "700", fontSize: 16 },
+  submitText: { color: "#fff", fontWeight: "800", fontSize: 16 },
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.55)",
     justifyContent: "center",
   },
   modalBox: {
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     margin: 16,
     borderRadius: 16,
     padding: 14,
@@ -592,9 +536,43 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   calendarBox: {
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     margin: 20,
     borderRadius: 16,
     padding: 12,
+  },
+  modalActions: {
+    marginTop: 8,
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 10,
+  },
+  closeBtn: {
+    borderWidth: 1,
+    borderColor: ORANGE,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    minWidth: 90,
+    alignItems: "center",
+  },
+  closeBtnText: {
+    color: ORANGE,
+    fontWeight: "800",
+  },
+  saveBtn: {
+    backgroundColor: ORANGE,
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    minWidth: 90,
+    alignItems: "center",
+  },
+  saveBtnText: {
+    color: "#fff",
+    fontWeight: "800",
   },
 });
+
+

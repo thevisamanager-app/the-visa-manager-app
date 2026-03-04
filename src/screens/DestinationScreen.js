@@ -363,6 +363,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 import CountryCards from '../components/CountryCards';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -375,7 +376,6 @@ const FILTERS = [
   { key: 'ALL', label: 'All' },
   { key: 'Schengen', label: 'Schengen' },
   { key: 'Visa Free', label: 'Visa Free' },
-  { key: 'DAC', label: 'DAC' },
   { key: 'evisa', label: 'eVisa' },
 ];
 export default function DestinationScreen() {
@@ -430,28 +430,52 @@ export default function DestinationScreen() {
 
   const handleCardPress = (item) => {
     dispatch(setSelectedDestination(item));
-    navigation.navigate('VisaDetailsScreen', { date });
+    const isSchengen =
+      String(item?.countryType || "").trim().toLowerCase() === "schengen";
+
+    if (isSchengen) {
+      navigation.navigate("SchengenFlowScreen", {
+        country: item?.countrName || "Schengen",
+        destination: item,
+        date,
+      });
+      return;
+    }
+
+    navigation.navigate("VisaDetailsScreen", { date });
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
       {/* Search */}
-      <TextInput
-        style={styles.input}
-        onChangeText={setSearchText}
-        value={searchText}
-        placeholder="Search destination"
-        placeholderTextColor={"#FF5C00"}
-      />
+      <View style={styles.searchWrap}>
+        <Ionicons name="search-outline" size={18} color="#94A3B8" />
+        <TextInput
+          style={styles.input}
+          onChangeText={setSearchText}
+          value={searchText}
+          placeholder="Search destination"
+          placeholderTextColor={"#94A3B8"}
+        />
+        {searchText ? (
+          <TouchableOpacity onPress={() => setSearchText("")} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+            <Ionicons name="close-circle" size={18} color="#94A3B8" />
+          </TouchableOpacity>
+        ) : null}
+      </View>
 
       {/* 🔥 FILTER BUTTONS */}
-      <View style={styles.filterRow}>
-        {FILTERS.map((filter) => {
-          const isActive =
-            activeFilter.toLowerCase() === filter.key.toLowerCase();
+      <View style={styles.filterWrap}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filterRow}
+        >
+          {FILTERS.map((filter) => {
+            const isActive =
+              activeFilter.toLowerCase() === filter.key.toLowerCase();
 
-          return (
-            <ScrollView showsHorizontalScrollIndicator={true} key={filter.key}>
+            return (
               <TouchableOpacity
                 key={filter.key}
                 onPress={() => setActiveFilter(filter.key)}
@@ -459,7 +483,7 @@ export default function DestinationScreen() {
                   styles.filterBtn,
                   isActive && styles.activeFilterBtn,
                 ]}
-                activeOpacity={0.8}
+                activeOpacity={0.85}
               >
                 <Text
                   style={[
@@ -470,9 +494,9 @@ export default function DestinationScreen() {
                   {filter.label}
                 </Text>
               </TouchableOpacity>
-            </ScrollView>
-          );
-        })}
+            );
+          })}
+        </ScrollView>
       </View>
 
 
@@ -502,34 +526,55 @@ export default function DestinationScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#FFF',
+    backgroundColor: '#F7FAFC',
+  },
+
+  searchWrap: {
+    marginHorizontal: wp('4%'),
+    marginVertical: verticalScale(10),
+    minHeight: hp('6%'),
+    borderWidth: scale(1.1),
+    paddingHorizontal: moderateScale(12),
+    borderRadius: moderateScale(999),
+    borderColor: '#D3DEEC',
+    backgroundColor: '#FFFFFF',
+    flexDirection: "row",
+    alignItems: "center",
+    elevation: 1,
   },
 
   input: {
-    height: hp('6%'),
-    marginHorizontal: wp('4%'),
-    marginVertical: verticalScale(10),
-    borderWidth: scale(1),
-    padding: moderateScale(10),
-    borderRadius: moderateScale(10),
-    borderColor: 'grey  ',
+    flex: 1,
+    marginLeft: 8,
     color: '#111',
     fontSize: RFValue(14),
+    paddingVertical: 0,
   },
 
   filterRow: {
     flexDirection: 'row',
-    paddingHorizontal: wp('4%'),
+    paddingHorizontal: moderateScale(10),
+    paddingVertical: moderateScale(8),
+  },
+  filterWrap: {
+    marginHorizontal: wp('4%'),
     marginBottom: verticalScale(10),
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#D6DFEC',
+    borderRadius: moderateScale(14),
+    elevation: 1,
   },
 
   filterBtn: {
-    flex: 1, // 🔥 THIS IS THE KEY
-    paddingVertical: verticalScale(8),
+    minHeight: verticalScale(34),
+    justifyContent: 'center',
+    paddingVertical: verticalScale(7),
+    paddingHorizontal: moderateScale(15),
     marginRight: moderateScale(8),
-    borderRadius: moderateScale(10),
+    borderRadius: moderateScale(999),
     borderWidth: 1,
-    borderColor: '#DDD',
+    borderColor: '#C9D5E6',
     backgroundColor: '#FFF',
     alignItems: 'center',
   },
@@ -540,19 +585,19 @@ const styles = StyleSheet.create({
   // },
 
   activeFilterBtn: {
-    backgroundColor: '#FFE5D6',
+    backgroundColor: '#FF5C00',
     borderColor: '#FF5C00',
   },
 
   filterText: {
     fontSize: RFValue(13),
-    color: '#555',
-    fontWeight: '500',
-    alignSelf: "center"
+    color: '#334155',
+    fontWeight: '600',
+    alignSelf: "center",
   },
 
   activeFilterText: {
-    color: '#FF5C00',
+    color: '#FFFFFF',
     fontWeight: '700',
   },
 });

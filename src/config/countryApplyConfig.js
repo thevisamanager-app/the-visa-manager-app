@@ -21,7 +21,7 @@ export const COUNTRY_APPLY_CONFIG = {
       photo: {
         label: "Passport Size Photo",
         required: true,
-        example: require("../assets/examples/passport-photo.png"),
+        example: require("../assets/examples/passportimage.png"),
       },
       ticket: {
         label: "Upload Return Ticket",
@@ -73,7 +73,7 @@ export const COUNTRY_APPLY_CONFIG = {
       photo: {
         label: "Passport Size Photo",
         required: true,
-        example: require("../assets/examples/passport-photo.png"),
+        example: require("../assets/examples/passportimage.png"),
       },
       ticket: {
         label: "Upload Return Air Ticket",
@@ -90,6 +90,17 @@ export const COUNTRY_APPLY_CONFIG = {
         required: true,
         example: null,
       },
+    },
+  },
+  Singapore: {
+    forms: {
+      applicationFormAssetPath: "forms/Form14a.pdf",
+      authorityLetterAssetPath: "forms/Authority-letter.pdf",
+      applicationFormSignatureRefAssetPath:
+        "forms/Form14a-signature-reference.pdf",
+      applicationFormPreviewImageAssetPath:
+        "forms/Form14a-signature-reference.jpg",
+      authorityLetterPreviewImageAssetPath: "forms/Authority-letter-sample.jpg",
     },
   },
 
@@ -119,19 +130,23 @@ export const COUNTRY_APPLY_CONFIG = {
       photo: {
         label: "Applicant's Photo",
         required: true,
-        example: require("../assets/examples/passport-photo.png"),
+        example: require("../assets/examples/passportimage.png"),
       },
     },
-    forms: {
-      applicationFormAssetPath: "forms/Form14a.pdf",
-      applicationFormSignatureRefAssetPath:
-        "forms/Form14a-signature-reference.pdf",
-      applicationFormPreviewImageAssetPath:
-        "forms/Form14a-signature-reference.jpg",
-      authorityLetterAssetPath: "forms/Authority-letter.pdf",
-      authorityLetterPreviewImageAssetPath: "forms/Authority-letter-sample.jpg",
-      applicationFormUrl: "",
-      authorityLetterUrl: "",
+  },
+
+  DEFAULT: {
+    fields: {
+      travelDate: { required: true },
+      phone: { required: true },
+      email: { required: true },
+    },
+    documents: {
+      passportFront: {
+        label: "Upload Passport Front Page",
+        required: true,
+        example: require("../assets/examples/passport-front.png"),
+      },
     },
   },
 

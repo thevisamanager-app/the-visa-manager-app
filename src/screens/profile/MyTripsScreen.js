@@ -11,7 +11,6 @@ import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import ScreenWrapper from "../../components/ScreenWrapper";
 import { RFValue } from "react-native-responsive-fontsize";
-import { useSelector } from 'react-redux';
 
 const COLORS = {
     primary: "#FF5C00",
@@ -24,28 +23,58 @@ const COLORS = {
 export default function MyTripsScreen({ navigation }) {
     const [trips, setTrips] = useState([]);
     const [loading, setLoading] = useState(true);
-    const user = auth().currentUser;
-    const selected = useSelector((state) => state.destinations.selected);
+    const [fallbackPassportNumber, setFallbackPassportNumber] = useState("");
+    const [profilePassportNumber, setProfilePassportNumber] = useState("");
+    const userId = auth().currentUser?.uid;
 
-    const country = selected?.countrName || "Country";
-    console.log("COUNTRY===>", country)
     useEffect(() => {
-        if (!user) return;
+        if (!userId) {
+            setLoading(false);
+            return;
+        }
 
-        const unsubscribe = firestore()
+        const unsubscribeTrips = firestore()
             .collection("users")
-            .doc(user.uid)
+            .doc(userId)
             .collection("passportData")
             .orderBy("createdAt", "desc")
             .onSnapshot((snap) => {
                 const list = [];
                 snap.forEach((doc) => list.push({ id: doc.id, ...doc.data() }));
                 setTrips(list);
+
+                // Keep one fallback passport number from any available document.
+                const fallback =
+                    list.find((d) => d?.passportNumber)?.passportNumber ||
+                    list.find((d) => d?.passportNo)?.passportNo ||
+                    list.find((d) => d?.frontPageData?.parsed?.passportNumber)?.frontPageData?.parsed?.passportNumber ||
+                    list.find((d) => Array.isArray(d?.travellers) && d.travellers?.[0]?.passportNumber)?.travellers?.[0]?.passportNumber ||
+                    list.find((d) => Array.isArray(d?.travellers) && d.travellers?.[0]?.frontPageData?.parsed?.passportNumber)?.travellers?.[0]?.frontPageData?.parsed?.passportNumber ||
+                    "";
+                setFallbackPassportNumber(fallback);
+
                 setLoading(false);
             });
 
-        return unsubscribe;
-    }, []);
+        const unsubscribeProfile = firestore()
+            .collection("users")
+            .doc(userId)
+            .onSnapshot((docSnap) => {
+                const data = docSnap?.data() || {};
+                const passportFromProfile =
+                    data?.passportNumber ||
+                    data?.passportNo ||
+                    data?.passport?.passportNumber ||
+                    data?.profile?.passportNumber ||
+                    "";
+                setProfilePassportNumber(passportFromProfile);
+            });
+
+        return () => {
+            unsubscribeTrips?.();
+            unsubscribeProfile?.();
+        };
+    }, [userId]);
 
     if (loading) return <ActivityIndicator size="large" color={COLORS.primary} />;
 
@@ -65,7 +94,7 @@ export default function MyTripsScreen({ navigation }) {
                     renderItem={({ item }) => (
                         <TripCard
                             item={item}
-                            selected={selected}
+                            fallbackPassportNumber={fallbackPassportNumber || profilePassportNumber}
                             onPress={() => navigation.navigate("VisaStatusScreen", { trip: item })}
                         />
                     )}
@@ -132,13 +161,57 @@ export default function MyTripsScreen({ navigation }) {
 //   );
 // }
 
-function TripCard({ item, onPress }) {
-    const travelDate =
-        typeof item.travelDate === "string"
-            ? item.travelDate
-            : item.travelDate?.toDate
-                ? item.travelDate.toDate().toDateString()
-                : "N/A";
+function formatDateValue(value) {
+    if (!value) return "N/A";
+    if (typeof value === "string") return value;
+    if (value?.toDate) return value.toDate().toDateString();
+    if (typeof value === "object" && value?.selectedDate) return String(value.selectedDate);
+    return "N/A";
+}
+
+function getPrimaryTraveller(item) {
+    if (!item) return null;
+    if (Array.isArray(item.travellers)) return item.travellers[0] || null;
+    if (item.travellers && typeof item.travellers === "object") {
+        const values = Object.values(item.travellers);
+        return values[0] || null;
+    }
+    return null;
+}
+
+function TripCard({ item, onPress, fallbackPassportNumber }) {
+    const primaryTraveller = getPrimaryTraveller(item);
+
+    const passportNumber =
+        item?.passportNumber ||
+        item?.passportNo ||
+        item?.passport_number ||
+        item?.form?.passportNumber ||
+        item?.form?.passportNo ||
+        item?.form?.passport_number ||
+        item?.passport?.passportNumber ||
+        primaryTraveller?.passportNumber ||
+        primaryTraveller?.passportNo ||
+        primaryTraveller?.passport_number ||
+        primaryTraveller?.form?.passportNumber ||
+        primaryTraveller?.form?.passportNo ||
+        primaryTraveller?.form?.passport_number ||
+        item?.frontPageData?.parsed?.passportNumber ||
+        primaryTraveller?.frontPageData?.parsed?.passportNumber ||
+        fallbackPassportNumber ||
+        "N/A";
+
+    const travelDate = formatDateValue(
+        item?.travelDate ||
+        item?.entryDate ||
+        item?.travelDate?.selectedDate ||
+        item?.form?.travelDate ||
+        item?.form?.entryDate ||
+        primaryTraveller?.travelDate ||
+        primaryTraveller?.entryDate ||
+        primaryTraveller?.form?.travelDate ||
+        primaryTraveller?.form?.entryDate
+    );
 
     return (
         <TouchableOpacity style={styles.card} onPress={onPress}>
@@ -172,7 +245,7 @@ function TripCard({ item, onPress }) {
 
             {/* Passport */}
             <Text style={styles.date}>
-                Passport Number: {item.passportNumber || "N/A"}
+                Passport Number: {passportNumber}
             </Text>
 
             {/* Travel Date */}

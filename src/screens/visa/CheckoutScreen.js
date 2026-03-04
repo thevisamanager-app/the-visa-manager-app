@@ -4,7 +4,6 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  SafeAreaView,
   ScrollView,
   Alert,
   TextInput,
@@ -13,13 +12,6 @@ import Icon from "react-native-vector-icons/Ionicons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import ScreenWrapper from "../../components/ScreenWrapper";
 import { useSelector } from "react-redux";
-import {
-  wp,
-  scale,
-  verticalScale,
-  moderateScale,
-  RFValue,
-} from "../../utils/metrics";
 import { startPayment } from "../../services/payment/PaymentService";
 import { getAuth } from "@react-native-firebase/auth/lib/modular";
 import {
@@ -31,39 +23,50 @@ import {
 import { getDoc } from "@react-native-firebase/firestore/lib/modular/query";
 import { serverTimestamp } from "@react-native-firebase/firestore/lib/modular/FieldValue";
 import LottieView from "lottie-react-native";
+import LinearGradient from "react-native-linear-gradient";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const ORANGE = "#FF5C00";
-const LIGHT_PURPLE = "#ECEAFF";
-const CARD_BG = "#FFFFFF";
+const BG = "#F4F7FC";
+const CARD = "#FFFFFF";
+const TEXT_DARK = "#0F172A";
+const TEXT_MUTE = "#64748B";
+const BORDER = "#E2E8F0";
 
-/* ---------------- HELPERS ---------------- */
 const parseFee = (fee) => {
   if (!fee) return 0;
-  if (typeof fee === "string") {
-    return Number(fee.replace(/[^\d.]/g, "")) || 0;
-  }
-  if (typeof fee === "object") {
-    return Number(fee.Single || 0);
-  }
+  if (typeof fee === "string") return Number(fee.replace(/[^\d.]/g, "")) || 0;
+  if (typeof fee === "object") return Number(fee.Single || 0);
   return Number(fee) || 0;
 };
 
+const formatCurrency = (amount) =>
+  `\u20B9${Number(amount || 0).toLocaleString("en-IN", {
+    maximumFractionDigits: 2,
+  })}`;
+
+const PriceRow = ({ label, value, subLabel }) => (
+  <View style={styles.rowSpace}>
+    <View style={styles.rowLabelWrap}>
+      <Text style={styles.itemTitle}>{label}</Text>
+      {subLabel ? <Text style={styles.subLabel}>{subLabel}</Text> : null}
+    </View>
+    <Text style={styles.price}>{formatCurrency(value)}</Text>
+  </View>
+);
+
 export default function CheckoutScreen({ navigation, route }) {
   const selected = useSelector((state) => state.destinations.selected);
+  const insets = useSafeAreaInsets();
+
   const routeTravellers = route?.params?.travellers;
   const coTravellers = route?.params?.coTravellers ?? [];
   const applicationId = route?.params?.applicationId;
-  const routeCountry = String(route?.params?.country || selected?.countrName || "").toLowerCase();
-  const isBhutan = routeCountry === "bhutan";
-  const bhutanStayDays = Math.max(1, Number(route?.params?.stayDays || 1));
-  const bhutanPerDayFee = Number(route?.params?.bhutanPerDayFee || 2085);
 
   const routeTravellersCount = Array.isArray(routeTravellers)
     ? routeTravellers.length
     : 0;
-  const coTravellersCount = Array.isArray(coTravellers)
-    ? coTravellers.length
-    : 0;
+  const coTravellersCount = Array.isArray(coTravellers) ? coTravellers.length : 0;
   const routeTotalTravellers = Number(route?.params?.totalTravellers || 0);
   const initialTravellerCount =
     routeTravellersCount > 0
@@ -71,7 +74,11 @@ export default function CheckoutScreen({ navigation, route }) {
       : routeTotalTravellers > 0
       ? routeTotalTravellers
       : coTravellersCount + 1;
+
   const [travellerCount, setTravellerCount] = useState(initialTravellerCount);
+  const [hasMinor, setHasMinor] = useState(false);
+  const [minorCount, setMinorCount] = useState("1");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const resolvedRouteCount =
@@ -106,10 +113,7 @@ export default function CheckoutScreen({ navigation, route }) {
           : 0;
         const countFromTotal = Number(data.totalTravellers || 0);
         const resolvedCount = countFromArray || countFromTotal;
-
-        if (resolvedCount > 0) {
-          setTravellerCount(resolvedCount);
-        }
+        if (resolvedCount > 0) setTravellerCount(resolvedCount);
       } catch (error) {
         console.log("Checkout traveller count load error:", error);
       }
@@ -122,48 +126,29 @@ export default function CheckoutScreen({ navigation, route }) {
     };
   }, [applicationId]);
 
-  const totalTravelers = Math.max(1, travellerCount); // main + co
+  const totalTravelers = Math.max(1, travellerCount);
+  const passport = route?.params?.passport || route?.params?.updatedPassport || {};
 
-  const passport =
-    route?.params?.passport || route?.params?.updatedPassport || {};
-
-  /* ---------------- MINOR INPUTS (NEW) ---------------- */
-  const [hasMinor, setHasMinor] = useState(false);
-  const [minorCount, setMinorCount] = useState("1");
-  const [loading, setLoading] = useState(false);
-
-  /* ---------------- BASE FEES (1 MAIN TRAVELLER) ---------------- */
   const visaFee = parseFee(selected?.GovernmentFee);
   const tvmFee = parseFee(selected?.VisaManagerFee);
   const authorityFee = parseFee(selected?.AuthorityCharges);
-
   const adultFeePerPerson = visaFee + tvmFee + authorityFee;
 
-  /* ---------------- MINOR CALCULATION ---------------- */
-  const maxMinorCount = Math.max(0, totalTravelers - 1); // only co-travellers can be minors
+  const maxMinorCount = Math.max(0, totalTravelers - 1);
   const enteredMinorCount = Number(minorCount) || 0;
   const minors = hasMinor
     ? Math.min(Math.max(enteredMinorCount, 0), maxMinorCount)
     : 0;
   const adults = totalTravelers - minors;
 
-  // Each minor pays half for all fee components.
   const visaTotal = visaFee * adults + visaFee * 0.5 * minors;
   const tvmTotal = tvmFee * adults + tvmFee * 0.5 * minors;
-  const authorityTotal =
-    authorityFee * adults + authorityFee * 0.5 * minors;
-
+  const authorityTotal = authorityFee * adults + authorityFee * 0.5 * minors;
   const minorFeePerPerson = adultFeePerPerson * 0.5;
   const minorTotal = minorFeePerPerson * minors;
-  const baseTotalAmount = Number((visaTotal + tvmTotal + authorityTotal).toFixed(2));
-  const effectiveUnits = adults + minors * 0.5;
-  const totalAmount = isBhutan
-    ? Number((bhutanStayDays * bhutanPerDayFee * effectiveUnits).toFixed(2))
-    : baseTotalAmount;
-
+  const totalAmount = Number((visaTotal + tvmTotal + authorityTotal).toFixed(2));
 
   const handlePay = async () => {
-
     try {
       setLoading(true);
       const userId = getAuth().currentUser?.uid;
@@ -189,9 +174,6 @@ export default function CheckoutScreen({ navigation, route }) {
             adults,
             minors,
             fees: {
-              bhutanStayDays: isBhutan ? bhutanStayDays : null,
-              bhutanPerDayFee: isBhutan ? bhutanPerDayFee : null,
-              bhutanBaseAmount: isBhutan ? bhutanStayDays * bhutanPerDayFee : null,
               visaFeePerAdult: visaFee,
               visaManagerFeePerAdult: tvmFee,
               authorityFeePerAdult: authorityFee,
@@ -209,38 +191,32 @@ export default function CheckoutScreen({ navigation, route }) {
       );
 
       const result = await startPayment(totalAmount, userId, passport);
-
-      //✅ PAYMENT SUCCESS
       if (result?.success) {
         navigation.navigate("RatingScreen", {
           passport,
-          totalAmount: totalAmount,
+          totalAmount,
           selected,
           minors,
         });
         return;
       }
 
-      //❌ PAYMENT FAILED / CANCELLED
       Alert.alert(
         "Payment Failed",
         "Payment was not completed. Please try again."
       );
     } catch (error) {
-      // ❌ PAYMENT ERROR
       Alert.alert(
         "Payment Error",
-        error.message || "Something went wrong. Please try again."
+        error?.message || "Something went wrong. Please try again."
       );
     } finally {
-      setLoading(false); // 🔥 HIDE LOADER
+      setLoading(false);
     }
-    // navigation.navigate("RatingScreen",{passport,totalAmount,selected})
   };
-  console.log("totalTravelers==>", totalTravelers);
+
   return (
     <ScreenWrapper style={styles.container}>
-      {/* 🔥 FULL SCREEN LOADER */}
       {loading && (
         <View style={styles.loaderOverlay}>
           <LottieView
@@ -252,144 +228,415 @@ export default function CheckoutScreen({ navigation, route }) {
           <Text style={styles.loadingText}>Redirecting to payment...</Text>
         </View>
       )}
-      {/* HEADER */}
+
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" size={26} color="black" />
+        <TouchableOpacity style={styles.headerBtn} onPress={() => navigation.goBack()}>
+          <Icon name="chevron-back" size={20} color={TEXT_DARK} />
         </TouchableOpacity>
-
-        <Text style={styles.headerTitle}>{selected?.countrName}</Text>
-
+        <View style={styles.headerCenter}>
+          <Text style={styles.headerTitle}>Checkout</Text>
+          <Text style={styles.headerSub}>{selected?.countrName || "Visa Application"}</Text>
+        </View>
         <TouchableOpacity
-          onPress={() =>
-            navigation.navigate("Tabs", { screen: "Destination" })
-          }
+          style={styles.headerBtn}
+          onPress={() => navigation.navigate("Tabs", { screen: "Destination" })}
         >
-          <Icon name="home" size={moderateScale(24)} color={ORANGE} />
+          <Icon name="home-outline" size={18} color={ORANGE} />
         </TouchableOpacity>
       </View>
 
-      <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
-        {/* VISA CARD */}
-        <View style={styles.card}>
-          {isBhutan ? (
-            <View style={styles.rowSpace}>
-              <Text style={styles.itemTitle}>How many day you stay</Text>
-              <Text style={styles.price}>{bhutanStayDays}</Text>
+      <ScrollView
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: Math.max(160, insets.bottom + 150) },
+        ]}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        <LinearGradient colors={["#FF7E31", "#FF5C00"]} style={styles.heroCard}>
+          <View style={styles.heroBadge}>
+            <Icon name="shield-checkmark-outline" size={13} color="#FFFFFF" />
+            <Text style={styles.heroBadgeText}>SECURE CHECKOUT</Text>
+          </View>
+          <Text style={styles.heroAmount}>{formatCurrency(totalAmount)}</Text>
+          <Text style={styles.heroSubText}>Final payable amount for your application</Text>
+          <View style={styles.heroMetaRow}>
+            <View style={styles.metaPill}>
+              <Text style={styles.metaPillText}>{totalTravelers} Traveller(s)</Text>
             </View>
-          ) : (
-            <>
-              <View style={styles.rowSpace}>
-                <Text style={styles.itemTitle}>
-                  Visa Fee x {totalTravelers}
-                </Text>
+            <View style={styles.metaPill}>
+              <Text style={styles.metaPillText}>{adults} Adult(s)</Text>
+            </View>
+            <View style={styles.metaPill}>
+              <Text style={styles.metaPillText}>{minors} Minor(s)</Text>
+            </View>
+          </View>
+        </LinearGradient>
 
-                <Text style={styles.price}>INR {visaTotal.toLocaleString("en-IN")}</Text>
-              </View>
+        <View style={styles.card}>
+          <View style={styles.cardHeaderRow}>
+            <Text style={styles.cardTitle}>Fee Breakdown</Text>
+            <Text style={styles.cardCaption}>Per current selection</Text>
+          </View>
 
-              <View style={styles.rowSpace}>
-                <Text style={styles.itemTitle}>TVM Fee <Text style={styles.gstText}>(including Gst)</Text> x {totalTravelers}</Text>
-                <Text style={styles.price}>INR {tvmTotal.toLocaleString("en-IN")}</Text>
-              </View>
-
-              <View style={styles.rowSpace}>
-                <Text style={styles.itemTitle}> Authority Fee <Text style={styles.gstText}>(including Gst)</Text> x {totalTravelers}</Text>
-                <Text style={styles.price}>INR {authorityTotal.toLocaleString("en-IN")}</Text>
-              </View>
-            </>
-          )}
+          <PriceRow
+            label={`Visa Fee x ${totalTravelers}`}
+            value={visaTotal}
+          />
+          <PriceRow
+            label={`TVM Fee x ${totalTravelers}`}
+            subLabel="Including GST"
+            value={tvmTotal}
+          />
+          <PriceRow
+            label={`Authority Fee x ${totalTravelers}`}
+            subLabel="Including GST"
+            value={authorityTotal}
+          />
 
           <View style={styles.divider} />
 
-          {/* ✅ MINOR YES / NO */}
           <TouchableOpacity
             style={styles.checkboxRow}
-            onPress={() => setHasMinor((p) => !p)}
+            onPress={() => setHasMinor((prev) => !prev)}
+            activeOpacity={0.85}
           >
             <MaterialIcons
               name={hasMinor ? "check-box" : "check-box-outline-blank"}
-              size={26}
+              size={24}
               color={ORANGE}
             />
-            <Text style={styles.checkboxText}>
-              Do you have a co-traveller who is a minor?
-            </Text>
+            <View style={styles.checkboxTextWrap}>
+              <Text style={styles.checkboxText}>Include minor co-travellers</Text>
+              <Text style={styles.checkboxSubText}>
+                Minor fares are charged at 50% of each fee component.
+              </Text>
+            </View>
           </TouchableOpacity>
 
-          {/* ✅ MINOR COUNT + FEES */}
-          {hasMinor && (
+          {hasMinor ? (
             <View style={styles.minorBox}>
-              <Text style={styles.minorLabel}>
-                How many minor co-travellers will be traveling?
-              </Text>
-
+              <Text style={styles.minorLabel}>Number of minor co-travellers</Text>
               <TextInput
                 value={minorCount}
                 onChangeText={setMinorCount}
                 keyboardType="numeric"
                 style={styles.input}
+                placeholder="Enter minor count"
+                placeholderTextColor="#94A3B8"
               />
-              <Text style={styles.minorHint}>
-                Max minors allowed: {maxMinorCount}
-              </Text>
-
-              <View style={styles.rowSpace}>
-                <Text style={styles.itemTitle}>
-                  Minor Fee x {minors}
-                </Text>
-                <Text style={styles.price}>INR {minorTotal.toLocaleString("en-IN")}</Text>
-              </View>
+              <Text style={styles.minorHint}>Max allowed: {maxMinorCount}</Text>
+              <PriceRow label={`Minor Fee x ${minors}`} value={minorTotal} />
             </View>
-          )}
+          ) : null}
 
-          <View style={styles.divider} />
-
-          <View style={styles.rowSpace}>
-            <Text style={styles.totalLabel}>Total</Text>
-            <Text style={styles.totalAmount}>INR {totalAmount}</Text>
+          <View style={styles.totalBox}>
+            <Text style={styles.totalLabel}>Grand Total</Text>
+            <Text style={styles.totalAmount}>{formatCurrency(totalAmount)}</Text>
           </View>
+        </View>
 
-          <View style={styles.protectCard}>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Icon name="shield-half-outline" size={32} color={ORANGE} />
-              <View style={{ marginLeft: 10 }}>
-                <Text style={styles.protectTitle}>The Visa Manager</Text>
-              </View>
-            </View>
-          </View>
+        <View style={styles.infoCard}>
+          <Icon name="lock-closed-outline" size={18} color={ORANGE} />
+          <Text style={styles.infoText}>
+            Your payment is encrypted and processed securely.
+          </Text>
         </View>
       </ScrollView>
 
-      <View style={styles.bottomBar}>
-        <TouchableOpacity style={styles.payButton} onPress={handlePay}>
-          <Text style={styles.btnText}>Proceed to Pay</Text>
+      <View style={[styles.bottomBar, { paddingBottom: Math.max(12, insets.bottom) }]}>
+        <View>
+          <Text style={styles.bottomLabel}>Payable now</Text>
+          <Text style={styles.bottomAmount}>{formatCurrency(totalAmount)}</Text>
+        </View>
+        <TouchableOpacity style={styles.payButton} onPress={handlePay} disabled={loading}>
+          <Text style={styles.btnText}>{loading ? "Processing..." : "Proceed to Pay"}</Text>
+          <Icon name="arrow-forward" size={16} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
     </ScreenWrapper>
   );
 }
 
-/* ---------------- STYLES ---------------- */
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FAFAFA",
-    marginTop: verticalScale(30),
+    backgroundColor: BG,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: wp("4%"),
-    paddingVertical: verticalScale(10),
     justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 6,
+  },
+  headerBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: BORDER,
+    backgroundColor: CARD,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  headerCenter: {
+    alignItems: "center",
   },
   headerTitle: {
-    fontSize: RFValue(18),
+    fontSize: 18,
+    fontWeight: "800",
+    color: TEXT_DARK,
+  },
+  headerSub: {
+    marginTop: 1,
+    fontSize: 12,
+    color: TEXT_MUTE,
+    fontWeight: "600",
+  },
+  scrollContent: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+  },
+  heroCard: {
+    borderRadius: 18,
+    padding: 16,
+  },
+  heroBadge: {
+    alignSelf: "flex-start",
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.35)",
+    backgroundColor: "rgba(255,255,255,0.15)",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    gap: 4,
+  },
+  heroBadgeText: {
+    color: "#FFFFFF",
+    fontSize: 10,
     fontWeight: "700",
+    letterSpacing: 0.7,
+  },
+  heroAmount: {
+    marginTop: 10,
+    fontSize: 32,
+    lineHeight: 38,
+    color: "#FFFFFF",
+    fontWeight: "800",
+  },
+  heroSubText: {
+    marginTop: 6,
+    color: "rgba(255,255,255,0.92)",
+    fontSize: 13,
+  },
+  heroMetaRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginTop: 10,
+    gap: 8,
+  },
+  metaPill: {
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.34)",
+    backgroundColor: "rgba(255,255,255,0.14)",
+  },
+  metaPillText: {
+    color: "#FFFFFF",
+    fontSize: 11,
+    fontWeight: "700",
+  },
+  card: {
+    marginTop: 12,
+    backgroundColor: CARD,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: BORDER,
+    padding: 14,
+  },
+  cardHeaderRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  cardTitle: {
+    color: TEXT_DARK,
+    fontSize: 16,
+    fontWeight: "800",
+  },
+  cardCaption: {
+    fontSize: 11,
+    color: TEXT_MUTE,
+    fontWeight: "600",
+  },
+  rowSpace: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginVertical: 7,
+    gap: 12,
+  },
+  rowLabelWrap: {
+    flex: 1,
+  },
+  itemTitle: {
+    fontSize: 14,
+    color: TEXT_DARK,
+    fontWeight: "600",
+  },
+  subLabel: {
+    marginTop: 2,
+    fontSize: 11,
+    color: TEXT_MUTE,
+  },
+  price: {
+    fontSize: 15,
+    color: TEXT_DARK,
+    fontWeight: "700",
+  },
+  divider: {
+    height: 1,
+    backgroundColor: BORDER,
+    marginVertical: 10,
+  },
+  checkboxRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 8,
+  },
+  checkboxTextWrap: {
+    flex: 1,
+  },
+  checkboxText: {
+    fontSize: 14,
+    color: TEXT_DARK,
+    fontWeight: "700",
+  },
+  checkboxSubText: {
+    marginTop: 2,
+    fontSize: 12,
+    color: TEXT_MUTE,
+    lineHeight: 17,
+  },
+  minorBox: {
+    marginTop: 12,
+    backgroundColor: "#F8FAFC",
+    borderWidth: 1,
+    borderColor: BORDER,
+    borderRadius: 12,
+    padding: 10,
+  },
+  minorLabel: {
+    fontSize: 13,
+    color: TEXT_DARK,
+    fontWeight: "600",
+    marginBottom: 6,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#CBD5E1",
+    borderRadius: 10,
+    backgroundColor: CARD,
+    color: TEXT_DARK,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 14,
+    marginBottom: 4,
+  },
+  minorHint: {
+    fontSize: 11,
+    color: TEXT_MUTE,
+    marginBottom: 4,
+  },
+  totalBox: {
+    marginTop: 12,
+    borderRadius: 12,
+    backgroundColor: "#FFF7ED",
+    borderWidth: 1,
+    borderColor: "#FFD7BF",
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  totalLabel: {
+    fontSize: 15,
+    color: TEXT_DARK,
+    fontWeight: "700",
+  },
+  totalAmount: {
+    fontSize: 20,
+    color: ORANGE,
+    fontWeight: "900",
+  },
+  infoCard: {
+    marginTop: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: BORDER,
+    backgroundColor: CARD,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  infoText: {
+    flex: 1,
+    color: TEXT_MUTE,
+    fontSize: 12,
+  },
+  bottomBar: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: CARD,
+    borderTopWidth: 1,
+    borderTopColor: BORDER,
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  bottomLabel: {
+    color: TEXT_MUTE,
+    fontSize: 11,
+    fontWeight: "600",
+  },
+  bottomAmount: {
+    marginTop: 2,
+    color: TEXT_DARK,
+    fontSize: 20,
+    fontWeight: "900",
+  },
+  payButton: {
+    minHeight: 46,
+    borderRadius: 999,
+    backgroundColor: ORANGE,
+    paddingHorizontal: 18,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+  },
+  btnText: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "800",
   },
   loaderOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(255,255,255,0.9)",
+    backgroundColor: "rgba(255,255,255,0.92)",
     justifyContent: "center",
     alignItems: "center",
     zIndex: 30,
@@ -400,140 +647,8 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 12,
-    fontSize: RFValue(14),
-    fontWeight: "600",
-    color: "#555",
-  },
-
-  card: {
-    backgroundColor: CARD_BG,
-    margin: wp("4%"),
-    padding: moderateScale(16),
-    borderRadius: moderateScale(16),
-    borderWidth: scale(1.2),
-    borderColor: "#E4E4E7",
-  },
-  rowSpace: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginVertical: verticalScale(6),
-  },
-  itemTitle: {
-    fontSize: RFValue(14),
-    fontWeight: "500",
-  },
-  gstText: {
-    fontSize: RFValue(10),
-    color: "#6B7280",
-    fontWeight: "400",
-  },
-  price: {
-    fontSize: RFValue(16),
-    fontWeight: "600",
-  },
-  divider: {
-    height: scale(1),
-    backgroundColor: "#E4E4E7",
-    marginVertical: verticalScale(10),
-  },
-  checkboxRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: verticalScale(8),
-  },
-  checkboxText: {
-    marginLeft: scale(8),
-    fontSize: RFValue(12),
-    fontWeight: "600",
-  },
-  minorBox: {
-    marginTop: verticalScale(10),
-  },
-  minorLabel: {
-    fontSize: RFValue(10),
-    marginBottom: verticalScale(6),
-  },
-  minorHint: {
-    fontSize: RFValue(10),
-    color: "#6B7280",
-    marginBottom: verticalScale(8),
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: verticalScale(8),
-  },
-  totalLabel: {
-    fontSize: RFValue(18),
+    fontSize: 14,
     fontWeight: "700",
-  },
-  totalAmount: {
-    fontSize: RFValue(20),
-    fontWeight: "900",
-    color: ORANGE,
-  },
-  bannerBox: {
-    backgroundColor: LIGHT_PURPLE,
-    padding: verticalScale(10),
-    borderRadius: moderateScale(10),
-    marginTop: verticalScale(6),
-  },
-  bannerText: {
-    fontSize: RFValue(13),
-    textAlign: "center",
-    color: "#4A4A4A",
-  },
-  bottomBar: {
-    position: "absolute",
-    bottom: 0,
-    width: "100%",
-    padding: moderateScale(14),
-    backgroundColor: "#fff",
-  },
-  payButton: {
-    backgroundColor: ORANGE,
-    paddingVertical: verticalScale(14),
-    borderRadius: moderateScale(12),
-    alignItems: "center",
-  },
-  btnText: {
-    fontSize: RFValue(16),
-    color: "#fff",
-    fontWeight: "800",
-  },
-  protectCard: {
-    backgroundColor: CARD_BG,
-    //marginHorizontal: wp("4%"),
-    padding: moderateScale(16),
-    borderRadius: moderateScale(16),
-    marginTop: verticalScale(8),
-    borderWidth: scale(1),
-    borderColor: "#e4e4e7",
-  },
-
-  protectTitle: {
-    fontSize: RFValue(16),
-    fontWeight: "700",
-    color: "#2F2F2F",
-  },
-
-  protectBadge: {
-    fontSize: RFValue(12),
-    color: "#2AA952",
-    marginTop: verticalScale(2),
-    fontWeight: "700",
-  },
-
-  protectInfo: {
-    marginTop: verticalScale(5),
-    fontSize: RFValue(10),
-    color: "#444",
+    color: "#475569",
   },
 });
-
-
-
-

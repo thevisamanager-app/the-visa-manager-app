@@ -14,11 +14,11 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { Calendar } from "react-native-calendars";
 import { Picker } from "@react-native-picker/picker";
 import { launchImageLibrary } from "react-native-image-picker";
+import { validatePickedDocument } from "../../utils/documentValidation";
 import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import ScreenWrapper from "../../components/ScreenWrapper";
-import { CountryApplyBanner, CoPassengerCard } from "../../components/ApplyFlowCards";
-import { extractPassportFrontPageFromAsset } from "../../utils/passportFrontPage";
+import { ApplyCountryHeader, CoPassengerCard } from "../../components/ApplyFlowCards";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
 import PassportBackSample from "../../assets/examples/passport-back.png";
@@ -62,15 +62,22 @@ export default function AzerbaijanApplyScreen({ navigation }) {
       includeBase64: key === "passportFront",
     });
     if (!res.assets?.[0]) return;
+    const selectedAsset = res.assets[0];
+
+    const validation = await validatePickedDocument(key, selectedAsset);
+    if (!validation.ok) {
+      Alert.alert("Invalid Document", validation.message);
+      return;
+    }
 
     if (target === "main") {
       const updated = [...travellers];
-      updated[0].documents[key] = res.assets[0];
+      updated[0].documents[key] = selectedAsset;
       setTravellers(updated);
     } else {
       setTempTraveller((p) => ({
         ...p,
-        documents: { ...p.documents, [key]: res.assets[0] },
+        documents: { ...p.documents, [key]: selectedAsset },
       }));
     }
   };
@@ -120,7 +127,8 @@ export default function AzerbaijanApplyScreen({ navigation }) {
       const formattedTravellers = await Promise.all(
         travellers.map(async (t) => {
           const passportFrontPage = await extractPassportFrontPageFromAsset(
-            t.documents.passportFront
+            t.documents.passportFront,
+            t.form.phone
           );
           return {
             isPrimary: t.isPrimary,
@@ -193,6 +201,7 @@ export default function AzerbaijanApplyScreen({ navigation }) {
         value={traveller.form.email}
         onChangeText={(v) => onChange("email", v)}
       />
+
       <View style={styles.pickerWrap}>
         <Picker
           selectedValue={azerbaijanEntryType}
@@ -250,22 +259,7 @@ export default function AzerbaijanApplyScreen({ navigation }) {
   return (
     <ScreenWrapper>
       <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="chevron-back" size={26} />
-          </TouchableOpacity>
-
-          <View />
-
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("Tabs", { screen: "Destination" })
-            }
-          >
-            <Ionicons name="home-outline" size={24} color={ORANGE} />
-          </TouchableOpacity>
-        </View>
-        <CountryApplyBanner countryName="Azerbaijan" />
+        <ApplyCountryHeader navigation={navigation} countryName="Azerbaijan" />
 
         <View style={styles.formCard}>
         {renderForm(
@@ -319,10 +313,17 @@ export default function AzerbaijanApplyScreen({ navigation }) {
                 "co"
               )}
             </ScrollView>
-
-            <TouchableOpacity style={styles.submitBtn} onPress={saveCoTraveller}>
-              <Text style={styles.submitText}>Save Co-Traveller</Text>
-            </TouchableOpacity>
+            <View style={styles.modalActions}>
+              <TouchableOpacity
+                style={styles.closeBtn}
+                onPress={() => setShowCoTravellerModal(false)}
+              >
+                <Text style={styles.closeBtnText}>Close</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.saveBtn} onPress={saveCoTraveller}>
+                <Text style={styles.saveBtnText}>Save</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
@@ -359,12 +360,12 @@ const styles = StyleSheet.create({
   container: { padding: 16, paddingBottom: 40 },
   formCard: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 14,
+    borderRadius: 16,
     padding: 12,
     marginTop: 10,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: "#E2E8F0",
     elevation: 2,
   },
   header: {
@@ -374,19 +375,30 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 
-  headerTitle: { fontSize: 17, fontWeight: "700" },
+  headerTitle: { fontSize: 17, fontWeight: "800" },
 
   input: {
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#CBD5E1",
     borderRadius: 10,
     padding: 12,
     marginBottom: 12,
   },
+  pickerWrap: {
+    borderWidth: 1,
+    borderColor: "#CBD5E1",
+    borderRadius: 10,
+    marginBottom: 12,
+    overflow: "hidden",
+    backgroundColor: "#FFFFFF",
+  },
+  picker: {
+    color: "#111827",
+  },
 
   docCard: {
-    backgroundColor: "#fff",
-    borderRadius: 14,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
     padding: 12,
     marginBottom: 16,
     elevation: 2,
@@ -411,7 +423,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  uploadText: { color: ORANGE, fontWeight: "700" },
+  uploadText: { color: ORANGE, fontWeight: "800" },
 
   addTravellerBtn: {
     borderWidth: 1,
@@ -422,7 +434,7 @@ const styles = StyleSheet.create({
     marginVertical: 16,
   },
 
-  addTravellerText: { color: ORANGE, fontWeight: "700" },
+  addTravellerText: { color: ORANGE, fontWeight: "800" },
 
   submitBtn: {
     backgroundColor: ORANGE,
@@ -431,24 +443,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  submitText: { color: "#fff", fontWeight: "700", fontSize: 16 },
+  submitText: { color: "#fff", fontWeight: "800", fontSize: 16 },
 
   sectionTitle: {
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: "800",
     marginBottom: 16,
     textAlign: "center",
-  },
-  pickerWrap: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 10,
-    marginBottom: 12,
-    overflow: "hidden",
-    backgroundColor: "#FFFFFF",
-  },
-  picker: {
-    color: "#111827",
   },
 
   modalOverlay: {
@@ -458,7 +459,7 @@ const styles = StyleSheet.create({
   },
 
   modalBox: {
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     margin: 20,
     borderRadius: 16,
     padding: 16,
@@ -472,10 +473,42 @@ const styles = StyleSheet.create({
   },
 
   calendarBox: {
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     margin: 20,
     borderRadius: 16,
     padding: 12,
+  },
+  modalActions: {
+    marginTop: 8,
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 10,
+  },
+  closeBtn: {
+    borderWidth: 1,
+    borderColor: ORANGE,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    minWidth: 90,
+    alignItems: "center",
+  },
+  closeBtnText: {
+    color: ORANGE,
+    fontWeight: "800",
+  },
+  saveBtn: {
+    backgroundColor: ORANGE,
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    minWidth: 90,
+    alignItems: "center",
+  },
+  saveBtnText: {
+    color: "#fff",
+    fontWeight: "800",
   },
 });
 

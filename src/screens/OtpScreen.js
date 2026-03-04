@@ -31,11 +31,6 @@ export default function OtpScreen({ route, navigation }) {
           phone: result?.user?.phoneNumber || null,
         })
       );
-
-      navigation.reset({
-        index: 0,
-        routes: [{ name: "Tabs" }],
-      });
     } catch (e) {
       Alert.alert("Invalid OTP", "Please enter correct OTP.");
     }
@@ -76,4 +71,3 @@ const styles = StyleSheet.create({
   button: { backgroundColor: "#28a745", padding: 15, borderRadius: 10 },
   buttonText: { color: "#fff", textAlign: "center", fontWeight: "700" },
 });
-

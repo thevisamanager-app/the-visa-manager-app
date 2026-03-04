@@ -1,264 +1,180 @@
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-} from "react-native";
+import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-
 import { wp, verticalScale, moderateScale, RFValue } from "../utils/metrics";
-import { getFlagEmoji } from "../utils/countryIsoMap";
 import { getCountryImage } from "../utils/countryImages";
 
-/* -------- helpers -------- */
-
-const getVisaManagerFee = (fee) => {
-  if (!fee) return 0;
-
-  if (typeof fee === "number" || typeof fee === "string") {
-    return fee;
-  }
-
-  if (typeof fee === "object") {
-    const values = Object.values(fee)
-      .map((v) => Number(String(v).replace(/,/g, "")))
-      .filter((v) => !isNaN(v));
-
-    return values.length ? Math.min(...values) : 0;
-  }
-
-  return 0;
-};
+const ORANGE = "#FF5C00";
+const NAVY = "#0F2A5F";
 
 export default function CountryCards({ item, countrName, onPress }) {
-  const visaType = item.countryType?.toUpperCase() || "VISA";
-  const flag = getFlagEmoji(countrName);
   const imageSource = getCountryImage(countrName);
-
-  const [liveCount, setLiveCount] = useState(item.liveCount ?? 5);
-
-  const governmentFee = getVisaManagerFee(item.VisaManagerFee);
-
-  /* -------- AUTO LIVE COUNT -------- */
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setLiveCount((prev) => {
-        const change = Math.floor(Math.random() * 3) - 1; // -1,0,1
-        const next = prev + change;
-        return next < 1 ? 1 : next;
-      });
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, []);
+  const visaType = String(item?.countryType || "Visa");
 
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.95}>
-      
-      {/* -------- HEADER -------- */}
-      <View style={styles.topRow}>
-        <View style={styles.flagBox}>
-          <Text style={styles.flag}>{flag}</Text>
+    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.94}>
+      <View style={styles.imageWrap}>
+        {imageSource ? (
+          <Image source={imageSource} style={styles.image} resizeMode="cover" />
+        ) : (
+          <View style={styles.noImageFallback} />
+        )}
+        <View style={styles.imageShade} />
+
+        <View style={styles.typePill}>
+          <Text style={styles.typeText}>{visaType}</Text>
         </View>
 
-        <View style={styles.rightHeader}>
-          <Text style={styles.visaType}>{visaType}</Text>
+        <View style={styles.verifiedPill}>
+          <Ionicons name="shield-checkmark" size={12} color="#0F766E" />
+          <Text style={styles.verifiedText}>Verified</Text>
+        </View>
 
-          <View style={styles.liveBadge}>
-            <View style={styles.liveDot} />
-            <Text style={styles.liveText}>LIVE visitors {liveCount}</Text>
-          </View>
+        <View style={styles.heroTextWrap}>
+          <Text numberOfLines={1} style={styles.countryName}>
+            {countrName}
+          </Text>
+          <Text style={styles.subText}>Trusted visa support, every step.</Text>
         </View>
       </View>
 
-      {/* -------- COUNTRY NAME -------- */}
-      <Text style={styles.title}>{countrName}</Text>
+      <View style={styles.bottomArea}>
+        <TouchableOpacity style={styles.ctaBtn} onPress={onPress} activeOpacity={0.9}>
+          <Text style={styles.ctaText}>Apply Now</Text>
+          <Ionicons name="arrow-forward" size={19} color="#FFFFFF" />
+        </TouchableOpacity>
 
-      {/* -------- IMAGE -------- */}
-      {imageSource && (
-        <Image source={imageSource} style={styles.image} resizeMode="cover" />
-      )}
-
-      {/* -------- SUBTITLE -------- */}
-      {item.subtitle && (
-        <Text style={styles.subtitle}>{item.subtitle}</Text>
-      )}
-
-      {/* -------- BULLETS -------- */}
-      {Array.isArray(item.bullets) &&
-        item.bullets
-          .filter((text) => text !== null && text !== undefined && text !== "")
-          .map((text, index) => (
-          <View key={index} style={styles.bulletRow}>
-            <View style={styles.bulletIcon}>
-              <Ionicons name="checkmark" size={10} color="#FFFFFF" />
-            </View>
-            <Text style={styles.bulletText}>{text}</Text>
-          </View>
-        ))}
-
-      {/* -------- PRICE -------- */}
-      <View style={styles.priceSection}>
-        <Text style={styles.price}>
-          ₹{governmentFee}
-          <Text style={styles.perAdult}> per adult</Text>
-        </Text>
-
-        <Text style={styles.fee}>All inclusive + GST</Text>
+        <View style={styles.metaRow}>
+          <Ionicons name="star" size={13} color="#F59E0B" />
+          <Text style={styles.metaText}>Top choice for first-time applicants</Text>
+        </View>
       </View>
-
-      {/* -------- APPLY BUTTON -------- */}
-      <TouchableOpacity style={styles.applyButton} onPress={onPress}>
-        <Text style={styles.applyText}>Apply Now</Text>
-      </TouchableOpacity>
     </TouchableOpacity>
   );
 }
-
-/* ---------------- STYLES ---------------- */
 
 const styles = StyleSheet.create({
   card: {
     width: wp("92%"),
     alignSelf: "center",
-    backgroundColor: "#F8EFE6",
-    borderRadius: moderateScale(20),
-    padding: moderateScale(16),
-    marginVertical: verticalScale(12),
-    elevation: 5,
+    borderRadius: moderateScale(24),
+    overflow: "hidden",
+    marginVertical: verticalScale(10),
+    backgroundColor: "#FFFFFF",
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    elevation: 7,
   },
-
-  topRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+  imageWrap: {
+    position: "relative",
   },
-
-  flagBox: {
-    backgroundColor: "#FFF",
-    padding: 6,
-    borderRadius: 8,
-  },
-
-  flag: {
-    fontSize: RFValue(22),
-  },
-
-  rightHeader: {
-    alignItems: "flex-end",
-  },
-
-  visaType: {
-    fontSize: RFValue(12),
-    fontWeight: "700",
-    color: "#1E3A8A",
-    marginBottom: 6,
-  },
-
-  liveBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#FFF",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 999,
-  },
-
-  liveDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: "#FF4D4F",
-    marginRight: 6,
-  },
-
-  liveText: {
-    fontSize: RFValue(11),
-    fontWeight: "600",
-    color: "#555",
-  },
-
-  title: {
-    fontSize: RFValue(18),
-    fontWeight: "800",
-    marginTop: verticalScale(8),
-    color: "#111",
-  },
-
   image: {
     width: "100%",
-    height: verticalScale(150),
-    borderRadius: 14,
-    marginTop: verticalScale(10),
+    height: verticalScale(210),
   },
-
-  subtitle: {
-    marginTop: verticalScale(10),
-    fontSize: RFValue(14),
-    fontWeight: "700",
-    color: "#E65100",
+  noImageFallback: {
+    width: "100%",
+    height: verticalScale(210),
+    backgroundColor: "#CBD5E1",
   },
-
-  bulletRow: {
+  imageShade: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(7, 18, 40, 0.34)",
+  },
+  typePill: {
+    position: "absolute",
+    top: moderateScale(12),
+    left: moderateScale(12),
+    backgroundColor: "rgba(15,42,95,0.92)",
+    borderRadius: moderateScale(999),
+    paddingHorizontal: moderateScale(11),
+    paddingVertical: verticalScale(5),
+  },
+  typeText: {
+    color: "#FFFFFF",
+    fontSize: RFValue(10.2),
+    fontWeight: "800",
+    textTransform: "uppercase",
+    letterSpacing: 0.4,
+  },
+  verifiedPill: {
+    position: "absolute",
+    top: moderateScale(12),
+    right: moderateScale(12),
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 7,
+    backgroundColor: "rgba(255,255,255,0.95)",
+    borderRadius: moderateScale(999),
+    paddingHorizontal: moderateScale(9),
+    paddingVertical: verticalScale(4),
   },
-
-  bulletIcon: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    backgroundColor: "#F97316",
+  verifiedText: {
+    color: "#0F766E",
+    fontSize: RFValue(10.2),
+    fontWeight: "800",
+    marginLeft: 4,
+  },
+  heroTextWrap: {
+    position: "absolute",
+    left: moderateScale(12),
+    right: moderateScale(12),
+    bottom: moderateScale(18),
+    backgroundColor: "rgba(2, 9, 23, 0.55)",
+    borderRadius: moderateScale(12),
+    paddingHorizontal: moderateScale(12),
+    paddingVertical: verticalScale(8),
+  },
+  countryName: {
+    color: "#FFFFFF",
+    fontSize: RFValue(19),
+    fontWeight: "800",
+    marginBottom: verticalScale(4),
+  },
+  subText: {
+    color: "#E2E8F0",
+    fontSize: RFValue(11.2),
+    fontWeight: "700",
+    letterSpacing: 0.2,
+  },
+  bottomArea: {
+    paddingTop: verticalScale(13),
+    paddingBottom: verticalScale(12),
+    paddingHorizontal: moderateScale(12),
+  },
+  ctaBtn: {
+    backgroundColor: ORANGE,
+    minHeight: verticalScale(50),
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    borderRadius: moderateScale(14),
+    marginTop: verticalScale(-34),
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: "#FF8C4A",
+  },
+  ctaText: {
+    color: "#FFFFFF",
+    fontSize: RFValue(14.5),
+    fontWeight: "800",
     marginRight: 8,
   },
-
-  bulletText: {
-    fontSize: RFValue(13),
-    color: "#4B5563",
-  },
-
-  priceSection: {
-    marginTop: verticalScale(14),
-    borderTopWidth: 1,
-    borderStyle: "dashed",
-    borderTopColor: "#E2CDB8",
-    paddingTop: verticalScale(10),
-  },
-
-  price: {
-    fontSize: RFValue(22),
-    fontWeight: "800",
-    color: "#111",
-  },
-
-  perAdult: {
-    fontSize: RFValue(13),
-    color: "#666",
-  },
-
-  fee: {
-    fontSize: RFValue(12),
-    color: "#6B7280",
-    marginTop: 3,
-  },
-
-  applyButton: {
-    backgroundColor: "#090F85",
-    paddingVertical: verticalScale(12),
-    borderRadius: 999,
+  metaRow: {
+    marginTop: verticalScale(10),
+    flexDirection: "row",
+    justifyContent: "center",
     alignItems: "center",
-    marginTop: verticalScale(14),
-    elevation: 2,
+    backgroundColor: "#F8FAFC",
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    borderRadius: moderateScale(999),
+    paddingHorizontal: moderateScale(10),
+    paddingVertical: verticalScale(5),
   },
-
-  applyText: {
-    color: "#FFF",
-    fontSize: RFValue(15),
+  metaText: {
+    marginLeft: 5,
+    color: NAVY,
+    fontSize: RFValue(10.2),
     fontWeight: "700",
   },
 });

@@ -1,4 +1,3 @@
-// src/assets/data/countryVisaConfig.js
 
 export const COUNTRY_VISA_CONFIG = {
     "Sri-lanka": {

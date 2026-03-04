@@ -546,6 +546,8 @@ const ORANGE = "#FF5C00";
 export default function StartApplicationScreen({ navigation, route }) {
   const date = route.params?.date;
   const selected = useSelector((state) => state.destinations.selected);
+  const isSchengen =
+    String(selected?.countryType || "").trim().toLowerCase() === "schengen";
 
   const country = selected?.countrName || "Country";
 
@@ -636,7 +638,16 @@ export default function StartApplicationScreen({ navigation, route }) {
       <Text
         style={styles.linkText}
         onPress={() =>
-          navigation.navigate("VisaDetailsScreen")
+          navigation.navigate(
+            isSchengen ? "SchengenFlowScreen" : "VisaDetailsScreen",
+            isSchengen
+              ? {
+                  country: selected?.countrName || "Schengen",
+                  destination: selected,
+                  date,
+                }
+              : undefined
+          )
         }
       >
         More Info

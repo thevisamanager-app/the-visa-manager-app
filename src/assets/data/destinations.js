@@ -3,7 +3,7 @@ const DESTINATIONS = [
     id: 1,
     countrName: "Vietnam",
     countryType: "evisa",
-    VisaManagerFee: "3157.72",
+    VisaManagerFee: "3158",
     liveCount: 9,
     subtitle: "Get Visa in 1-3 Business Days",
     bullets: [
@@ -80,7 +80,7 @@ const DESTINATIONS = [
     id: 7,
     countrName: 'Sri-lanka',
     VisaManagerFee: "590",
-    countryType: "DAC",
+    countryType: "evisa",
     subtitle: "Get Your ETA in just 1 day",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -117,7 +117,7 @@ const DESTINATIONS = [
   {
     id: 10,
     countrName: 'Armenia',
-    VisaManagerFee: "1612.44",
+    VisaManagerFee: "1613",
     countryType: "evisa",
     subtitle: "Get visa in 6-7 days",
     bullets: [
@@ -141,24 +141,26 @@ const DESTINATIONS = [
   {
     id: 12,
     countrName: 'France',
-    VisaManagerFee: "2948.82",
+    VisaManagerFee: "15861",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Quick & Easy Process",
-      "Trusted by 10k+ Customers",
-      "120+ countries"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
 
   {
     id: 13,
     countrName: 'Italy',
-    VisaManagerFee: "2948.82",
+    VisaManagerFee: "13460",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Quick & Easy Process",
-      "Trusted by 10k+ Customers",
-      "120+ countries"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
 
@@ -177,12 +179,13 @@ const DESTINATIONS = [
   {
     id: 15,
     countrName: 'Sweden',
-    VisaManagerFee: "3540",
+    VisaManagerFee: "15530",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Quick & Easy Process",
-      "Trusted by 10k+ Customers",
-      "120+ countries"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
 
@@ -237,36 +240,39 @@ const DESTINATIONS = [
   {
     id: 20,
     countrName: 'Poland',
-    VisaManagerFee: "3540",
+    VisaManagerFee: "14070",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Quick & Easy Process",
-      "Trusted by 10k+ Customers",
-      "120+ countries"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
 
   {
     id: 21,
     countrName: 'Portugal',
-    VisaManagerFee: "2950",
+    VisaManagerFee: "16478",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Quick & Easy Process",
-      "Trusted by 10k+ Customers",
-      "120+ countries"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
 
   {
     id: 22,
     countrName: 'Norway',
-    VisaManagerFee: "2948.82",
+    VisaManagerFee: "14320",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Quick & Easy Process",
-      "Trusted by 10k+ Customers",
-      "120+ countries"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
 
@@ -287,10 +293,11 @@ const DESTINATIONS = [
     countrName: 'Netherland',
     VisaManagerFee: "2948.82",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Quick & Easy Process",
-      "Trusted by 10k+ Customers",
-      "120+ countries"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
 
@@ -310,7 +317,7 @@ const DESTINATIONS = [
     id: 26,
     countrName: 'Maldives',
     VisaManagerFee: "885",
-    countryType: "DAC",
+    countryType: "evisa",
     subtitle: "Get Your Visa by 1 day",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -334,7 +341,7 @@ const DESTINATIONS = [
   {
     id: 28,
     countrName: 'Liechtenstein',
-    VisaManagerFee: "2948.82",
+    VisaManagerFee: "14412",
     countryType: "evisa",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -358,12 +365,13 @@ const DESTINATIONS = [
   {
     id: 30,
     countrName: 'Finland',
-    VisaManagerFee: "2948.82",
+    VisaManagerFee: "15040",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Mandatory for Indain Travellers",
-      "15k+ ETAs Processed",
-      "Online Process"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
 
@@ -394,12 +402,13 @@ const DESTINATIONS = [
   {
     id: 33,
     countrName: 'Austria',
-    VisaManagerFee: "2948.82",
+    VisaManagerFee: "16829",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Mandatory for Indain Travellers",
-      "15k+ ETAs Processed",
-      "Online Process"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
 
   },
@@ -407,12 +416,13 @@ const DESTINATIONS = [
   {
     id: 34,
     countrName: 'Bulgaria',
-    VisaManagerFee: "2950",
+    VisaManagerFee: "15405",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Mandatory for Indain Travellers",
-      "15k+ ETAs Processed",
-      "Online Process"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
 
@@ -420,7 +430,7 @@ const DESTINATIONS = [
     id: 35,
     countrName: 'Malaysia',
     VisaManagerFee: "590",
-    countryType: "DAC",
+    countryType: "evisa",
 
     subtitle: "Get Your Visa by 1 day",
     bullets: [
@@ -446,7 +456,7 @@ const DESTINATIONS = [
     id: 37,
     countrName: 'Thailand',
     VisaManagerFee: "590",
-    countryType: "DAC",
+    countryType: "evisa",
     subtitle: "Mandatory for Indians",
     bullets: [
       "15K+ visas sucessfully processed",
@@ -458,179 +468,194 @@ const DESTINATIONS = [
   {
     id: 38,
     countrName: 'Belgium',
-    VisaManagerFee: "2950",
+    VisaManagerFee: "16960",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Mandatory for Indain Travellers",
-      "15k+ ETAs Processed",
-      "Online Process"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
 
   {
     id: 39,
     countrName: 'Croatia',
-    VisaManagerFee: "2950",
+    VisaManagerFee: "15936",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Mandatory for Indain Travellers",
-      "15k+ ETAs Processed",
-      "Online Process"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
 
   {
     id: 40,
     countrName: 'Czechia',
-    VisaManagerFee: "2950",
+    VisaManagerFee: "15640",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Mandatory for Indain Travellers",
-      "15k+ ETAs Processed",
-      "Online Process"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
 
   {
     id: 41,
     countrName: 'Denmark',
-    VisaManagerFee: "2950",
+    VisaManagerFee: "15203",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Mandatory for Indain Travellers",
-      "15k+ ETAs Processed",
-      "Online Process"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
 
   {
     id: 42,
     countrName: 'Estonia',
-    VisaManagerFee: "2950",
+    VisaManagerFee: "15685",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Mandatory for Indain Travellers",
-      "15k+ ETAs Processed",
-      "Online Process"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
 
   {
     id: 43,
     countrName: 'Germany',
-    VisaManagerFee: "2950",
+    VisaManagerFee: "15162",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Mandatory for Indain Travellers",
-      "15k+ ETAs Processed",
-      "Online Process"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
 
   {
     id: 44,
     countrName: 'Greece',
-    VisaManagerFee: "2950",
+    VisaManagerFee: "15940",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Mandatory for Indain Travellers",
-      "15k+ ETAs Processed",
-      "Online Process"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
 
   {
     id: 45,
     countrName: 'Hungary',
-    VisaManagerFee: "2950",
+    VisaManagerFee: "17940",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Mandatory for Indain Travellers",
-      "15k+ ETAs Processed",
-      "Online Process"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
 
   {
     id: 46,
     countrName: 'Iceland',
-    VisaManagerFee: "2950",
+    VisaManagerFee: "16340",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Mandatory for Indain Travellers",
-      "15k+ ETAs Processed",
-      "Online Process"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
   {
     id: 47,
     countrName: 'Latvia',
-    VisaManagerFee: "2950",
+    VisaManagerFee: "16361",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Mandatory for Indain Travellers",
-      "15k+ ETAs Processed",
-      "Online Process"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
 
   {
     id: 48,
     countrName: 'Lithuania',
-    VisaManagerFee: "2950",
+    VisaManagerFee: "15366",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Mandatory for Indain Travellers",
-      "15k+ ETAs Processed",
-      "Online Process"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
 
   {
     id: 49,
     countrName: 'Luxembourg',
-    VisaManagerFee: "2950",
+    VisaManagerFee: "15151",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Mandatory for Indain Travellers",
-      "15k+ ETAs Processed",
-      "Online Process"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
 
   {
     id: 50,
     countrName: 'Malta',
-    VisaManagerFee: "2950",
+    VisaManagerFee: "16297",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Mandatory for Indain Travellers",
-      "15k+ ETAs Processed",
-      "Online Process"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
 
   {
     id: 51,
     countrName: 'Netherland',
-    VisaManagerFee: "2950",
+    VisaManagerFee: "15285",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Mandatory for Indain Travellers",
-      "15k+ ETAs Processed",
-      "Online Process"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
 
   {
     id: 52,
     countrName: 'Norway',
-    VisaManagerFee: "2950",
+    VisaManagerFee: "14320",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Mandatory for Indain Travellers",
-      "15k+ ETAs Processed",
-      "Online Process"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
 
@@ -639,70 +664,76 @@ const DESTINATIONS = [
     countrName: 'Portugal',
     VisaManagerFee: "2950",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Mandatory for Indain Travellers",
-      "15k+ ETAs Processed",
-      "Online Process"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
 
   {
     id: 54,
     countrName: 'Romania',
-    VisaManagerFee: "2950",
+    VisaManagerFee: "13612",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Mandatory for Indain Travellers",
-      "15k+ ETAs Processed",
-      "Online Process"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
 
   {
     id: 55,
     countrName: 'Slovakia',
-    VisaManagerFee: "2950",
+    VisaManagerFee: "16690",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Mandatory for Indain Travellers",
-      "15k+ ETAs Processed",
-      "Online Process"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
 
   {
     id: 56,
     countrName: 'Spain',
-    VisaManagerFee: "2950",
+    VisaManagerFee: "14951",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Mandatory for Indain Travellers",
-      "15k+ ETAs Processed",
-      "Online Process"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
 
   {
     id: 57,
     countrName: 'Slovenia',
-    VisaManagerFee: "2950",
+    VisaManagerFee: "16152",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Mandatory for Indain Travellers",
-      "15k+ ETAs Processed",
-      "Online Process"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
 
   {
     id: 58,
     countrName: 'Switzerland',
-    VisaManagerFee: "2950",
+    VisaManagerFee: "15630",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Mandatory for Indain Travellers",
-      "15k+ ETAs Processed",
-      "Online Process"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
 
@@ -711,10 +742,11 @@ const DESTINATIONS = [
     countrName: 'Cyprus',
     VisaManagerFee: "3540",
     countryType: "Schengen",
+    subtitle: "Quick Visa Appointment",
     bullets: [
-      "Mandatory for Indain Travellers",
-      "15k+ ETAs Processed",
-      "Online Process"
+      "Customize document strategy",
+      "File Preparation",
+      "Throughout exclusive guidence"
     ],
   },
   {
@@ -771,7 +803,7 @@ const DESTINATIONS = [
     id: 65,
     countrName: 'Mauritius',
     VisaManagerFee: "885",
-    countryType: "DAC",
+    countryType: "evisa",
     subtitle: "Get Your TDA in 1 day",
     bullets: [
       "Mandatory for Indain Travellers",
@@ -1156,7 +1188,7 @@ const DESTINATIONS = [
     id: 95,
     countrName: 'Kazakhstan',
     VisaManagerFee: "6517.23",
-    countryType: "evisa",  
+    countryType: "evisa",
     subtitle: "Get visa in 4-5 working days",
     bullets: [
       "1200+ visas successfully Processed",
@@ -1164,7 +1196,7 @@ const DESTINATIONS = [
     ]
   },
 
-{
+  {
     id: 96,
     countrName: 'Israel',
     VisaManagerFee: "3985",

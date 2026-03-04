@@ -213,7 +213,7 @@ export default function PhotoUploadScreen({ navigation, route }) {
             navigation.navigate("Tabs", { screen: "Destination" })
           }
         >
-          <Icon name="home" size={moderateScale(24)} color={ORANGE} />
+          <Icon name="home" size={moderateScale(24)} color="#FF5C00" />
         </TouchableOpacity>
       </View>
 

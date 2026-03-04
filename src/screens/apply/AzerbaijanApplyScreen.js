@@ -18,7 +18,7 @@ import { validatePickedDocument } from "../../utils/documentValidation";
 import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import ScreenWrapper from "../../components/ScreenWrapper";
-import { CountryApplyBanner, CoPassengerCard } from "../../components/ApplyFlowCards";
+import { ApplyCountryHeader, CoPassengerCard } from "../../components/ApplyFlowCards";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
 import PassportBackSample from "../../assets/examples/passport-back.png";
@@ -291,16 +291,18 @@ export default function AzerbaijanApplyScreen({ navigation }) {
       <Modal visible={showCoTravellerModal} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.modalBox}>
-            <Text style={styles.sectionTitle}>Add Co-Traveller</Text>
-             <View style={styles.header}>
-              <TouchableOpacity onPress={() => navigation.goBack()}>
+            <View style={styles.header}>
+              <TouchableOpacity onPress={() => setShowCoTravellerModal(false)}>
                 <Ionicons name="chevron-back" size={26} />
               </TouchableOpacity>
 
+              <Text style={styles.headerTitle}>Add Co-Traveller</Text>
+
               <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate("Tabs", { screen: "Destination" })
-                }
+                onPress={() => {
+                  setShowCoTravellerModal(false);
+                  navigation.navigate("Tabs", { screen: "Destination" });
+                }}
               >
                 <Ionicons name="home-outline" size={24} color={ORANGE} />
               </TouchableOpacity>

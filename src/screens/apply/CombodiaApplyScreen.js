@@ -18,7 +18,7 @@ import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import ScreenWrapper from "../../components/ScreenWrapper";
-import { CountryApplyBanner, CoPassengerCard } from "../../components/ApplyFlowCards";
+import { ApplyCountryHeader, CoPassengerCard } from "../../components/ApplyFlowCards";
 import { extractTextFromImage } from "../../api/ocr/visionApi";
 import { parseMRZ } from "../../api/ocr/mrzParser";
 
@@ -235,7 +235,7 @@ export default function CombodiaApplyScreen({ navigation }) {
         style={styles.input}
         onPress={() => setShowCalendarFor(target)}
       >
-        <Text>
+        <Text style={traveller.form.travelDate ? styles.inputText : styles.inputPlaceholder}>
           {traveller.form.travelDate
             ? formatDate(traveller.form.travelDate)
             : "Select Travel Date"}
@@ -244,6 +244,7 @@ export default function CombodiaApplyScreen({ navigation }) {
 
       <TextInput
         placeholder="Mobile Number"
+        placeholderTextColor="#111827"
         style={styles.input}
         keyboardType="phone-pad"
         value={traveller.form.phone}
@@ -252,6 +253,7 @@ export default function CombodiaApplyScreen({ navigation }) {
 
       <TextInput
         placeholder="Email ID"
+        placeholderTextColor="#111827"
         style={styles.input}
         value={traveller.form.email}
         onChangeText={(v) => onChange("email", v)}
@@ -268,7 +270,7 @@ export default function CombodiaApplyScreen({ navigation }) {
         <View key={key} style={styles.docCard}>
           <Text style={styles.docLabel}>{label} *</Text>
 
-          {!travellers[0].documents[key] ? (
+          {!traveller.documents[key] ? (
             key.includes("passport") || key === "photo" || key === "ticket" ? (
               <View style={styles.sampleWrapper}>
                 <Image
@@ -280,7 +282,7 @@ export default function CombodiaApplyScreen({ navigation }) {
             ) : null
           ) : (
             <Image
-              source={{ uri: travellers[0].documents[key].uri }}
+              source={{ uri: traveller.documents[key].uri }}
               style={styles.previewImage}
             />
           )}
@@ -290,7 +292,7 @@ export default function CombodiaApplyScreen({ navigation }) {
             onPress={() => pickDocument(key)}
           >
             <Text style={styles.uploadText}>
-              {travellers[0].documents[key]
+              {traveller.documents[key]
                 ? "Replace Document"
                 : "Upload Document"}
             </Text>
@@ -332,16 +334,18 @@ export default function CombodiaApplyScreen({ navigation }) {
       <Modal visible={showCoTravellerModal} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.modalBox}>
-            <Text style={styles.sectionTitle}>Add Co-Traveller</Text>
             <View style={styles.header}>
-              <TouchableOpacity onPress={() => navigation.goBack()}>
+              <TouchableOpacity onPress={() => setShowCoTravellerModal(false)}>
                 <Ionicons name="chevron-back" size={26} />
               </TouchableOpacity>
 
+              <Text style={styles.headerTitle}>Add Co-Traveller</Text>
+
               <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate("Tabs", { screen: "Destination" })
-                }
+                onPress={() => {
+                  setShowCoTravellerModal(false);
+                  navigation.navigate("Tabs", { screen: "Destination" });
+                }}
               >
                 <Ionicons name="home-outline" size={24} color={ORANGE} />
               </TouchableOpacity>
@@ -424,6 +428,8 @@ const styles = StyleSheet.create({
   },
 
   headerTitle: { fontSize: 17, fontWeight: "700" },
+  inputText: { color: "#111827" },
+  inputPlaceholder: { color: "#111827" },
 
   sectionTitle: {
     fontSize: 16,
@@ -456,6 +462,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: "center",
     marginBottom: 8,
+    color: "#111827",
   },
 
   sampleWrapper: {

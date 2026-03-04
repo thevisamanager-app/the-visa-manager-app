@@ -18,7 +18,7 @@ import auth from "@react-native-firebase/auth";
 import firestore, { serverTimestamp } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import ScreenWrapper from "../../components/ScreenWrapper";
-import { CountryApplyBanner, CoPassengerCard } from "../../components/ApplyFlowCards";
+import { ApplyCountryHeader, CoPassengerCard } from "../../components/ApplyFlowCards";
 import { extractPassportFrontPageFromAsset } from "../../utils/passportFrontPage";
 
 import PassportFrontSample from "../../assets/examples/passport-front.png";
@@ -272,22 +272,17 @@ export default function VietnamApplyScreen({ navigation }) {
                 onChangeText={(v) => onChange("email", v)}
                 placeholderTextColor="#000000"
             />
-            {target === "main" ? (
-                <>
-                    
-                    <View style={styles.pickerWrap}>
-                        <Picker
-                            selectedValue={visaEntryType}
-                            onValueChange={(v) => setVisaEntryType(v)}
-                            style={styles.picker}
-                        >
-                            <Picker.Item label="Select Entry Type" value="" />
-                            <Picker.Item label="Single Entry" value="single" />
-                            <Picker.Item label="Multiple Entry" value="multiple" />
-                        </Picker>
-                    </View>
-                </>
-            ) : null}
+            <View style={styles.pickerWrap}>
+                <Picker
+                    selectedValue={visaEntryType}
+                    onValueChange={(v) => setVisaEntryType(v)}
+                    style={styles.picker}
+                >
+                    <Picker.Item label="Select Entry Type" value="" />
+                    <Picker.Item label="Single Entry" value="single" />
+                    <Picker.Item label="Multiple Entry" value="multiple" />
+                </Picker>
+            </View>
 
             <TextInput
                 placeholder="Hotel Name & Address"
@@ -340,24 +335,7 @@ export default function VietnamApplyScreen({ navigation }) {
     return (
         <ScreenWrapper>
             <ScrollView contentContainerStyle={styles.container}>
-                {/* HEADER */}
-                <View style={styles.header}>
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <Ionicons name="chevron-back" size={26} />
-                    </TouchableOpacity>
-
-                    <View />
-
-                    <TouchableOpacity
-                        onPress={() =>
-                            navigation.navigate("Tabs", { screen: "Destination" })
-                        }
-                    >
-                        <Ionicons name="home-outline" size={24} color={ORANGE} />
-                    </TouchableOpacity>
-                </View>
-
-                <CountryApplyBanner countryName="Vietnam" />
+                <ApplyCountryHeader navigation={navigation} countryName="Vietnam" />
         <View style={styles.formCard}>
                 {renderForm(
                     travellers[0],

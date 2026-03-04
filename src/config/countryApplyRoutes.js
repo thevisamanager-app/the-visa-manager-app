@@ -13,6 +13,7 @@ export const COUNTRY_APPLY_ROUTES = {
   Armenia: "ArmeniaApplyScreen",
   Azerbaijan: "AzerbaijanApplyScreen",
   Combodia: "CombodiaApplyScreen",
+  Cambodia: "CombodiaApplyScreen",
   Kenya: "KenyaApplyScreen",
   Russia: "RussiaApplyScreen",
   Qatar: "QatarApplyScreen",
@@ -22,5 +23,5 @@ export const COUNTRY_APPLY_ROUTES = {
   Kazakhstan: "KazakhstanApplyScreen",
   Philippines: "PhilippinesApplyScreen",
   Israel: "IsraelApplyScreen",
-  DEFAULT: "GenericApplyScreen",
+  DEFAULT: "TravelDateScreen",
 };

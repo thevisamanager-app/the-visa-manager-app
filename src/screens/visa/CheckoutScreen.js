@@ -4,6 +4,7 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
+  SafeAreaView,
   ScrollView,
   Alert,
   TextInput,
@@ -268,19 +269,20 @@ export default function CheckoutScreen({ navigation, route }) {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.mainContent}>
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        >
-          {/* VISA CARD */}
-          <View style={styles.card}>
-          <View style={styles.rowSpace}>
-            <Text style={styles.itemTitle}>
-              Visa Fee x {totalTravelers}
-            </Text>
+      <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
+        {/* VISA CARD */}
+        <View style={styles.card}>
+          {isBhutan ? (
+            <View style={styles.rowSpace}>
+              <Text style={styles.itemTitle}>How many day you stay</Text>
+              <Text style={styles.price}>{bhutanStayDays}</Text>
+            </View>
+          ) : (
+            <>
+              <View style={styles.rowSpace}>
+                <Text style={styles.itemTitle}>
+                  Visa Fee x {totalTravelers}
+                </Text>
 
                 <Text style={styles.price}>INR {visaTotal.toLocaleString("en-IN")}</Text>
               </View>
@@ -355,9 +357,8 @@ export default function CheckoutScreen({ navigation, route }) {
               </View>
             </View>
           </View>
-          </View>
-        </ScrollView>
-      </View>
+        </View>
+      </ScrollView>
 
       <View style={styles.bottomBar}>
         <TouchableOpacity style={styles.payButton} onPress={handlePay}>
@@ -486,20 +487,11 @@ const styles = StyleSheet.create({
     color: "#4A4A4A",
   },
   bottomBar: {
+    position: "absolute",
+    bottom: 0,
     width: "100%",
     padding: moderateScale(14),
     backgroundColor: "#fff",
-    borderTopWidth: scale(1),
-    borderTopColor: "#E5E7EB",
-  },
-  mainContent: {
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: 24,
   },
   payButton: {
     backgroundColor: ORANGE,
@@ -541,7 +533,3 @@ const styles = StyleSheet.create({
     color: "#444",
   },
 });
-
-
-
-

@@ -35,11 +35,12 @@ import {
 } from "@react-native-firebase/storage/lib/modular";
 
 import ScreenWrapper from "../../../components/ScreenWrapper";
-import { ApplyCountryHeader, CoPassengerCard } from "../../../components/ApplyFlowCards";
+import { ApplyCountryHeader } from "../../../components/ApplyFlowCards";
 import PassportFrontSample from "../../../assets/examples/passport-front.png";
 import PassportBackSample from "../../../assets/examples/passport-back.png";
-import PassportPhotoSample from "../../../assets/examples/passportimage.png";
+import PassportPhotoSample from "../../../assets/examples/passport-photo.png";
 import TicketSample from "../../../assets/examples/ticket.png";
+import { extractPassportFrontPageFromAsset } from "../../../utils/passportFrontPage";
 
 const ORANGE = "#FF5C00";
 
@@ -237,7 +238,6 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
       Alert.alert("Missing Info", err);
       return;
     }
-
     setCoTravellers((prev) => [...prev, { form: { ...coForm }, docs: { ...coDocs } }]);
     setCoForm(createForm());
     setCoDocs(createDocs());
@@ -264,47 +264,36 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
       return;
     }
 
-    let applicationRef = null;
-    let allTravellers = [];
-    const applicationId = `dac_${countryName.replace(/\s+/g, "_").toLowerCase()}_${Date.now()}`;
-
     try {
       setLoading(true);
+      const applicationId = `dac_${countryName.replace(/\s+/g, "_").toLowerCase()}_${Date.now()}`;
       const db = getFirestore();
       const userRef = doc(collection(db, "users"), user.uid);
-      applicationRef = doc(collection(userRef, "passportData"), applicationId);
-      allTravellers = [{ isPrimary: true, form, docs }, ...coTravellers.map((t) => ({ isPrimary: false, ...t }))];
-      const basePath = `applications/${user.uid}/${applicationId}`;
+      const applicationRef = doc(collection(userRef, "passportData"), applicationId);
 
       await setDoc(applicationRef, {
         country: countryName,
-<<<<<<< HEAD
-        status: "processing",
-=======
         visaType: isSriLanka ? (sriLankaVisaType || "tourist") : null,
         status: "uploading",
->>>>>>> e0d7a289d5df36dda2a3bad941e86ff353b497a0
         createdAt: serverTimestamp(),
-        totalTravellers: allTravellers.length,
+        totalTravellers: coTravellers.length + 1,
       });
+
+      const allTravellers = [{ isPrimary: true, form, docs }, ...coTravellers.map((t) => ({ isPrimary: false, ...t }))];
+      const basePath = `applications/${user.uid}/${applicationId}`;
 
       const payloadTravellers = await Promise.all(
         allTravellers.map(async (traveller, idx) => {
           const i = idx + 1;
           const travellerPath = `${basePath}/traveller_${i}`;
-<<<<<<< HEAD
-=======
           const passportFrontPage = await extractPassportFrontPageFromAsset(
             traveller.docs.passportFront
           );
->>>>>>> e0d7a289d5df36dda2a3bad941e86ff353b497a0
 
           const frontUri = await resolveUploadUri(traveller.docs.passportFront, { prefix: `front-${i}` });
           const backUri = await resolveUploadUri(traveller.docs.passportBack, { prefix: `back-${i}` });
           const ticketUri = await resolveUploadUri(traveller.docs.ticket, { prefix: `ticket-${i}` });
-          const photoUri = traveller.docs.photo
-            ? await resolveUploadUri(traveller.docs.photo, { prefix: `photo-${i}` })
-            : null;
+          const photoUri = traveller.docs.photo ? await resolveUploadUri(traveller.docs.photo, { prefix: `photo-${i}` }) : null;
 
           if (!frontUri || !backUri || !ticketUri) {
             throw new Error(`Traveller ${i}: File URI missing. Please re-upload.`);
@@ -315,15 +304,14 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
             uploadFile(backUri, `${travellerPath}/passport_back.jpg`),
             uploadFile(ticketUri, `${travellerPath}/ticket.jpg`),
           ];
-          if (photoUri) {
-            uploadTasks.push(uploadFile(photoUri, `${travellerPath}/photo.jpg`));
-          }
+          if (photoUri) uploadTasks.push(uploadFile(photoUri, `${travellerPath}/photo.jpg`));
 
           const uploaded = await Promise.all(uploadTasks);
 
           return {
             isPrimary: traveller.isPrimary,
             form: { ...traveller.form },
+            passportFrontPage,
             documents: {
               passportFront: uploaded[0],
               passportBack: uploaded[1],
@@ -349,76 +337,56 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
         { merge: true }
       );
 
-      await setDoc(
-        userRef,
-        {
-          lastApplicationId: applicationId,
-          lastApplicationCountry: countryName,
-          lastApplicationStatus: "submitted",
-          lastApplicationUpdatedAt: serverTimestamp(),
-        },
-        { merge: true }
-      );
-
       navigation.navigate("CheckoutScreen", {
         country: countryName,
         visaType: isSriLanka ? (sriLankaVisaType || "tourist") : null,
         sriLankaVisaType: isSriLanka ? (sriLankaVisaType || "tourist") : null,
         applicationId,
         totalTravellers: payloadTravellers.length,
-        travellers: payloadTravellers.map((t) => ({ isPrimary: t.isPrimary, form: t.form })),
-        coTravellers: payloadTravellers.filter((t) => !t.isPrimary).map((t) => ({ isPrimary: false, form: t.form })),
+        travellers: payloadTravellers,
+        coTravellers: payloadTravellers.slice(1),
       });
     } catch (e) {
-      console.log(`${countryName} submit error:`, e);
-      try {
-        if (applicationRef) {
-          await setDoc(
-            applicationRef,
-            {
-              country: countryName,
-              status: "failed",
-              errorMessage: e?.message || "Unknown submit error",
-              failedAt: serverTimestamp(),
-              totalTravellers: allTravellers.length || coTravellers.length + 1,
-            },
-            { merge: true }
-          );
-        }
-      } catch (innerError) {
-        console.log("Failed to update failed status:", innerError);
-      }
       Alert.alert("Error", e?.message || "Submission failed.");
     } finally {
       setLoading(false);
     }
   };
 
-  const renderPicker = (fieldKey, placeholder, options, formData, setFieldFn, target = "main") => {
+  const renderPicker = (fieldKey, placeholder, options, formData, setFieldFn) => {
     const placeholderValue = `__${fieldKey}_placeholder__`;
     const selectedValue = formData[fieldKey] || placeholderValue;
     const isPlaceholder = selectedValue === placeholderValue;
-    const isAndroid = Platform.OS === "android";
     const useWhitePopupText =
-      isAndroid &&
-      (fieldKey === "purpose" ||
-        fieldKey === "accommodation" ||
-        fieldKey === "occupation");
+      Platform.OS === "android" &&
+      isSriLanka &&
+      fieldKey === "purpose";
     const dropdownTextColor = useWhitePopupText ? "#FFFFFF" : "#111827";
     const dropdownPlaceholderColor = useWhitePopupText ? "#FFFFFF" : "#111827";
+    const selectedLabel = isPlaceholder
+      ? placeholder
+      : options.find((o) => o === selectedValue) || placeholder;
     return (
       <View style={styles.fieldFull}>
         <Text style={styles.labelText}>{placeholder} *</Text>
         <View style={styles.pickerWrap}>
+          {useWhitePopupText ? (
+            <Text style={styles.pickerOverlayText}>{selectedLabel}</Text>
+          ) : null}
           <Picker
             selectedValue={selectedValue}
             onValueChange={(v) => setFieldFn(fieldKey, v === placeholderValue ? "" : v)}
-            style={[styles.picker, isPlaceholder ? styles.pickerPlaceholderText : styles.pickerSelectedText]}
+            style={[
+              styles.picker,
+              isPlaceholder ? styles.pickerPlaceholderText : styles.pickerSelectedText,
+              useWhitePopupText ? styles.pickerTransparentText : null,
+            ]}
             dropdownIconColor="#111827"
-            mode={isAndroid ? "dropdown" : undefined}
+            mode={Platform.OS === "android" ? "dropdown" : undefined}
+            useNativeAndroidPickerStyle={false}
             itemStyle={styles.pickerItem}
             prompt={placeholder}
-            themeVariant={isAndroid ? "light" : undefined}
+            themeVariant={Platform.OS === "android" ? "light" : undefined}
           >
             <Picker.Item label={placeholder} value={placeholderValue} color={dropdownPlaceholderColor} />
             {options.map((o) => (
@@ -456,19 +424,39 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
         </TouchableOpacity>
       </View>
 
-      {isSriLanka && target === "main" ? (
+      {isSriLanka ? (
         <View style={styles.fieldFull}>
           <View style={styles.pickerWrap}>
+            <Text style={styles.pickerOverlayText}>
+              {sriLankaVisaType === "tourist"
+                ? "Tourist"
+                : sriLankaVisaType === "business"
+                ? "Business"
+                : "Select Visa Type"}
+            </Text>
             <Picker
               selectedValue={sriLankaVisaType}
               onValueChange={(v) => setSriLankaVisaType(v)}
-              style={styles.picker}
+              style={[styles.picker, styles.pickerTransparentText]}
               dropdownIconColor="#111827"
               mode={Platform.OS === "android" ? "dropdown" : undefined}
+              useNativeAndroidPickerStyle={false}
             >
-              <Picker.Item label="Select Visa Type" value="" color="#000000" />
-              <Picker.Item label="Tourist" value="tourist" color="#000000" />
-              <Picker.Item label="Business" value="business" color="#000000" />
+              <Picker.Item
+                label="Select Visa Type"
+                value=""
+                color={Platform.OS === "android" ? "#FFFFFF" : "#000000"}
+              />
+              <Picker.Item
+                label="Tourist"
+                value="tourist"
+                color={Platform.OS === "android" ? "#FFFFFF" : "#000000"}
+              />
+              <Picker.Item
+                label="Business"
+                value="business"
+                color={Platform.OS === "android" ? "#FFFFFF" : "#000000"}
+              />
             </Picker>
           </View>
         </View>
@@ -496,10 +484,10 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
       </View>
 
       {cfg.requires.purpose
-        ? renderPicker("purpose", "Purpose of Visit", purposeOptions, formData, setFieldFn, target)
+        ? renderPicker("purpose", "Purpose of Visit", purposeOptions, formData, setFieldFn)
         : null}
       {cfg.requires.accommodation
-        ? renderPicker("accommodation", "Accommodation Details", ACCOMMODATION_OPTIONS, formData, setFieldFn, target)
+        ? renderPicker("accommodation", "Accommodation Details", ACCOMMODATION_OPTIONS, formData, setFieldFn)
         : null}
       {cfg.requires.hotelDetails ? (
         <View style={styles.fieldFull}>
@@ -513,7 +501,7 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
         </View>
       ) : null}
       {cfg.requires.occupation
-        ? renderPicker("occupation", "Occupation", OCCUPATION_OPTIONS, formData, setFieldFn, target)
+        ? renderPicker("occupation", "Occupation", OCCUPATION_OPTIONS, formData, setFieldFn)
         : null}
 
       <View style={styles.docsStack}>
@@ -555,14 +543,28 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
           {renderTravellerForm(form, setMainField, docs, "main")}
         </View>
 
-        <CoPassengerCard
-          coTravellerCount={coTravellers.length}
-          onAddPress={() => {
-            setCoForm(createForm());
-            setCoDocs(createDocs());
-            setCoModalOpen(true);
-          }}
-        />
+        <View style={styles.coCard}>
+          <View style={styles.coHeader}>
+            <Text style={styles.coTitle}>Co-Passengers</Text>
+            <TouchableOpacity
+              onPress={() => {
+                setCoForm(createForm());
+                setCoDocs(createDocs());
+                setCoModalOpen(true);
+              }}
+            >
+              <Text style={styles.coAdd}>+ Add Co-Passenger</Text>
+            </TouchableOpacity>
+          </View>
+
+          {coTravellers.length === 0 ? (
+            <Text style={styles.coEmpty}>No co-passengers added yet.</Text>
+          ) : (
+            coTravellers.map((t, i) => (
+              <Text style={styles.coItem} key={`co-${i + 1}`}>Co-Passenger {i + 1}: {t.form.email || "No email"}</Text>
+            ))
+          )}
+        </View>
 
         <TouchableOpacity style={styles.submitBtn} onPress={submit}>
           {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.submitText}>Complete Process</Text>}
@@ -591,7 +593,23 @@ export default function DacCountryApplyTemplate({ navigation, countryName }) {
         <View style={styles.modalOverlay}>
           <View style={styles.modalCard}>
             <ScrollView contentContainerStyle={styles.modalContent}>
-              <Text style={styles.modalTitle}>Add Co-Passenger</Text>
+              <View style={styles.coModalHeader}>
+                <TouchableOpacity onPress={() => setCoModalOpen(false)}>
+                  <Ionicons name="chevron-back" size={26} />
+                </TouchableOpacity>
+
+                <Text style={styles.coModalTitle}>Add Co-Traveller</Text>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    setCoModalOpen(false);
+                    navigation.navigate("Tabs", { screen: "Destination" });
+                  }}
+                >
+                  <Ionicons name="home-outline" size={24} color={ORANGE} />
+                </TouchableOpacity>
+              </View>
+
               {renderTravellerForm(coForm, setCoField, coDocs, "co")}
 
               <View style={styles.modalActions}>
@@ -680,6 +698,18 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   picker: { marginTop: Platform.OS === "android" ? -2 : 0, width: "100%" },
+  pickerTransparentText: {
+    color: "transparent",
+  },
+  pickerOverlayText: {
+    position: "absolute",
+    left: 12,
+    top: 14,
+    color: "#111827",
+    fontSize: 14,
+    zIndex: 2,
+    pointerEvents: "none",
+  },
   pickerItem: { color: "#000000" },
   pickerPlaceholderText: { color: "#000000" },
   pickerSelectedText: { color: "#000000" },
@@ -726,6 +756,20 @@ const styles = StyleSheet.create({
   radioOuter: { width: 14, height: 14, borderRadius: 7, borderWidth: 1, borderColor: "#9CA3AF", marginRight: 6 },
   radioOuterActive: { borderColor: ORANGE, backgroundColor: ORANGE },
   radioText: { color: "#111827", fontSize: 13 },
+  coCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 18,
+    padding: 12,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    elevation: 1,
+  },
+  coHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  coTitle: { fontSize: 14, fontWeight: "700", color: "#111827" },
+  coAdd: { color: ORANGE, fontWeight: "700", fontSize: 13 },
+  coEmpty: { color: "#6B7280", fontSize: 12, marginTop: 8 },
+  coItem: { color: "#374151", fontSize: 12, marginTop: 8 },
   submitBtn: {
     backgroundColor: ORANGE,
     borderRadius: 999,
@@ -739,8 +783,15 @@ const styles = StyleSheet.create({
   calendarOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.4)", justifyContent: "center" },
   calendarBox: { backgroundColor: "#fff", margin: 20, borderRadius: 16, padding: 12 },
   modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.45)", justifyContent: "center", padding: 12 },
-  modalCard: { backgroundColor: "#FFFFFF", borderRadius: 12, maxHeight: "90%" },
+  modalCard: { backgroundColor: "#E5E7EB", borderRadius: 12, maxHeight: "90%" },
   modalContent: { padding: 12, paddingBottom: 20 },
+  coModalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  coModalTitle: { fontSize: 17, fontWeight: "700" },
   modalTitle: { fontSize: 18, fontWeight: "700", color: "#1F2937", marginBottom: 10 },
   modalActions: { marginTop: 8, flexDirection: "row", justifyContent: "center", gap: 10 },
   closeBtn: {
@@ -764,4 +815,3 @@ const styles = StyleSheet.create({
   },
   saveBtnText: { color: "#fff", fontWeight: "700" },
 });
-

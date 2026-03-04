@@ -131,7 +131,7 @@ const DESTINATIONS = [
     countrName: 'Russia',
     VisaManagerFee: "5948",
     countryType: "evisa",
-     subtitle: "Get visa in 6 to 7 days",
+    subtitle: "Get visa in 6 to 7 days",
     bullets: [
       "1200 + Visa Successfully Processed",
       "Online Process"
@@ -419,7 +419,7 @@ const DESTINATIONS = [
   {
     id: 35,
     countrName: 'Malaysia',
-    VisaManagerFee: "1",
+    VisaManagerFee: "590",
     countryType: "DAC",
 
     subtitle: "Get Your Visa by 1 day",
@@ -445,7 +445,7 @@ const DESTINATIONS = [
   {
     id: 37,
     countrName: 'Thailand',
-    VisaManagerFee: "1",
+    VisaManagerFee: "590",
     countryType: "DAC",
     subtitle: "Mandatory for Indians",
     bullets: [
@@ -1179,6 +1179,3 @@ const DESTINATIONS = [
 
 ];
 export default DESTINATIONS;
-
-
-

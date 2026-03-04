@@ -73,12 +73,24 @@ export default function VisaDetailsScreen({ navigation }) {
   const selected = useSelector((state) => state.destinations.selected);
   const countryName = selected?.countrName || "Country";
   const normalizedCountryName = countryName?.trim();
+  const normalizeRouteKey = (name = "") =>
+    String(name).toLowerCase().replace(/[^a-z]/g, "");
+  const normalizedApplyRoutes = Object.entries(COUNTRY_APPLY_ROUTES).reduce(
+    (acc, [key, value]) => {
+      if (key !== "DEFAULT") acc[normalizeRouteKey(key)] = value;
+      return acc;
+    },
+    {}
+  );
   const isSchengen =
     selected?.countryType?.toString().trim().toLowerCase() === "schengen";
+  const routeByExactName = COUNTRY_APPLY_ROUTES?.[countryName];
+  const routeByNormalizedName =
+    normalizedApplyRoutes?.[normalizeRouteKey(countryName)];
   const applyRoute =
     (isSchengen
       ? "SchengenFlowScreen"
-      : COUNTRY_APPLY_ROUTES?.[countryName]) ||
+      : routeByExactName || routeByNormalizedName) ||
     COUNTRY_APPLY_ROUTES?.DEFAULT ||
     "TravelDateScreen";
   const [faqSearch, setFaqSearch] = useState("");
